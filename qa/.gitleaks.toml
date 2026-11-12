@@ -1,0 +1,6 @@
+# .env.example has variable names only; the generic rule matches across its empty lines.
+[extend]
+useDefault = true
+
+[[allowlists]]
+paths = ['''\.env\.example$''']

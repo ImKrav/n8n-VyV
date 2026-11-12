@@ -1,0 +1,10 @@
+{
+  "name": "vyv-qa",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test scripts/",
+    "fechas": "node scripts/validar-fechas.mjs .",
+    "secretos": "bash scripts/gitleaks.sh ."
+  }
+}

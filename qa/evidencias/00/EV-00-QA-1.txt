@@ -1,0 +1,14 @@
+npm notice run test
+npm notice run node --test scripts/
+✔ acepta 17/11/2026 (67.168005ms)
+✔ rechaza el día siguiente a la fecha límite (52.463941ms)
+✔ rechaza marcador dd/mm/aaaa (44.612864ms)
+✔ rechaza "por definir" (50.575556ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 350.90447
