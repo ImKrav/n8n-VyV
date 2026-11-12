@@ -1,0 +1,83 @@
+# Builds the fork image on GitHub-hosted runners and pushes it to GHCR.
+# Build chain: `pnpm build:docker` = scripts/build-n8n.mjs + scripts/dockerize-n8n.mjs
+# (docker buildx bake, file docker/docker-bake.hcl, Dockerfile docker/images/n8n/Dockerfile).
+# Default local image: n8nio/n8n:local (IMAGE_BASE_NAME / IMAGE_TAG env vars; a registry
+# host in IMAGE_BASE_NAME would push directly, so it is left unset and we retag + push here).
+# Single platform: the runner host (linux/amd64).
+name: QA build image
+
+on:
+  push:
+    branches: [qa/final-vyv]
+    tags: [v-final]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/imkrav/n8n-vyv
+  NODE_OPTIONS: --max-old-space-size=7168
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check existing baseline image
+        id: exists
+        run: |
+          if docker manifest inspect "$IMAGE:v-baseline" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.exists.outputs.skip != 'true'
+        with:
+          ref: v-baseline
+      - uses: actions/setup-node@v4
+        if: steps.exists.outputs.skip != 'true'
+        with:
+          node-version: 24
+      - name: Build image
+        if: steps.exists.outputs.skip != 'true'
+        run: |
+          npm i -g pnpm@12.4.2
+          pnpm install --frozen-lockfile
+          pnpm build:docker
+      - name: Tag and push
+        if: steps.exists.outputs.skip != 'true'
+        run: |
+          docker tag n8nio/n8n:local "$IMAGE:v-baseline"
+          docker push "$IMAGE:v-baseline"
+
+  head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build image
+        run: |
+          npm i -g pnpm@12.4.2
+          pnpm install --frozen-lockfile
+          pnpm build:docker
+      - name: Tag and push
+        run: |
+          docker tag n8nio/n8n:local "$IMAGE:sha-${GITHUB_SHA::7}"
+          docker push "$IMAGE:sha-${GITHUB_SHA::7}"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            docker tag n8nio/n8n:local "$IMAGE:$GITHUB_REF_NAME"
+            docker push "$IMAGE:$GITHUB_REF_NAME"
+          fi
