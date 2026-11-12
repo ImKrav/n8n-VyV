@@ -1,0 +1,73 @@
+name: Defecto (QA VyV)
+description: Registro de un defecto detectado en las pruebas de n8n 2.48.0
+title: "[CP-XX-NN-NN] "
+labels: [defecto]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Flujo del defecto: Nuevo → Asignado → En proceso → Corregido → Revalidado → Cerrado.
+        Este repositorio es público. En hallazgos de seguridad, el título y la descripción deben ser neutros y sin el vector de ataque.
+  - type: input
+    id: caso
+    attributes:
+      label: Caso de prueba
+      description: Identificador del caso que detectó el defecto.
+      placeholder: CP-WF-01-01
+    validations:
+      required: true
+  - type: input
+    id: evidencia
+    attributes:
+      label: Evidencia
+      description: Identificador de la evidencia en qa/evidencias/.
+      placeholder: EV-06-CP-WF-01-01-1
+    validations:
+      required: true
+  - type: dropdown
+    id: modulo
+    attributes:
+      label: Módulo
+      options: [WF (Workflows), EX (Ejecuciones), CR (Credenciales), CO (Core)]
+    validations:
+      required: true
+  - type: dropdown
+    id: severidad
+    attributes:
+      label: Severidad
+      options: [Crítica, Alta, Media, Baja]
+    validations:
+      required: true
+  - type: dropdown
+    id: prioridad
+    attributes:
+      label: Prioridad
+      options: [Alta, Media, Baja]
+    validations:
+      required: true
+  - type: input
+    id: entorno
+    attributes:
+      label: Entorno
+      description: Versión, commit, navegador y tipo de instancia.
+      placeholder: n8n 2.48.0, commit 2b1d836bac, instancia local
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducir
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+  - type: textarea
+    id: obtenido
+    attributes:
+      label: Resultado obtenido
+    validations:
+      required: true

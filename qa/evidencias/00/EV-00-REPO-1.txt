@@ -1,0 +1,6 @@
+v-baseline      feat(core): Add a settings column to workflow history (no-changelog) (#42701)
+  origin/HEAD -> origin/master
+  origin/imgbot
+  origin/master
+  origin/qa/fase-00-preparacion
+  origin/qa/final-vyv

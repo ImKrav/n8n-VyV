@@ -1,0 +1,22 @@
+bug	Something isn't working	#d73a4a
+accessibility	Barrier affecting people with disabilities	#f143ab
+documentation	Improvements or additions to documentation	#0075ca
+duplicate	This issue or pull request already exists	#cfd3d7
+enhancement	New feature or request	#a2eeef
+good first issue	Good for newcomers	#7057ff
+help wanted	Extra attention is needed	#008672
+invalid	This doesn't seem right	#e4e669
+question	Further information is requested	#d876e3
+wontfix	This will not be worked on	#ffffff
+defecto	Defecto detectado en las pruebas	#b60205
+severidad:crítica	Severidad crítica	#b60205
+severidad:alta	Severidad alta	#d73a4a
+severidad:baja	Severidad baja	#9e9e9e
+severidad:media	Severidad media	#fbca04
+prioridad:alta	Prioridad alta	#d73a4a
+prioridad:media	Prioridad media	#fbca04
+modulo:EX	Módulo Ejecuciones	#1d76db
+modulo:WF	Módulo Workflows	#1d76db
+prioridad:baja	Prioridad baja	#9e9e9e
+modulo:CO	Módulo Core	#1d76db
+modulo:CR	Módulo Credenciales	#1d76db
