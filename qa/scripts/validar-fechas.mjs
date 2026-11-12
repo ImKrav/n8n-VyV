@@ -1,6 +1,6 @@
 // Fails on dates after the deadline or on date placeholders in deliverable docs.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, extname, basename } from 'node:path';
+import { join, extname, basename, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const LIMITE = Date.UTC(2026, 10, 17);
@@ -28,7 +28,7 @@ function listar(raiz) {
 	if (!statSync(raiz).isDirectory()) return [raiz];
 	return readdirSync(raiz, { recursive: true })
 		.map((f) => join(raiz, f))
-		.filter((f) => !EXCLUIDOS.test(f.replaceAll('\\', '/')) && statSync(f).isFile());
+		.filter((f) => !EXCLUIDOS.test(relative(raiz, f).replaceAll('\\', '/')) && statSync(f).isFile());
 }
 
 function leer(f) {

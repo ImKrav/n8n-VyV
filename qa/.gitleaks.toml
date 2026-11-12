@@ -1,6 +1,7 @@
-# .env.example has variable names only; the generic rule matches across its empty lines.
+# .env.example has variable names only; generic-api-key matches across its empty lines.
 [extend]
 useDefault = true
 
 [[allowlists]]
+targetRules = ['generic-api-key']
 paths = ['''\.env\.example$''']

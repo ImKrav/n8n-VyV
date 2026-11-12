@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -34,4 +34,20 @@ test('rechaza marcador dd/mm/aaaa', () => {
 
 test('rechaza "por definir"', () => {
 	assert.equal(run(['por', 'definir'].join(' ')).status, 1);
+});
+
+test('no excluye por segmentos de la ruta de la raíz', () => {
+	const base = mkdtempSync(join(tmpdir(), 'fechas-'));
+	try {
+		const raiz = join(base, 'scripts', 'raiz');
+		mkdirSync(raiz, { recursive: true });
+		writeFileSync(join(raiz, 'doc.md'), `Entrega: ${['18', '11', '2026'].join('/')}`);
+		assert.equal(spawnSync('node', [script, raiz], { encoding: 'utf8' }).status, 1);
+	} finally {
+		rmSync(base, { recursive: true, force: true });
+	}
+});
+
+test('ignora fechas imposibles', () => {
+	assert.equal(run(`Fecha: ${['31', '02', '2027'].join('/')}`).status, 0);
 });
