@@ -149,6 +149,22 @@ describe('CP-CO-01-02 · Nombre vacío o solo espacios', () => {
 		// Assert
 		expect(dataTableStore.createDataTable).not.toHaveBeenCalled();
 	});
+
+	it('propone el nombre del CSV cuando el nombre tiene solo espacios', async () => {
+		// Arrange
+		const { nameInput, dataTableStore, getByTestId, container } = setup();
+		vi.mocked(dataTableStore.findAvailableDataTableName).mockResolvedValue('ventas');
+		await userEvent.type(nameInput(), '   ');
+		await userEvent.click(getByTestId('import-csv-option'));
+
+		// Act
+		const fileInput = container.querySelector<HTMLInputElement>('input[type="file"]')!;
+		await userEvent.upload(fileInput, new File(['a,b\n1,2'], 'ventas.csv', { type: 'text/csv' }));
+
+		// Assert
+		await waitFor(() => expect(nameInput()).toHaveValue('ventas'));
+		expect(dataTableStore.findAvailableDataTableName).toHaveBeenCalledWith('ventas', 'project-1');
+	});
 });
 
 describe('CP-CO-01-03 · Nombre duplicado en el proyecto', () => {
