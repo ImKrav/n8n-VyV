@@ -21,7 +21,7 @@ vyv/
 ├── ai/                  Stagehand, DeepEval y generador de casos con IA
 └── evidence/
     ├── units/           ciclos TDD, ejecución completa y cobertura de la suite unitaria
-    └── e2e/             ejecución «antes» (n8n 2.46.6) y línea base de regresión de Cypress
+    └── e2e/             ejecuciones de Cypress «antes» (n8n 2.46.6) y «después» (2.47.0) y línea base de regresión
 ```
 
 | Carpeta | Qué contiene | Módulos | Herramienta |
@@ -76,7 +76,8 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | --- | --- | --- |
 | `units` | 91 archivos, **263 pruebas en verde**, 21 `it.todo`; cobertura 52,4 % de líneas de los 74 módulos probados | 13/11/2026 · n8n 2.47.0 |
 | `backend` | **64 pruebas en verde** (data-table 40, `folderNameSchema` 19, `FolderService.deleteFolder` 5) | 13/11/2026 · n8n 2.47.0 |
-| `e2e` | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente | 08/11/2026 · n8n 2.46.6  |
+| `e2e` | **89 pruebas: 88 aprobadas**, 0 fallidas, 1 pendiente (CP-017-08 necesita `npm run n8n:storage-limit`). Comparación con la línea base de regresión: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 13/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con la función Folders activada; navegador Electron |
+| `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
 
 ## Equivalencia de IDs en el módulo Core
 
