@@ -48,8 +48,9 @@ const config: KnipConfig = {
 	workspaces: {
 		'.': {
 			entry: ['scripts/**/*.{mjs,js,ts}'],
-			// qa/ runs with the editor-ui Vitest setup and resolves its packages from there.
-			ignore: ['qa/**'],
+			// vyv/ holds the test plan suites: the unit suite runs with the editor-ui Vitest
+			// setup, and the Cypress suite has its own package.json outside the workspace.
+			ignore: ['vyv/**'],
 			ignoreDependencies: [
 				// Invoked by path in the n8n-module-sdk script.
 				'@n8n/module-cli',

@@ -1,4 +1,4 @@
-# QA · Suite unitaria del plan de pruebas · Módulos 1–4
+# VyV · Suite unitaria del editor · Módulos 1–4
 
 Esta carpeta contiene la suite unitaria que ejecuta el **plan de pruebas de n8n-VyV** (carpeta «Final VyV»: `PLAN DE PRUEBAS.docx`, `CASOS Y ESCENARIOS DE PRUEBAS.xlsx` y `MATRIZ DE TRAZABILIDAD.xlsx`). El sistema bajo prueba es **n8n 2.47.0 (commit `01bd57cdd`)**, la versión que congela el plan.
 
@@ -13,10 +13,10 @@ Esta carpeta contiene la suite unitaria que ejecuta el **plan de pruebas de n8n-
 ## Estructura
 
 ```
-qa/
+vyv/unitarias/
 ├── README.md            este informe
 ├── run-tests.sh         ejecuta la suite
-├── vitest.config.mts    extiende la config de Vitest de editor-ui; incluye solo qa/unit
+├── vitest.config.mts    extiende la config de Vitest de editor-ui; incluye solo vyv/unitarias/unit
 ├── suite.mts            módulos de producción medidos por la cobertura
 ├── unit/
 │   ├── workflows/WF-01 … WF-05/        un archivo por archivo de origen, un describe por CP
@@ -31,7 +31,7 @@ Cada prueba está dentro de un `describe('CP-XX-NN-MM · <caso del plan>')`, as�
 
 ## Cómo se construyó
 
-- **Pruebas movidas.** Para cada caso se buscó la prueba de editor-ui que verifica la misma condición. Esa prueba se **movió** a `qa/` sin reescribirla, con la preparación que necesita (imports, `vi.mock`, `beforeEach` y helpers del archivo original), y se **borró de su archivo original**. La cabecera de cada archivo indica su origen (`Origen: …`). Dos archivos de origen quedaron vacíos y se borraron (`ScopesNotice.test.ts`, `StopManyExecutionsModal.test.ts`).
+- **Pruebas movidas.** Para cada caso se buscó la prueba de editor-ui que verifica la misma condición. Esa prueba se **movió** a `vyv/unitarias/` sin reescribirla, con la preparación que necesita (imports, `vi.mock`, `beforeEach` y helpers del archivo original), y se **borró de su archivo original**. La cabecera de cada archivo indica su origen (`Origen: …`). Dos archivos de origen quedaron vacíos y se borraron (`ScopesNotice.test.ts`, `StopManyExecutionsModal.test.ts`).
 - **Pruebas nuevas.** Donde no existía prueba se escribió una nueva, con AAA, FIRST, aserciones fluidas y dobles de prueba (mock, stub, fake, spy, dummy). En los archivos mixtos, las nuevas van después del comentario «Pruebas nuevas (no existían en el repositorio)».
 - **Sin equivalente unitario.** Rendimiento, reinicio del servidor, base de datos, OAuth con un proveedor real, permisos entre usuarios y análisis del CSV en el servidor quedan como `it.todo` con el motivo. Se cubren con las pruebas de sistema del plan.
 
@@ -40,18 +40,18 @@ Cada prueba está dentro de un `describe('CP-XX-NN-MM · <caso del plan>')`, as�
 Requisitos: `pnpm install` y compilar las dependencias de editor-ui (`pnpm --filter 'n8n-editor-ui^...' run build`).
 
 ```bash
-./qa/run-tests.sh
+./vyv/unitarias/run-tests.sh
 ```
 
 ```bash
-./qa/run-tests.sh --coverage.enabled --maxWorkers=2
+./vyv/unitarias/run-tests.sh --coverage.enabled --maxWorkers=2
 ```
 
 ```bash
-./qa/run-tests.sh CO-05
+./vyv/unitarias/run-tests.sh CO-05
 ```
 
-El informe HTML de cobertura queda en `qa/coverage/index.html` (Git lo ignora). El script crea `qa/node_modules` como enlace a los paquetes de editor-ui y sube el heap de Node a 8 GB.
+El informe HTML de cobertura queda en `vyv/unitarias/coverage/index.html` (Git lo ignora). El script crea `vyv/unitarias/node_modules` como enlace a los paquetes de editor-ui y sube el heap de Node a 8 GB.
 
 ## TDD
 
@@ -62,13 +62,13 @@ Se hicieron dos ciclos rojo → verde → refactor con evidencia en `evidence/`:
 | CP-EX-02-03 | Un rango de fechas invertido (fin antes que inicio) devolvía siempre una lista vacía. | `tdd-1-red.log`: 2 fallan | `executions.utils.ts` ordena el rango (`tdd-2-green.log`, `tdd-3-refactor.log`) |
 | CP-CO-01-02 | Un nombre de data table con solo espacios habilitaba «Create» y Enter creaba la tabla. | `tdd-co01-1-red.log`: 2 fallan | `AddDataTableModal.vue` exige un nombre no vacío tras `trim()` (`tdd-co01-2-green.log`, `tdd-co01-3-refactor.log`) |
 
-Los logs de EX-02 se generaron cuando la prueba estaba en `qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts`; hoy está en `qa/unit/executions/EX-02/executionFilterToQueryFilter.test.ts`. En CO-01, la corrección final es la equivalente que también hizo MarioFer299 (`trimmedName`), y las pruebas la verifican.
+Los logs TDD se generaron cuando la suite estaba en `qa/` (antes de unirla con `vyv/`), por eso muestran rutas `qa/unit/…`; la prueba de EX-02 estaba en `qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts` y hoy está en `vyv/unitarias/unit/executions/EX-02/executionFilterToQueryFilter.test.ts`. En CO-01, la corrección final es la equivalente que también hizo MarioFer299 (`trimmedName`, BUG-016-01 en `vyv/datatables-carpetas/`), y las pruebas la verifican.
 
 ## Matriz: 142 casos del plan
 
 ### 1. Workflows
 
-| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`vyv/unitarias/unit/…`) |
 | --- | --- | ---: | ---: | --- | --- |
 | CP-WF-01-01 | Añadir un trigger y un nodo y conectarlos | 2 | 0 | ✅ | `workflows/WF-01/useCanvasOperations.test.ts` |
 | CP-WF-01-02 | Mover y eliminar nodos | 3 | 0 | ✅ | `workflows/WF-01/useCanvasOperations.test.ts` |
@@ -107,7 +107,7 @@ Los logs de EX-02 se generaron cuando la prueba estaba en `qa/unit/executions/EX
 
 ### 2. Ejecuciones
 
-| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`vyv/unitarias/unit/…`) |
 | --- | --- | ---: | ---: | --- | --- |
 | CP-EX-01-01 | Ejecución exitosa con estado y duración | 1 | 2 | ✅ | `executions/EX-01/GlobalExecutionsListItem.test.ts` |
 | CP-EX-01-02 | Ejecución fallida | 0 | 2 | ✅ | `executions/EX-01/GlobalExecutionsListItem.test.ts` |
@@ -148,7 +148,7 @@ Los logs de EX-02 se generaron cuando la prueba estaba en `qa/unit/executions/EX
 
 ### 3. Credenciales
 
-| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`vyv/unitarias/unit/…`) |
 | --- | --- | ---: | ---: | --- | --- |
 | CP-CR-01-01 | Crear credencial Header Auth válida | 1 | 0 | ✅ | `credentials/CR-01/CredentialEdit.test.ts` |
 | CP-CR-01-02 | Campo obligatorio vacío | 2 | 0 | ✅ | `credentials/CR-01/CredentialConfig.test.ts`, `credentials/CR-01/CredentialInputs.test.ts` |
@@ -189,7 +189,7 @@ Los logs de EX-02 se generaron cuando la prueba estaba en `qa/unit/executions/EX
 
 ### 4. Core: data tables y carpetas
 
-| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`vyv/unitarias/unit/…`) |
 | --- | --- | ---: | ---: | --- | --- |
 | CP-CO-01-01 | Crear data table con nombre válido | 1 | 3 | ✅ | `core/CO-01/AddDataTableModal.test.ts`, `core/CO-01/dataTable.store.test.ts` |
 | CP-CO-01-02 | Nombre vacío o solo espacios | 0 | 3 | ✅ | `core/CO-01/AddDataTableModal.test.ts` |

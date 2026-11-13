@@ -1,5 +1,5 @@
-// Production files measured by the QA coverage report: the unit under test of each
-// qa/unit file. Paths are relative to packages/frontend/editor-ui (the Vitest root).
+// Production files measured by the coverage report: the unit under test of each
+// vyv/unitarias/unit file. Paths are relative to packages/frontend/editor-ui (the Vitest root).
 export const selectedSources = [
 	'src/app/components/MainHeader/WorkflowHeaderDraftPublishActions.vue',
 	'src/app/components/NodeExecuteButton.vue',

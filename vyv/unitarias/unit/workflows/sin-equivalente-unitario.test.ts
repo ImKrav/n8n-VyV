@@ -1,7 +1,7 @@
 /**
  * Módulo Workflows — casos del plan sin equivalente unitario.
  * Cada caso queda como `it.todo` con el motivo, para que la suite muestre los 142 casos del plan.
- * Se cubren con pruebas de sistema, de integración o de rendimiento (ver qa/README.md).
+ * Se cubren con pruebas de sistema, de integración o de rendimiento (ver vyv/unitarias/README.md).
  */
 
 describe('CP-WF-01-08 · Rendimiento del lienzo con 100 nodos', () => {

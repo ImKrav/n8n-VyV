@@ -1,7 +1,7 @@
 /**
  * Módulo Credenciales — casos del plan sin equivalente unitario.
  * Cada caso queda como `it.todo` con el motivo, para que la suite muestre los 142 casos del plan.
- * Se cubren con pruebas de sistema, de integración o de rendimiento (ver qa/README.md).
+ * Se cubren con pruebas de sistema, de integración o de rendimiento (ver vyv/unitarias/README.md).
  */
 
 describe('CP-CR-01-07 · Secretos cifrados en la base de datos', () => {
