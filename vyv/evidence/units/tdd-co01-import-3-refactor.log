@@ -1,0 +1,34 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.mts:28:29). Use `import.meta.dirname` instead
+  - import "../@n8n/design-system/src/icons/lucide/vite" without a file extension (vite.config.mts:12:35). Add the file extension
+  - import "./vite/i18n-locales-hmr-helpers" without a file extension (vite.config.mts:15:48). Add the file extension
+  - import "../../@n8n/constants/src/csp" without a file extension (vite.config.mts:20:40). Add the file extension
+  - ESM syntax in a file loaded as CommonJS (../../@n8n/constants/src/csp.ts:6:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - import "./bucket" without a file extension (../@n8n/design-system/src/icons/lucide/vite.ts:5:46). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/frontend/editor-ui
+
+ ✓ ../../../vyv/units/core/CO-03/ImportCsvModal.test.ts (2 tests) 246ms
+ ✓ ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts (8 tests) 809ms
+ ✓ ../../../vyv/units/core/CO-01/AddColumnButton.test.ts (5 tests) 1735ms
+   ✓ CP-CO-01-05 · Añadir columnas de los cuatro tipos (3)
+     ✓ should display all column type options 397ms
+     ✓ should allow selecting different column types 466ms
+   ✓ CP-CO-01-07 · Nombre de columna con caracteres no permitidos (2)
+     ✓ should allow valid column names 434ms
+ ✓ ../../../vyv/units/core/CO-01/ColumnHeader.test.ts (2 tests) 218ms
+ ✓ ../../../vyv/units/core/CO-03/DownloadDataTableModal.test.ts (2 tests) 159ms
+ ✓ ../../../vyv/units/core/CO-03/dataTable.store.test.ts (1 test) 15ms
+ ✓ ../../../vyv/units/core/CO-01/dataTable.store.columns.test.ts (2 tests) 19ms
+ ✓ ../../../vyv/units/core/CO-01/dataTable.store.test.ts (1 test) 17ms
+
+ Test Files  8 passed (8)
+      Tests  23 passed (23)
+   Start at  20:27:33
+   Duration  22.28s (transform 53%, import 30%, setup 6%, environment 5%, tests 5%)
+
+     Import  1951 modules were evaluated 14985 times · 18.91s total, 30% of tracked time
+             ~3.86s faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+             learn more: https://vitest.dev/guide/improving-performance#test-isolation
+

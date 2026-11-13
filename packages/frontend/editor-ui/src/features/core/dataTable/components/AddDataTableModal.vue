@@ -228,16 +228,15 @@ const handleFileChange = async (uploadFile: UploadFile) => {
 	const baseName = deriveNameFromFileName(file.name);
 	if (!baseName) return;
 
+	// The user can pick another file or type a name while the suggestion loads
+	const applySuggestion = (name: string) => {
+		if (selectedFile.value === file && !trimmedName.value) dataTableName.value = name;
+	};
 	const projectId = route.params.projectId as string;
 	try {
-		const suggested = await dataTableStore.findAvailableDataTableName(baseName, projectId);
-		if (selectedFile.value === file && !trimmedName.value) {
-			dataTableName.value = suggested;
-		}
+		applySuggestion(await dataTableStore.findAvailableDataTableName(baseName, projectId));
 	} catch {
-		if (selectedFile.value === file && !trimmedName.value) {
-			dataTableName.value = baseName;
-		}
+		applySuggestion(baseName);
 	}
 };
 

@@ -2,7 +2,7 @@
 # Runs the n8n-VyV test plan (modules 1–4) from vyv/.
 #
 # Usage: ./vyv/run-tests.sh [units|backend|e2e|all] [Vitest arguments for units]
-#   units    editor unit suite (vyv/units) with coverage, e.g. `units CO-05`
+#   units    editor unit suite (vyv/units); no arguments: full run with coverage; `units CO-05` runs a subset
 #   backend  backend unit tests *.vyv.test.ts of data tables and folders
 #   e2e      Cypress suite (vyv/e2e); needs n8n on http://localhost:5678
 #   all      the three parts in sequence
@@ -15,9 +15,11 @@ units() {
 	# The unit test files live outside editor-ui; this link lets them resolve its packages.
 	ln -sfn ../packages/frontend/editor-ui/node_modules "$VYV/node_modules"
 	cd "$ROOT/packages/frontend/editor-ui"
+	# Without arguments, run the full suite with coverage; with arguments, pass only those to Vitest.
+	[ $# -gt 0 ] || set -- --coverage.enabled --maxWorkers=2
 	# WorkflowSettings.test.ts (reused) runs out of the default heap; 8 GB is enough.
 	NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=8192" \
-		pnpm exec vitest run --config ../../../vyv/vitest.config.mts --coverage.enabled --maxWorkers=2 "$@"
+		pnpm exec vitest run --config ../../../vyv/vitest.config.mts "$@"
 }
 
 backend() {
