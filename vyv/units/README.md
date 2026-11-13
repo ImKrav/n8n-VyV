@@ -51,12 +51,13 @@ El script ejecuta Vitest con cobertura y dos workers. Los argumentos después de
 
 ## TDD
 
-Se hicieron dos ciclos rojo → verde → refactor con evidencia en `vyv/evidence/units/`:
+Se hicieron tres ciclos rojo → verde → refactor con evidencia en `vyv/evidence/units/`:
 
 | Caso | Defecto | Rojo | Verde / refactor |
 | --- | --- | --- | --- |
 | CP-EX-02-03 | Un rango de fechas invertido (fin antes que inicio) devolvía siempre una lista vacía. | `tdd-1-red.log`: 2 fallan | `executions.utils.ts` ordena el rango (`tdd-2-green.log`, `tdd-3-refactor.log`) |
 | CP-CO-01-02 | Un nombre de data table con solo espacios habilitaba «Create» y Enter creaba la tabla. | `tdd-co01-1-red.log`: 2 fallan | `AddDataTableModal.vue` exige un nombre no vacío tras `trim()` (`tdd-co01-2-green.log`, `tdd-co01-3-refactor.log`) |
+| CP-CO-01-02 | Con un nombre de solo espacios, elegir un CSV no proponía el nombre del archivo. | `tdd-co01-import-1-red.log`: 1 falla | `AddDataTableModal.vue` trata un nombre de solo espacios como vacío (`tdd-co01-import-2-green.log`, `tdd-co01-import-3-refactor.log`) |
 
 Los logs TDD se generaron cuando la suite estaba en `qa/` (antes de unirla con `vyv/`), por eso muestran rutas `qa/unit/…`; la prueba de EX-02 estaba en `qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts` y hoy está en `vyv/units/executions/EX-02/executionFilterToQueryFilter.test.ts`. En CO-01, la corrección final es la equivalente que también hizo MarioFer299 (`trimmedName`, BUG-016-01 en `vyv/e2e/`), y las pruebas la verifican.
 

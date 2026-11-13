@@ -100,12 +100,12 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | CP-CO-02-05 | Celda de más de 10 000 caracteres | ✅ | CP-017-05 (API) |
 | CP-CO-02-06 | Ordenar por columna | ✅ | CP-017-06 (API, UI) |
 | CP-CO-02-07 | Filtrar por columna | ✅ | CP-017-07 (API, UI, BDD) |
-| CP-CO-02-08 | Leer y escribir filas desde el nodo Data Table | ⏳ todo | — |
+| CP-CO-02-08 | Leer y escribir filas desde el nodo Data Table | ⏳ todo | CP-CO-02-08 (`CO-02/data-table-node.api.cy.js`: workflows con Webhook y nodo Data Table) |
 | CP-CO-03-01 | Importar un CSV válido | ✅ | CP-018-01 (API, UI, BDD) |
 | CP-CO-03-02 | CSV con columnas desiguales | ✅ | CP-018-03 (API) · unitaria backend CP-018-03 |
 | CP-CO-03-03 | CSV con tipos incompatibles | ⏳ todo | CP-018-04 (API) · unitaria backend CP-018-07 (TDD) |
-| CP-CO-03-04 | CSV con BOM, separador «;» y tildes | ⏳ todo | — |
-| CP-CO-03-05 | Importar un archivo grande | ⏳ todo | — |
+| CP-CO-03-04 | CSV con BOM, separador «;» y tildes | ⏳ todo | CP-CO-03-04 (`CO-03/csv-encoding-size.api.cy.js`): BOM y tildes ✅ · **hallazgo**: el separador «;» falla |
+| CP-CO-03-05 | Importar un archivo grande | ⏳ todo | CP-CO-03-05 (`CO-03/csv-encoding-size.api.cy.js`: 10 000 filas en menos de 30 s) |
 | CP-CO-03-06 | Exportar y comparar con el origen | ✅ | CP-018-06 (API, UI) |
 | CP-CO-04-01 | Crear carpeta en la raíz | ✅ | CP-019-01 (API, UI) |
 | CP-CO-04-02 | Anidar carpetas en varios niveles | ✅ | CP-019-04 (API, BDD) |
@@ -124,7 +124,9 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 
 `e2e/` tiene casos sin equivalente en el plan: CP-017-08 (límite de almacenamiento), CP-018-02 (archivo que no es CSV), CP-018-05 (columnas desconocidas), CP-018-07 (inferencia de fechas imposibles) y CP-018-08 (inyección de fórmulas al exportar).
 
-Con las dos carpetas, en Core quedan sin prueba automatizada solo CP-CO-02-08, CP-CO-03-04 y CP-CO-03-05. Estos casos se ejecutan de forma manual según el plan.
+Con las dos carpetas, todos los casos del plan de Core tienen prueba automatizada. Las pruebas nuevas de `e2e/` usan los IDs del plan (CP-CO-…).
+
+**Hallazgo CP-CO-03-04 (abierto).** Un CSV exportado desde Excel en español usa «;» como separador. n8n no lo separa ni informa que no lo admite: crea una sola columna `nombre;ciudad`, que además es un nombre de columna inválido, así que la tabla no se puede crear sin renombrarla. El parser (`csv-parser.service.ts`) solo acepta la coma. El BOM se quita y las tildes se conservan.
 
 ## Defectos corregidos con TDD
 
@@ -132,6 +134,7 @@ Con las dos carpetas, en Core quedan sin prueba automatizada solo CP-CO-02-08, C
 | --- | --- | --- |
 | Rango de fechas invertido en el filtro de ejecuciones devolvía una lista vacía (CP-EX-02-03) | `executions.utils.ts` | `units/executions/EX-02` |
 | Nombre de data table con solo espacios habilitaba «Create» (CP-CO-01-02 / BUG-016-01) | `AddDataTableModal.vue` (`trimmedName`) | `units/core/CO-01` · Cypress CP-016-02 |
+| Con un nombre de solo espacios, el modal no proponía el nombre del CSV elegido (CP-CO-01-02) | `AddDataTableModal.vue` (`handleFileChange`) | `units/core/CO-01` · logs `evidence/units/tdd-co01-import-*` |
 | Fechas imposibles y números no decimales inferidos en el CSV (BUG-018-01/02/03) | `csv-parser.service.ts` | unitaria backend CP-018-07 |
 | CSV malformado y `fileId` inválido respondían 500 (BUG-018-05) | `csv-parser.service.ts`, `data-table-uploads.controller.ts` | unitaria backend CP-018-03 · Cypress BUG-018-05 |
 | El CSV exportado no neutralizaba fórmulas (BUG-018-04) | `utils/csv-escape.ts`, `data-table.service.ts` | unitaria backend CP-018-08 |

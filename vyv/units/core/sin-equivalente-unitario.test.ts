@@ -24,7 +24,9 @@ describe('CP-CO-02-03 · Fecha inválida', () => {
 });
 
 describe('CP-CO-02-08 · Leer y escribir filas desde el nodo Data Table', () => {
-	it.todo('Necesita ejecutar un workflow con el nodo Data Table en el servidor.');
+	it.todo(
+		'Necesita ejecutar un workflow en el servidor. Cubierto en Cypress: e2e/core/CO-02/data-table-node.api.cy.js.',
+	);
 });
 
 describe('CP-CO-03-03 · CSV con tipos incompatibles', () => {
@@ -34,11 +36,15 @@ describe('CP-CO-03-03 · CSV con tipos incompatibles', () => {
 });
 
 describe('CP-CO-03-04 · CSV con BOM, separador ’;’ y tildes', () => {
-	it.todo('El análisis del CSV (BOM, separador «;», tildes) ocurre en el servidor.');
+	it.todo(
+		'El servidor analiza el CSV. Cubierto en Cypress: e2e/core/CO-03/csv-encoding-size.api.cy.js (hallazgo con «;»).',
+	);
 });
 
 describe('CP-CO-03-05 · Importar un archivo grande', () => {
-	it.todo('Prueba de rendimiento: importar un CSV de 10 000 filas en una instancia real.');
+	it.todo(
+		'Prueba de rendimiento en una instancia real. Cubierto en Cypress: e2e/core/CO-03/csv-encoding-size.api.cy.js.',
+	);
 });
 
 describe('CP-CO-05-08 · Sin workflows huérfanos tras eliminar', () => {

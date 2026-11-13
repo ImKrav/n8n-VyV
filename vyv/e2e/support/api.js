@@ -48,9 +48,15 @@ export const n8nApi = {
 
   /** Sube un archivo de fixtures/ (multipart, campo "file"). */
   subirArchivo: (rutaFixture, nombre, hasHeaders = true) =>
-    cy.fixture(rutaFixture, 'binary').then((contenido) => {
+    cy.fixture(rutaFixture, 'binary').then((contenido) =>
+      n8nApi.subirBytes(Cypress.Buffer.from(contenido, 'binary'), nombre, hasHeaders),
+    ),
+
+  /** Sube un CSV generado en la prueba (texto o bytes), p. ej. un archivo grande. */
+  subirBytes: (bytes, nombre, hasHeaders = true) =>
+    cy.wrap(null, { log: false }).then(() => {
       const form = new FormData();
-      form.append('file', new Blob([Cypress.Buffer.from(contenido, 'binary')], { type: 'text/csv' }), nombre);
+      form.append('file', new Blob([bytes], { type: 'text/csv' }), nombre);
       form.append('hasHeaders', String(hasHeaders));
       return cy
         .request({ method: 'POST', url: '/rest/data-tables/uploads', body: form, headers: h(), failOnStatusCode: false })

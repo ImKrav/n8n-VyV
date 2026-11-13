@@ -22,7 +22,7 @@ recorrer(ORIGEN);
 
 const indice = {};
 for (const a of archivos) {
-  const ids = [...new Set((basename(a).match(/CP-\d{3}-\d{2}/g) ?? []))];
+  const ids = [...new Set((basename(a).match(/CP-(?:\d{3}|[A-Z]{2}-\d{2})-\d{2}/g) ?? []))];
   // "CP-017-0607" (nombres con barra eliminada por Windows) → CP-017-06 y CP-017-07
   const combinado = /CP-(\d{3})-(\d{2})(\d{2})/.exec(basename(a));
   if (combinado) ids.push(`CP-${combinado[1]}-${combinado[2]}`, `CP-${combinado[1]}-${combinado[3]}`);
