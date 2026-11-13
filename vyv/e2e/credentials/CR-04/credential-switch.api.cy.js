@@ -66,11 +66,18 @@ describe('CR-04 · Cambiar la credencial de un nodo (API)', () => {
       return n8nApi.req('POST', `/rest/workflows/${wf.id}/activate`, { versionId: r.body.data.versionId });
     }).its('status').should('eq', 200);
 
-    // Ejecutar y verificar las cabeceras devueltas por el eco.
-    cy.then(() => n8nApi.llamarWebhook('GET', rutaPrueba)).then((r) => {
+    // Ejecutar y verificar las cabeceras devueltas por el eco. n8n aplica la versión publicada poco
+    // después de responder: se reintenta hasta 10 s mientras siga respondiendo la versión anterior.
+    let intentos = 0;
+    const llamarHastaNueva = (restantes = 20) =>
+      n8nApi.llamarWebhook('GET', rutaPrueba).then((r) => {
+        intentos += 1;
+        return r.body?.headers?.['x-token'] || restantes <= 1 ? r : cy.wait(500).then(() => llamarHastaNueva(restantes - 1));
+      });
+    cy.then(() => llamarHastaNueva()).then((r) => {
       expect(r.status).to.eq(200);
       const cabeceras = r.body.headers;
-      cy.evidencia(`Cabeceras recibidas por el eco: x-token=${cabeceras['x-token']} · x-api-key=${cabeceras['x-api-key'] ?? '(ausente)'}`);
+      cy.evidencia(`Cabeceras recibidas por el eco (intento ${intentos}): x-token=${cabeceras['x-token']} · x-api-key=${cabeceras['x-api-key'] ?? '(ausente)'}`);
       expect(cabeceras, 'usa la credencial nueva').to.include({ 'x-token': 'abc' });
       expect(cabeceras, 'no envía la credencial anterior').not.to.have.property('x-api-key');
     });
