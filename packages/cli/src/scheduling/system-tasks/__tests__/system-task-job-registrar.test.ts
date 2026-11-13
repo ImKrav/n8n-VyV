@@ -28,14 +28,9 @@ const emptySummary: ProvisionSummary = {
 	removed: [],
 };
 
-type TaskOverrides = {
-	schedule?: SystemTaskSchedule;
-	scheduler?: Partial<SchedulerOptions>;
-	initialDelaySeconds?: number;
-};
+type TaskOverrides = { schedule?: SystemTaskSchedule; scheduler?: Partial<SchedulerOptions> };
 
-const task = ({ schedule, scheduler, initialDelaySeconds }: TaskOverrides = {}): SystemTask => ({
-	initialDelaySeconds,
+const task = ({ schedule, scheduler }: TaskOverrides = {}): SystemTask => ({
 	name: 'prune-executions',
 	schedule: schedule ?? { kind: 'interval', intervalSeconds: 60 },
 	target: { scope: 'cluster', scheduler: { retryOnFailure: true, ...scheduler } },
@@ -90,12 +85,6 @@ describe('systemTaskProvisionRequest', () => {
 
 	it('seeds an interval task at now', () => {
 		expect(request().desired[0]?.firstRunAt).toEqual(NOW);
-	});
-
-	it('seeds an interval task after its initial delay without changing the cadence', () => {
-		const { desired } = request({ initialDelaySeconds: 17 });
-		expect(desired[0]?.firstRunAt).toEqual(new Date(NOW.getTime() + 17_000));
-		expect(desired[0]?.schedule).toEqual({ kind: 'interval', intervalSeconds: 60 });
 	});
 
 	it('seeds a cron task at its next fire', () => {

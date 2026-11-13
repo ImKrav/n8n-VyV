@@ -2,10 +2,7 @@ operationId: deleteUser
 tags:
   - User
 summary: Delete user
-description: |-
-  Delete a user from your instance.
-
-  Requires the `user:delete` API key scope.
+description: Delete a user from your instance.
 x-required-scope: user:delete
 parameters:
   - schema:

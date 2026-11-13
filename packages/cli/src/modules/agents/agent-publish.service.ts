@@ -6,7 +6,6 @@ import {
 	type AgentVersionListItemDto,
 	type AgentPublishHistoryItemDto,
 	type UpdateAgentVersionDto,
-	type PublishAgentDto,
 } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import { EventService } from '@n8n/backend-services';
@@ -17,12 +16,8 @@ import isEqual from 'lodash/isEqual';
 import { v4 as uuid } from 'uuid';
 
 import { CredentialsService } from '@/credentials/credentials.service';
-import { BadRequestError, ConflictError, NotFoundError, UserError } from '@n8n/errors';
+import { ConflictError, NotFoundError, UserError } from '@n8n/errors';
 import { KnowledgeAvailabilityService } from '@/modules/knowledge/knowledge-availability.service';
-import {
-	KnowledgeFileRepository,
-	type AgentKnowledgeTotals,
-} from '@/modules/knowledge/repositories/knowledge-file.repository';
 import { Telemetry } from '@/telemetry';
 
 import { AgentDefinitionService } from './agent-definition.service';
@@ -48,11 +43,14 @@ import type { AgentHistory } from './entities/agent-history.entity';
 import type { Agent, ProjectAgent } from './entities/agent.entity';
 import { ChatIntegrationService } from './integrations/chat-integration.service';
 import { toAgentDocument } from './json-config/agent-document';
+import {
+	AgentFileRepository,
+	type AgentKnowledgeTotals,
+} from './repositories/agent-file.repository';
 import { AgentPublishHistoryRepository } from './repositories/agent-publish-history.repository';
 import { AgentHistoryRepository } from './repositories/agent-history.repository';
 import { AgentRepository } from './repositories/agent.repository';
 import { getAgentOrThrow } from './utils/get-agent-or-throw';
-import { markAgentDraftDirty, saveAgentDraftFenced } from './utils/agent-draft.utils';
 
 export type AgentPublishTrigger = 'explicit' | 'republish';
 
@@ -126,7 +124,7 @@ export class AgentPublishService {
 		private readonly definitionService: AgentDefinitionService,
 		private readonly agentPolicyService: AgentPolicyService,
 		private readonly agentSkillRefs: AgentSkillRefsService,
-		private readonly agentFileRepository: KnowledgeFileRepository,
+		private readonly agentFileRepository: AgentFileRepository,
 		private readonly publishHistory: AgentPublishHistoryRepository,
 		private readonly knowledgeAvailabilityService: KnowledgeAvailabilityService,
 	) {}
@@ -141,29 +139,22 @@ export class AgentPublishService {
 		pushRef?: string,
 		expectedRevision?: number,
 		metadata?: UpdateAgentVersionDto,
-		draft?: PublishAgentDto['draft'],
 	): Promise<PublishAgentResult> {
 		const agent = await getAgentOrThrow(this.agentRepository, agentId, projectId);
 
-		if (agent.isArchived) throw new BadRequestError('Cannot publish an archived agent');
 		if (expectedRevision !== undefined && agent.revision !== expectedRevision) {
 			throw new ConflictError('Agent was modified concurrently while publishing; please retry');
 		}
 		const expectedPublicationRevision = agent.publicationRevision;
-		if (versionId && draft)
-			throw new UserError('Select a saved version or the current draft to publish');
-		if (versionId && versionId === agent.activeVersionId) {
-			if (metadata) await this.updateVersionMetadata(agentId, projectId, versionId, metadata);
-			return { agent };
-		}
 
-		const targetHistory = await this.findPublishTarget(agent, versionId, user, draft);
-		if (targetHistory.versionId === agent.activeVersionId) {
+		const selectedVersionId = versionId ?? agent.versionId;
+		if (selectedVersionId && selectedVersionId === agent.activeVersionId) {
 			if (metadata)
-				await this.updateVersionMetadata(agentId, projectId, targetHistory.versionId, metadata);
+				await this.updateVersionMetadata(agentId, projectId, selectedVersionId, metadata);
 			return { agent };
 		}
 
+		const targetHistory = await this.findPublishTarget(agent, versionId, user);
 		const wasPublished = await this.publishHistory.hasPublication(
 			agent.id,
 			targetHistory.versionId,
@@ -274,7 +265,6 @@ export class AgentPublishService {
 		by: AgentActor,
 		pushRef?: string,
 		expectedRevision?: number,
-		{ archive = false }: { archive?: boolean } = {},
 	): Promise<ProjectAgent> {
 		const agent = await getAgentOrThrow(this.agentRepository, agentId, projectId);
 
@@ -284,7 +274,7 @@ export class AgentPublishService {
 		if (!agent.activeVersionId) return agent;
 		const expectedPublicationRevision = agent.publicationRevision;
 
-		await this.commitUnpublication(agent, expectedPublicationRevision, user, archive);
+		await this.commitUnpublication(agent, expectedPublicationRevision, user);
 		this.eventService.emit('agent-saved', { agentId });
 		this.agentUpdateBroadcaster.notify({ projectId, agentId, source: by }, pushRef);
 
@@ -296,99 +286,6 @@ export class AgentPublishService {
 
 		this.logger.debug('Unpublished SDK agent', { agentId, projectId });
 		return agent;
-	}
-
-	/**
-	 * Unpublishes the agent and marks it archived in one write. This disconnects channels
-	 * and stops scheduled tasks, and keeps all agent data.
-	 */
-	async archiveAgent(
-		agentId: string,
-		projectId: string,
-		user: User,
-		pushRef?: string,
-		by: AgentActor = 'user',
-	): Promise<ProjectAgent> {
-		const agent = await getAgentOrThrow(this.agentRepository, agentId, projectId);
-		if (agent.isArchived) throw new BadRequestError('Agent is already archived.');
-
-		let current = agent;
-		if (agent.activeVersionId) {
-			current = await this.unpublishAndArchive(agentId, projectId, user, by, pushRef);
-		}
-		// A concurrent unpublication makes unpublishAgent skip the archive write.
-		if (!current.isArchived) await this.setArchived(agentId, projectId, true, pushRef, by);
-
-		this.reportArchived(agentId, projectId, user);
-		return await getAgentOrThrow(this.agentRepository, agentId, projectId);
-	}
-
-	/** Reports the archive also when a step after the committed write fails. */
-	private async unpublishAndArchive(
-		agentId: string,
-		projectId: string,
-		user: User,
-		by: AgentActor,
-		pushRef?: string,
-	): Promise<ProjectAgent> {
-		try {
-			return await this.unpublishAgent(agentId, projectId, user, by, pushRef, undefined, {
-				archive: true,
-			});
-		} catch (error) {
-			// A conflict means that this request did not write the archive state.
-			const committed =
-				!(error instanceof ConflictError) &&
-				(await this.agentRepository.findById(agentId))?.isArchived;
-			if (committed) this.reportArchived(agentId, projectId, user);
-			throw error;
-		}
-	}
-
-	private reportArchived(agentId: string, projectId: string, user: User): void {
-		this.eventService.emit('agent-archived', { user, agentId, projectId });
-		this.telemetry.track(TELEMETRY_EVENT.AGENTS.USER_ARCHIVED_AGENT, {
-			agent_id: agentId,
-			project_id: projectId,
-			user_id: user.id,
-			event_version: '1',
-		});
-	}
-
-	/** Restores an archived agent as an unpublished draft. The user publishes it again. */
-	async unarchiveAgent(
-		agentId: string,
-		projectId: string,
-		user: User,
-		pushRef?: string,
-	): Promise<ProjectAgent> {
-		const agent = await getAgentOrThrow(this.agentRepository, agentId, projectId);
-		if (!agent.isArchived) throw new BadRequestError('Agent is not archived.');
-
-		await this.setArchived(agentId, projectId, false, pushRef);
-
-		this.eventService.emit('agent-unarchived', { user, agentId, projectId });
-		this.telemetry.track(TELEMETRY_EVENT.AGENTS.USER_UNARCHIVED_AGENT, {
-			agent_id: agentId,
-			project_id: projectId,
-			user_id: user.id,
-			event_version: '1',
-		});
-		return await getAgentOrThrow(this.agentRepository, agentId, projectId);
-	}
-
-	private async setArchived(
-		agentId: string,
-		projectId: string,
-		isArchived: boolean,
-		pushRef?: string,
-		by: AgentActor = 'user',
-	): Promise<void> {
-		if (!(await this.agentRepository.setArchived(agentId, isArchived))) {
-			throw new ConflictError('Agent was modified concurrently; please retry');
-		}
-		this.runtimeCacheService.clearRuntimes(agentId);
-		this.agentUpdateBroadcaster.notify({ projectId, agentId, source: by }, pushRef);
 	}
 
 	/** Make sure a failed read for the publish event never stops the publication. */
@@ -644,26 +541,16 @@ export class AgentPublishService {
 			versions.map(({ versionId }) => versionId),
 			{},
 		);
-		return await Promise.all(
-			versions.map(
-				async (version) =>
-					await this.versionSummary(agent, version, publications.get(version.versionId)),
-			),
+		return versions.map((version) =>
+			this.versionSummary(agent, version, publications.get(version.versionId)),
 		);
 	}
 
-	private async versionSummary(
+	private versionSummary(
 		agent: Agent,
 		version: AgentHistory,
 		publication?: AgentPublishHistory,
-	): Promise<AgentVersionListItemDto> {
-		const isCurrent =
-			version.versionId === agent.versionId &&
-			(await this.agentSkillRefs.matchesVersion(
-				version.versionId,
-				await this.agentSkillRefs.versionSnapshot(agent, {}),
-				{},
-			));
+	): AgentVersionListItemDto {
 		return {
 			versionId: version.versionId,
 			agentId: version.agentId,
@@ -671,7 +558,7 @@ export class AgentPublishService {
 			updatedAt: version.updatedAt.toISOString(),
 			author: version.author,
 			isActive: version.versionId === agent.activeVersionId,
-			isCurrent,
+			isCurrent: version.versionId === agent.versionId,
 			name: version.name ?? null,
 			description: version.description ?? null,
 			...(publication
@@ -695,7 +582,7 @@ export class AgentPublishService {
 		const version = await this.agentHistoryRepository.findSummary(agentId, versionId, {});
 		if (!version) throw new NotFoundError(`Version "${versionId}" not found`);
 		const publications = await this.publishHistory.findLatestForVersions(agentId, [versionId], {});
-		return await this.versionSummary(agent, version, publications.get(versionId));
+		return this.versionSummary(agent, version, publications.get(versionId));
 	}
 
 	async hasVersionHistory(agentId: string): Promise<boolean> {
@@ -781,7 +668,6 @@ export class AgentPublishService {
 		agent: ProjectAgent,
 		expectedRevision: number,
 		user: User,
-		archive: boolean,
 	): Promise<void> {
 		await this.transactionRunner.run({}, async (ctx) => {
 			const won = await this.agentRepository.setActiveVersionFenced(
@@ -789,13 +675,11 @@ export class AgentPublishService {
 				expectedRevision,
 				null,
 				ctx,
-				{ archive },
 			);
 			if (!won) throw new ConflictError('Agent publication changed concurrently; please retry');
 			await this.publishHistory.record(agent.id, agent.activeVersionId, 'deactivated', user, ctx);
 			agent.activeVersionId = null;
 			agent.activeVersion = null;
-			if (archive) agent.isArchived = true;
 			agent.publicationRevision = expectedRevision + 1;
 		});
 	}
@@ -804,19 +688,15 @@ export class AgentPublishService {
 		agent: ProjectAgent,
 		versionId: string | undefined,
 		user: User,
-		draft?: PublishAgentDto['draft'],
 	): Promise<AgentHistory> {
-		if (versionId) {
-			const target = await this.agentHistoryRepository.findByVersionAndAgentId(
-				versionId,
-				agent.id,
-				{},
-			);
+		const id = versionId ?? agent.versionId;
+		if (id) {
+			const target = await this.agentHistoryRepository.findByVersionAndAgentId(id, agent.id, {});
 			if (target) return target;
 		}
 		if (versionId && versionId !== agent.versionId)
 			throw new NotFoundError(`Version "${versionId}" not found for agent "${agent.id}"`);
-		// Resolve followed skills at publish. Saved versions keep their original pins.
+		// Older callers can publish a draft that predates saved versions.
 		return await this.transactionRunner.run({}, async (ctx) => {
 			const current = await this.agentRepository.lockForVersionCapture(agent.id, ctx);
 			if (
@@ -826,39 +706,7 @@ export class AgentPublishService {
 			)
 				throw new ConflictError('Agent draft changed concurrently; please retry');
 			try {
-				if (draft && current.versionId !== draft.versionId) {
-					throw new ConflictError('The agent draft changed. Review the draft and publish again.');
-				}
-				const pins = await this.agentSkillRefs.versionSnapshot(current, ctx);
-				if (
-					draft &&
-					!(await this.agentSkillRefs.matchesDraftVersions(pins, draft.skillVersions, ctx))
-				) {
-					throw new ConflictError('The agent skills changed. Review the draft and publish again.');
-				}
-				const existing = current.versionId
-					? await this.agentHistoryRepository.findByVersionAndAgentId(
-							current.versionId,
-							current.id,
-							ctx,
-						)
-					: null;
-				if (existing) {
-					if (await this.agentSkillRefs.matchesVersion(existing.versionId, pins, ctx))
-						return existing;
-					markAgentDraftDirty(current);
-					await saveAgentDraftFenced(this.agentRepository, current, ctx);
-				}
-				const target = await this.definitionService.captureVersion(
-					current,
-					user,
-					ctx,
-					undefined,
-					pins,
-				);
-				agent.versionId = current.versionId;
-				agent.revision = current.revision;
-				return target;
+				return await this.definitionService.captureVersion(current, user, ctx);
 			} catch (error) {
 				if (isUniqueConstraintError(error))
 					throw new ConflictError('Agent publication changed concurrently; please retry');

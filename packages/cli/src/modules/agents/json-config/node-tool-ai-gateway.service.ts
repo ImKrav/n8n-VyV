@@ -1,20 +1,20 @@
 import type { AgentJsonToolConfig } from '@n8n/api-types';
 import { Service } from '@n8n/di';
 
-import { NodeTypesProxy } from '@n8n/backend-services';
+import { NodeTypes } from '@/node-types';
 import { AiGatewayService } from '@/services/ai-gateway.service';
 
 import { reconcileNodeToolGatewayCredentials } from './reconcile-node-tool-gateway-credentials';
 
 /**
  * Composes node descriptions with the gateway config to auto-assign n8n Connect
- * managed credentials to node tools. Keeps node type lookups out of the config service
+ * managed credentials to node tools. Keeps `NodeTypes` out of the config service
  * and agent-config shape out of the generic `AiGatewayService`.
  */
 @Service()
 export class NodeToolAiGatewayService {
 	constructor(
-		private readonly nodeTypes: NodeTypesProxy,
+		private readonly nodeTypes: NodeTypes,
 		private readonly aiGatewayService: AiGatewayService,
 	) {}
 

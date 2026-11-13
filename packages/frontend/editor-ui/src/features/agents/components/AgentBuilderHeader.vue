@@ -10,7 +10,6 @@ import { computed, onMounted, ref, useCssModule } from 'vue';
 import { useRouter, type RouteLocationRaw } from 'vue-router';
 import type { AgentConfigValidationIssue } from '@n8n/api-types';
 import {
-	N8nBadge,
 	N8nBreadcrumbs,
 	N8nButton,
 	N8nDropdownMenu,
@@ -233,7 +232,7 @@ function onMenuSelect(id: string) {
 				}}
 			</span>
 			<AgentSetupTasks
-				v-if="tasks && tasks.length > 0 && !agent?.isArchived"
+				v-if="tasks && tasks.length > 0"
 				:tasks="tasks"
 				@action="emit('setup-task-action', $event)"
 			/>
@@ -268,15 +267,7 @@ function onMenuSelect(id: string) {
 					</a>
 				</template>
 			</N8nHoverCard>
-			<N8nBadge
-				v-if="agent?.isArchived"
-				variant="outline"
-				data-testid="agent-header-archived-badge"
-			>
-				{{ i18n.baseText('workflows.item.archived') }}
-			</N8nBadge>
 			<AgentPublishButton
-				v-else
 				ref="publishButton"
 				:agent="agent"
 				:project-id="projectId"

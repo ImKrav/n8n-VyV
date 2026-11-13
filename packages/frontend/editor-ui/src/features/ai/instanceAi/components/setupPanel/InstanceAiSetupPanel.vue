@@ -766,7 +766,7 @@ async function onBindCredential(item: SetupCredentialItem, credentialId: string)
 		return;
 	}
 	const credential =
-		(credentialsStore.hasUsableCredentialsForScope({ workflowId, forAssistant: true })
+		(credentialsStore.hasUsableCredentialsForScope({ workflowId })
 			? credentialsStore.getUsableCredentialById(credentialId)
 			: undefined) ?? credentialsStore.getCredentialById(credentialId);
 	if (!credential) return;

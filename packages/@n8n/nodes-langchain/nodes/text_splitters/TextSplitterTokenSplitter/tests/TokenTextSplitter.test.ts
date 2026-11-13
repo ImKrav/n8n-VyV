@@ -1,5 +1,5 @@
 import * as aiUtilities from '@n8n/ai-utilities';
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 import type { Mock, Mocked } from 'vitest';
 
 import { TokenTextSplitter } from '../TokenTextSplitter';

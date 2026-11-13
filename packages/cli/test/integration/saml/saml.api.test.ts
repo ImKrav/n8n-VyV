@@ -17,8 +17,6 @@ import {
 	AuthIdentity,
 	AuthIdentityRepository,
 	GLOBAL_MEMBER_ROLE,
-	type Person,
-	PersonRepository,
 	type User,
 	UserRepository,
 	RoleRepository,
@@ -53,9 +51,9 @@ import { createOwner, createUser, createUserShell } from '../shared/db/users';
 import type { SuperAgentTest } from '../shared/types';
 import * as utils from '../shared/utils/';
 
-let somePerson: Person;
-let owner: Person;
-let samlPerson: Person;
+let someUser: User;
+let owner: User;
+let samlUser: User;
 let authMemberAgent: SuperAgentTest;
 let authOwnerAgent: SuperAgentTest;
 let authSamlUserAgent: SuperAgentTest;
@@ -78,12 +76,12 @@ const samlUserPassword = randomValidPassword();
 
 beforeAll(async () => {
 	owner = await createOwner();
-	somePerson = await createUser({ password: memberPassword });
-	samlPerson = await createUser({ password: samlUserPassword });
-	await attachSamlIdentity(samlPerson, `saml-${samlPerson.id}`);
+	someUser = await createUser({ password: memberPassword });
+	samlUser = await createUser({ password: samlUserPassword });
+	await attachSamlIdentity(samlUser, `saml-${samlUser.id}`);
 	authOwnerAgent = testServer.authAgentFor(owner);
-	authMemberAgent = testServer.authAgentFor(somePerson);
-	authSamlUserAgent = testServer.authAgentFor(samlPerson);
+	authMemberAgent = testServer.authAgentFor(someUser);
+	authSamlUserAgent = testServer.authAgentFor(samlUser);
 	Container.get(GlobalConfig).sso.saml.loginEnabled = true;
 });
 
@@ -123,9 +121,9 @@ describe('Instance owner', () => {
 				.send({ email: newEmail, currentPassword: samlUserPassword })
 				.expect(200);
 
-			const refreshed = (await Container.get(PersonRepository).findById(samlPerson.id))!;
+			const refreshed = await Container.get(UserRepository).findOneByOrFail({ id: samlUser.id });
 			expect(refreshed.email).toBe(newEmail);
-			samlPerson.email = newEmail;
+			samlUser.email = newEmail;
 		});
 	});
 
@@ -135,9 +133,9 @@ describe('Instance owner', () => {
 			await authSamlUserAgent
 				.patch('/me')
 				.send({
-					email: samlPerson.email,
+					email: samlUser.email,
 					firstName: 'NewFirst',
-					lastName: samlPerson.lastName,
+					lastName: samlUser.lastName,
 				})
 				.expect(400, {
 					code: 400,
@@ -153,17 +151,17 @@ describe('Instance owner', () => {
 			await authSamlUserAgent
 				.patch('/me')
 				.send({
-					email: samlPerson.email,
+					email: samlUser.email,
 					firstName: newFirstName,
 					lastName: newLastName,
 				})
 				.expect(200);
 
-			const refreshed = (await Container.get(PersonRepository).findById(samlPerson.id))!;
+			const refreshed = await Container.get(UserRepository).findOneByOrFail({ id: samlUser.id });
 			expect(refreshed.firstName).toBe(newFirstName);
 			expect(refreshed.lastName).toBe(newLastName);
-			samlPerson.firstName = newFirstName;
-			samlPerson.lastName = newLastName;
+			samlUser.firstName = newFirstName;
+			samlUser.lastName = newLastName;
 		});
 	});
 
@@ -917,14 +915,14 @@ describe('SAML SSO provisioning', () => {
 	let samlService: SamlService;
 	let roleMappingRuleRepository: RoleMappingRuleRepository;
 	let roleRepository: RoleRepository;
-	let personRepository: PersonRepository;
+	let userRepository: UserRepository;
 	let savedProvisioningConfig: unknown;
 
 	beforeAll(async () => {
 		samlService = Container.get(SamlService);
 		roleMappingRuleRepository = Container.get(RoleMappingRuleRepository);
 		roleRepository = Container.get(RoleRepository);
-		personRepository = Container.get(PersonRepository);
+		userRepository = Container.get(UserRepository);
 		await Container.get(ProvisioningService).init();
 	});
 
@@ -969,10 +967,11 @@ describe('SAML SSO provisioning', () => {
 		const result = await samlService.handleSamlLogin(mockRequest, 'post');
 		expect(result).toBeDefined();
 
-		const personFromDB = await personRepository.findByEmailWithAuthIdentities(
-			'saml-expr-instance@example.com',
-		);
-		expect(personFromDB!.role.slug).toEqual('global:admin');
+		const userFromDB = await userRepository.findOne({
+			where: { email: 'saml-expr-instance@example.com' },
+			relations: ['role'],
+		});
+		expect(userFromDB!.role.slug).toEqual('global:admin');
 	});
 
 	it('should deny the login and create no account when no rule matches and the default condition is block access', async () => {
@@ -1003,8 +1002,10 @@ describe('SAML SSO provisioning', () => {
 			ForbiddenError,
 		);
 
-		const personFromDB = await personRepository.findByEmail('saml-blocked-fallback@example.com');
-		expect(personFromDB).toBeNull();
+		const userFromDB = await userRepository.findOne({
+			where: { email: 'saml-blocked-fallback@example.com' },
+		});
+		expect(userFromDB).toBeNull();
 	});
 
 	it('should deny an existing user without touching their account when the default condition is block access', async () => {
@@ -1038,7 +1039,10 @@ describe('SAML SSO provisioning', () => {
 		);
 
 		// The account is kept as-is: not deactivated, role unchanged
-		const reloaded = (await personRepository.findByIdWithRole(existingUser.id))!;
+		const reloaded = await userRepository.findOneOrFail({
+			where: { id: existingUser.id },
+			relations: ['role'],
+		});
 		expect(reloaded.role.slug).toBe('global:member');
 		expect(reloaded.disabled).toBe(false);
 	});
@@ -1070,10 +1074,11 @@ describe('SAML SSO provisioning', () => {
 		const result = await samlService.handleSamlLogin({} as express.Request, 'post');
 		expect(result.authenticatedUser).toBeDefined();
 
-		const personFromDB = (await personRepository.findByEmailWithAuthIdentities(
-			'saml-mapped-role@example.com',
-		))!;
-		expect(personFromDB.role.slug).toBe('global:admin');
+		const userFromDB = await userRepository.findOneOrFail({
+			where: { email: 'saml-mapped-role@example.com' },
+			relations: ['role'],
+		});
+		expect(userFromDB.role.slug).toBe('global:admin');
 	});
 
 	it('should redirect a blocked login to the sign-in page instead of answering with an error', async () => {
@@ -1200,7 +1205,7 @@ describe('SAML account linking', () => {
 				relations: ['authIdentities', 'role'],
 			}),
 		).toMatchObject({ isPending: false, role: { slug: GLOBAL_MEMBER_ROLE.slug } });
-		expect(await Container.get(PersonRepository).findManyByEmail([invitee.email])).toHaveLength(1);
+		expect(await userRepository.countBy({ email: invitee.email })).toBe(1);
 	});
 
 	test('does not link an existing user by email when the identity provider marks the email as not verified', async () => {
@@ -1211,7 +1216,7 @@ describe('SAML account linking', () => {
 		).rejects.toThrow(SamlEmailNotVerifiedError);
 
 		expect(await samlIdentitiesOf(user)).toHaveLength(0);
-		const stored = (await Container.get(PersonRepository).findById(user.id))!;
+		const stored = await Container.get(UserRepository).findOneByOrFail({ id: user.id });
 		expect(stored.firstName).toBe('Local');
 		expect(stored.lastName).toBe('Account');
 	});

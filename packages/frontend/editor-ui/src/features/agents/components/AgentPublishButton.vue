@@ -9,7 +9,6 @@ import { useAgentPermissions } from '../composables/useAgentPermissions';
 import { useAgentPublish } from '../composables/useAgentPublish';
 import type { AgentResource } from '../types';
 import { hasBlockingIssues } from '../utils/validationIssues';
-import { hasAgentUnpublishedChanges } from '../utils/agentPublication';
 import AgentValidationTooltip from './AgentValidationTooltip.vue';
 
 const props = withDefaults(
@@ -56,7 +55,7 @@ type AgentPublishState = 'not-published' | 'published-no-changes' | 'published-w
 
 const publishState = computed((): AgentPublishState => {
 	if (!props.agent?.activeVersionId) return 'not-published';
-	if (hasAgentUnpublishedChanges(props.agent)) return 'published-with-changes';
+	if (props.agent.versionId !== props.agent.activeVersionId) return 'published-with-changes';
 	return 'published-no-changes';
 });
 
@@ -159,7 +158,7 @@ async function onPublishClick() {
 	const updated = await publish(
 		projectId,
 		agentId,
-		undefined,
+		versionId,
 		() => projectId === props.projectId && agentId === props.agentId,
 	);
 	if (updated && projectId === props.projectId && agentId === props.agentId)

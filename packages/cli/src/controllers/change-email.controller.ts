@@ -6,7 +6,7 @@ import {
 } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import { EventService } from '@n8n/backend-services';
-import { AuthenticatedRequest, PersonRepository } from '@n8n/db';
+import { AuthenticatedRequest, isPerson, PersonRepository, UserRepository } from '@n8n/db';
 import {
 	Body,
 	createUserKeyedRateLimiter,
@@ -18,12 +18,11 @@ import {
 import { Response } from 'express';
 
 import { AuthService } from '@/auth/auth.service';
-import { BadRequestError, InternalServerError, NotFoundError } from '@n8n/errors';
+import { BadRequestError, ForbiddenError, InternalServerError, NotFoundError } from '@n8n/errors';
 import { ExternalHooks } from '@/external-hooks';
 import { AuthlessRequest } from '@/requests';
 import { EmailChangeService } from '@/services/email-change.service';
 import { UserService } from '@/services/user.service';
-import { assertPerson } from '@/utils/assert-person';
 import { UserManagementMailer } from '@/user-management/email';
 
 @RestController()
@@ -33,6 +32,7 @@ export class ChangeEmailController {
 		private readonly externalHooks: ExternalHooks,
 		private readonly authService: AuthService,
 		private readonly userService: UserService,
+		private readonly userRepository: UserRepository,
 		private readonly personRepository: PersonRepository,
 		private readonly mailer: UserManagementMailer,
 		private readonly emailChangeService: EmailChangeService,
@@ -52,7 +52,9 @@ export class ChangeEmailController {
 		res: Response,
 		@Body payload: ChangeEmailRequestDto,
 	): Promise<ChangeEmailResponse> {
-		assertPerson(req.user);
+		if (!isPerson(req.user)) {
+			throw new ForbiddenError('Only a person can change their email');
+		}
 		const person = req.user;
 		const currentEmail = person.email;
 		const newEmail = payload.email;
@@ -163,9 +165,9 @@ export class ChangeEmailController {
 		return { success: true };
 	}
 
-	/** Reject when another person already owns the target email. A service account has no email. */
+	/** Reject when another account of either kind already owns the target email. */
 	private async assertEmailAvailable(email: string): Promise<void> {
-		const existing = await this.personRepository.findByEmail(email);
+		const existing = await this.userRepository.findOneBy({ email });
 		if (existing) {
 			throw new BadRequestError('This email address is already in use');
 		}

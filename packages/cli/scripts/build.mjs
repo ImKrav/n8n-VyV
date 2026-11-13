@@ -5,7 +5,6 @@ import shell from 'shelljs';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { rawTimeZones } from '@vvo/tzdb';
 import glob from 'fast-glob';
-import cliPackageJson from '../package.json' with { type: 'json' };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -93,12 +92,10 @@ async function buildPublicApiSpec() {
 	// 3. Assemble the published spec from the envelope and the bundled root.
 	const envelope = parseYaml(readFileSync(path.join(v1Dir, SPEC_FILENAME), 'utf8'));
 	const generated = parseYaml(readFileSync(generatedDistSpec, 'utf8'));
-	const n8nVersion = cliPackageJson.version;
-
-	const openApiSpec = assembleSpec(envelope, generated, n8nVersion);
-	const openApiSpecYaml = stringifyYaml(openApiSpec, YAML_STRINGIFY_OPTS);
-
-	writeFileSync(path.join(v1DistDir, SPEC_FILENAME), openApiSpecYaml);
+	writeFileSync(
+		path.join(v1DistDir, SPEC_FILENAME),
+		stringifyYaml(assembleSpec(envelope, generated), YAML_STRINGIFY_OPTS),
+	);
 
 	// 4. Remove the bundled root. Only the assembled spec is published.
 	rmSync(generatedDistSpec);

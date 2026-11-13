@@ -1,5 +1,5 @@
 import { QdrantClient } from '@qdrant/js-client-rest';
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 export type QdrantCredential = {
 	qdrantUrl: string;

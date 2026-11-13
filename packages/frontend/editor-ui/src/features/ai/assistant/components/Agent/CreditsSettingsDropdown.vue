@@ -108,7 +108,7 @@ function onGetMoreCredits() {
 <template>
 	<div ref="dropdownRef" :class="$style.wrapper">
 		<N8nButton
-			icon="n8n-assistant-circle"
+			icon="circle-dollar-sign"
 			variant="ghost"
 			:size="props.buttonSize"
 			:icon-size="props.iconSize"

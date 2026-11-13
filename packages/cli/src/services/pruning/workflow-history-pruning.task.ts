@@ -15,7 +15,9 @@ export class WorkflowHistoryPruningTask implements SystemTask {
 	readonly target = clusterTarget({
 		scheduler: {
 			retryOnFailure: true,
-			// The signal stops the run only between batches, so the timeout waits for a statement to end.
+			// One DELETE that ignores the signal. A timeout that stops the run before the
+			// DELETE ends lets the next run start a second one, so it waits for the
+			// statement timeout first.
 			timeoutSeconds: timeoutAfterLimit(
 				statementTimeoutSeconds(this.databaseConfig),
 				5 * Time.minutes.toSeconds,
@@ -32,7 +34,7 @@ export class WorkflowHistoryPruningTask implements SystemTask {
 		private readonly workflowHistoryManager: WorkflowHistoryManager,
 	) {}
 
-	async run(signal: AbortSignal): Promise<void> {
-		await this.workflowHistoryManager.prune(signal);
+	async run(): Promise<void> {
+		await this.workflowHistoryManager.prune();
 	}
 }

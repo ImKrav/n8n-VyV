@@ -6,9 +6,9 @@ import {
 	mockInstance,
 } from '@n8n/backend-test-utils';
 import { GlobalConfig } from '@n8n/config';
-import { GLOBAL_OWNER_ROLE, Person, ProjectRepository } from '@n8n/db';
+import type { User } from '@n8n/db';
+import { GLOBAL_OWNER_ROLE, ProjectRepository, UserRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
-import { DataSource } from '@n8n/typeorm';
 import type { IPersonalizationSurveyAnswersV4 } from 'n8n-workflow';
 import validator from 'validator';
 
@@ -31,7 +31,7 @@ const ownerPassword = randomValidPassword();
 const memberPassword = randomValidPassword();
 
 describe('Owner shell', () => {
-	let ownerShell: Person;
+	let ownerShell: User;
 	let authOwnerShellAgent: SuperAgentTest;
 
 	beforeEach(async () => {
@@ -57,9 +57,7 @@ describe('Owner shell', () => {
 			expect(isPending).toBe(false);
 			expect(role).toBe('global:owner');
 
-			const storedOwnerShell = await Container.get(DataSource).manager.findOneByOrFail(Person, {
-				id,
-			});
+			const storedOwnerShell = await Container.get(UserRepository).findOneByOrFail({ id });
 
 			expect(storedOwnerShell.email).toBeNull();
 			if (validPayload.firstName !== undefined) {
@@ -76,7 +74,7 @@ describe('Owner shell', () => {
 			const response = await authOwnerShellAgent.patch('/me').send(invalidPayload);
 			expect(response.statusCode).toBe(400);
 
-			const storedOwnerShell = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+			const storedOwnerShell = await Container.get(UserRepository).findOneByOrFail({});
 			expect(storedOwnerShell.email).toBeNull();
 			expect(storedOwnerShell.firstName).toBeNull();
 			expect(storedOwnerShell.lastName).toBeNull();
@@ -101,7 +99,7 @@ describe('Owner shell', () => {
 			const response = await authOwnerShellAgent.patch('/me/password').send(payload);
 			expect([400, 500].includes(response.statusCode)).toBe(true);
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({});
 
 			if (payload.newPassword) {
 				expect(storedMember.password).not.toBe(payload.newPassword);
@@ -112,7 +110,7 @@ describe('Owner shell', () => {
 			}
 		}
 
-		const storedOwnerShell = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+		const storedOwnerShell = await Container.get(UserRepository).findOneByOrFail({});
 		expect(storedOwnerShell.password).toBeNull();
 	});
 
@@ -125,7 +123,7 @@ describe('Owner shell', () => {
 			expect(response.body).toEqual(SUCCESS_RESPONSE_BODY);
 			expect(response.statusCode).toBe(200);
 
-			const storedShellOwner = await Container.get(DataSource).manager.findOneOrFail(Person, {
+			const storedShellOwner = await Container.get(UserRepository).findOneOrFail({
 				where: { id: ownerShell.id },
 			});
 
@@ -135,7 +133,7 @@ describe('Owner shell', () => {
 });
 
 describe('Member', () => {
-	let member: Person;
+	let member: User;
 	let authMemberAgent: SuperAgentTest;
 
 	beforeEach(async () => {
@@ -162,7 +160,7 @@ describe('Member', () => {
 			expect(isPending).toBe(false);
 			expect(role).toBe('global:member');
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, { id });
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({ id });
 
 			expect(storedMember.email).toBe(member.email);
 			if (validPayload.firstName !== undefined) {
@@ -182,9 +180,7 @@ describe('Member', () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.body.data.email).toBe(member.email);
 
-		const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {
-			id: member.id,
-		});
+		const storedMember = await Container.get(UserRepository).findOneByOrFail({ id: member.id });
 		expect(storedMember.email).toBe(member.email);
 	});
 
@@ -193,7 +189,7 @@ describe('Member', () => {
 			const response = await authMemberAgent.patch('/me').send(invalidPayload);
 			expect(response.statusCode).toBe(400);
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({});
 			expect(storedMember.email).toBe(member.email);
 			expect(storedMember.firstName).toBe(member.firstName);
 			expect(storedMember.lastName).toBe(member.lastName);
@@ -217,7 +213,7 @@ describe('Member', () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toEqual(SUCCESS_RESPONSE_BODY);
 
-		const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+		const storedMember = await Container.get(UserRepository).findOneByOrFail({});
 		expect(storedMember.password).not.toBe(member.password);
 		expect(storedMember.password).not.toBe(validPayload.newPassword);
 	});
@@ -227,7 +223,7 @@ describe('Member', () => {
 			const response = await authMemberAgent.patch('/me/password').send(payload);
 			expect([400, 500].includes(response.statusCode)).toBe(true);
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({});
 
 			if (payload.newPassword) {
 				expect(storedMember.password).not.toBe(payload.newPassword);
@@ -247,8 +243,8 @@ describe('Member', () => {
 			expect(response.body).toEqual(SUCCESS_RESPONSE_BODY);
 
 			const { personalizationAnswers: storedAnswers } = await Container.get(
-				DataSource,
-			).manager.findOneByOrFail(Person, {});
+				UserRepository,
+			).findOneByOrFail({});
 
 			expect(storedAnswers).toEqual(validPayload);
 		}
@@ -267,9 +263,7 @@ describe('Member', () => {
 			expect(response.body.data.easyAIWorkflowOnboarded).toBe(true);
 			expect(response.body.data.dismissedCallouts).toEqual({ 'test-callout': true });
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {
-				id: member.id,
-			});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({ id: member.id });
 			expect(storedMember.settings?.easyAIWorkflowOnboarded).toBe(true);
 			expect(storedMember.settings?.dismissedCallouts).toEqual({ 'test-callout': true });
 		});
@@ -287,9 +281,7 @@ describe('Member', () => {
 			// allowSSOManualLogin should NOT be set
 			expect(response.body.data.allowSSOManualLogin).toBeUndefined();
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {
-				id: member.id,
-			});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({ id: member.id });
 			expect(storedMember.settings?.easyAIWorkflowOnboarded).toBe(true);
 			expect(storedMember.settings?.allowSSOManualLogin).toBeUndefined();
 		});
@@ -307,9 +299,7 @@ describe('Member', () => {
 			// userActivated should NOT be set via this endpoint
 			expect(response.body.data.userActivated).toBeUndefined();
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {
-				id: member.id,
-			});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({ id: member.id });
 			expect(storedMember.settings?.easyAIWorkflowOnboarded).toBe(true);
 			expect(storedMember.settings?.userActivated).toBeUndefined();
 		});
@@ -317,7 +307,7 @@ describe('Member', () => {
 });
 
 describe('Chat User', () => {
-	let member: Person;
+	let member: User;
 	let authMemberAgent: SuperAgentTest;
 
 	beforeEach(async () => {
@@ -344,7 +334,7 @@ describe('Chat User', () => {
 			expect(isPending).toBe(false);
 			expect(role).toBe('global:chatUser');
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, { id });
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({ id });
 
 			expect(storedMember.email).toBe(member.email);
 			if (validPayload.firstName !== undefined) {
@@ -361,7 +351,7 @@ describe('Chat User', () => {
 			const response = await authMemberAgent.patch('/me').send(invalidPayload);
 			expect(response.statusCode).toBe(400);
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({});
 			expect(storedMember.email).toBe(member.email);
 			expect(storedMember.firstName).toBe(member.firstName);
 			expect(storedMember.lastName).toBe(member.lastName);
@@ -385,7 +375,7 @@ describe('Chat User', () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toEqual(SUCCESS_RESPONSE_BODY);
 
-		const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+		const storedMember = await Container.get(UserRepository).findOneByOrFail({});
 		expect(storedMember.password).not.toBe(member.password);
 		expect(storedMember.password).not.toBe(validPayload.newPassword);
 	});
@@ -395,7 +385,7 @@ describe('Chat User', () => {
 			const response = await authMemberAgent.patch('/me/password').send(payload);
 			expect([400, 500].includes(response.statusCode)).toBe(true);
 
-			const storedMember = await Container.get(DataSource).manager.findOneByOrFail(Person, {});
+			const storedMember = await Container.get(UserRepository).findOneByOrFail({});
 
 			if (payload.newPassword) {
 				expect(storedMember.password).not.toBe(payload.newPassword);
@@ -415,8 +405,8 @@ describe('Chat User', () => {
 			expect(response.body).toEqual(SUCCESS_RESPONSE_BODY);
 
 			const { personalizationAnswers: storedAnswers } = await Container.get(
-				DataSource,
-			).manager.findOneByOrFail(Person, {});
+				UserRepository,
+			).findOneByOrFail({});
 
 			expect(storedAnswers).toEqual(validPayload);
 		}
@@ -458,7 +448,7 @@ describe('Owner', () => {
 			expect(role).toBe('global:owner');
 			expect(apiKey).toBeUndefined();
 
-			const storedOwner = await Container.get(DataSource).manager.findOneByOrFail(Person, { id });
+			const storedOwner = await Container.get(UserRepository).findOneByOrFail({ id });
 
 			expect(storedOwner.email).toBe(owner.email);
 			if (validPayload.firstName !== undefined) {

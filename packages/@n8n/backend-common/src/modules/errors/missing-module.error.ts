@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 export class MissingModuleError extends UserError {
 	constructor(moduleName: string, errorMsg: string) {

@@ -798,7 +798,7 @@ defineExpose({
 		</N8nAiModelSelectorDropdown>
 		<ContactAdminModal
 			kind="credential"
-			:type-name="contactAdmin?.subject ?? ''"
+			:node-type-name="contactAdmin?.subject ?? ''"
 			:audience="contactAdmin?.audience ?? 'instance'"
 			:open="contactAdmin !== null"
 			@update:open="(isOpen) => !isOpen && (contactAdmin = null)"

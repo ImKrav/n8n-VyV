@@ -15,13 +15,12 @@ export const SKILL_MD = 'SKILL.md';
  * frontmatter key other than name and description, so an imported skill keeps keys that
  * n8n does not know.
  * A skill holds only `references/*.md` besides SKILL.md. Every other file is left out and
- * listed in `skippedFiles`, in path order. `unstorableFiles` names the references among them
- * that n8n cannot store, such as a file with a NUL character.
+ * listed in `skippedFiles`, in path order.
  */
 export function readSkillFolder(
 	folderName: string,
 	files: SkillFolderFile[],
-): { content: SkillContent; skippedFiles: string[]; unstorableFiles: string[] } {
+): { content: SkillContent; skippedFiles: string[] } {
 	const normalized = files
 		.map((file) => ({ path: normalizePath(file.path), content: file.content }))
 		.sort((left, right) => compareSkillFilePaths(left.path, right.path));
@@ -34,10 +33,6 @@ export function readSkillFolder(
 	if (!skillFile) throw new SkillParseError('The folder has no SKILL.md.');
 	const others = normalized.filter((file) => file !== skillFile);
 	const { data, instructions } = parseSkillMd(skillFile.content);
-	// Postgres stores no NUL in a text column, so such a reference stays out instead of
-	// failing the import of every skill.
-	const isStorable = (file: SkillFolderFile) => !file.content.includes('\0');
-	const kept = others.filter((file) => isReferencePath(file.path) && isStorable(file));
 	const { name, description, ...frontmatter } = data;
 	return {
 		content: {
@@ -45,12 +40,11 @@ export function readSkillFolder(
 			description: descriptionOf(description),
 			instructions,
 			frontmatter: Object.keys(frontmatter).length > 0 ? frontmatter : null,
-			files: kept.map((file) => ({ path: file.path, content: normalizeText(file.content) })),
+			files: others
+				.filter((file) => isReferencePath(file.path))
+				.map((file) => ({ path: file.path, content: normalizeText(file.content) })),
 		},
-		skippedFiles: others.filter((file) => !kept.includes(file)).map((file) => file.path),
-		unstorableFiles: others
-			.filter((file) => isReferencePath(file.path) && !isStorable(file))
-			.map((file) => file.path),
+		skippedFiles: others.filter((file) => !isReferencePath(file.path)).map((file) => file.path),
 	};
 }
 
@@ -98,21 +92,7 @@ function parseSkillMd(text: string): { data: Record<string, unknown>; instructio
 	if (!instructions) {
 		throw new SkillParseError('SKILL.md needs instructions after the frontmatter.');
 	}
-	// Postgres stores no NUL in a text or JSON column, so the skill cannot come in.
-	if (instructions.includes('\0') || hasNul(data)) {
-		throw new SkillParseError('SKILL.md has a NUL character, which n8n cannot store.');
-	}
 	return { data, instructions };
-}
-
-/** Whether a frontmatter value holds a NUL character in a string or a key, at any level. */
-function hasNul(value: unknown): boolean {
-	if (typeof value === 'string') return value.includes('\0');
-	if (Array.isArray(value)) return value.some(hasNul);
-	if (isRecord(value)) {
-		return Object.entries(value).some(([key, entry]) => key.includes('\0') || hasNul(entry));
-	}
-	return false;
 }
 
 /** The frontmatter name, or else the folder name, as the Agent Skills format does. */

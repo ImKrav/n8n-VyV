@@ -9,10 +9,7 @@ const pgp = pgPromise();
 const multiSpy = vi.fn(() => [[{ id: 2, name: 'test' }]]);
 
 vi.mock('../../transport', () => ({
-	configurePostgres: vi.fn(() => ({
-		db: { connect: vi.fn(async () => ({ done: vi.fn() })), multi: multiSpy },
-		pgp,
-	})),
+	configurePostgres: vi.fn(() => ({ db: { multi: multiSpy }, pgp })),
 }));
 
 describe('Postgres v1', () => {

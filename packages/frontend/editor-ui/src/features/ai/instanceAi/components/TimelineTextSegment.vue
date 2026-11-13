@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { InstanceAiTimelineEntry } from '@n8n/api-types';
+import { N8nText } from '@n8n/design-system';
 import InstanceAiMarkdown from './InstanceAiMarkdown.vue';
 
 /**
@@ -18,5 +19,7 @@ const props = withDefaults(
 </script>
 
 <template>
-	<InstanceAiMarkdown :content="props.entry.content" :streaming="props.streaming" />
+	<N8nText size="large" :compact="props.compact">
+		<InstanceAiMarkdown :content="props.entry.content" :streaming="props.streaming" />
+	</N8nText>
 </template>

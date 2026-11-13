@@ -9,7 +9,7 @@ test.beforeEach(async ({ n8nContainer }) => {
 test.describe(
 	'Sentry baseline',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('frontend error is captured', async ({ n8n, n8nContainer }) => {

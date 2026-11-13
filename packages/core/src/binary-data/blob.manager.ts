@@ -1,6 +1,5 @@
 import type { ByteStore } from '@n8n/blob-storage';
-import { jsonParse } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import { jsonParse, UnexpectedError } from 'n8n-workflow';
 import { createReadStream } from 'node:fs';
 import type { Readable } from 'node:stream';
 import pLimit from 'p-limit';

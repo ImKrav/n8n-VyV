@@ -1,6 +1,6 @@
 import { testDb, mockInstance } from '@n8n/backend-test-utils';
-import type { Person } from '@n8n/db';
-import { GLOBAL_OWNER_ROLE, PersonRepository } from '@n8n/db';
+import type { User } from '@n8n/db';
+import { GLOBAL_OWNER_ROLE, UserRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { randomString } from 'n8n-workflow';
 
@@ -21,14 +21,14 @@ const testServer = setupTestServer({ endpointGroups: ['changeEmail'] });
 
 const NEW_EMAIL = 'new@example.com';
 
-let owner: Person;
+let owner: User;
 let authService: AuthService;
-let personRepository: PersonRepository;
+let userRepository: UserRepository;
 
-const tokenFor = (user: Person, newEmail: string) =>
+const tokenFor = (user: User, newEmail: string) =>
 	new URL(authService.generateEmailChangeUrl(user, newEmail)).searchParams.get('token') ?? '';
 
-const emailInDb = async (id: string) => (await personRepository.findById(id))?.email;
+const emailInDb = async (id: string) => (await userRepository.findOneByOrFail({ id })).email;
 
 beforeEach(async () => {
 	await testDb.truncate(['User']);
@@ -42,7 +42,7 @@ beforeEach(async () => {
 	mailer.emailChangeConfirmation.mockReset();
 	mailer.emailChangeCompleted.mockReset();
 	authService = Container.get(AuthService);
-	personRepository = Container.get(PersonRepository);
+	userRepository = Container.get(UserRepository);
 });
 
 describe('POST /change-email', () => {

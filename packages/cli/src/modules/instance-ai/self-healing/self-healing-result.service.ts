@@ -6,8 +6,7 @@ import {
 	type SelfHealingExecutionReference,
 	type SelfHealingResultDetail,
 	type SelfHealingResultActionResponse,
-	type SelfHealingResultWorkflow,
-	type SelfHealingResultWorkflowCall,
+	type WorkflowSuggestionActionResult,
 	type WorkflowSuggestionAppliedVersion,
 	type WorkflowSuggestionBaseline,
 	type WorkflowSuggestionProposalDetail,
@@ -17,21 +16,16 @@ import {
 	SharedWorkflowRepository,
 	TransactionRunner,
 	UserRepository,
-	WorkflowDependencyRepository,
 	type OperationContext,
 	type User,
 } from '@n8n/db';
 import { Service } from '@n8n/di';
 import type { SelfHealingOutput } from '@n8n/instance-ai';
 import { ConflictError, ForbiddenError, NotFoundError, UnexpectedError } from '@n8n/errors';
-import sortBy from 'lodash/sortBy';
-import uniqBy from 'lodash/uniqBy';
-
-import { WorkflowFinderService } from '@/workflows/workflow-finder.service';
+import isEqual from 'lodash/isEqual';
 
 import type { InboxSourceQuery } from '../../inbox/inbox-source.registry';
 import { WorkflowSuggestionActionsService } from '../workflow-suggestions/workflow-suggestion-actions.service';
-import { hasGraphChanges } from '../workflow-suggestions/workflow-suggestion-graph';
 import {
 	WorkflowSuggestionService,
 	type PreparedWorkflowSuggestion,
@@ -46,22 +40,24 @@ import {
 	SelfHealingConfigurationService,
 } from './self-healing-configuration.service';
 import { SelfHealingExecutionReferenceService } from './self-healing-execution-reference.service';
-import { pruneWorkflowHierarchy } from './self-healing-hierarchy';
-
-const MAX_HIERARCHY_DEPTH = 10;
-const MAX_HIERARCHY_WORKFLOWS = 100;
-
-type ResultHierarchy = Pick<SelfHealingResultDetail, 'workflows' | 'calls'>;
 
 export type SelfHealingResultInput = {
 	output: SelfHealingOutput;
 	usage: SelfHealingResultUsage;
-	candidates?: Array<{
-		baseline: WorkflowSuggestionBaseline;
+	candidate?: {
 		graph: WorkflowSuggestionGraph;
-	}>;
+	};
 	completedAt: string;
 };
+
+export function getSelfHealingReviewState(
+	result: Pick<SelfHealingResult, 'dismissedAt' | 'outcome'>,
+	suggestion: Pick<WorkflowSuggestionProposalDetail, 'closedReason'> | null,
+): SelfHealingResultDetail['reviewState'] {
+	if (result.dismissedAt) return 'dismissed';
+	if (result.outcome === 'could_not_fix') return 'closed';
+	return suggestion?.closedReason ?? 'open';
+}
 
 @Service()
 export class SelfHealingResultService {
@@ -77,8 +73,6 @@ export class SelfHealingResultService {
 		private readonly roles: RoleService,
 		private readonly configurations: SelfHealingConfigurationRepository,
 		private readonly configurationService: SelfHealingConfigurationService,
-		private readonly dependencies: WorkflowDependencyRepository,
-		private readonly workflowFinder: WorkflowFinderService,
 	) {}
 
 	private async getInboxAccess(userId: string) {
@@ -136,7 +130,11 @@ export class SelfHealingResultService {
 			throw new UnexpectedError('The baseline does not belong to the investigation.');
 		}
 
-		const { content, completedAt, suggestions } = await this.prepareResult(investigation, input);
+		const {
+			content,
+			completedAt,
+			suggestion: prepared,
+		} = await this.prepareResult(investigation, baseline, input);
 		signal?.throwIfAborted();
 
 		return await this.txRunner.run({}, async (ctx) => {
@@ -166,12 +164,15 @@ export class SelfHealingResultService {
 				return null;
 			}
 
-			const targets = [baseline, ...suggestions.map((suggestion) => suggestion.baseline)];
-			for (const target of sortBy(uniqBy(targets, 'workflowId'), 'workflowId')) {
-				await this.suggestions.readWorkflowTargetForApply(target.workflowId, ctx);
-				await this.suggestions.requireCurrentBaseline(target, ctx);
-			}
+			await this.suggestions.readWorkflowTargetForApply(investigation.workflowId, ctx);
+			await this.suggestions.requireCurrentBaseline(baseline, ctx);
 			signal?.throwIfAborted();
+
+			let suggestionId: string | null = null;
+			if (prepared) {
+				const suggestion = await this.suggestions.createSuggestion(prepared, ctx);
+				suggestionId = suggestion.id;
+			}
 
 			const result = await this.results.createResult(
 				{
@@ -180,17 +181,15 @@ export class SelfHealingResultService {
 					projectId: current.projectId,
 					backgroundUserId: current.backgroundUserId,
 					executionId: current.executionId,
+					suggestionId,
 					...content,
 					completedAt,
 				},
 				ctx,
 			);
-			for (const prepared of suggestions) {
-				await this.suggestions.createSuggestion(prepared, result.id, ctx);
-			}
 
 			await this.investigations.completeWithResult(investigationId, result.id, ctx);
-			// Abort before commit so the result and its suggestions roll back together.
+			// Abort before commit so the result and suggestion roll back together.
 			signal?.throwIfAborted();
 			return result;
 		});
@@ -198,13 +197,14 @@ export class SelfHealingResultService {
 
 	private async prepareResult(
 		investigation: SelfHealingInvestigation,
+		baseline: WorkflowSuggestionBaseline,
 		input: SelfHealingResultInput,
 	) {
 		if (investigation.finishedAt) {
 			throw new ConflictError('The self-healing investigation has already finished.');
 		}
 
-		const { output, candidates = [] } = input;
+		const { output, candidate } = input;
 
 		const content = selfHealingResultContentSchema.parse({
 			outcome: output.outcome,
@@ -213,22 +213,19 @@ export class SelfHealingResultService {
 			usage: input.usage,
 		});
 
-		const changed = candidates.filter(({ baseline: { original }, graph }) =>
-			hasGraphChanges(original, graph),
-		);
-		if (output.outcome === 'fix_ready' && changed.length === 0) {
-			throw new ConflictError('The suggestion has no workflow changes.');
-		}
+		const needsYouWithoutChanges =
+			output.outcome === 'needs_you' &&
+			candidate !== undefined &&
+			isEqual(baseline.original.nodes, candidate.graph.nodes) &&
+			isEqual(baseline.original.connections, candidate.graph.connections);
 
-		const suggestions: PreparedWorkflowSuggestion[] = [];
-		for (const candidate of changed) {
-			suggestions.push(
-				await this.suggestions.prepareSuggestion(candidate.baseline, {
-					graph: candidate.graph,
-					explanation: output.summary,
-					resultKind: output.outcome === 'fix_ready' ? 'fix_ready' : 'needs_you',
-				}),
-			);
+		let suggestion: PreparedWorkflowSuggestion | undefined;
+		if (candidate && !needsYouWithoutChanges) {
+			suggestion = await this.suggestions.prepareSuggestion(baseline, {
+				graph: candidate.graph,
+				explanation: output.summary,
+				resultKind: output.outcome === 'fix_ready' ? 'fix_ready' : 'needs_you',
+			});
 		}
 
 		const actor = await this.suggestions.requireEditor(
@@ -241,7 +238,7 @@ export class SelfHealingResultService {
 			investigation.executionId,
 		);
 
-		return { content, completedAt: new Date(input.completedAt), suggestions };
+		return { content, completedAt: new Date(input.completedAt), suggestion };
 	}
 
 	async getDetail(
@@ -251,17 +248,31 @@ export class SelfHealingResultService {
 		resultId: string,
 	): Promise<SelfHealingResultDetail> {
 		const authorized = await this.getResultForEditor(user, projectId, workflowId, resultId);
-		const { reviewer, suggestions } = authorized;
+		const reviewer = authorized.reviewer;
 		let result = authorized.result;
 		await this.requireCurrentProject(workflowId, projectId);
 
-		let proposals = await this.suggestions.getProposals(reviewer, projectId, suggestions);
-		if (proposals.length > 0) {
-			// A concurrent closure commits the result and its suggestions together.
+		const suggestionId = result.suggestionId;
+		let suggestion: WorkflowSuggestionProposalDetail | null = null;
+		if (suggestionId) {
+			suggestion = await this.suggestions.getProposal(
+				reviewer,
+				projectId,
+				workflowId,
+				suggestionId,
+			);
+		}
+
+		if (suggestion) {
+			// A concurrent dismissal commits the result and suggestion together.
 			result = await this.results.getResult(resultId, { projectId, workflowId });
-			if (result.reviewState !== 'open' && proposals.some(({ state }) => state === 'pending')) {
-				const current = await this.getSuggestions(result);
-				proposals = await this.suggestions.getProposals(reviewer, projectId, current);
+			if (result.dismissedAt && suggestion.state === 'pending') {
+				suggestion = await this.suggestions.getProposal(
+					reviewer,
+					projectId,
+					workflowId,
+					suggestion.suggestionId,
+				);
 			}
 		}
 
@@ -270,76 +281,12 @@ export class SelfHealingResultService {
 			workflowId,
 			result.executionId,
 		);
-		const hierarchy = await this.getWorkflowHierarchy(reviewer, result, proposals);
-		return this.toDetail(result, proposals, hierarchy, execution);
-	}
-
-	private async getWorkflowHierarchy(
-		reviewer: User,
-		result: SelfHealingResult,
-		proposals: WorkflowSuggestionProposalDetail[],
-	): Promise<ResultHierarchy> {
-		const suggestionIds = new Map(
-			proposals.map(({ workflowId, suggestionId }) => [workflowId, suggestionId]),
-		);
-		const calls = await this.findCurrentCalls(result);
-		const hierarchy = pruneWorkflowHierarchy(
-			result.workflowId,
-			calls,
-			new Set(suggestionIds.keys()),
-		);
-		const readable = await this.workflowFinder.findWorkflowsByIdsForUser(
-			hierarchy.workflowIds,
-			reviewer,
-			['workflow:read'],
-		);
-		const names = new Map(readable.map(({ id, name }) => [id, name]));
-
-		return {
-			workflows: hierarchy.workflowIds.flatMap((workflowId): SelfHealingResultWorkflow[] => {
-				const name = names.get(workflowId);
-				if (name === undefined) return [];
-				const suggestionId = suggestionIds.get(workflowId) ?? null;
-				return [
-					{ workflowId, name, change: suggestionId ? 'modified' : 'unchanged', suggestionId },
-				];
-			}),
-			calls: hierarchy.calls.filter(
-				({ callerWorkflowId, calledWorkflowId }) =>
-					names.has(callerWorkflowId) && names.has(calledWorkflowId),
-			),
-		};
-	}
-
-	private async findCurrentCalls({ workflowId, projectId }: SelfHealingResult) {
-		const calls: SelfHealingResultWorkflowCall[] = [];
-		const visited = new Set([workflowId]);
-		let frontier = [workflowId];
-		for (let depth = 0; depth < MAX_HIERARCHY_DEPTH && frontier.length > 0; depth++) {
-			const found = await this.dependencies.findWorkflowCalls(frontier);
-			const owners = await this.ownership.findOwnerProjectsByWorkflowIds(
-				found.map(({ calledWorkflowId }) => calledWorkflowId),
-			);
-
-			frontier = [];
-			for (const call of found) {
-				const called = call.calledWorkflowId;
-				if (!visited.has(called)) {
-					if (owners.get(called)?.id !== projectId) continue;
-					if (visited.size >= MAX_HIERARCHY_WORKFLOWS) continue;
-					visited.add(called);
-					frontier.push(called);
-				}
-				calls.push(call);
-			}
-		}
-		return calls;
+		return this.toDetail(result, suggestion, execution);
 	}
 
 	private toDetail(
 		result: SelfHealingResult,
-		suggestions: WorkflowSuggestionProposalDetail[],
-		hierarchy: ResultHierarchy,
+		suggestion: WorkflowSuggestionProposalDetail | null,
 		execution: SelfHealingExecutionReference,
 	): SelfHealingResultDetail {
 		return {
@@ -354,9 +301,10 @@ export class SelfHealingResultService {
 			createdAt: result.createdAt.toISOString(),
 			updatedAt: result.updatedAt.toISOString(),
 			completedAt: result.completedAt.toISOString(),
-			reviewState: result.reviewState,
-			suggestions,
-			...hierarchy,
+			dismissedAt: result.dismissedAt?.toISOString() ?? null,
+			dismissedById: result.dismissedById,
+			reviewState: getSelfHealingReviewState(result, suggestion),
+			suggestion,
 			execution,
 		};
 	}
@@ -369,65 +317,79 @@ export class SelfHealingResultService {
 		action: WorkflowSuggestionAppliedVersion['action'],
 		clientId?: string,
 	): Promise<SelfHealingResultActionResponse> {
-		const { result, reviewer, suggestions } = await this.getResultForEditor(
+		const { result, reviewer } = await this.getResultForEditor(
 			user,
 			projectId,
 			workflowId,
 			resultId,
 		);
-		await this.requireCurrentProject(workflowId, projectId);
+		const suggestionId = result.suggestionId;
 		const allowedOutcomes = action === 'apply' ? ['fix_ready', 'needs_you'] : ['fix_ready'];
-		if (suggestions.length === 0 || !allowedOutcomes.includes(result.outcome)) {
+		if (!suggestionId || !allowedOutcomes.includes(result.outcome)) {
 			throw new ConflictError("This fix isn't ready to apply. Review the report for next steps.");
 		}
-		const publication = await this.actions.apply(
-			reviewer,
-			projectId,
-			suggestions,
-			action,
-			clientId,
-		);
 
+		let actionResult: WorkflowSuggestionActionResult;
+		if (action === 'approve-and-publish') {
+			actionResult = await this.actions.approveAndPublish(
+				reviewer,
+				projectId,
+				workflowId,
+				suggestionId,
+				clientId,
+			);
+		} else {
+			actionResult = await this.actions.apply(
+				reviewer,
+				projectId,
+				workflowId,
+				suggestionId,
+				clientId,
+			);
+		}
+
+		const { publishError, ...suggestion } = actionResult;
 		const execution = await this.executionReferences.getReference(
 			reviewer,
 			workflowId,
 			result.executionId,
 		);
-		const current = await this.results.getResult(resultId, { projectId, workflowId });
-		const proposals = await this.suggestions.getProposals(
-			reviewer,
-			projectId,
-			await this.getSuggestions(current),
-		);
-		const hierarchy = await this.getWorkflowHierarchy(reviewer, current, proposals);
 		return {
-			...this.toDetail(current, proposals, hierarchy, execution),
-			...publication,
+			...this.toDetail(result, suggestion, execution),
+			...(publishError !== undefined ? { publishError } : {}),
 		};
 	}
 
 	async dismiss(user: User, projectId: string, workflowId: string, resultId: string) {
 		const outcome = await this.txRunner.run({}, async (ctx) => {
-			const { result, reviewer, suggestions } = await this.getResultForEditor(
+			const { result, reviewer } = await this.getResultForEditor(
 				user,
 				projectId,
 				workflowId,
 				resultId,
 				ctx,
 			);
-			if (result.reviewState === 'dismissed') return 'already_closed';
+			if (result.dismissedAt) return 'already_closed';
 
-			if (!suggestions.some((suggestion) => suggestion.workflowId === workflowId)) {
+			const suggestionId = result.suggestionId;
+			if (suggestionId) {
+				const discardOutcome = await this.actions.discardPending(
+					reviewer,
+					projectId,
+					workflowId,
+					suggestionId,
+					ctx,
+				);
+				if (discardOutcome !== 'discarded') return discardOutcome;
+			} else {
 				await this.requireCurrentProject(workflowId, projectId, ctx);
 			}
-			if (suggestions.length > 0) {
-				return await this.actions.discardPending(reviewer, projectId, suggestions, ctx);
-			}
+
 			if (
-				result.reviewState !== 'closed' &&
-				!(await this.results.closeResult(result.id, 'dismissed', ctx))
+				result.outcome === 'needs_you' &&
+				!(await this.results.dismissResult(result.id, user.id, ctx))
 			) {
-				return 'already_closed';
+				throw new ConflictError('This result is already closed.');
 			}
 			return 'dismissed';
 		});
@@ -457,15 +419,7 @@ export class SelfHealingResultService {
 		if (!isReviewer) {
 			throw new NotFoundError('Self-healing result not found.');
 		}
-		return { result, reviewer, suggestions: await this.getSuggestions(result, ctx) };
-	}
-
-	private async getSuggestions(result: SelfHealingResult, ctx: OperationContext = {}) {
-		const suggestions = await this.suggestions.getForResult(result.id, ctx);
-		return suggestions.sort(
-			(a, b) =>
-				Number(b.workflowId === result.workflowId) - Number(a.workflowId === result.workflowId),
-		);
+		return { result, reviewer };
 	}
 
 	private async requireCurrentProject(

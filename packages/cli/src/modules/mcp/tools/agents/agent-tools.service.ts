@@ -14,13 +14,11 @@ import {
 	AgentJsonConfigSchema,
 	isDraftAgentConfig,
 	AgentTelegramSettingsSchema,
-	AgentWebhookSettingsSchema,
 	McpAuthenticationSchemaTypes,
 	McpOAuth2CredentialTypeSchema,
 	agentSkillSchema,
 	agentTaskSchema,
 	sanitizeAgentJsonConfig,
-	WEBHOOK_INTEGRATION_TYPE,
 	type AgentJsonConfig,
 } from '@n8n/api-types';
 import { OutboundHttp } from '@n8n/backend-network';
@@ -64,9 +62,10 @@ import { AgentSecureRuntime } from '@/modules/agents/runtime/agent-secure-runtim
 import { getAgentConfigHash, getAgentSkillHash } from '@/modules/agents/utils/agent-config-hash';
 import { createAgentCredentialProvider } from '@/modules/agents/utils/agent-credential-provider';
 import { McpRegistryService } from '@/modules/mcp-registry/registry/mcp-registry.service';
+import { NodeTypes } from '@/node-types';
 import { OauthService } from '@/oauth/oauth.service';
 import { userHasScopes } from '@/permissions.ee/check-access';
-import { ProjectScopeService, UrlService, NodeTypesProxy } from '@n8n/backend-services';
+import { ProjectScopeService, UrlService } from '@n8n/backend-services';
 import { Telemetry } from '@/telemetry';
 import { createAiMcpFetch, createAiProxyFetch } from '@/utils/ai-proxy-fetch';
 
@@ -142,7 +141,6 @@ function integrationsChanged(current: AgentJsonConfig, next: unknown): boolean {
 }
 
 const TELEGRAM_SETTINGS_JSON_SCHEMA = zodSchemaToJsonSchema(AgentTelegramSettingsSchema);
-const WEBHOOK_SETTINGS_JSON_SCHEMA = zodSchemaToJsonSchema(AgentWebhookSettingsSchema);
 
 const httpUrlSchema = z
 	.string()
@@ -382,7 +380,7 @@ const updateIntegrationInput = {
 		.min(1)
 		.optional()
 		.describe(
-			'Accessible credential for this integration. Required for disconnect and for non-Slack connect operations. Omit it to connect Slack through managed setup, and for a channel that runs without a credential, such as a webhook with authentication none',
+			'Accessible credential for this integration. Required for disconnect and for non-Slack connect operations. Omit it to connect Slack through managed setup',
 		),
 	managerCredentialId: z
 		.string()
@@ -401,7 +399,7 @@ const updateIntegrationInput = {
 	settings: z
 		.record(z.unknown())
 		.optional()
-		.describe('Integration settings; required for Telegram and webhook connect operations'),
+		.describe('Integration settings; required for Telegram connect operations'),
 	replacesCredentialId: z
 		.string()
 		.min(1)
@@ -451,7 +449,6 @@ type UpdateIntegrationInput = z.infer<z.ZodObject<typeof updateIntegrationInput>
 /** Telemetry label for the connect flow that an update_agent_integration call takes. */
 function integrationSetupPath(input: UpdateIntegrationInput) {
 	if (input.action === 'disconnect' || input.credentialId) return 'credential';
-	if (input.type === WEBHOOK_INTEGRATION_TYPE) return 'credential';
 	return input.managerCredentialId || input.workspaceId ? 'managed_install' : 'managed_discovery';
 }
 type CallAgentInput = z.infer<z.ZodObject<typeof callAgentInput>>;
@@ -481,7 +478,7 @@ export class McpAgentToolsService {
 		private readonly agentModelCatalogService: AgentModelCatalogService,
 		private readonly attachableWorkflowsService: AttachableWorkflowsService,
 		private readonly mcpRegistryService: McpRegistryService,
-		private readonly nodeTypes: NodeTypesProxy,
+		private readonly nodeTypes: NodeTypes,
 		private readonly oauthService: OauthService,
 		private readonly outboundHttp: OutboundHttp,
 		private readonly urlService: UrlService,
@@ -522,7 +519,7 @@ export class McpAgentToolsService {
 		registerIfAllowed(this.listAgentVersionsTool(user));
 		registerIfAllowed(this.listAgentSessionsTool(user));
 		registerIfAllowed(this.getAgentSessionTool(user));
-		registerIfAllowed(this.archiveAgentTool(user));
+		registerIfAllowed(this.deleteAgentTool(user));
 		registerIfAllowed(this.discoverAssetsTool(user));
 		registerIfAllowed(this.verifyMcpServerTool(user));
 		registerIfAllowed(this.updateIntegrationTool(user));
@@ -1079,27 +1076,27 @@ export class McpAgentToolsService {
 		};
 	}
 
-	private archiveAgentTool(user: User): ToolDefinition<typeof agentIdentityShape> {
+	private deleteAgentTool(user: User): ToolDefinition<typeof agentIdentityShape> {
 		return {
-			name: 'archive_agent',
+			name: 'delete_agent',
 			config: {
-				description:
-					'Archive an Agent. An archived Agent is unpublished and hidden. A user can restore it in n8n.',
+				description: 'Permanently delete an Agent and its associated resources.',
 				inputSchema: agentIdentityShape,
 				annotations: {
-					title: 'Archive Agent',
+					title: 'Delete Agent',
 					readOnlyHint: false,
 					destructiveHint: true,
 					idempotentHint: true,
-					openWorldHint: false,
+					openWorldHint: true,
 				},
 			},
 			handler: async ({ agentId }) =>
-				await this.run(user, 'archive_agent', { agentId }, async () => {
+				await this.run(user, 'delete_agent', { agentId }, async () => {
 					const { projectId } = await this.resolveAgent(user, agentId);
 					await this.assertScope(user, projectId, 'agent:delete');
-					await this.agentPublishService.archiveAgent(agentId, projectId, user, undefined, 'mcp');
-					return { ok: true, archived: true, agentId };
+					const deleted = await this.agentsService.delete(agentId, projectId);
+					if (!deleted) throw new UserError(`Agent "${agentId}" not found`);
+					return { ok: true, deleted: true, agentId };
 				}),
 		};
 	}
@@ -1166,7 +1163,7 @@ export class McpAgentToolsService {
 			name: 'update_agent_integration',
 			config: {
 				description:
-					"Configure or disconnect a Slack, Telegram, Linear, or webhook conversation integration. This is the only way to manage integrations; config.replace and config.patch can't change them. Configuration never publishes the Agent. If the Agent is already published, connecting starts the channel immediately. Otherwise, the channel stays inactive until publish_agent is called. For Slack, connect without credentialId first: n8n returns the workspaces where it can create a Slack app for the Agent, or the steps the user must take in n8n. Then call again with managerCredentialId and workspaceId after the user confirms the workspace. For a webhook, pass settings.authentication, and omit credentialId when it is none.",
+					"Configure or disconnect a Slack, Telegram, or Linear conversation integration. This is the only way to manage integrations; config.replace and config.patch can't change them. Configuration never publishes the Agent. If the Agent is already published, connecting starts the channel immediately. Otherwise, the channel stays inactive until publish_agent is called. For Slack, connect without credentialId first: n8n returns the workspaces where it can create a Slack app for the Agent, or the steps the user must take in n8n. Then call again with managerCredentialId and workspaceId after the user confirms the workspace.",
 				inputSchema: updateIntegrationInput,
 				annotations: {
 					title: 'Update Agent Integration',
@@ -1810,8 +1807,7 @@ export class McpAgentToolsService {
 			case 'integrations':
 				return this.integrationPersistenceService.listChatIntegrations().map((integration) => ({
 					...integration,
-					settingsRequired:
-						integration.type === 'telegram' || integration.type === WEBHOOK_INTEGRATION_TYPE,
+					settingsRequired: integration.type === 'telegram',
 					...(integration.type === SLACK_INTEGRATION_TYPE
 						? {
 								setupGuidance:
@@ -1823,13 +1819,6 @@ export class McpAgentToolsService {
 								settingsSchema: TELEGRAM_SETTINGS_JSON_SCHEMA,
 								settingsGuidance:
 									'Pass accessMode=public with allowedUsers=[], or accessMode=private with at least one Telegram user ID or username.',
-							}
-						: {}),
-					...(integration.type === WEBHOOK_INTEGRATION_TYPE
-						? {
-								settingsSchema: WEBHOOK_SETTINGS_JSON_SCHEMA,
-								settingsGuidance:
-									'Pass authentication=headerAuth with an httpHeaderAuth credential, or authentication=jwtAuth with a jwtAuth credential. Pass authentication=none only when anyone with the URL may call the Agent. Omit credentialId for none.',
 							}
 						: {}),
 				}));
@@ -1912,14 +1901,8 @@ export class McpAgentToolsService {
 		input: UpdateIntegrationInput,
 		agent: ProjectAgent,
 	) {
-		// A webhook without authentication is stored with an empty credential.
-		const hasCredentialFreeWebhook = agent.integrations?.some(
-			(entry) => entry.type === WEBHOOK_INTEGRATION_TYPE && entry.credentialId === '',
-		);
-		const credentialId =
-			input.credentialId ??
-			(input.type === WEBHOOK_INTEGRATION_TYPE && hasCredentialFreeWebhook ? '' : undefined);
-		if (credentialId === undefined) throw new UserError('credentialId is required to disconnect');
+		const { credentialId } = input;
+		if (!credentialId) throw new UserError('credentialId is required to disconnect');
 		if (input.managerCredentialId || input.workspaceId) {
 			throw new UserError('managerCredentialId and workspaceId apply only to connect');
 		}
@@ -1946,10 +1929,6 @@ export class McpAgentToolsService {
 		const managedTarget = this.managedSlackTarget(input);
 		if (managedTarget) return await this.installManagedSlackApp(user, agent, managedTarget);
 		if (!input.credentialId) {
-			// A webhook without authentication runs without a credential. The integration checks the settings.
-			if (input.type === WEBHOOK_INTEGRATION_TYPE) {
-				return await this.connectWithCredential(user, input, agent, '');
-			}
 			if (input.type !== SLACK_INTEGRATION_TYPE) {
 				throw new UserError('credentialId is required to connect this integration');
 			}
@@ -2116,9 +2095,6 @@ export class McpAgentToolsService {
 	private async resolveAgent(user: User, agentId: string): Promise<ProjectAgent> {
 		const agent = await this.agentsService.findByIdForUser(agentId, user);
 		if (!agent) throw new UserError(`Agent "${agentId}" not found`);
-		if (agent.isArchived) {
-			throw new UserError(`Agent "${agentId}" is archived and cannot be accessed.`);
-		}
 		if (!agent.availableInMCP) {
 			throw new UserError(
 				'Agent is not available in MCP. Enable MCP access from the agents list, or from the MCP settings page.',

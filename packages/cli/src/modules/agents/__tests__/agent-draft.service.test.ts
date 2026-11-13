@@ -15,7 +15,7 @@ function setup() {
 	const settings = mock<Dependencies[0]>();
 	const agents = mock<Dependencies[1]>();
 	const defaultModel = mock<Dependencies[2]>();
-	const agentResponseMapper = mock<Dependencies[3]>();
+	const runnableState = mock<Dependencies[3]>();
 	settings.assertEnabled.mockResolvedValue(undefined);
 	defaultModel.resolve.mockResolvedValue(null);
 	agents.createOrAdopt.mockResolvedValue({
@@ -30,17 +30,11 @@ function setup() {
 		config: null,
 		configHash: null,
 	}));
-	agentResponseMapper.toAgentDto.mockResolvedValue({
-		id: 'agent-1',
-		name: 'Persisted name',
-		projectId: 'project-1',
-		isRunnable: true,
-		config: null,
-		configHash: 'mapped-hash',
-		versionId: 'v1',
-	} as never);
-	const service = new AgentDraftService(settings, agents, defaultModel, agentResponseMapper);
-	return { service, settings, agents, defaultModel, agentResponseMapper };
+	runnableState.addRunnableState.mockImplementation(
+		async (agent) => ({ ...agent, isRunnable: true }) as never,
+	);
+	const service = new AgentDraftService(settings, agents, defaultModel, runnableState);
+	return { service, settings, agents, defaultModel, runnableState };
 }
 
 const user = mock<User>({ id: 'user-1' });
@@ -166,8 +160,8 @@ describe('AgentDraftService', () => {
 			expect(await result?.getState()).toMatchObject({
 				id: 'agent-1',
 				isRunnable: true,
-				config: null,
-				configHash: 'mapped-hash',
+				config,
+				configHash: 'saved-hash',
 				adopted: false,
 				versionId: 'v1',
 			});
@@ -194,8 +188,8 @@ describe('AgentDraftService', () => {
 		const existing = await service.persistDraft(user, 'project-1', options);
 		expect(existing).toMatchObject({ name: 'Persisted name' });
 		expect(await existing?.getState()).toMatchObject({
-			config: null,
-			configHash: 'mapped-hash',
+			config,
+			configHash: 'winner-hash',
 			adopted: true,
 		});
 		expect(agents.createOrAdopt).not.toHaveBeenCalled();
@@ -203,8 +197,8 @@ describe('AgentDraftService', () => {
 		const concurrent = await service.persistDraft(user, 'project-1', options);
 		expect(concurrent).toMatchObject({ name: 'Persisted name' });
 		expect(await concurrent?.getState()).toMatchObject({
-			config: null,
-			configHash: 'mapped-hash',
+			config,
+			configHash: 'winner-hash',
 			adopted: true,
 		});
 		expect(agents.createOrAdopt).toHaveBeenCalledWith(

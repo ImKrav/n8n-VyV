@@ -9,8 +9,7 @@ import {
 	getSystemCredentials,
 	assertSupportedAwsRegion,
 } from 'n8n-nodes-base/aws-credentials';
-import type { ISupplyDataFunctions } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { UserError, type ISupplyDataFunctions } from 'n8n-workflow';
 
 export type ResolvedAwsCredentials = {
 	region: AWSRegion;

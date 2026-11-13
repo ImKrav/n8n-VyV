@@ -6,13 +6,12 @@ import type {
 	AiGatewayUsageQueryDto,
 } from '@n8n/api-types';
 import type { GlobalConfig } from '@n8n/config';
-import { Person, type AuthenticatedRequest } from '@n8n/db';
+import type { AuthenticatedRequest } from '@n8n/db';
 import { APIResponseError, NetworkError, type AiAssistantSDK } from '@n8n_io/ai-assistant-sdk';
 import { mock } from 'vitest-mock-extended';
 
 import {
 	BadRequestError,
-	ForbiddenError,
 	InternalServerError,
 	NotFoundError,
 	ServiceUnavailableError,
@@ -42,7 +41,7 @@ describe('AiController', () => {
 	);
 
 	const request = mock<AuthenticatedRequest>({
-		user: Object.assign(new Person(), { id: 'user123' }),
+		user: { id: 'user123' },
 	});
 	const response = mock<FlushableResponse>();
 
@@ -74,7 +73,7 @@ describe('AiController', () => {
 
 			await controller.chat(request, response, payload);
 
-			expect(aiService.chat).toHaveBeenCalledWith(payload, request.user.toIUser());
+			expect(aiService.chat).toHaveBeenCalledWith(payload, request.user);
 			expect(response.header).toHaveBeenCalledWith('Content-type', 'application/json-lines');
 			expect(response.flush).toHaveBeenCalled();
 			expect(response.end).toHaveBeenCalled();
@@ -177,7 +176,7 @@ describe('AiController', () => {
 
 			const result = await controller.applySuggestion(request, response, payload);
 
-			expect(aiService.applySuggestion).toHaveBeenCalledWith(payload, request.user.toIUser());
+			expect(aiService.applySuggestion).toHaveBeenCalledWith(payload, request.user);
 			expect(result).toEqual(clientResponse);
 		});
 
@@ -200,7 +199,7 @@ describe('AiController', () => {
 
 			const result = await controller.askAi(request, response, payload);
 
-			expect(aiService.askAi).toHaveBeenCalledWith(payload, request.user.toIUser());
+			expect(aiService.askAi).toHaveBeenCalledWith(payload, request.user);
 			expect(result).toEqual(clientResponse);
 		});
 
@@ -255,7 +254,7 @@ describe('AiController', () => {
 						executionSchema: undefined,
 					},
 				},
-				request.user.toIUser(),
+				request.user,
 				expect.any(AbortSignal),
 			);
 			expect(response.header).toHaveBeenCalledWith('Content-type', 'application/json-lines');
@@ -424,7 +423,7 @@ describe('AiController', () => {
 				expect(capturedSignal).toBeInstanceOf(AbortSignal);
 				expect(workflowBuilderService.chat).toHaveBeenCalledWith(
 					expect.any(Object),
-					request.user.toIUser(),
+					request.user,
 					capturedSignal,
 				);
 			});
@@ -500,23 +499,6 @@ describe('AiController', () => {
 		});
 	});
 
-	describe('aiCredits', () => {
-		it('keeps the 403 when a service account claims the free credits', async () => {
-			const forbidden = new ForbiddenError('Only a person can do this action');
-			freeAiCreditsService.claim.mockRejectedValue(forbidden);
-
-			await expect(controller.aiCredits(request, response, {})).rejects.toBe(forbidden);
-		});
-
-		it('turns an unexpected failure into a 500', async () => {
-			freeAiCreditsService.claim.mockRejectedValue(new Error('Something went wrong'));
-
-			await expect(controller.aiCredits(request, response, {})).rejects.toThrow(
-				InternalServerError,
-			);
-		});
-	});
-
 	describe('getBuilderCredits', () => {
 		it('should return builder instance credits successfully', async () => {
 			const expectedCredits: AiAssistantSDK.BuilderInstanceCreditsResponse = {
@@ -528,9 +510,7 @@ describe('AiController', () => {
 
 			const result = await controller.getBuilderCredits(request, response);
 
-			expect(workflowBuilderService.getBuilderInstanceCredits).toHaveBeenCalledWith(
-				request.user.toIUser(),
-			);
+			expect(workflowBuilderService.getBuilderInstanceCredits).toHaveBeenCalledWith(request.user);
 			expect(result).toEqual(expectedCredits);
 		});
 
@@ -541,9 +521,7 @@ describe('AiController', () => {
 			await expect(controller.getBuilderCredits(request, response)).rejects.toThrow(
 				InternalServerError,
 			);
-			expect(workflowBuilderService.getBuilderInstanceCredits).toHaveBeenCalledWith(
-				request.user.toIUser(),
-			);
+			expect(workflowBuilderService.getBuilderInstanceCredits).toHaveBeenCalledWith(request.user);
 		});
 
 		it('should map an unreachable AI assistant service to ServiceUnavailableError', async () => {
@@ -569,7 +547,7 @@ describe('AiController', () => {
 
 			expect(workflowBuilderService.clearSession).toHaveBeenCalledWith(
 				payload.workflowId,
-				request.user.toIUser(),
+				request.user,
 			);
 			expect(result).toEqual({ success: true });
 		});
@@ -599,7 +577,7 @@ describe('AiController', () => {
 
 			expect(workflowBuilderService.getSessions).toHaveBeenCalledWith(
 				payload.workflowId,
-				request.user.toIUser(),
+				request.user,
 				undefined,
 			);
 			expect(result).toEqual(mockSessions);
@@ -615,7 +593,7 @@ describe('AiController', () => {
 
 			expect(workflowBuilderService.getSessions).toHaveBeenCalledWith(
 				payload.workflowId,
-				request.user.toIUser(),
+				request.user,
 				true,
 			);
 			expect(result).toEqual(mockSessions);
@@ -647,7 +625,7 @@ describe('AiController', () => {
 
 			expect(workflowBuilderService.truncateMessagesAfter).toHaveBeenCalledWith(
 				payload.workflowId,
-				request.user.toIUser(),
+				request.user,
 				payload.messageId,
 				undefined,
 			);
@@ -694,7 +672,7 @@ describe('AiController', () => {
 			);
 			expect(workflowBuilderService.truncateMessagesAfter).toHaveBeenCalledWith(
 				payload.workflowId,
-				request.user.toIUser(),
+				request.user,
 				payload.messageId,
 				undefined,
 			);

@@ -5,9 +5,7 @@ import type { AgentChatResumeDto, AgentJsonConfig, AgentThreadMemoryDto } from '
 import { useI18n } from '@n8n/i18n';
 import { N8nRecycleScroller } from '@n8n/design-system';
 import SessionTimelineRow from './SessionTimelineRow.vue';
-import ToolApprovalCard from '@/features/ai/shared/components/ToolApprovalCard.vue';
 import type { TimelineItem } from '../session-timeline.types';
-import type { ApprovalInput, ApprovalResume } from '@/features/ai/shared/agentsChat/types';
 import { filteredTimelineItemIndexes, timelineItemKey } from '../session-timeline.utils';
 import { backgroundJobTimelineLabelKey } from '../utils/background-job-labels';
 
@@ -30,16 +28,9 @@ const props = defineProps<{
 	visibleKinds: Set<string>;
 	searchQuery?: string;
 	noticeIndex?: number;
-	/** Suspension row the open approval belongs to. The card expands under it. */
-	approvalItem?: TimelineItem | null;
-	approval?: ApprovalInput;
-	approvalDisabled?: boolean;
 }>();
 
-const emit = defineEmits<{
-	select: [index: number | null];
-	approve: [resumeData: ApprovalResume];
-}>();
+const emit = defineEmits<{ select: [index: number | null] }>();
 
 const i18n = useI18n();
 const tableRef = ref<HTMLElement | null>(null);
@@ -123,16 +114,6 @@ const rows = computed<Row[]>(function getRows() {
 const shouldVirtualizeRows = computed(function shouldVirtualize() {
 	return rows.value.length > VIRTUALIZE_AFTER_ROWS;
 });
-
-// The card expands inline under its suspension row, so it is not part of the
-// row model and never touches selectedIndex or arrow-key navigation.
-function showsApprovalRow(row: Row): boolean {
-	return (
-		props.approval !== undefined &&
-		props.approvalItem?.executionId === row.item.executionId &&
-		props.approvalItem?.toolCallId === row.item.toolCallId
-	);
-}
 const tabbableEventIndex = computed(function getTabbableEventIndex() {
 	return rows.value.find((row) => row.index === props.selectedIndex)?.index ?? rows.value[0]?.index;
 });
@@ -324,24 +305,6 @@ onBeforeUnmount(() => {
 							:personalisation="props.personalisation"
 						/>
 					</div>
-					<div
-						v-if="props.approval && showsApprovalRow(row)"
-						:class="$style.approvalRow"
-						data-test-id="timeline-approval-row"
-						role="gridcell"
-						@click.stop
-						@keydown.stop
-					>
-						<ToolApprovalCard
-							:input="props.approval"
-							:agent-name="props.agentName"
-							:tools="props.tools"
-							:disabled="props.approvalDisabled"
-							:auto-focus="false"
-							:use-key-shortcuts="false"
-							@submit="emit('approve', $event)"
-						/>
-					</div>
 					<div v-if="rowIndex < rows.length - 1" :class="$style.divider"><span></span></div>
 				</div>
 				<div
@@ -400,24 +363,6 @@ onBeforeUnmount(() => {
 					>
 						<slot name="notice" />
 					</div>
-					<div
-						v-if="props.approval && showsApprovalRow(row)"
-						:class="$style.approvalRow"
-						data-test-id="timeline-approval-row"
-						role="gridcell"
-						@click.stop
-						@keydown.stop
-					>
-						<ToolApprovalCard
-							:input="props.approval"
-							:agent-name="props.agentName"
-							:tools="props.tools"
-							:disabled="props.approvalDisabled"
-							:auto-focus="false"
-							:use-key-shortcuts="false"
-							@submit="emit('approve', $event)"
-						/>
-					</div>
 					<div v-if="row.id !== rows[rows.length - 1].id" :class="$style.divider">
 						<span></span>
 					</div>
@@ -445,11 +390,6 @@ onBeforeUnmount(() => {
 	width: 100%;
 	max-width: var(--n8n-session-panel--container-width, none);
 	margin: 0 auto;
-}
-
-.approvalRow {
-	width: 100%;
-	padding: var(--spacing--4xs) var(--spacing--sm) var(--spacing--xs);
 }
 
 .empty {

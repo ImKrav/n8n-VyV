@@ -1,5 +1,4 @@
-import type { Document } from '@langchain/core/documents';
-import type { VectorStore } from '@langchain/core/vectorstores';
+import type { PineconeStoreParams } from '@langchain/pinecone';
 import { PineconeStore } from '@langchain/pinecone';
 import { Pinecone } from '@pinecone-database/pinecone';
 import type {
@@ -12,7 +11,6 @@ import type {
 	NodeParameterValueType,
 } from 'n8n-workflow';
 import { jsonParse, NodeOperationError } from 'n8n-workflow';
-import { assertPineconeIndexAcceptsVectors, getPineconeVectorStore } from '../shared/pinecone';
 import { getUserScopedSlot } from '../shared/userScoped';
 import { createVectorStoreNode, metadataFilterField } from '@n8n/ai-utilities';
 import {
@@ -106,7 +104,7 @@ async function deleteDocuments(
 	return null;
 }
 
-export class ChatHubVectorStorePinecone extends createVectorStoreNode<VectorStore>({
+export class ChatHubVectorStorePinecone extends createVectorStoreNode<PineconeStore>({
 	meta: {
 		displayName: 'ChatHub Pinecone Vector Store',
 		name: 'chatHubVectorStorePinecone',
@@ -134,40 +132,31 @@ export class ChatHubVectorStorePinecone extends createVectorStoreNode<VectorStor
 	retrieveFields,
 	loadFields: retrieveFields,
 	insertFields,
-	// Document indexes with integrated embedding need the query text
-	searchByText: true,
 	async getVectorStoreClient(context, filter, embeddings, itemIndex) {
 		const credentials = await context.getCredentials<ChatHubVectorStorePineconeApiCredentials>(
 			'chatHubVectorStorePineconeApi',
 		);
 		const namespaceName = getUserScopedSlot(context, credentials.namespacePrefix, itemIndex);
 
-		const store = await getPineconeVectorStore(
-			{
-				context,
-				credentialType: 'chatHubVectorStorePineconeApi',
-				apiKey: credentials.apiKey,
-			},
-			embeddings,
-			{
-				indexName: credentials.pineconeIndex,
-				namespace: namespaceName,
-				filter,
-			},
-		);
+		const client = new Pinecone({ apiKey: credentials.apiKey });
+		const pineconeIndex = client.Index(credentials.pineconeIndex);
 
-		// Both entry points filter, because a document index with integrated embedding searches by
-		// text only. The filter is idempotent, so a text search that delegates to the vector search is fine
-		const sanitize = (results: Array<[Document, number]>): Array<[Document, number]> =>
-			results.map(([doc, score]) => [
+		const config: PineconeStoreParams = {
+			namespace: namespaceName,
+			pineconeIndex,
+			filter,
+		};
+
+		const store = await PineconeStore.fromExistingIndex(embeddings, config);
+
+		const originalSearch = store.similaritySearchVectorWithScore.bind(store);
+		store.similaritySearchVectorWithScore = async (...args) => {
+			const results = await originalSearch(...args);
+			return results.map(([doc, score]) => [
 				{ ...doc, metadata: filterChatHubMetadata(doc.metadata, CHAT_HUB_RETRIEVE_METADATA_KEYS) },
 				score,
 			]);
-		const vectorSearch = store.similaritySearchVectorWithScore.bind(store);
-		store.similaritySearchVectorWithScore = async (...args) =>
-			sanitize(await vectorSearch(...args));
-		const textSearch = store.similaritySearchWithScore.bind(store);
-		store.similaritySearchWithScore = async (...args) => sanitize(await textSearch(...args));
+		};
 
 		return store;
 	},
@@ -191,14 +180,6 @@ export class ChatHubVectorStorePinecone extends createVectorStoreNode<VectorStor
 			);
 		}
 
-		await assertPineconeIndexAcceptsVectors(
-			{
-				context,
-				credentialType: 'chatHubVectorStorePineconeApi',
-				apiKey: credentials.apiKey,
-			},
-			credentials.pineconeIndex,
-		);
 		const pineconeIndex = client.Index(credentials.pineconeIndex);
 
 		await PineconeStore.fromDocuments(filterChatHubInsertDocuments(documents), embeddings, {

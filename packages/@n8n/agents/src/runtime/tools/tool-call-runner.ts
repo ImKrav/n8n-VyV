@@ -4,10 +4,9 @@ import type { JSONSchema7 } from 'json-schema';
 import {
 	executeTool,
 	isSuspendedToolResult,
-	resolveToolCallTarget,
+	resolveToolForCall,
 	type SuspendedToolResult,
 } from './tool-adapter';
-import { CALL_TOOL_TOOL_NAME, FIND_TOOLS_TOOL_NAME } from './tool-catalog';
 import {
 	guardToolErrorForModel,
 	guardToolMessageForModel,
@@ -99,25 +98,13 @@ export class ToolCallRunner {
 	 * error tool-result message to the list so the LLM can self-correct, and returns
 	 * `{ outcome: 'error' }` — never re-throws.
 	 */
-	async processToolCall(callParams: ProcessToolCallParams): Promise<ToolCallOutcome> {
-		const { toolName, toolMap, list, toolCallId, resumeData } = callParams;
-		// A tool from the tool catalog called by its own name runs as if it came through
-		// call_tool. Skills and tool results name tool catalog tools directly, and some
-		// models then call them by that name. Invalid input returns the schema.
-		const target = resolveToolCallTarget(toolMap, toolName, callParams.input);
+	async processToolCall(params: ProcessToolCallParams): Promise<ToolCallOutcome> {
+		const { toolName, toolMap, list, toolCallId, resumeData } = params;
+		const builtTool = resolveToolForCall(toolMap, toolName, params.input);
 
-		if (!target) {
-			const hint = toolMap.has(CALL_TOOL_TOOL_NAME)
-				? ` Find the right name with ${FIND_TOOLS_TOOL_NAME} (query), then run it with ${CALL_TOOL_TOOL_NAME}.`
-				: '';
-			return await this.toolError(callParams, new Error(`Tool ${toolName} not found.${hint}`));
+		if (!builtTool) {
+			return await this.toolError(params, new Error(`Tool ${toolName} not found`));
 		}
-		// A dispatcher (the tool catalog's call_tool) hands the call to the tool it
-		// names. That tool's schema, approval, and suspension then apply.
-		const builtTool = target.tool;
-		const params: ProcessToolCallParams = target.dispatchedBy
-			? { ...callParams, input: target.input as JSONValue }
-			: callParams;
 
 		// Already settled by the AI SDK (e.g. provider-executed tools): emit the
 		// lifecycle end and skip re-execution.
@@ -139,15 +126,14 @@ export class ToolCallRunner {
 			incrementToolCallCount(params.executionCounter);
 		}
 
-		const validation = await this.validateToolInput(params, builtTool, !!target.dispatchedBy);
+		const validation = await this.validateToolInput(params, builtTool);
 		if (!validation.ok) return validation.outcome;
 		const input = validation.input;
 
 		const guardrails = GuardrailRunner.from(params.guardrails);
-		// Guardrails check the tool that runs, so a dispatched call reports that tool, not call_tool.
 		const guardCtx = guardrails?.toolCallContext({
 			toolCallId,
-			toolName: builtTool.name,
+			toolName,
 			input,
 			runId: params.runId,
 		});
@@ -379,21 +365,13 @@ export class ToolCallRunner {
 	private async validateToolInput(
 		params: ProcessToolCallParams,
 		builtTool: BuiltTool,
-		dispatched: boolean,
 	): Promise<{ ok: true; input: JSONValue } | { ok: false; outcome: ToolCallOutcome }> {
 		if (!builtTool.inputSchema) return { ok: true, input: params.input };
 		const result = await parseWithSchema(builtTool.inputSchema, params.input);
 		if (!result.success) {
 			const reason = result.schemaInvalid
 				? `Tool ${params.toolName} has an input schema that could not be compiled: ${result.error}`
-				: !dispatched && params.toolName === builtTool.name
-					? `Invalid tool input: ${result.error}`
-					: // Dispatched calls carry no schema in the request, so return it to retry with.
-						`Invalid arguments for ${builtTool.name}: ${result.error}\nInput schema: ${JSON.stringify(
-							isZodSchema(builtTool.inputSchema)
-								? zodSchemaToJsonSchema(builtTool.inputSchema)
-								: builtTool.inputSchema,
-						)}`;
+				: `Invalid tool input: ${result.error}`;
 			return { ok: false, outcome: await this.toolError(params, new Error(reason)) };
 		}
 		return { ok: true, input: result.data as JSONValue };
@@ -408,6 +386,7 @@ export class ToolCallRunner {
 	): Promise<unknown> {
 		const {
 			toolCallId,
+			toolName,
 			runId,
 			persistence,
 			resumeData,
@@ -419,10 +398,9 @@ export class ToolCallRunner {
 			continuation,
 			resumeSchema,
 		} = params;
-		// Name the span after the tool that runs, so a call_tool dispatch shows the real tool.
 		return await this.telemetry.withToolSpan(
 			toolCallId,
-			builtTool.name,
+			toolName,
 			input,
 			resolvedTelemetry,
 			async () =>

@@ -1,6 +1,5 @@
 import type { INode } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { BaseError } from '@n8n/errors';
+import { BaseError, NodeOperationError } from 'n8n-workflow';
 
 import {
 	MODEL_OUTPUT_PARSER_ERROR_MESSAGE,

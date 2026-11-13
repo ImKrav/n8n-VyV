@@ -151,11 +151,7 @@ describe('components', () => {
 					});
 					const button = wrapper.container.querySelector('button');
 					expect(button?.className).toContain('loading');
-					const spinner = wrapper.container.querySelector('n8n-spinner-stub');
-					expect(spinner).toBeInTheDocument();
-					expect(spinner).toHaveAttribute('type', 'grid');
-					expect(spinner).toHaveAttribute('size', 'medium');
-					expect(spinner).toHaveAttribute('aria-hidden', 'true');
+					expect(wrapper.container.querySelector('n8n-icon-stub')).toBeInTheDocument();
 				});
 
 				it('should be disabled while loading', async () => {

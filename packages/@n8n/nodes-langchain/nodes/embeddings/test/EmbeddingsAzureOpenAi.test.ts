@@ -363,8 +363,7 @@ describe('AzureOpenAIEmbeddings', () => {
 				});
 			});
 
-			// An empty key, not undefined: undefined makes LangChain read AZURE_OPENAI_API_KEY
-			it('should pass a token provider to a classic deployment, and an empty API key', async () => {
+			it('should pass a token provider to a classic deployment, and no API key', async () => {
 				const mockContext = setupMockContext();
 				mockContext.getCredentials.mockResolvedValue({
 					...entraCredential,
@@ -378,7 +377,7 @@ describe('AzureOpenAIEmbeddings', () => {
 				expect(MockedAzureOpenAIEmbeddings).toHaveBeenCalledWith(
 					expect.objectContaining({
 						azureADTokenProvider: expect.any(Function),
-						azureOpenAIApiKey: '',
+						azureOpenAIApiKey: undefined,
 						azureOpenAIBasePath: 'https://test-resource-name.openai.azure.com/openai/deployments',
 					}),
 				);

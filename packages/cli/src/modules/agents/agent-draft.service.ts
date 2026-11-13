@@ -13,7 +13,7 @@ import type {
 	PersistAgentDraftOptions,
 	PersistedAgentDraft,
 } from './agent-draft.contracts';
-import { AgentResponseMapper } from './agent-response.mapper';
+import { AgentRunnableStateService } from './agent-runnable-state.service';
 import { AgentsService, type AgentCreationResult } from './agents.service';
 import { AgentsSettingsService } from './agents-settings.service';
 
@@ -23,7 +23,7 @@ export class AgentDraftService {
 		private readonly settings: AgentsSettingsService,
 		private readonly agents: AgentsService,
 		private readonly defaultModel: AgentDefaultModelResolverService,
-		private readonly agentResponseMapper: AgentResponseMapper,
+		private readonly runnableState: AgentRunnableStateService,
 	) {}
 
 	async createDraft(
@@ -67,13 +67,14 @@ export class AgentDraftService {
 		} else {
 			creationResult = await this.createPendingDraft(user, projectId, options);
 		}
-		const { agent, adopted } = creationResult;
+		const { agent, ...creationState } = creationResult;
 		return {
 			id: agent.id,
 			name: agent.name,
 			getState: async () => ({
-				...(await this.agentResponseMapper.toAgentDto(agent, projectId, user)),
-				adopted,
+				...(await this.runnableState.addRunnableState(agent, projectId, user)),
+				...creationState,
+				projectId,
 			}),
 		};
 	}

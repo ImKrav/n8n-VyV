@@ -11,7 +11,7 @@ const ROUNDS = 3;
 test.describe(
 	'Instance-AI Memory: Parallel Workflow Builds',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('heap returns to baseline after parallel build rounds', async ({

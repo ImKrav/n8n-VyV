@@ -21,7 +21,6 @@ import { AgentMessageQueueService } from './agent-message-queue.service';
 import { AgentMessageSteeringService } from './agent-message-steering.service';
 import type { AgentExecutionStreamChunk, SteeredMessageEvent } from './types/agent-steering';
 import type { AgentTurnFinalizeOutcome, FormattedTurnError } from './types/agent-turn-outcome';
-import { AgentSandboxFilesService, usedWorkspace } from './agent-sandbox-files.service';
 import { AgentToolApprovalService } from './agent-tool-approval.service';
 import { EXECUTION_METADATA_KEY, type AgentExecutionAdmission } from './types/agent-queued-message';
 import {
@@ -54,8 +53,6 @@ export type AgentTurnRequest = { recording: StartExecutionParams } & (
 interface ExecuteTurnConfig {
 	admittedExecution?: AgentExecutionAdmission;
 	onAdmitted?: () => Promise<void>;
-	/** Runs when the agent runtime starts. An abort before it means the agent did not run. */
-	onRuntimeStarted?: () => void;
 	agentInstance: RuntimeAgent;
 	toolRegistry: ToolRegistry;
 	mcpServerAttributions: Map<string, string>;
@@ -133,7 +130,6 @@ export class AgentTurnExecutionService {
 		private readonly steering: AgentMessageSteeringService,
 		private readonly toolApprovalService: AgentToolApprovalService,
 		private readonly knowledgeUsageTracker: AgentKnowledgeUsageTracker,
-		private readonly sandboxFiles: AgentSandboxFilesService,
 	) {}
 
 	async getSessionMode(threadId: string): Promise<AgentSessionMode> {
@@ -156,9 +152,6 @@ export class AgentTurnExecutionService {
 			config.backgroundJobSignal,
 			config.admittedExecution?.startedAt,
 		);
-		const { agentId, threadId } = config.context;
-		const activeRun = { agentId, getWorkspace: () => config.agentInstance.getWorkspace() };
-		this.sandboxFiles.trackRun(threadId, activeRun);
 		try {
 			config.onRecorderCreated?.(recorder);
 			turn = await config.prepare();
@@ -201,7 +194,6 @@ export class AgentTurnExecutionService {
 			recorder.record({ type: 'finish', finishReason: 'error' });
 			throw error;
 		} finally {
-			this.sandboxFiles.untrackRun(threadId, activeRun);
 			chatControl?.dispose();
 			if (turn && state.executionId) {
 				try {
@@ -260,7 +252,6 @@ export class AgentTurnExecutionService {
 		turn.options.abortSignal?.throwIfAborted();
 		if (turn.type === 'start') {
 			state.executionStarted = true;
-			config.onRuntimeStarted?.();
 			const started = await config.agentInstance.stream(turn.input, turn.options);
 			state.runId = started.runId;
 			return started.stream;
@@ -271,7 +262,6 @@ export class AgentTurnExecutionService {
 			...options,
 			onResumeClaimed: async () => {
 				state.executionStarted = true;
-				config.onRuntimeStarted?.();
 				recorder.recordHitlResponse(options.toolCallId, resumeData);
 				await options.onResumeClaimed?.();
 			},
@@ -380,7 +370,6 @@ export class AgentTurnExecutionService {
 		state: TurnExecutionState,
 	): Promise<void> {
 		const cancelled = await this.isCancelled(turn, recorder, state);
-		await this.syncSandboxOutputs(config, recorder);
 		await this.runBeforeFinalize(config, recorder, executionId, state, cancelled);
 		const record = recorder.getMessageRecord();
 		let hitlStatus: RecordMessageParams['hitlStatus'];
@@ -432,15 +421,6 @@ export class AgentTurnExecutionService {
 			turn.options.abortSignal?.aborted === true ||
 			(!state.receivedFinish && !recorder.suspended && recorder.getMessageRecord().error === null)
 		);
-	}
-
-	/** Store the new files of the sandbox `outputs/` before the turn ends, for each status. */
-	private async syncSandboxOutputs(config: ExecuteTurnConfig, recorder: ExecutionRecorder) {
-		if (!usedWorkspace(recorder.getMessageRecord().timeline)) return;
-		const workspace = config.agentInstance.getWorkspace();
-		if (!workspace) return;
-		const { agentId, projectId, threadId } = config.context;
-		await this.sandboxFiles.syncOutputs(workspace, { agentId, projectId, threadId });
 	}
 
 	/** Give the host the outcome of the turn before the record is final. */
@@ -682,7 +662,6 @@ export class AgentTurnExecutionService {
 				...turn.options.persistence.hostMetadata,
 				[EXECUTION_METADATA_KEY]: executionId,
 			};
-			turn.options.persistence.persistSettledSuspensions = true;
 		} else if (turn.type === 'resume') {
 			turn.options.hostMetadata = {
 				...turn.options.hostMetadata,

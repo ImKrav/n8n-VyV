@@ -4,7 +4,6 @@ import { Get, Param, Query, RestController } from '@n8n/decorators';
 import { NotFoundError } from '@n8n/errors';
 import type { Response } from 'express';
 
-import { AgentResponseMapper } from './agent-response.mapper';
 import { AgentsService } from './agents.service';
 import { parseThreadListLimit } from './utils/parse-thread-list-limit';
 
@@ -25,22 +24,15 @@ import { parseThreadListLimit } from './utils/parse-thread-list-limit';
  */
 @RestController('/agents/v2')
 export class AgentsListController {
-	constructor(
-		private readonly agentsService: AgentsService,
-		private readonly agentResponseMapper: AgentResponseMapper,
-	) {}
+	constructor(private readonly agentsService: AgentsService) {}
 
 	@Get('/')
 	async list(req: AuthenticatedRequest, res: Response, @Query query: ListAgentsQueryDto) {
-		if (query.filter?.availableInChat !== undefined) {
-			res.json(await this.agentsService.findChatReachableByUserPaginated(req.user, query));
-			return;
-		}
-		const page = await this.agentsService.findListableByUserPaginated(req.user, query);
-		res.json({
-			count: page.count,
-			data: page.data.map((agent) => this.agentResponseMapper.toAgentListItem(agent)),
-		});
+		res.json(
+			query.filter?.availableInChat === undefined
+				? await this.agentsService.findListableByUserPaginated(req.user, query)
+				: await this.agentsService.findChatReachableByUserPaginated(req.user, query),
+		);
 	}
 
 	/**

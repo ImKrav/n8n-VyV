@@ -338,8 +338,8 @@ describe('EvalThreadRestoreService', () => {
 
 		// The failed seed too: activation can throw after its triggers are registered.
 		expect(workflowService.deactivateWorkflowAsSystem.mock.calls).toEqual([
-			['wf-first', 'instance-ai-eval-rollback'],
-			['wf-second', 'instance-ai-eval-rollback'],
+			['wf-first'],
+			['wf-second'],
 		]);
 	});
 
@@ -349,8 +349,8 @@ describe('EvalThreadRestoreService', () => {
 		await service.unpublishWorkflows(['wf-first', 'wf-second']);
 
 		expect(workflowService.deactivateWorkflowAsSystem.mock.calls).toEqual([
-			['wf-first', 'instance-ai-eval-rollback'],
-			['wf-second', 'instance-ai-eval-rollback'],
+			['wf-first'],
+			['wf-second'],
 		]);
 	});
 
@@ -361,10 +361,7 @@ describe('EvalThreadRestoreService', () => {
 
 		await service.deleteWorkflows(['wf-live']);
 
-		expect(workflowService.deactivateWorkflowAsSystem).toHaveBeenCalledExactlyOnceWith(
-			'wf-live',
-			'instance-ai-eval-rollback',
-		);
+		expect(workflowService.deactivateWorkflowAsSystem).toHaveBeenCalledExactlyOnceWith('wf-live');
 		expect(workflowService.deactivateWorkflowAsSystem.mock.invocationCallOrder[0]).toBeLessThan(
 			workflowPublishedVersionRepo.getPublishedVersionId.mock.invocationCallOrder[0],
 		);

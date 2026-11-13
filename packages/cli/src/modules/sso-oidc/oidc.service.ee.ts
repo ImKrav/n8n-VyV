@@ -8,9 +8,9 @@ import {
 	isPerson,
 	isValidEmail,
 	GLOBAL_MEMBER_ROLE,
-	type Person,
 	PersonRepository,
 	SettingsRepository,
+	type User,
 	UserRepository,
 } from '@n8n/db';
 import { OnPubSubEvent } from '@n8n/decorators';
@@ -290,7 +290,7 @@ export class OidcService {
 		callbackUrl: URL,
 		storedState: string,
 		storedNonce: string,
-	): Promise<{ user: Person; idToken?: string }> {
+	): Promise<{ user: User; idToken?: string }> {
 		this.assertOidcLoginEnabled();
 		await this.loadOpenIdClient();
 		const configuration = await this.getOidcConfiguration();
@@ -385,7 +385,7 @@ export class OidcService {
 		}
 
 		const user = await this.userRepository.manager.transaction(async (trx) => {
-			const { user: newUser } = await this.personRepository.createPersonWithProject(
+			const { user: newUser } = await this.userRepository.createUserWithProject(
 				{
 					firstName: typeof userInfo.given_name === 'string' ? userInfo.given_name : undefined,
 					lastName: typeof userInfo.family_name === 'string' ? userInfo.family_name : undefined,
@@ -597,13 +597,13 @@ export class OidcService {
 	}
 
 	private async applySsoProvisioning(
-		person: Person,
+		user: User,
 		claims: Record<string, unknown>,
 		userInfo: Record<string, unknown>,
 	) {
 		if (await this.provisioningService.isExpressionMappingEnabled()) {
 			const context = buildOidcClaimsContext(claims, userInfo);
-			await this.provisioningService.provisionExpressionMappedRolesForUser(person, context);
+			await this.provisioningService.provisionExpressionMappedRolesForUser(user, context);
 			return;
 		}
 
@@ -611,9 +611,9 @@ export class OidcService {
 		const projectRoleMapping = claims[provisioningConfig.scopesProjectsRolesClaimName];
 		const instanceRole = claims[provisioningConfig.scopesInstanceRoleClaimName];
 		// Called even when the claim is missing so the configured default condition applies
-		await this.provisioningService.provisionInstanceRoleForUser(person, instanceRole);
+		await this.provisioningService.provisionInstanceRoleForUser(user, instanceRole);
 		if (projectRoleMapping) {
-			await this.provisioningService.provisionProjectRolesForUser(person.id, projectRoleMapping);
+			await this.provisioningService.provisionProjectRolesForUser(user.id, projectRoleMapping);
 		}
 	}
 
@@ -634,7 +634,7 @@ export class OidcService {
 
 	private async broadcastReloadOIDCConfigurationCommand(): Promise<void> {
 		if (this.instanceSettings.isMultiMain) {
-			const { Publisher } = await import('@n8n/backend-services');
+			const { Publisher } = await import('@/scaling/pubsub/publisher.service.js');
 			await Container.get(Publisher).publishCommand({ command: 'reload-oidc-config' });
 		}
 	}

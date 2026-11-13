@@ -91,10 +91,10 @@ const workflowSettingsStubs = {
 		template:
 			'<div role="dialog"><slot name="header" /><slot name="content" /><slot name="footer" /></div>',
 	},
-	// Stub N8nSwitch to prevent spurious update:model-value emissions in jsdom.
+	// Stub ElSwitch to prevent spurious update:model-value emissions in jsdom.
 	// userEvent.click simulates pointer movement that can trigger the switch
 	// during mouse path traversal, toggling executionTimeout and breaking save.
-	N8nSwitch: {
+	ElSwitch: {
 		props: ['modelValue', 'disabled'],
 		emits: ['update:modelValue'],
 		template:

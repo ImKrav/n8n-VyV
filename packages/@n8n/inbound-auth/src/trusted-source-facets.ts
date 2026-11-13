@@ -10,7 +10,7 @@ export type TrustedSourceFacets = {
 	surfaces: SurfaceId[];
 	identitySubject: TrustedSourceConfigLatest['identity']['subject'];
 	linkByEmail: TrustedSourceConfigLatest['identity']['linkByEmail'];
-	provisionPerson: TrustedSourceConfigLatest['identity']['provision']['person'];
+	provisionHuman: TrustedSourceConfigLatest['identity']['provision']['human'];
 	roleMappingMode: TrustedSourceConfigLatest['identity']['roleMapping']['mode'];
 };
 
@@ -20,8 +20,7 @@ export type TrustedSourceTelemetryFacets = {
 	surfaces: SurfaceId[];
 	identity_subject: TrustedSourceConfigLatest['identity']['subject'];
 	link_by_email: TrustedSourceConfigLatest['identity']['linkByEmail'];
-	provision_human: TrustedSourceConfigLatest['identity']['provision']['person'];
-	provision_person: TrustedSourceConfigLatest['identity']['provision']['person'];
+	provision_human: TrustedSourceConfigLatest['identity']['provision']['human'];
 	role_mapping_mode: TrustedSourceConfigLatest['identity']['roleMapping']['mode'];
 };
 
@@ -34,9 +33,7 @@ export function toTrustedSourceTelemetryFacets(
 		surfaces: facets.surfaces,
 		identity_subject: facets.identitySubject,
 		link_by_email: facets.linkByEmail,
-		// Deprecated key, still sent so reports built on it keep their data.
-		provision_human: facets.provisionPerson,
-		provision_person: facets.provisionPerson,
+		provision_human: facets.provisionHuman,
 		role_mapping_mode: facets.roleMappingMode,
 	};
 }
@@ -50,7 +47,7 @@ export function trustedSourceFacetsOf(config: TrustedSourceConfigLatest): Truste
 		surfaces: SurfaceIdSchema.options.filter((surface) => surfaces[surface] !== undefined),
 		identitySubject: identity.subject,
 		linkByEmail: identity.linkByEmail,
-		provisionPerson: identity.provision.person,
+		provisionHuman: identity.provision.human,
 		roleMappingMode: identity.roleMapping.mode,
 	};
 }

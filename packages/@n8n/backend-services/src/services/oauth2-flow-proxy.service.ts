@@ -1,7 +1,10 @@
 import { Service } from '@n8n/di';
 import type { Inbound } from '@n8n/inbound-auth';
-import type { N8nOAuth2FlowResult, N8nOAuth2RefreshResult } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import {
+	UnexpectedError,
+	type N8nOAuth2FlowResult,
+	type N8nOAuth2RefreshResult,
+} from 'n8n-workflow';
 
 /** What the surface knows of the callback request, carried into the verified result. */
 export type OAuth2FlowRequest = Pick<Inbound['request'], 'method' | 'url' | 'ip'>;

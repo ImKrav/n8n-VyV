@@ -2,10 +2,7 @@ operationId: getWorkflow
 tags:
   - Workflow
 summary: Retrieve a workflow
-description: |-
-  Retrieve a workflow.
-
-  Requires the `workflow:read` API key scope.
+description: Retrieve a workflow.
 x-required-scope: workflow:read
 parameters:
   - schema:

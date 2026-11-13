@@ -1,7 +1,6 @@
 import { mockInstance } from '@n8n/backend-test-utils';
 import type { GlobalConfig } from '@n8n/config';
 import type { ApiKey, User, PersonRepository } from '@n8n/db';
-import { Person } from '@n8n/db';
 import { PROJECT_EDITOR_ROLE_SLUG, PROJECT_VIEWER_ROLE_SLUG } from '@n8n/permissions';
 import type { IWorkflowBase } from 'n8n-workflow';
 import { mock } from 'vitest-mock-extended';
@@ -106,13 +105,13 @@ describe('UserManagementMailer', () => {
 		});
 
 		it('should send workflow share notifications', async () => {
-			const sharer = Object.assign(new Person(), { firstName: 'Sharer', email: 'sharer@user.com' });
+			const sharer = mock<User>({ firstName: 'Sharer', email: 'sharer@user.com' });
 			const newShareeIds = ['recipient1', 'recipient2'];
 			const workflow = mock<IWorkflowBase>({ id: 'workflow1', name: 'Test Workflow' });
 			personRepository.getEmailsByIds.mockResolvedValue([
 				{ id: 'recipient1', email: 'recipient1@user.com' },
 				{ id: 'recipient2', email: 'recipient2@user.com' },
-			]);
+			] as User[]);
 			const result = await userManagementMailer.notifyWorkflowShared({
 				sharer,
 				newShareeIds,
@@ -168,7 +167,7 @@ describe('UserManagementMailer', () => {
 		])('should name a service account that shares %s by its name', async (_, share, subject) => {
 			personRepository.getEmailsByIds.mockResolvedValue([
 				{ id: 'recipient1', email: 'recipient1@user.com' },
-			]);
+			] as User[]);
 
 			await share(mockServiceAccount());
 
@@ -176,12 +175,12 @@ describe('UserManagementMailer', () => {
 		});
 
 		it('should send credentials share notifications', async () => {
-			const sharer = Object.assign(new Person(), { firstName: 'Sharer', email: 'sharer@user.com' });
+			const sharer = mock<User>({ firstName: 'Sharer', email: 'sharer@user.com' });
 			const newShareeIds = ['recipient1', 'recipient2'];
 			personRepository.getEmailsByIds.mockResolvedValue([
 				{ id: 'recipient1', email: 'recipient1@user.com' },
 				{ id: 'recipient2', email: 'recipient2@user.com' },
-			]);
+			] as User[]);
 			const result = await userManagementMailer.notifyCredentialsShared({
 				sharer,
 				newShareeIds,
@@ -220,7 +219,7 @@ describe('UserManagementMailer', () => {
 				const workflow = mock<IWorkflowBase>({ id: 'workflow1', name: 'Test Workflow' });
 				personRepository.getEmailsByIds.mockResolvedValue([
 					{ id: 'owner-1', email: 'owner@user.com' },
-				]);
+				] as User[]);
 
 				const result = await userManagementMailer.notifyWorkflowAutodeactivated({
 					recipient,
@@ -242,14 +241,14 @@ describe('UserManagementMailer', () => {
 				label: 'Test 123',
 				apiKey: 'n8n_api_xxxxxxxaaa5',
 				userId: 'owner-1',
-				user: Object.assign(new Person(), {
+				user: mock<User>({
 					id: 'owner-1',
 					email: 'owner@example.com',
 					firstName: 'Maria',
 					lastName: 'Silva',
 				}),
 			});
-			const revoker = Object.assign(new Person(), {
+			const revoker = mock<User>({
 				firstName: 'Jan',
 				lastName: 'Ostrówka',
 				email: 'jan@acme.test',
@@ -277,13 +276,13 @@ describe('UserManagementMailer', () => {
 				label: 'Test 123',
 				apiKey: 'n8n_api_xxxxxxxaaa5',
 				userId: 'owner-1',
-				user: Object.assign(new Person(), {
+				user: mock<User>({
 					id: 'owner-1',
 					email: 'owner@example.com',
 					firstName: 'Maria',
 				}),
 			});
-			const revoker = Object.assign(new Person(), {
+			const revoker = mock<User>({
 				firstName: undefined,
 				lastName: undefined,
 				email: 'jan@acme.test',
@@ -295,51 +294,8 @@ describe('UserManagementMailer', () => {
 			expect(callBody).toContain('jan@acme.test');
 		});
 
-		it('does not send an api key revoked notification when the key owner is a service account', async () => {
-			const apiKey = mock<ApiKey>({
-				id: 'key-1',
-				label: 'Test 123',
-				apiKey: 'n8n_api_xxxxxxxaaa5',
-				userId: 'sa-1',
-				user: mockServiceAccount({ id: 'sa-1' }),
-			});
-			const revoker = Object.assign(new Person(), {
-				firstName: 'Jan',
-				lastName: 'Ostrówka',
-				email: 'jan@acme.test',
-			});
-
-			const result = await userManagementMailer.notifyApiKeyRevoked({ apiKey, revoker });
-
-			expect(result).toEqual({ emailSent: false });
-			expect(nodeMailer.sendMail).not.toHaveBeenCalled();
-		});
-
-		it('names a service account revoker by its name in the api key revoked notification', async () => {
-			const apiKey = mock<ApiKey>({
-				id: 'key-1',
-				label: 'Test 123',
-				apiKey: 'n8n_api_xxxxxxxaaa5',
-				userId: 'owner-1',
-				user: Object.assign(new Person(), {
-					id: 'owner-1',
-					email: 'owner@example.com',
-					firstName: 'Maria',
-				}),
-			});
-
-			const result = await userManagementMailer.notifyApiKeyRevoked({
-				apiKey,
-				revoker: mockServiceAccount({ id: 'sa-1' }, 'Deploy bot'),
-			});
-
-			expect(result.emailSent).toBe(true);
-			const callBody = nodeMailer.sendMail.mock.calls[0][0].body as string;
-			expect(callBody).toContain('Deploy bot');
-		});
-
 		it('should send mcp client revoked notifications', async () => {
-			const revoker = Object.assign(new Person(), {
+			const revoker = mock<User>({
 				firstName: 'Jan',
 				lastName: 'Ostrówka',
 				email: 'jan@acme.test',
@@ -365,7 +321,7 @@ describe('UserManagementMailer', () => {
 		});
 
 		it('should send project share notifications', async () => {
-			const sharer = Object.assign(new Person(), { firstName: 'Sharer', email: 'sharer@user.com' });
+			const sharer = mock<User>({ firstName: 'Sharer', email: 'sharer@user.com' });
 			const newSharees = [
 				{ userId: 'recipient1', role: PROJECT_EDITOR_ROLE_SLUG },
 				{ userId: 'recipient2', role: PROJECT_VIEWER_ROLE_SLUG },
@@ -375,11 +331,11 @@ describe('UserManagementMailer', () => {
 				{
 					id: 'recipient1',
 					email: 'recipient1@user.com',
-				},
+				} as User,
 				{
 					id: 'recipient2',
 					email: 'recipient2@user.com',
-				},
+				} as User,
 			]);
 			const result = await userManagementMailer.notifyProjectShared({
 				sharer,

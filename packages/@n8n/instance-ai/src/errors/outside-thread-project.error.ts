@@ -1,4 +1,4 @@
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 
 /**
  * Thrown when an Instance AI write targets a resource outside the thread's

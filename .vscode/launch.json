@@ -17,8 +17,7 @@
 		},
 		{
 			"name": "Attach to running n8n",
-			"preLaunchTask": "Open n8n inspector port",
-			"port": 9229,
+			"processId": "${command:PickProcess}",
 			"request": "attach",
 			"skipFiles": ["<node_internals>/**"],
 			"type": "node"

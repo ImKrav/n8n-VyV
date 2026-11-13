@@ -85,8 +85,20 @@ export class DataTableCsvImportService {
 		}
 	}
 
+	/**
+	 * Best-effort removal of the uploaded file. It runs in `finally` blocks, so it must never throw:
+	 * an error here would replace the original error of the import (e.g. a 400 FileUploadError for an
+	 * invalid fileId would surface as a 500).
+	 */
 	async cleanupFile(fileId: string) {
-		await this.fileCleanupService.deleteFile(fileId);
+		try {
+			await this.fileCleanupService.deleteFile(fileId);
+		} catch (error) {
+			this.logger.warn('Could not clean up uploaded CSV file', {
+				fileId,
+				error: error instanceof Error ? error.message : String(error),
+			});
+		}
 	}
 
 	private matchColumns(

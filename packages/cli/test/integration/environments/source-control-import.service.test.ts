@@ -17,7 +17,6 @@ import {
 	type Project,
 	type TagEntity,
 	TagRepository,
-	type Person,
 	type User,
 	VariablesRepository,
 	type WorkflowEntity,
@@ -265,10 +264,10 @@ describe('SourceControlImportService', () => {
 		const globMock = fastGlob.default as unknown as Mock<(...args: string[]) => Promise<string[]>>;
 		const fsReadFile = vi.mocked(readFile);
 
-		let globalAdmin: Person;
-		let globalOwner: Person;
-		let globalMember: Person;
-		let teamAdmin: Person;
+		let globalAdmin: User;
+		let globalOwner: User;
+		let globalMember: User;
+		let teamAdmin: User;
 		let team1: Project;
 
 		beforeEach(async () => {
@@ -392,8 +391,8 @@ describe('SourceControlImportService', () => {
 
 	describe('getLocalVersionIdsFromDb()', () => {
 		let instanceOwner: User;
-		let projectAdmin: Person;
-		let projectMember: Person;
+		let projectAdmin: User;
+		let projectMember: User;
 		let teamProjectA: Project;
 		let teamProjectB: Project;
 		let teamAWorkflows: WorkflowEntity[];
@@ -542,10 +541,10 @@ describe('SourceControlImportService', () => {
 		const globMock = fastGlob.default as unknown as Mock<(...args: string[]) => Promise<string[]>>;
 		const fsReadFile = vi.mocked(readFile);
 
-		let globalAdmin: Person;
-		let globalOwner: Person;
-		let globalMember: Person;
-		let teamAdmin: Person;
+		let globalAdmin: User;
+		let globalOwner: User;
+		let globalMember: User;
+		let teamAdmin: User;
 		let team1: Project;
 
 		beforeEach(async () => {
@@ -662,8 +661,8 @@ describe('SourceControlImportService', () => {
 
 	describe('getLocalCredentialsFromDb', () => {
 		let instanceOwner: User;
-		let projectAdmin: Person;
-		let projectMember: Person;
+		let projectAdmin: User;
+		let projectMember: User;
 		let teamProjectA: Project;
 		let teamProjectB: Project;
 		let teamACredentials: CredentialsEntity[];
@@ -897,8 +896,8 @@ describe('SourceControlImportService', () => {
 
 	describe('getLocalFoldersAndMappingsFromDb()', () => {
 		let instanceOwner: User;
-		let projectAdmin: Person;
-		let projectMember: Person;
+		let projectAdmin: User;
+		let projectMember: User;
 		let teamProjectA: Project;
 		let teamProjectB: Project;
 		let foldersProjectA: Folder[];
@@ -1027,10 +1026,10 @@ describe('SourceControlImportService', () => {
 		const globMock = fastGlob.default as unknown as Mock<(...args: string[]) => Promise<string[]>>;
 		const fsReadFile = vi.mocked(readFile);
 
-		let globalAdmin: Person;
-		let globalOwner: Person;
-		let globalMember: Person;
-		let teamAdmin: Person;
+		let globalAdmin: User;
+		let globalOwner: User;
+		let globalMember: User;
+		let teamAdmin: User;
 		let team1: Project;
 		let team2: Project;
 		let workflowTeam1: WorkflowEntity[];
@@ -1154,8 +1153,8 @@ describe('SourceControlImportService', () => {
 
 	describe('getLocalTagsAndMappingsFromDb()', () => {
 		let instanceOwner: User;
-		let projectAdmin: Person;
-		let projectMember: Person;
+		let projectAdmin: User;
+		let projectMember: User;
 		let teamProjectA: Project;
 		let teamProjectB: Project;
 		let tags: TagEntity[];
@@ -2055,14 +2054,14 @@ describe('SourceControlImportService', () => {
 
 		describe('workflow history', () => {
 			it('should create workflow history for new workflow on import', async () => {
-				const importingPerson = (await getGlobalOwner()) as Person;
+				const importingUser = await getGlobalOwner();
 
 				const workflow = makeWorkflowImport();
 				const file = putWorkflowFile(workflow.id, workflow);
 
 				await service.importWorkflowFromWorkFolder(
 					[mock<SourceControlledFile>({ id: workflow.id, file })],
-					importingPerson.id,
+					importingUser.id,
 				);
 
 				// Verify workflow history was created
@@ -2074,12 +2073,12 @@ describe('SourceControlImportService', () => {
 				expect(historyRecord?.nodes).toEqual(workflow.nodes);
 				expect(historyRecord?.connections).toEqual(workflow.connections);
 				expect(historyRecord?.authors).toBe(
-					`import by ${importingPerson.firstName} ${importingPerson.lastName}`,
+					`import by ${importingUser.firstName} ${importingUser.lastName}`,
 				);
 			});
 
 			it('should update workflow history when versionId exists but nodes changed', async () => {
-				const importingPerson = (await getGlobalOwner()) as Person;
+				const importingUser = await getGlobalOwner();
 				const workflowId = nanoid();
 				const versionId = nanoid();
 
@@ -2103,7 +2102,7 @@ describe('SourceControlImportService', () => {
 						nodes: initialNodes,
 						connections: {},
 					},
-					importingPerson,
+					importingUser,
 				);
 
 				// Import with updated nodes
@@ -2124,7 +2123,7 @@ describe('SourceControlImportService', () => {
 
 				await service.importWorkflowFromWorkFolder(
 					[mock<SourceControlledFile>({ id: workflowId, file })],
-					importingPerson.id,
+					importingUser.id,
 				);
 
 				// Verify workflow history was updated
@@ -2135,7 +2134,7 @@ describe('SourceControlImportService', () => {
 				expect(historyRecord).toBeTruthy();
 				expect(historyRecord?.nodes).toEqual(updatedNodes);
 				expect(historyRecord?.authors).toBe(
-					`import by ${importingPerson.firstName} ${importingPerson.lastName}`,
+					`import by ${importingUser.firstName} ${importingUser.lastName}`,
 				);
 			});
 

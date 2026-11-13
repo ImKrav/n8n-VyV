@@ -35,35 +35,20 @@ export interface ProviderQuirks {
 	thinkingToProviderOptions?: (
 		thinking: ThinkingConfig,
 		modelId: string,
-		endpoint: ThinkingEndpoint,
 	) => Record<string, Record<string, unknown>>;
 }
 
-/** Where the model's requests go, for options that only the provider's own API accepts. */
-export interface ThinkingEndpoint {
-	/** The model calls the provider's own API, not a proxy, gateway, or custom base URL. */
-	isOfficialApi: boolean;
-}
-
-/**
- * Shared Anthropic Messages thinking mapping (also used by Vertex Anthropic).
- * `blockBinding` applies to the adaptive shape only: the budget shape does not accept it.
- */
+/** Shared Anthropic Messages thinking mapping (also used by Vertex Anthropic). */
 function anthropicThinkingToProviderOptions(
 	thinking: ThinkingConfig,
 	modelId: string,
-	blockBinding?: { prefixMismatchBehavior: 'drop_block' },
 ): Record<string, Record<string, unknown>> {
 	const cfg = thinking as AnthropicThinkingConfig;
 	const adaptive = cfg.mode === 'adaptive' ? cfg : undefined;
 	if (anthropicUsesAdaptiveThinking(modelId)) {
 		return {
 			anthropic: {
-				thinking: {
-					type: 'adaptive',
-					display: adaptive?.display ?? 'summarized',
-					...(blockBinding !== undefined ? { blockBinding } : {}),
-				},
+				thinking: { type: 'adaptive', display: adaptive?.display ?? 'summarized' },
 				effort: adaptive?.effort ?? 'medium',
 			},
 		};
@@ -137,25 +122,14 @@ export const PROVIDER_QUIRKS: Partial<Record<ProviderId, ProviderQuirks>> = {
 		// QUIRK(anthropic): the two thinking APIs are mutually exclusive — an
 		// adaptive model rejects `type: 'enabled'` and vice versa — so the model
 		// decides the shape and the config only fills in its details.
-		// QUIRK(anthropic): Anthropic binds signed thinking to the content before
-		// it. The runtime rewrites that content on purpose (mid-run observation,
-		// deferred tool and skill instructions), so ask Anthropic to drop stale
-		// thinking blocks instead of rejecting the request. Only Anthropic's own
-		// API accepts `block_binding`: proxies that forward to Vertex reject it.
-		thinkingToProviderOptions: (thinking, modelId, { isOfficialApi }) =>
-			anthropicThinkingToProviderOptions(
-				thinking,
-				modelId,
-				isOfficialApi ? { prefixMismatchBehavior: 'drop_block' } : undefined,
-			),
+		thinkingToProviderOptions: anthropicThinkingToProviderOptions,
 	},
 	// Vertex Claude uses AnthropicLanguageModel under the hood — providerOptions
 	// stay under the `anthropic` namespace even though the model id prefix differs.
 	'google-vertex-anthropic': {
 		providerOptionsNamespace: 'anthropic',
 		toolProviderOptionDefaults: { eagerInputStreaming: false },
-		thinkingToProviderOptions: (thinking, modelId) =>
-			anthropicThinkingToProviderOptions(thinking, modelId),
+		thinkingToProviderOptions: anthropicThinkingToProviderOptions,
 	},
 	openai: {
 		// QUIRK(openai): the Responses API pairs each function_call item with a

@@ -1,4 +1,4 @@
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 import { createServer } from 'node:http';
 
 /** Methods that Node's HTTP listener replaces on every inbound socket. */

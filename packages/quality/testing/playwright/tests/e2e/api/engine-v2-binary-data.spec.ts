@@ -126,7 +126,7 @@ const fileReceivedOnControlPlane: Partial<IWorkflowBase> = {
 test.describe(
 	'Engine v2 binary data across the planes',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('serves a file that a node on the data plane stored @engine:v2', async ({ api }) => {

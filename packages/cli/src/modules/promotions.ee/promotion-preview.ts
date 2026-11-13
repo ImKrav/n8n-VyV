@@ -232,10 +232,14 @@ function applyOperationRules(
 	{
 		direction,
 		before,
+		after,
+		desired,
 		planned,
 	}: {
 		direction: PromotionDirection;
 		before: SideResource | undefined;
+		after: SideResource | undefined;
+		desired: SideIndex;
 		planned: ReadonlyMap<string, PlannedChange> | null;
 	},
 ): PromotionResource | null {
@@ -255,7 +259,18 @@ function applyOperationRules(
 		if (type !== 'workflow') return unchanged();
 	}
 
-	if (direction === 'promote') return resource;
+	if (direction === 'promote') {
+		// Promote writes a folder only together with a workflow inside it.
+		if (
+			type === 'folder' &&
+			change !== 'unchanged' &&
+			after &&
+			workflowsInside(desired, after.target).length === 0
+		) {
+			return null;
+		}
+		return resource;
+	}
 
 	// The import plan decides for projects, folders, tags, data tables and bound credentials. A tag
 	// can exist here under another name or id, so the files of the two sides do not tell. A folder
@@ -280,12 +295,6 @@ function applyOperationRules(
 		...(previousName !== undefined ? { previousName } : {}),
 		...(plannedChange.previousId !== undefined ? { previousId: plannedChange.previousId } : {}),
 	};
-}
-
-/** A workflow, or a project or folder that the operation adds or changes. */
-function isSelectable({ type, change }: PromotionResource): boolean {
-	if (type === 'workflow') return true;
-	return (type === 'project' || type === 'folder') && (change === 'added' || change === 'modified');
 }
 
 function compareResource(
@@ -420,9 +429,10 @@ export function buildPreview({
 		const current = after ?? before;
 		if (!current) continue;
 		const compared = compareResource(current, before, after);
-		const resource = operation ? applyOperationRules(compared, { ...operation, before }) : compared;
-		if (resource)
-			all.set(key, operation ? { ...resource, selectable: isSelectable(resource) } : resource);
+		const resource = operation
+			? applyOperationRules(compared, { ...operation, before, after, desired: desiredIndex })
+			: compared;
+		if (resource) all.set(key, resource);
 	}
 
 	const { links, missingWorkflows } = dependencyLinks(desired, desiredIndex, projectIds);

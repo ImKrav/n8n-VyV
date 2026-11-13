@@ -5,7 +5,7 @@ const WORKFLOW_FILE = 'Subworkflow-debugging-execute-workflow.json';
 test.describe(
 	'Subworkflow debugging',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test.beforeEach(async ({ n8n }) => {

@@ -1,7 +1,8 @@
 import type { SerializedCredential, SerializedVariable } from '@n8n/api-types';
+import { LicenseState } from '@n8n/backend-common';
 import { Service } from '@n8n/di';
 
-import { UnexpectedError } from '@n8n/errors';
+import { ForbiddenError, UnexpectedError } from '@n8n/errors';
 
 import {
 	credentialUpdateScope,
@@ -11,6 +12,7 @@ import type {
 	CredentialBindingRequest,
 	CredentialUpdateScope,
 } from '../entities/credential/credential.types';
+import { removesUnpackagedWorkflows } from '../entities/folder/folder-conflict-policy';
 import type { DataTableImportRequest } from '../entities/data-table/data-table.types';
 import { ProjectImporter, projectRefusalError } from '../entities/project/project-importer';
 import type { ProjectImportPlan } from '../entities/project/project-import.types';
@@ -33,7 +35,7 @@ import type {
 	PackageImportSource,
 } from '../n8n-packages.types';
 import { mergeBindings } from '../n8n-packages.types';
-import { assertPackageImportApiKeyScopes, assertProjectWritesAllowed } from './import-gates';
+import { assertPackageImportApiKeyScopes } from './import-gates';
 import { toImportBlockedError } from './import-blocked.error';
 import {
 	needsBundledCredentialFiles,
@@ -82,6 +84,7 @@ export class ProjectPackageImporter {
 		private readonly projectImporter: ProjectImporter,
 		private readonly importOrchestrator: ImportOrchestrator,
 		private readonly importPreflight: PackageImportPreflight,
+		private readonly licenseState: LicenseState,
 	) {}
 
 	async import(
@@ -125,7 +128,6 @@ export class ProjectPackageImporter {
 			projects,
 			request.projectConflictPolicy,
 		);
-		assertProjectWritesAllowed(request.apiKeyScopes, projectPlan.items);
 		// A refused project decides the whole import, so report it before reading any project's
 		// contents — planning work that is certain to be discarded only delays the same failure.
 		if (projectPlan.conflicts.length > 0) {
@@ -345,7 +347,7 @@ export class ProjectPackageImporter {
 		importSource: PackageImportSource,
 	): Promise<ImportOrchestrationInput> {
 		const basePrefix = `${project.target}/`;
-		const allFolders = await this.packageParser.getFolders(reader, basePrefix);
+		const folders = await this.packageParser.getFolders(reader, basePrefix);
 		const allWorkflows = await this.packageParser.getWorkflows(reader, basePrefix);
 		const agents =
 			!request.selection && manifest.agents?.length
@@ -358,12 +360,6 @@ export class ProjectPackageImporter {
 					request.selection!.selectedWorkflowIds.includes(workflow.sourceWorkflowId),
 				)
 			: allWorkflows;
-		const selectedFolderIds = request.selection
-			? foldersInSelection(allFolders, workflows, request.selection.selectedFolderIds ?? [])
-			: undefined;
-		const folders = selectedFolderIds
-			? allFolders.filter(({ sourceFolderId }) => selectedFolderIds.has(sourceFolderId))
-			: allFolders;
 
 		// Requirements and bindings are both scoped to this project's workflows so another project's
 		// binding is not seen as an orphan here (which would block the whole multi-project import).
@@ -440,6 +436,7 @@ export class ProjectPackageImporter {
 			),
 			explicitDeleteWorkflowIds: deletesForProject(request.selection, project.id),
 			checkRootPlacement: true,
+			...(request.selection ? { movableFolderIds: foldersHolding(folders, workflows) } : {}),
 		};
 	}
 
@@ -447,8 +444,28 @@ export class ProjectPackageImporter {
 		request: ResolvedImportRequest,
 		manifest: PackageManifest,
 	): void {
+		// A project package can create new projects or update matched ones (by source id), so require both —
+		// mirroring the folder create+update assertion below.
+		assertPackageImportApiKeyScopes(request.apiKeyScopes, ['project:create', 'project:update']);
+
+		if ((manifest.folders?.length ?? 0) > 0) {
+			if (!this.licenseState.isLicensed('feat:folders')) {
+				throw new ForbiddenError(
+					'Your license does not allow folders. Importing a package with folders requires a license that supports folders.',
+				);
+			}
+			assertPackageImportApiKeyScopes(request.apiKeyScopes, ['folder:create', 'folder:update']);
+		}
+
 		if ((manifest.workflows?.length ?? 0) > 0) {
 			assertPackageImportApiKeyScopes(request.apiKeyScopes, ['workflow:import']);
+		}
+
+		// `overwrite` archives workflows the package omits, so require the scope up front rather than
+		// discovering mid-import that the caller may not remove what reconciliation demands.
+		if (removesUnpackagedWorkflows(request.folderConflictPolicy)) {
+			// Folders it empties go too, so it needs both removal scopes up front.
+			assertPackageImportApiKeyScopes(request.apiKeyScopes, ['workflow:delete', 'folder:delete']);
 		}
 
 		// Selection imports preserve folders, so explicit deletions need only workflow:delete.
@@ -466,28 +483,24 @@ function deletesForProject(
 	return selection.deletedWorkflowIds;
 }
 
-/**
- * The folders that a selection creates, moves or renames: the selected folders and the folders
- * that hold a selected workflow, with every folder above them. Other folders stay as they are.
- */
-function foldersInSelection(
+/** The folders that hold a selected workflow, with every folder above them. */
+function foldersHolding(
 	folders: Array<{ sourceFolderId: string; parentFolderId: string | null }>,
 	workflows: Array<{ parentFolderId: string | null }>,
-	selectedFolderIds: string[],
 ): Set<string> {
 	const parentOf = new Map(
 		folders.map(({ sourceFolderId, parentFolderId }) => [sourceFolderId, parentFolderId]),
 	);
-	const result = new Set<string>();
-	for (const start of [...selectedFolderIds, ...workflows.map((w) => w.parentFolderId)]) {
+	const holding = new Set<string>();
+	for (const workflow of workflows) {
 		// A visited folder ends the walk, which also stops a cycle.
 		for (
-			let current = start;
-			current !== null && !result.has(current);
+			let current = workflow.parentFolderId;
+			current !== null && !holding.has(current);
 			current = parentOf.get(current) ?? null
 		) {
-			result.add(current);
+			holding.add(current);
 		}
 	}
-	return result;
+	return holding;
 }

@@ -20,14 +20,12 @@ import { jsonParse } from 'n8n-workflow';
 import { ZodError, type ZodType, type ZodTypeDef } from 'zod';
 
 import { BadRequestError, UserError } from '@n8n/errors';
-import { CredentialTypes } from '@/credential-types';
 import { NodeTypes } from '@/node-types';
 import * as WorkflowHelpers from '@/workflow-helpers';
 
 import { deriveParentFolderId, foldersInScope, workflowsInScope } from './package-layout';
 import { toImportBlockedError } from './import-blocked.error';
 import { agentBodyIssues } from '../entities/agent/agent-body-issues';
-import { dropUnconfirmedCredentialData } from '../entities/credential/credential-display-controllers';
 import type { PreparedAgent } from '../entities/agent/agent-import.types';
 import type { PreparedFolder } from '../entities/folder/folder-import.types';
 import type { PreparedProject } from '../entities/project/project-import.types';
@@ -62,7 +60,6 @@ export class N8nPackageParser {
 		private readonly logger: Logger,
 		private readonly nodeTypes: NodeTypes,
 		private readonly workflowSerializer: WorkflowSerializer,
-		private readonly credentialTypes: CredentialTypes,
 	) {}
 
 	async getManifest(reader: PackageReader): Promise<PackageManifest> {
@@ -214,7 +211,6 @@ export class N8nPackageParser {
 			name: agent.name,
 			config: agent.config,
 			availableInMCP: agent.availableInMCP,
-			isArchived: agent.isArchived ?? false,
 			metadata,
 			tools: agent.tools,
 			tasks: agent.tasks,
@@ -502,20 +498,7 @@ export class N8nPackageParser {
 			);
 		}
 
-		return this.dropUnconfirmedPlainValues(credential, path);
-	}
-
-	private dropUnconfirmedPlainValues(
-		credential: SerializedCredential,
-		path: string,
-	): SerializedCredential {
-		const result = dropUnconfirmedCredentialData(credential, this.credentialTypes);
-		if (result.dropped.length > 0) {
-			this.logger.warn(
-				`Package credential file at ${path}: dropped values of ${result.dropped.join(', ')}. Only expressions and values that control which fields show can travel in a package.`,
-			);
-		}
-		return result.credential;
+		return credential;
 	}
 
 	private async readJson<T = unknown>(

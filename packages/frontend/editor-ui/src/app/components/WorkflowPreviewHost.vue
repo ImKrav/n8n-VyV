@@ -25,19 +25,15 @@ import {
 import { disposeNDVStore, useNDVStore } from '@/features/ndv/shared/ndv.store';
 import { canvasEventBus } from '@/features/workflows/canvas/canvas.eventBus';
 
-const props = withDefaults(
-	defineProps<{
-		/**
-		 * Synthetic document id this preview is keyed by — never `{id}@latest`,
-		 * so the preview can never collide with the editor's document store.
-		 * Construct via `createWorkflowDocumentId(workflowId, <version token>)`.
-		 */
-		documentId: WorkflowDocumentId;
-		workflow: IWorkflowDb | IWorkflowTemplate['workflow'];
-		showNodeIssues?: boolean;
-	}>(),
-	{ showNodeIssues: true },
-);
+const props = defineProps<{
+	/**
+	 * Synthetic document id this preview is keyed by — never `{id}@latest`,
+	 * so the preview can never collide with the editor's document store.
+	 * Construct via `createWorkflowDocumentId(workflowId, <version token>)`.
+	 */
+	documentId: WorkflowDocumentId;
+	workflow: IWorkflowDb | IWorkflowTemplate['workflow'];
+}>();
 
 const { normalizeWorkflowData } = useWorkflowNormalization();
 
@@ -59,7 +55,6 @@ provide(
 		askAi: false,
 		executionSuccessToasts: false,
 		executionErrorToasts: false,
-		showNodeIssues: props.showNodeIssues,
 	})),
 );
 

@@ -79,9 +79,10 @@ export class FolderImporter {
 				continue;
 			}
 
-			// Under `follow-package` a folder takes the parent and name of the package.
+			// Under `follow-package` a folder takes the parent and name of the package. A folder outside
+			// the selection stays as it is, with everything inside it.
 			const renamed = followsPackage && match.name !== folder.name;
-			if (moved || renamed) {
+			if ((moved || renamed) && (context.movableFolderIds?.has(folder.sourceFolderId) ?? true)) {
 				items.push({
 					action: 'update',
 					sourceFolderId: folder.sourceFolderId,

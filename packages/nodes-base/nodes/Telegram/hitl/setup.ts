@@ -1,6 +1,6 @@
 import { GlobalConfig } from '@n8n/config';
 import { Container } from '@n8n/di';
-import { TELEGRAM_HITL_WEBHOOK_SUFFIX } from 'n8n-core';
+import { buildResumeUrlSuffix, TELEGRAM_HITL_WEBHOOK_SUFFIX } from 'n8n-core';
 import type { IExecuteFunctions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
@@ -34,15 +34,14 @@ function isLikelyTriggerWebhook(url: string, origin: string, reverseProxyPrefix:
 
 /**
  * Derives this execution's waiting-webhook base (origin + path, without the
- * trailing `/<id>/<nodeId>`) from the signed resume URL, so the fixed HITL
- * endpoint URL always matches whatever public base n8n itself uses for
- * webhooks, regardless of reverse-proxy path prefixes. Engine v1 puts the
- * execution id in that first segment, engine v2 the step id.
+ * trailing `/<executionId>/<nodeId>`) from the signed resume URL, so the
+ * fixed HITL endpoint URL always matches whatever public base n8n itself
+ * uses for webhooks, regardless of reverse-proxy path prefixes.
  */
 function getWaitingWebhookBase(context: IExecuteFunctions): { origin: string; path: string } {
 	const signedUrl = new URL(context.getSignedResumeUrl());
-	const base = /^(.*)\/[^/]+\/[^/]+$/.exec(signedUrl.pathname);
-	if (!base) {
+	const suffix = buildResumeUrlSuffix(context.getExecutionId(), context.getNode().id);
+	if (!signedUrl.pathname.endsWith(suffix)) {
 		// Not expected to happen: getSignedResumeUrl's own URL-building convention
 		// changed underneath us. Fall back to the full path rather than guessing,
 		// but say so, since the fixed endpoint URL built from it will be wrong.
@@ -51,7 +50,10 @@ function getWaitingWebhookBase(context: IExecuteFunctions): { origin: string; pa
 		);
 		return { origin: signedUrl.origin, path: signedUrl.pathname };
 	}
-	return { origin: signedUrl.origin, path: base[1] };
+	return {
+		origin: signedUrl.origin,
+		path: signedUrl.pathname.slice(0, signedUrl.pathname.length - suffix.length),
+	};
 }
 
 /**

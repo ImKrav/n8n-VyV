@@ -1,6 +1,8 @@
-import { getN8nVersion, Logger } from '@n8n/backend-common';
+import { Logger } from '@n8n/backend-common';
 import { Service } from '@n8n/di';
 import { InstanceSettings } from 'n8n-core';
+
+import { N8N_VERSION } from '@/constants';
 
 import { InstanceVersionHistoryRepository } from './database/repositories/instance-version-history.repository';
 import type { SemVer, VersionEntry } from './instance-version-history.types';
@@ -58,8 +60,7 @@ export class InstanceVersionHistoryService {
 	// Should only be called from leader
 	private async checkAndRecordCurrentVersion(): Promise<void> {
 		const cache = await this.getCache();
-		const currentVersion = getN8nVersion();
-		const current = parseVersion(currentVersion);
+		const current = parseVersion(N8N_VERSION);
 		const newest = cache.at(-1);
 
 		if (!newest || compareVersions(newest, current) !== 0) {
@@ -73,7 +74,7 @@ export class InstanceVersionHistoryService {
 			});
 
 			this.logger.info(
-				`Recorded version change: ${newest ? formatVersion(newest) : '(none)'} -> ${currentVersion}`,
+				`Recorded version change: ${newest ? formatVersion(newest) : '(none)'} -> ${N8N_VERSION}`,
 			);
 		}
 	}

@@ -3,7 +3,7 @@ import { test, expect } from '../../../fixtures/base';
 test.describe(
 	'External Webhook Triggering',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('should create workflow via API, activate it, trigger webhook externally, and verify execution @engine:v2', async ({

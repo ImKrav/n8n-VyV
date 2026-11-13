@@ -1,6 +1,6 @@
 {
   "name": "@n8n/ai-utilities",
-  "version": "0.41.0",
+  "version": "0.40.0",
   "description": "Utilities for building AI nodes in n8n",
   "types": "dist/esm/index.d.ts",
   "module": "dist/esm/index.js",
@@ -42,9 +42,6 @@
       ],
       "gen-ai": [
         "dist/esm/gen-ai/index.d.ts"
-      ],
-      "guardrails": [
-        "dist/esm/guardrails/index.d.ts"
       ],
       "web-search": [
         "dist/esm/web-search/index.d.ts"
@@ -120,11 +117,6 @@
       "import": "./dist/esm/gen-ai/index.js",
       "require": "./dist/cjs/gen-ai/index.js"
     },
-    "./guardrails": {
-      "types": "./dist/esm/guardrails/index.d.ts",
-      "import": "./dist/esm/guardrails/index.js",
-      "require": "./dist/cjs/guardrails/index.js"
-    },
     "./web-search": {
       "types": "./dist/esm/web-search/index.d.ts",
       "import": "./dist/esm/web-search/index.js",
@@ -175,7 +167,6 @@
     "oxlint-tsgolint": "catalog:"
   },
   "dependencies": {
-    "@n8n/errors": "workspace:*",
     "zod": "catalog:",
     "zod-to-json-schema": "catalog:",
     "@langchain/core": "catalog:",

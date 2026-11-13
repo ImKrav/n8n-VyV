@@ -1,17 +1,13 @@
 import { Logger } from '@n8n/backend-common';
-import {
-	OnLeaderTakeover,
-	OnPubSubEvent,
-	OnShutdown,
-	type PubSubCommandMap,
-} from '@n8n/decorators';
+import { OnLeaderTakeover, OnPubSubEvent, OnShutdown } from '@n8n/decorators';
 import { Service } from '@n8n/di';
 import type { DistributiveOmit } from '@n8n/utils/types';
 import { InstanceSettings } from 'n8n-core';
 import { nanoid } from 'nanoid';
 
 import { ServiceUnavailableError } from '@n8n/errors';
-import { Publisher } from '@n8n/backend-services';
+import { Publisher } from '@/scaling/pubsub/publisher.service';
+import type { PubSubCommandMap } from '@/scaling/pubsub/pubsub.event-map';
 
 /**
  * How long a requesting main waits for the leader to acknowledge a leader-only

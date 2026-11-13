@@ -1,6 +1,6 @@
 import type { Logger } from '@n8n/backend-common';
 import type { GlobalConfig } from '@n8n/config';
-import type { AuthIdentity, Person } from '@n8n/db';
+import type { AuthIdentity, User } from '@n8n/db';
 import type { Mock } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 
@@ -39,9 +39,9 @@ describe('EmailChangeService', () => {
 		globalConfig,
 	);
 
-	const mockPerson = (overrides: Partial<Person> = {}) =>
+	const mockUser = (overrides: Partial<User> = {}) =>
 		Object.assign(
-			mock<Person>(),
+			mock<User>(),
 			{
 				id: 'user-1',
 				email: 'user@example.com',
@@ -62,40 +62,36 @@ describe('EmailChangeService', () => {
 
 	describe('assertMayApplyEmailChange', () => {
 		it('should pass when no guard applies', async () => {
-			await expect(service.assertMayApplyEmailChange(mockPerson())).resolves.toBeUndefined();
+			await expect(service.assertMayApplyEmailChange(mockUser())).resolves.toBeUndefined();
 		});
 
 		it('should reject an env-managed owner', async () => {
 			globalConfig.instanceSettingsLoader.ownerManagedByEnv = true;
-			const person = mockPerson({ email: 'owner@example.com' });
+			const user = mockUser({ email: 'owner@example.com' });
 
-			await expect(service.assertMayApplyEmailChange(person)).rejects.toThrow(ForbiddenError);
+			await expect(service.assertMayApplyEmailChange(user)).rejects.toThrow(ForbiddenError);
 		});
 
 		it('should reject a user with an active SSO identity', async () => {
 			userService.findSsoIdentity.mockResolvedValue(mock<AuthIdentity>({ providerType: 'ldap' }));
 			getCurrentAuthenticationMethodMock.mockReturnValue('ldap');
 
-			await expect(service.assertMayApplyEmailChange(mockPerson())).rejects.toThrow(
-				BadRequestError,
-			);
+			await expect(service.assertMayApplyEmailChange(mockUser())).rejects.toThrow(BadRequestError);
 		});
 
 		it('should reject when SAML is enabled', async () => {
 			isSamlLicensedAndEnabledMock.mockReturnValue(true);
 
-			await expect(service.assertMayApplyEmailChange(mockPerson())).rejects.toThrow(
-				BadRequestError,
-			);
+			await expect(service.assertMayApplyEmailChange(mockUser())).rejects.toThrow(BadRequestError);
 		});
 	});
 
 	describe('assertMayRequestEmailChange', () => {
 		describe('with MFA enabled', () => {
-			const person = () => mockPerson({ mfaEnabled: true });
+			const user = () => mockUser({ mfaEnabled: true });
 
 			it('should reject when the MFA code is missing', async () => {
-				await expect(service.assertMayRequestEmailChange(person(), {})).rejects.toThrow(
+				await expect(service.assertMayRequestEmailChange(user(), {})).rejects.toThrow(
 					BadRequestError,
 				);
 			});
@@ -104,7 +100,7 @@ describe('EmailChangeService', () => {
 				mfaService.validateMfa.mockResolvedValue(false);
 
 				await expect(
-					service.assertMayRequestEmailChange(person(), { mfaCode: '000000' }),
+					service.assertMayRequestEmailChange(user(), { mfaCode: '000000' }),
 				).rejects.toThrow(InvalidMfaCodeError);
 			});
 
@@ -112,20 +108,20 @@ describe('EmailChangeService', () => {
 				mfaService.validateMfa.mockResolvedValue(true);
 
 				await expect(
-					service.assertMayRequestEmailChange(person(), { mfaCode: '123456' }),
+					service.assertMayRequestEmailChange(user(), { mfaCode: '123456' }),
 				).resolves.toBeUndefined();
 			});
 		});
 
 		describe('with MFA disabled', () => {
 			it('should pass a user without a local password', async () => {
-				const person = mockPerson({ password: null });
+				const user = mockUser({ password: null });
 
-				await expect(service.assertMayRequestEmailChange(person, {})).resolves.toBeUndefined();
+				await expect(service.assertMayRequestEmailChange(user, {})).resolves.toBeUndefined();
 			});
 
 			it('should reject when the current password is missing', async () => {
-				await expect(service.assertMayRequestEmailChange(mockPerson(), {})).rejects.toThrow(
+				await expect(service.assertMayRequestEmailChange(mockUser(), {})).rejects.toThrow(
 					BadRequestError,
 				);
 			});
@@ -134,7 +130,7 @@ describe('EmailChangeService', () => {
 				passwordUtility.compare.mockResolvedValue(false);
 
 				await expect(
-					service.assertMayRequestEmailChange(mockPerson(), { currentPassword: 'wrong' }),
+					service.assertMayRequestEmailChange(mockUser(), { currentPassword: 'wrong' }),
 				).rejects.toThrow(BadRequestError);
 			});
 
@@ -142,7 +138,7 @@ describe('EmailChangeService', () => {
 				passwordUtility.compare.mockResolvedValue(true);
 
 				await expect(
-					service.assertMayRequestEmailChange(mockPerson(), { currentPassword: 'right' }),
+					service.assertMayRequestEmailChange(mockUser(), { currentPassword: 'right' }),
 				).resolves.toBeUndefined();
 			});
 		});

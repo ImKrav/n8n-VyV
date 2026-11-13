@@ -1,4 +1,4 @@
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 import { lstat } from 'node:fs/promises';
 import * as path from 'node:path';
 

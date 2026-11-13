@@ -206,7 +206,7 @@ export class License implements LicenseProvider {
 
 	private async broadcastReloadLicenseCommand() {
 		if (this.globalConfig.executions.mode === 'queue') {
-			const { Publisher } = await import('@n8n/backend-services');
+			const { Publisher } = await import('@/scaling/pubsub/publisher.service.js');
 			await Container.get(Publisher).publishCommand({ command: 'reload-license' });
 		}
 	}
@@ -479,14 +479,6 @@ export class License implements LicenseProvider {
 
 	getConsumerId() {
 		return this.manager?.getConsumerId() ?? 'unknown';
-	}
-
-	isEphemeral() {
-		return this.manager?.isEphemeral() ?? false;
-	}
-
-	getDeviceFingerprint() {
-		return this.manager?.getDeviceFingerprint();
 	}
 
 	// Helper functions for computed data

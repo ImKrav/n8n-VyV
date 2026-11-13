@@ -513,13 +513,9 @@ describe('SecuritySettings', () => {
 				expect(getByTestId('security-personal-space-sharing-toggle')).toBeInTheDocument();
 			});
 
-			expect(getByTestId('enable-force-mfa')).toHaveAttribute('data-disabled');
-			expect(getByTestId('security-personal-space-sharing-toggle')).toHaveAttribute(
-				'data-disabled',
-			);
-			expect(getByTestId('security-personal-space-publishing-toggle')).toHaveAttribute(
-				'data-disabled',
-			);
+			expect(getByTestId('enable-force-mfa')).toHaveClass('is-disabled');
+			expect(getByTestId('security-personal-space-sharing-toggle')).toHaveClass('is-disabled');
+			expect(getByTestId('security-personal-space-publishing-toggle')).toHaveClass('is-disabled');
 		});
 
 		it('should not call update APIs when clicking disabled toggles', async () => {
@@ -563,7 +559,7 @@ describe('SecuritySettings', () => {
 			});
 
 			const sharingToggle = getByTestId('security-personal-space-sharing-toggle');
-			expect(sharingToggle).toHaveAttribute('data-disabled');
+			expect(sharingToggle).toHaveClass('is-disabled');
 		});
 
 		it('should render disabled publishing toggle when unlicensed', async () => {
@@ -574,7 +570,7 @@ describe('SecuritySettings', () => {
 			});
 
 			const publishingToggle = getByTestId('security-personal-space-publishing-toggle');
-			expect(publishingToggle).toHaveAttribute('data-disabled');
+			expect(publishingToggle).toHaveClass('is-disabled');
 		});
 
 		it('should not call updateSecuritySettings when clicking disabled toggle', async () => {
@@ -746,7 +742,7 @@ describe('SecuritySettings', () => {
 				expect(getByTestId('enable-redaction-enforcement')).toBeInTheDocument();
 			});
 
-			expect(getByTestId('enable-redaction-enforcement')).toHaveAttribute('data-disabled');
+			expect(getByTestId('enable-redaction-enforcement')).toHaveClass('is-disabled');
 		});
 
 		it('should render disabled scope dropdown when unlicensed even if enforced=true', async () => {
@@ -851,7 +847,7 @@ describe('SecuritySettings', () => {
 				expect(getByTestId('enable-redaction-enforcement')).toBeInTheDocument();
 			});
 
-			expect(getByTestId('enable-redaction-enforcement')).toHaveAttribute('data-disabled');
+			expect(getByTestId('enable-redaction-enforcement')).toHaveClass('is-disabled');
 		});
 
 		it('should render correct affected-scope summary for floor=all', async () => {
@@ -883,7 +879,7 @@ describe('SecuritySettings', () => {
 					expect(getByTestId('enable-redaction-enforcement')).toBeInTheDocument();
 				});
 
-				expect(getByTestId('enable-redaction-enforcement')).toHaveAttribute('data-disabled');
+				expect(getByTestId('enable-redaction-enforcement')).toHaveClass('is-disabled');
 			});
 
 			it('should show the Upgrade badges and disabled scope dropdown when endpoint 403s', async () => {
@@ -999,7 +995,7 @@ describe('SecuritySettings', () => {
 				availableTypes: ['workflow_review'],
 				failedTypes: [],
 			});
-			expect(toggle).not.toHaveAttribute('data-disabled');
+			expect(toggle).not.toHaveClass('is-disabled');
 			expect(showError).not.toHaveBeenCalled();
 			expect(settingsStore.getSettings).not.toHaveBeenCalled();
 		});
@@ -1017,7 +1013,7 @@ describe('SecuritySettings', () => {
 				expect(getByTestId('security-workflow-reviews-toggle')).toBeInTheDocument();
 			});
 
-			expect(getByTestId('security-workflow-reviews-toggle')).toHaveAttribute('data-disabled');
+			expect(getByTestId('security-workflow-reviews-toggle')).toHaveClass('is-disabled');
 		});
 
 		it('should show alert dialog and proceed when confirming disable workflow reviews', async () => {

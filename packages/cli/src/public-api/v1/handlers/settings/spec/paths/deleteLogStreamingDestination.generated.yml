@@ -2,10 +2,7 @@ operationId: deleteLogStreamingDestination
 tags:
   - LogStreaming
 summary: Delete a log streaming destination
-description: |-
-  Remove a log streaming destination. Requires the Log Streaming feature to be licensed. When destinations are managed via environment variables, the delete is rejected with 409 and nothing is removed; reads still return the current values.
-
-  Requires the `eventBusDestination:delete` API key scope.
+description: Remove a log streaming destination. Requires the `eventBusDestination:delete` scope and the Log Streaming feature to be licensed. When destinations are managed via environment variables, the delete is rejected with 409 and nothing is removed; reads still return the current values.
 x-required-scope: eventBusDestination:delete
 parameters:
   - schema:

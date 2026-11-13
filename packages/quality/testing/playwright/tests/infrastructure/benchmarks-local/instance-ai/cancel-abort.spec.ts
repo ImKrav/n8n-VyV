@@ -9,7 +9,7 @@ const CANCEL_ITERATIONS = 5;
 test.describe(
 	'Instance-AI Memory: Cancel/Abort Cleanup',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('heap is cleaned up after cancelling runs mid-flight', async ({

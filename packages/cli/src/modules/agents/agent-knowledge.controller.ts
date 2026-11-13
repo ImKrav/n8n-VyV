@@ -7,21 +7,20 @@ import multer from 'multer';
 
 import { BadRequestError, NotFoundError } from '@n8n/errors';
 
-import type { UploadedKnowledgeFile } from '@/modules/knowledge/files/knowledge-file.service';
-import { KnowledgeUploadError } from '@/modules/knowledge/files/knowledge-upload.error';
-import {
-	KnowledgeUploadMiddleware,
-	cleanupUploadedTempFiles,
-	describeMulterError,
-	multerFailureReason,
-} from '@/modules/knowledge/files/knowledge-upload.middleware';
 import { KnowledgeAvailabilityService } from '@/modules/knowledge/knowledge-availability.service';
 import { Telemetry } from '@/telemetry';
 
-import { AgentKnowledgeService } from './agent-knowledge.service';
+import { AgentKnowledgeUploadError } from './agent-knowledge-upload.error';
+import { AgentKnowledgeService, type UploadedKnowledgeFile } from './agent-knowledge.service';
 import { AgentRuntimeCacheService } from './agent-runtime-cache.service';
+import {
+	AgentUploadMiddleware,
+	cleanupUploadedTempFiles,
+	describeMulterError,
+	multerFailureReason,
+} from './agent-upload.middleware';
 
-const knowledgeUploadMiddleware = Container.get(KnowledgeUploadMiddleware);
+const agentUploadMiddleware = Container.get(AgentUploadMiddleware);
 const KNOWLEDGE_FILES_FIELD = 'files';
 
 @RestController('/projects/:projectId/agents/v2')
@@ -53,7 +52,7 @@ export class AgentKnowledgeController {
 	}
 
 	@Post('/:agentId/files', {
-		middlewares: [knowledgeUploadMiddleware.array(KNOWLEDGE_FILES_FIELD)],
+		middlewares: [agentUploadMiddleware.array(KNOWLEDGE_FILES_FIELD)],
 	})
 	@ProjectScope('agent:update')
 	async uploadFiles(
@@ -73,7 +72,9 @@ export class AgentKnowledgeController {
 				if (error instanceof multer.MulterError) {
 					const message = `File upload error: ${describeMulterError(error)}`;
 					const reason = multerFailureReason(error, KNOWLEDGE_FILES_FIELD);
-					throw reason ? new KnowledgeUploadError(message, reason) : new BadRequestError(message);
+					throw reason
+						? new AgentKnowledgeUploadError(message, reason)
+						: new BadRequestError(message);
 				}
 				throw error;
 			}
@@ -158,7 +159,7 @@ export class AgentKnowledgeController {
 			return;
 		}
 
-		const reason = error instanceof KnowledgeUploadError ? error.reason : 'unknown';
+		const reason = error instanceof AgentKnowledgeUploadError ? error.reason : 'unknown';
 
 		this.telemetry.track(TELEMETRY_EVENT.AGENTS.USER_FAILED_AGENT_KNOWLEDGE_UPLOAD, {
 			stage: 'server',

@@ -15,16 +15,6 @@ import { Telemetry } from '@/telemetry';
 import { InstanceAiThreadRepository } from './repositories/instance-ai-thread.repository';
 
 /**
- * Keeps the display total of threads that are not on the current Assistant
- * runtime, such as Assistant agent threads. Registered only when the Assistant
- * agent loads, so this service does not depend on the agents module.
- */
-export interface AgentThreadCreditTotals {
-	/** Returns the new total, or `undefined` when no thread takes the total. */
-	addCredits(user: User, threadId: string, delta: number): Promise<number | undefined>;
-}
-
-/**
  * Owns Instance AI credit accounting: claims decimal, token-based credits per
  * finished run segment, dedupes replays, retries the authoritative proxy call,
  * accumulates the best-effort per-thread display total, and emits the credit
@@ -34,7 +24,6 @@ export interface AgentThreadCreditTotals {
  * atomically; the in-memory guard here only suppresses duplicate near-in-time
  * claims within this process. `thread.metadata.creditsUsed` is a best-effort
  * *display* total only — the authoritative ledger is the service-side count.
- * Assistant agent threads keep their total through {@link AgentThreadCreditTotals}.
  */
 @Service()
 export class InstanceAiCreditService {
@@ -51,8 +40,6 @@ export class InstanceAiCreditService {
 	/** Called once when a claim moves a user from under quota to exhausted. */
 	private readonly quotaExhaustedHandlers = new Set<(user: User) => void>();
 
-	private agentThreadCredits: AgentThreadCreditTotals | undefined;
-
 	/** Max retained run-segment ids in {@link claimedRunIds}; oldest evicted first. */
 	static readonly CLAIM_DEDUPE_CACHE_SIZE = 1000;
 
@@ -65,11 +52,6 @@ export class InstanceAiCreditService {
 	 */
 	onQuotaExhausted(handler: (user: User) => void): void {
 		this.quotaExhaustedHandlers.add(handler);
-	}
-
-	/** Keep the display total of threads that have no current Assistant thread row. */
-	useAgentThreadCredits(totals: AgentThreadCreditTotals): void {
-		this.agentThreadCredits = totals;
 	}
 
 	constructor(
@@ -175,7 +157,7 @@ export class InstanceAiCreditService {
 		// best-effort display/telemetry: it must never release the lock or report
 		// a billing failure. `push`/`telemetry` are fire-and-forget; the thread
 		// total write is the only awaited risk, so it is isolated in its helper.
-		const totalCreditsUsed = await this.accumulateThreadCredits(user, threadId, delta);
+		const totalCreditsUsed = await this.accumulateThreadCredits(threadId, delta);
 
 		this.logger.debug('Claimed Instance AI credits', {
 			threadId,
@@ -317,12 +299,10 @@ export class InstanceAiCreditService {
 	}
 
 	/**
-	 * Update the display total without failing a successful credit claim. A
-	 * thread without a current Assistant thread row is an Assistant agent thread.
+	 * Update the display total without failing a successful credit claim.
 	 * Internal threads and failed updates return no display total.
 	 */
 	private async accumulateThreadCredits(
-		user: User,
 		threadId: string,
 		delta: number,
 	): Promise<number | undefined> {
@@ -337,18 +317,11 @@ export class InstanceAiCreditService {
 					},
 				}),
 			});
-			if (thread) {
-				if (isSelfHealingResourceId(thread.resourceId)) return undefined;
-				return typeof thread.metadata?.creditsUsed === 'number'
-					? thread.metadata.creditsUsed
-					: undefined;
-			}
+			if (thread && isSelfHealingResourceId(thread.resourceId)) return undefined;
 
-			const total = await this.agentThreadCredits?.addCredits(user, threadId, delta);
-			if (total === undefined) {
-				this.logger.warn('No thread took the Instance AI credit total', { threadId });
-			}
-			return total;
+			return typeof thread?.metadata?.creditsUsed === 'number'
+				? thread.metadata.creditsUsed
+				: undefined;
 		} catch (error) {
 			this.logger.warn('Failed to persist Instance AI thread credit total', {
 				error: getErrorMessage(error),

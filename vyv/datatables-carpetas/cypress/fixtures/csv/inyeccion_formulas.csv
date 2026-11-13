@@ -1,0 +1,5 @@
+nombre,formula
+Normal,hola
+Ataque,"=HYPERLINK(""https://example.com/robo"";""clic"")"
+Suma,+1+1
+Arroba,@SUM(1+1)

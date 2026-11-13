@@ -38,8 +38,6 @@ import {
 	type RoleService,
 	type CredentialsFinderService,
 	type InstanceWriteAccessService,
-	type NodeTypesProxy,
-	PostHogClient,
 } from '@n8n/backend-services';
 import type { GlobalConfig } from '@n8n/config';
 import type {
@@ -61,11 +59,12 @@ import type { CredentialsService } from '@/credentials/credentials.service';
 import type { ExecutionPersistence } from '@/executions/execution-persistence';
 import type { License } from '@/license';
 import type { LoadNodesAndCredentials } from '@/load-nodes-and-credentials';
-import type { NodeTypes } from '@/node-types';
 import { type DataTableRepository, type DataTableService } from '@n8n/backend-module-data-table';
 
 import type { WorkflowDependencyQueryService } from '@/modules/workflow-index/workflow-dependency-query.service';
+import type { NodeTypes } from '@/node-types';
 import type { PolicyEnforcementService } from '@/policy/policy-enforcement.service';
+import { PostHogClient } from '@/posthog';
 import type { AiGatewayService } from '@/services/ai-gateway.service';
 import type { DynamicNodeParametersService } from '@/services/dynamic-node-parameters.service';
 import type { FolderService } from '@/services/folder.service';
@@ -106,7 +105,7 @@ function buildAdapter(options: { dependencyQueryService?: WorkflowDependencyQuer
 		mock<ActiveExecutions>(),
 		mock<WorkflowRunner>(),
 		mock<LoadNodesAndCredentials>(),
-		mock<NodeTypesProxy>(),
+		mock<NodeTypes>(),
 		mock<InstanceSettings>({ staticCacheDir: '/tmp/test-cache', n8nFolder: '/tmp/test-cache' }),
 		mock<DataTableService>(),
 		mock<DataTableRepository>(),

@@ -2,10 +2,7 @@ operationId: deleteUserFromProject
 tags:
   - Projects
 summary: Delete a user from a project
-description: |-
-  Delete a user from a project on your instance.
-
-  Requires the `project:manageMembers` API key scope.
+description: Delete a user from a project on your instance.
 x-required-scope: project:manageMembers
 parameters:
   - schema:

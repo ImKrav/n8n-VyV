@@ -1,4 +1,3 @@
-import type { AiGatewayConfigDto } from '@n8n/api-types';
 import type { User } from '@n8n/db';
 import type {
 	INode,
@@ -6,16 +5,14 @@ import type {
 	INodeCredentialDescription,
 	IWorkflowBase,
 } from 'n8n-workflow';
-import { UnrecognizedNodeTypeError } from 'n8n-core';
 import { NodeHelpers } from 'n8n-workflow';
 
 import type { CredentialsService } from '@/credentials/credentials.service';
-import type { NodeTypesProxy } from '@n8n/backend-services';
+import type { NodeTypes } from '@/node-types';
 import type { Telemetry } from '@/telemetry';
 
 import {
 	autoPopulateNodeCredentials,
-	reconcileAiGatewayMarkers,
 	trackAutoassignOutcomes,
 	type SlotOutcome,
 } from '../tools/workflow-builder/credentials-auto-assign';
@@ -77,13 +74,10 @@ function createMocks({
 	const nodeTypes = {
 		getByNameAndVersion: vi.fn().mockImplementation((type: string) => {
 			const desc = nodeTypeDescriptions.get(type);
-			if (!desc) {
-				const separator = type.lastIndexOf('.');
-				throw new UnrecognizedNodeTypeError(type.slice(0, separator), type.slice(separator + 1));
-			}
+			if (!desc) throw new Error(`Unknown node type: ${type}`);
 			return { description: desc };
 		}),
-	} as unknown as NodeTypesProxy;
+	} as unknown as NodeTypes;
 
 	return { credentialsService, nodeTypes };
 }
@@ -927,73 +921,6 @@ describe('autoPopulateNodeCredentials', () => {
 				});
 			});
 		});
-	});
-});
-
-describe('node type lookup failures', () => {
-	const gatewayConfig = {
-		nodes: ['n8n-nodes-base.slack'],
-		credentialTypes: ['slackApi'],
-		providerConfig: {},
-	} as unknown as AiGatewayConfigDto;
-	const marker = { id: null, name: 'Gateway credits', __aiGatewayManaged: true };
-
-	function nodeTypesThatThrow(error: Error) {
-		return {
-			getByNameAndVersion: vi.fn().mockImplementation(() => {
-				throw error;
-			}),
-		} as unknown as NodeTypesProxy;
-	}
-
-	test('autoPopulateNodeCredentials skips a node whose type is unknown', async () => {
-		const node = makeNode();
-		const { credentialsService } = createMocks();
-		const nodeTypes = nodeTypesThatThrow(new UnrecognizedNodeTypeError('n8n-nodes-base', 'slack'));
-
-		const result = await autoPopulateNodeCredentials(
-			makeWorkflow([node]),
-			user,
-			nodeTypes,
-			credentialsService,
-			projectId,
-		);
-
-		expect(result.assignments).toEqual([]);
-	});
-
-	test('autoPopulateNodeCredentials rethrows an unexpected lookup error', async () => {
-		const { credentialsService } = createMocks();
-		const nodeTypes = nodeTypesThatThrow(new Error('loader crashed'));
-
-		await expect(
-			autoPopulateNodeCredentials(
-				makeWorkflow([makeNode()]),
-				user,
-				nodeTypes,
-				credentialsService,
-				projectId,
-			),
-		).rejects.toThrow('loader crashed');
-	});
-
-	test('reconcileAiGatewayMarkers drops a marker when the node type is unknown', () => {
-		const node = makeNode({ credentials: { slackApi: { ...marker } } });
-		const nodeTypes = nodeTypesThatThrow(new UnrecognizedNodeTypeError('n8n-nodes-base', 'slack'));
-
-		reconcileAiGatewayMarkers([node], nodeTypes, gatewayConfig);
-
-		expect(node.credentials).toEqual({});
-	});
-
-	test('reconcileAiGatewayMarkers keeps markers and rethrows an unexpected lookup error', () => {
-		const node = makeNode({ credentials: { slackApi: { ...marker } } });
-		const nodeTypes = nodeTypesThatThrow(new Error('loader crashed'));
-
-		expect(() => reconcileAiGatewayMarkers([node], nodeTypes, gatewayConfig)).toThrow(
-			'loader crashed',
-		);
-		expect(node.credentials).toEqual({ slackApi: marker });
 	});
 });
 

@@ -16,7 +16,6 @@ import {
 	type SharedWorkflowRepository,
 	type ProjectRelationRepository,
 	type SharedCredentials,
-	type SharedWorkflow,
 	type User,
 	type UserRepository,
 	ProjectRelation as ProjectRelationEntity,
@@ -1212,35 +1211,6 @@ describe('ProjectService', () => {
 				await projectService.deleteProject(migratingUser, project.id);
 
 				expect(ownershipTransferService.enforceTransferPolicy).not.toHaveBeenCalled();
-			});
-
-			it('finishes the transfer when the workflow project cache invalidation fails', async () => {
-				projectRepository.findOneWithUserRoles
-					.mockResolvedValueOnce(project)
-					.mockResolvedValueOnce(mock<Project>({ id: 'team-2', type: 'team' }));
-				sharedWorkflowRepository.find.mockResolvedValueOnce([
-					mock<SharedWorkflow>({ workflowId: 'workflow-1' }),
-				]);
-				ownershipService.invalidateWorkflowProjectCacheByIds.mockRejectedValueOnce(
-					new Error('cache unavailable'),
-				);
-
-				await projectService.deleteProject(migratingUser, project.id, {
-					migrateToProject: 'team-2',
-				});
-
-				expect(ownershipService.invalidateWorkflowProjectCacheByIds).toHaveBeenCalledWith([
-					'workflow-1',
-				]);
-				expect(logger.warn).toHaveBeenCalledWith(
-					expect.stringContaining('workflow project cache'),
-					expect.objectContaining({ projectId: project.id }),
-				);
-				expect(variablesService.updateCache).toHaveBeenCalledTimes(1);
-				expect(eventService.emit).toHaveBeenCalledWith(
-					'team-project-deleted',
-					expect.objectContaining({ projectId: project.id, removalType: 'transfer' }),
-				);
 			});
 		});
 

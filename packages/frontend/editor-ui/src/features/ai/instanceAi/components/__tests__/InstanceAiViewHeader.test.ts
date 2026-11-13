@@ -4,8 +4,6 @@ import { createTestingPinia } from '@pinia/testing';
 import { waitFor, within } from '@testing-library/vue';
 import { setActivePinia } from 'pinia';
 import { createComponentRenderer } from '@/__tests__/render';
-import { mockedStore } from '@/__tests__/utils';
-import { useAssistantCreditsStore } from '../../assistantCredits.store';
 import InstanceAiViewHeader from '../InstanceAiViewHeader.vue';
 
 vi.mock('vue-router', async function (importOriginal) {
@@ -29,11 +27,7 @@ vi.mock('@/app/composables/usePageRedirectionHelper', function () {
 const renderHeader = createComponentRenderer(InstanceAiViewHeader, {
 	global: {
 		stubs: {
-			CreditsSettingsDropdown: {
-				props: ['creditsRemaining', 'creditsUsed'],
-				template:
-					'<div data-test-id="credits-dropdown">{{ creditsRemaining }}/{{ creditsUsed }}</div>',
-			},
+			CreditsSettingsDropdown: true,
 		},
 	},
 });
@@ -51,22 +45,6 @@ describe('InstanceAiViewHeader', function () {
 		expect(label).toBeVisible();
 		expect(label).not.toHaveAttribute('aria-hidden', 'true');
 		expect(button).not.toHaveAttribute('data-icon-only', 'true');
-	});
-
-	it('shows the instance balance and the thread total that it gets', function () {
-		mockedStore(useAssistantCreditsStore).creditsRemaining = 40;
-
-		const { getByTestId } = renderHeader({ props: { threadCreditsUsed: 2.5 } });
-
-		expect(getByTestId('credits-dropdown')).toHaveTextContent('40/2.5');
-	});
-
-	it('hides the credits while the balance is unknown', function () {
-		mockedStore(useAssistantCreditsStore).creditsRemaining = undefined;
-
-		const { queryByTestId } = renderHeader();
-
-		expect(queryByTestId('credits-dropdown')).not.toBeInTheDocument();
 	});
 
 	it('opens history from the chat title', async function () {

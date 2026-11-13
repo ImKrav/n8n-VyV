@@ -56,6 +56,8 @@ const telemetry = useTelemetry();
 
 const creationMode = ref<CreationMode>('select');
 const dataTableName = ref('');
+// The backend trims the name: a name made only of spaces is empty and must not enable "Create"
+const trimmedName = computed(() => dataTableName.value.trim());
 const inputRef = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
 const uploadedFileId = ref<string | null>(null);
@@ -129,7 +131,7 @@ const modalTitle = computed(() => {
 const isCreateDisabled = computed(() => {
 	if (creationMode.value === 'import') {
 		return (
-			!dataTableName.value ||
+			!trimmedName.value ||
 			!uploadedFileId.value ||
 			hasValidationErrors.value ||
 			hasDuplicateNames.value ||
@@ -149,7 +151,7 @@ onMounted(() => {
 const selectedOption = ref<'scratch' | 'import'>('scratch');
 
 const proceedFromSelect = async () => {
-	if (!selectedOption.value || !dataTableName.value || isLoading.value) return;
+	if (!selectedOption.value || !trimmedName.value || isLoading.value) return;
 
 	if (selectedOption.value === 'scratch') {
 		await onSubmit();
@@ -279,7 +281,7 @@ const onSubmit = async () => {
 
 		if (selectedOption.value === 'scratch') {
 			newDataTable = await dataTableStore.createDataTable(
-				dataTableName.value,
+				trimmedName.value,
 				route.params.projectId as string,
 			);
 		} else if (creationMode.value === 'import' && uploadedFileId.value) {
@@ -288,7 +290,7 @@ const onSubmit = async () => {
 			);
 
 			newDataTable = await dataTableStore.createDataTable(
-				dataTableName.value,
+				trimmedName.value,
 				route.params.projectId as string,
 				includedColumns.value.map((col) => ({
 					name: col.name,
@@ -501,7 +503,7 @@ const redirectToDataTables = () => {
 					:loading="isLoading"
 					size="large"
 					:disabled="
-						!dataTableName || !selectedOption || (selectedOption === 'import' && !selectedFile)
+						!trimmedName || !selectedOption || (selectedOption === 'import' && !selectedFile)
 					"
 					:label="i18n.baseText('generic.create')"
 					data-test-id="proceed-from-select-button"

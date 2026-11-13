@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import ChatMarkdown from '@/features/ai/shared/components/ChatMarkdown/ChatMarkdown.vue';
+import { N8nMarkdown } from '@n8n/design-system';
+import { useChatHubMarkdownOptions } from '@/features/ai/chatHub/composables/useChatHubMarkdownOptions';
+import { ref } from 'vue';
 import type { ChatMessageContentChunk } from '@n8n/api-types';
 import ChatButtons from './ChatButtons.vue';
 
@@ -16,17 +18,63 @@ const {
 }>();
 
 const emit = defineEmits<{ openArtifact: [title: string] }>();
+
+const codeBlockActionsClassName = 'n8n-markdown-code-block-actions';
+const tableContainerClassName = 'n8n-markdown-table-container';
+const footnoteRefClassName = footnoteStyle === 'pill' ? 'n8n-markdown-footnote-ref' : null;
+
+const markdown = useChatHubMarkdownOptions(
+	codeBlockActionsClassName,
+	tableContainerClassName,
+	footnoteRefClassName,
+);
+const hoveredCodeBlockActions = ref<HTMLElement | null>(null);
+
+function getHoveredCodeBlockContent() {
+	const idx = hoveredCodeBlockActions.value?.getAttribute('data-markdown-token-idx');
+	return idx ? markdown.codeBlockContents.value?.get(idx) : undefined;
+}
+
+function handleMouseMove(e: MouseEvent | FocusEvent) {
+	const container =
+		e.target instanceof HTMLElement || e.target instanceof SVGElement
+			? e.target.closest('pre')?.querySelector(`.${codeBlockActionsClassName}`)
+			: null;
+
+	hoveredCodeBlockActions.value = container instanceof HTMLElement ? container : null;
+}
+
+function handleMouseLeave() {
+	hoveredCodeBlockActions.value = null;
+}
+
+defineExpose({
+	hoveredCodeBlockActions,
+	getHoveredCodeBlockContent,
+});
 </script>
 
 <template>
-	<ChatMarkdown
+	<N8nMarkdown
 		v-if="source.type === 'text'"
+		:key="markdown.forceReRenderKey.value"
 		:content="source.content"
-		:single-pre="singlePre"
-		:options="{ math: true, footnotes: footnoteStyle }"
+		:class="['n8n-markdown', { 'n8n-markdown--single-pre': singlePre }]"
+		:options="markdown.options"
+		:plugins="markdown.plugins.value"
+		@mousemove="handleMouseMove"
+		@mouseleave="handleMouseLeave"
 	/>
 	<div v-else-if="source.type === 'with-buttons'" :class="$style.container">
-		<ChatMarkdown :content="source.content" :options="{ math: true, footnotes: footnoteStyle }" />
+		<N8nMarkdown
+			:key="markdown.forceReRenderKey.value"
+			:content="source.content"
+			class="n8n-markdown"
+			:options="markdown.options"
+			:plugins="markdown.plugins.value"
+			@mousemove="handleMouseMove"
+			@mouseleave="handleMouseLeave"
+		/>
 		<ChatButtons :buttons="source.buttons" :is-disabled="isButtonsDisabled" />
 	</div>
 	<div v-else-if="source.type === 'hidden'" />

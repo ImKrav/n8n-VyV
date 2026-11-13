@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { InstanceAiRunDebugWorkflowCodeSnapshot } from '@n8n/api-types';
-import { N8nCard } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
 import { computed } from 'vue';
 import InstanceAiDebugJsonPanel from './InstanceAiDebugJsonPanel.vue';
@@ -93,39 +92,34 @@ function formatStatus(success: boolean): string {
 		</div>
 	</details>
 
-	<N8nCard v-else :class="$style.cardRoot">
-		<div :class="$style.cardLayout">
-			<div :class="$style.metaBlock">
-				<span
-					:class="[
-						$style.statusChip,
-						snapshot.success ? $style.statusSuccess : $style.statusFailed,
-					]"
-				>
-					{{ formatStatus(snapshot.success) }}
-				</span>
-				<span v-if="snapshot.source" :class="$style.metaLabel">{{ snapshot.source }}</span>
-				<span v-if="snapshot.workflowId" :class="$style.metaLabel">
-					{{ snapshot.workflowId }}
-				</span>
-				<span :class="$style.metaLabel">{{ formatCharCount(snapshot.code.length) }}</span>
-				<span :class="$style.metaLabel">{{ formatTimestamp(snapshot.capturedAt) }}</span>
-			</div>
-
-			<InstanceAiDebugJsonPanel
-				v-if="snapshot.errors?.length"
-				:value="snapshot.errors"
-				:label="i18n.baseText('instanceAi.debug.runDebug.failed')"
-			/>
-			<InstanceAiDebugJsonPanel
-				v-if="snapshot.patches"
-				:value="snapshot.patches"
-				:label="i18n.baseText('instanceAi.debug.runDebug.metadata')"
-			/>
-
-			<pre :class="$style.code">{{ snapshot.code }}</pre>
+	<div v-else :class="$style.cardRoot">
+		<div :class="$style.metaBlock">
+			<span
+				:class="[$style.statusChip, snapshot.success ? $style.statusSuccess : $style.statusFailed]"
+			>
+				{{ formatStatus(snapshot.success) }}
+			</span>
+			<span v-if="snapshot.source" :class="$style.metaLabel">{{ snapshot.source }}</span>
+			<span v-if="snapshot.workflowId" :class="$style.metaLabel">
+				{{ snapshot.workflowId }}
+			</span>
+			<span :class="$style.metaLabel">{{ formatCharCount(snapshot.code.length) }}</span>
+			<span :class="$style.metaLabel">{{ formatTimestamp(snapshot.capturedAt) }}</span>
 		</div>
-	</N8nCard>
+
+		<InstanceAiDebugJsonPanel
+			v-if="snapshot.errors?.length"
+			:value="snapshot.errors"
+			:label="i18n.baseText('instanceAi.debug.runDebug.failed')"
+		/>
+		<InstanceAiDebugJsonPanel
+			v-if="snapshot.patches"
+			:value="snapshot.patches"
+			:label="i18n.baseText('instanceAi.debug.runDebug.metadata')"
+		/>
+
+		<pre :class="$style.code">{{ snapshot.code }}</pre>
+	</div>
 </template>
 
 <style lang="scss" module>
@@ -190,14 +184,6 @@ function formatStatus(success: boolean): string {
 }
 
 .cardRoot {
-	padding: 0;
-	border: 0;
-	border-radius: 0;
-	background-color: transparent;
-	box-shadow: none;
-}
-
-.cardLayout {
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing--3xs);

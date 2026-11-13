@@ -58,6 +58,7 @@ import { DataTableColumnNotFoundError } from './errors/data-table-column-not-fou
 import { DataTableNameConflictError } from './errors/data-table-name-conflict.error';
 import { DataTableNotFoundError } from './errors/data-table-not-found.error';
 import { DataTableValidationError } from './errors/data-table-validation.error';
+import { escapeCsvValue } from './utils/csv-escape';
 import { normalizeRows } from './utils/sql-utils';
 
 @Service()
@@ -1046,23 +1047,28 @@ export class DataTableService {
 			? ['id', ...userHeaders, 'createdAt', 'updatedAt']
 			: userHeaders;
 
-		const csvRows: string[] = [headers.map((h) => this.escapeCsvValue(h)).join(',')];
+		const csvRows: string[] = [headers.map((h) => escapeCsvValue(h)).join(',')];
 
 		for (const row of rows) {
 			const values: string[] = [];
 
 			if (includeSystemColumns) {
-				values.push(this.escapeCsvValue(row.id));
+				values.push(escapeCsvValue(row.id));
 			}
 
 			for (const column of sortedColumns) {
 				const value = row[column.name];
-				values.push(this.escapeCsvValue(this.formatValueForCsv(value, column.type)));
+				// Only free-text columns can carry formula payloads; numbers like -5 must stay untouched
+				values.push(
+					escapeCsvValue(this.formatValueForCsv(value, column.type), {
+						neutralizeFormulas: column.type === 'string',
+					}),
+				);
 			}
 
 			if (includeSystemColumns) {
-				values.push(this.escapeCsvValue(this.formatDateForCsv(row.createdAt)));
-				values.push(this.escapeCsvValue(this.formatDateForCsv(row.updatedAt)));
+				values.push(escapeCsvValue(this.formatDateForCsv(row.createdAt)));
+				values.push(escapeCsvValue(this.formatDateForCsv(row.updatedAt)));
 			}
 
 			csvRows.push(values.join(','));
@@ -1109,28 +1115,5 @@ export class DataTableService {
 		// If it's already a string, try to parse and format
 		const parsed = new Date(date);
 		return !isNaN(parsed.getTime()) ? parsed.toISOString() : String(date);
-	}
-
-	private escapeCsvValue(value: unknown): string {
-		const str = String(value);
-
-		// RFC 4180 compliant escaping:
-		// - If value contains comma, quote, or newline, wrap in quotes
-		// - Also wrap if value has leading/trailing spaces to prevent trimming
-		// - Escape quotes by doubling them
-		const hasLeadingOrTrailingSpace =
-			str.length > 0 && (str[0] === ' ' || str[str.length - 1] === ' ');
-
-		if (
-			str.includes(',') ||
-			str.includes('"') ||
-			str.includes('\n') ||
-			str.includes('\r') ||
-			hasLeadingOrTrailingSpace
-		) {
-			return `"${str.replace(/"/g, '""')}"`;
-		}
-
-		return str;
 	}
 }

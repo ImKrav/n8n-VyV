@@ -1,9 +1,9 @@
 import type { SandboxConfig } from '@n8n/agents/sandbox';
 import type { AppSandboxResolveOptions } from '@n8n/backend-module-apps';
-import { getN8nVersion } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
 import { Container } from '@n8n/di';
 
+import { N8N_VERSION } from '@/constants';
 import { SandboxSettingsService } from '@/services/sandbox-settings.service';
 
 export async function resolveAppSandboxConfig(
@@ -17,11 +17,10 @@ export async function resolveAppSandboxConfig(
 
 	settings.registerCredentialUses();
 	if (provider === 'daytona') {
-		const n8nVersion = getN8nVersion();
 		const connection = await settings.resolveDaytonaSandboxConfig(projectId, {
 			image: config.sandboxImage || undefined,
 			snapshot: config.sandboxSnapshot,
-			fallbackSnapshot: n8nVersion ? `n8n/instance-ai:${n8nVersion}` : undefined,
+			fallbackSnapshot: N8N_VERSION ? `n8n/instance-ai:${N8N_VERSION}` : undefined,
 		});
 		if (!connection.daytonaApiKey && !connection.getAuthToken)
 			return { enabled: false, provider: 'daytona' };

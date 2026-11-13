@@ -12,7 +12,7 @@ test.use({
 test.describe(
 	'Memory Leak Detection',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		async function performMemoryAction(n8n: n8nPage) {

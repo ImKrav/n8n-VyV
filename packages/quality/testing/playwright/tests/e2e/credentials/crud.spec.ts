@@ -115,9 +115,7 @@ test.describe(
 
 			await n8n.canvas.addNode('Pipedrive', { trigger: 'On new Pipedrive event' });
 			await n8n.ndv.selectOptionInParameterDropdown('incomingAuthentication', 'Basic Auth');
-			// Pipedrive OAuth2 has Automatic OAuth mode, so the first slot offers quick connect.
-			await expect(n8n.ndv.getNodeCredentialsQuickConnectEmptyState()).toHaveCount(1);
-			await expect(n8n.ndv.getNodeCredentialsEmptyState()).toHaveCount(1);
+			await expect(n8n.ndv.getNodeCredentialsEmptyState()).toHaveCount(2);
 
 			await n8n.ndv.clickCreateNewCredential(0);
 			// First credential type has multiple auth options → mode selector visible

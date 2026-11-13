@@ -1,12 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import {
-	N8nAlertDialog,
-	N8nPreviewBadge,
-	N8nSettingsRow,
-	N8nSwitch,
-	N8nText,
-} from '@n8n/design-system';
+import { ElSwitch } from 'element-plus';
+import { N8nAlertDialog, N8nPreviewBadge, N8nSettingsRow, N8nText } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
 import { useRootStore } from '@n8n/stores/useRootStore';
 import * as securitySettingsApi from '@n8n/rest-api-client/api/security-settings';
@@ -86,7 +81,7 @@ function confirmDisable() {
 			</N8nText>
 		</template>
 		<template #action>
-			<N8nSwitch
+			<ElSwitch
 				v-model="toggleValue"
 				size="large"
 				:disabled="managedByEnv || isSaving"

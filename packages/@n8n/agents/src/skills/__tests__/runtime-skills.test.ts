@@ -30,28 +30,12 @@ function skillLoadText(output: unknown): string {
 }
 
 describe('runtime skills', () => {
-	it('loads a SKILL.md that still uses the deprecated recommended_tools key', () => {
-		const result = parseRuntimeSkillMarkdown(`---
-name: legacy-skill
-description: Written before the tool group rename.
-recommended_tools:
-  - list_workflows
----
-
-Do the thing.`);
-
-		expect(result.ok).toBe(true);
-		if (!result.ok) return;
-		expect(result.skill).not.toHaveProperty('recommendedToolGroups');
-		expect(result.skill).not.toHaveProperty('recommendedTools');
-	});
-
 	it('parses SKILL.md frontmatter into a runtime skill', () => {
 		const result = parseRuntimeSkillMarkdown(`---
 name: workflow-builder
 description: Build workflows.
-recommended_tool_groups:
-  - workflows
+recommended_tools:
+  - bash
 allowed_tools: workflow
 interface:
   display_name: Workflow Builder
@@ -90,7 +74,7 @@ Follow the workflow-building process.`);
 				name: 'workflow-builder',
 				description: 'Build workflows.',
 				instructions: 'Follow the workflow-building process.',
-				recommendedToolGroups: ['workflows'],
+				recommendedTools: ['bash'],
 				allowedTools: ['workflow'],
 				interface: {
 					displayName: 'Workflow Builder',
@@ -566,7 +550,7 @@ Use the workflow SDK.`,
 				name: 'Summarize notes',
 				description: 'Use for meeting notes.',
 				category: 'productivity',
-				recommendedToolGroups: ['data_tables'],
+				recommendedTools: ['data-tables'],
 				instructions: 'Extract private decisions.',
 			},
 		]);
@@ -577,7 +561,7 @@ Use the workflow SDK.`,
 		expect(prompt).toContain('name: "Summarize notes"');
 		expect(prompt).toContain('id: "summarize_notes"');
 		expect(prompt).toContain('category: "productivity"');
-		expect(prompt).toContain('recommendedToolGroups: ["data_tables"]');
+		expect(prompt).toContain('recommendedTools: ["data-tables"]');
 		expect(prompt).toContain('load_skill once with `{ "skillId": "<id>" }`');
 		expect(prompt).not.toContain('list_skills');
 		expect(prompt).not.toContain('Extract private decisions.');

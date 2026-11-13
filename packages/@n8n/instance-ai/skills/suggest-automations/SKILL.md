@@ -8,8 +8,9 @@ description: >-
   themselves.
   Use it on other threads when the user asks what they could automate or
   wants ideas for a first workflow.
-recommended_tool_groups:
-  - workflows
+recommended_tools:
+  - ask_user
+  - workflow_builder_build_workflow
 ---
 
 # Suggest automations

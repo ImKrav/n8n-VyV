@@ -4,7 +4,7 @@ import { test, expect } from '../../../fixtures/base';
 test.describe(
 	'UI Test Entry Points',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test.describe('Entry Point: Home Page', () => {

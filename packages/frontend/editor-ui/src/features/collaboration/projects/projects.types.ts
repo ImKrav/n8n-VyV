@@ -30,4 +30,6 @@ export type ProjectListItem = ProjectSharingData & {
 };
 export type ProjectsCount = Record<ProjectType, number>;
 
-export type { ResourceEditorDestination } from '@n8n/frontend-module-sdk';
+export type ResourceEditorDestination =
+	| { kind: 'resolved'; project: Project }
+	| { kind: 'pending'; id: string; name: string; permissions: { create: boolean } };

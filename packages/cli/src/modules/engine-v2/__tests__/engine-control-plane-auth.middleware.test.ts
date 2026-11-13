@@ -24,7 +24,7 @@ describe('createEngineControlPlaneAuthMiddleware', () => {
 	const newRequest = (authorization?: string) =>
 		({
 			method: 'POST',
-			originalUrl: '/internal/credentials/resolve',
+			originalUrl: '/internal/status-callback',
 			header: vi.fn((name: string) =>
 				name.toLowerCase() === 'authorization' ? authorization : undefined,
 			),
@@ -33,7 +33,7 @@ describe('createEngineControlPlaneAuthMiddleware', () => {
 	const authenticate = (
 		authorization?: string,
 		secret = authSecret,
-		requiredScope: ActionScope = 'credentials:read',
+		requiredScope: ActionScope = 'lifecycle-events:write',
 	) => {
 		const res = newResponse();
 		const middleware = createEngineControlPlaneAuthMiddleware(
@@ -48,9 +48,7 @@ describe('createEngineControlPlaneAuthMiddleware', () => {
 	const expectRejected = (res: Mocked<Response>) => {
 		expect(next).not.toHaveBeenCalled();
 		expect(res.status).toHaveBeenCalledWith(401);
-		expect(logger.warn).toHaveBeenCalledWith(
-			expect.stringContaining('/internal/credentials/resolve'),
-		);
+		expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('/internal/status-callback'));
 	};
 
 	beforeEach(() => {
@@ -58,8 +56,8 @@ describe('createEngineControlPlaneAuthMiddleware', () => {
 		next = vi.fn();
 	});
 
-	it('accepts a token scoped to credential reads', () => {
-		const res = authenticate(`Bearer ${mintActionToken(authSecret, 'credentials:read')}`);
+	it('accepts a callback token scoped to status writes', () => {
+		const res = authenticate(`Bearer ${mintActionToken(authSecret, 'lifecycle-events:write')}`);
 
 		expect(next).toHaveBeenCalled();
 		expect(res.status).not.toHaveBeenCalled();
@@ -71,12 +69,12 @@ describe('createEngineControlPlaneAuthMiddleware', () => {
 		const middleware = createEngineControlPlaneAuthMiddleware(
 			engineConfig,
 			logger,
-			'credentials:read',
+			'lifecycle-events:write',
 		);
 		engineConfig.authSecret = authSecret;
 
 		middleware(
-			newRequest(`Bearer ${mintActionToken(authSecret, 'credentials:read')}`),
+			newRequest(`Bearer ${mintActionToken(authSecret, 'lifecycle-events:write')}`),
 			newResponse(),
 			next,
 		);
@@ -99,28 +97,42 @@ describe('createEngineControlPlaneAuthMiddleware', () => {
 		expectRejected(authenticate(`Bearer ${token}`));
 	});
 
-	it.each(['credential:read', 'lifecycle-events:write'])(
-		'rejects a token with the scope %s, which the engine does not know',
-		(scope) => {
-			const token = jwt.sign({ scope }, authSecret, {
-				algorithm: 'HS256',
-				issuer: ACTION_TOKEN_SPEC.issuer,
-				audience: ACTION_TOKEN_SPEC.audience,
-				expiresIn: ACTION_TOKEN_SPEC.ttlSeconds,
-			});
+	it('accepts a credential read token on a route that requires that scope', () => {
+		const token = mintActionToken(authSecret, 'credentials:read');
+		const res = authenticate(`Bearer ${token}`, authSecret, 'credentials:read');
 
-			expectRejected(authenticate(`Bearer ${token}`));
-		},
-	);
+		expect(next).toHaveBeenCalled();
+		expect(res.status).not.toHaveBeenCalled();
+	});
+
+	it.each<[ActionScope, ActionScope]>([
+		['credentials:read', 'lifecycle-events:write'],
+		['lifecycle-events:write', 'credentials:read'],
+	])('rejects a %s token on a route that requires %s', (minted, required) => {
+		const token = mintActionToken(authSecret, minted);
+
+		expectRejected(authenticate(`Bearer ${token}`, authSecret, required));
+	});
+
+	it('rejects a token with a scope the engine does not know', () => {
+		const token = jwt.sign({ scope: 'credential:read' }, authSecret, {
+			algorithm: 'HS256',
+			issuer: ACTION_TOKEN_SPEC.issuer,
+			audience: ACTION_TOKEN_SPEC.audience,
+			expiresIn: ACTION_TOKEN_SPEC.ttlSeconds,
+		});
+
+		expectRejected(authenticate(`Bearer ${token}`));
+	});
 
 	it('rejects a token signed with a different secret', () => {
-		const token = mintActionToken('b'.repeat(32), 'credentials:read');
+		const token = mintActionToken('b'.repeat(32), 'lifecycle-events:write');
 
 		expectRejected(authenticate(`Bearer ${token}`));
 	});
 
 	it('rejects everything when no shared secret is configured', () => {
-		const token = mintActionToken(authSecret, 'credentials:read');
+		const token = mintActionToken(authSecret, 'lifecycle-events:write');
 
 		expectRejected(authenticate(`Bearer ${token}`, ''));
 	});

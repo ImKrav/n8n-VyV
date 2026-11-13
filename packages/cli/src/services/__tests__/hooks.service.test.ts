@@ -1,6 +1,7 @@
 import type {
 	AuthenticatedRequest,
 	SettingsRepository,
+	User,
 	CredentialsRepository,
 	WorkflowRepository,
 	Person,
@@ -20,7 +21,7 @@ import type { UserService } from '@/services/user.service';
 vi.mock('@rudderstack/rudder-sdk-node');
 
 describe('HooksService', () => {
-	const mockedPerson = mock<Person>();
+	const mockedUser = mock<User>();
 	const userService = mock<UserService>();
 	const authService = mock<AuthService>();
 	const personRepository = mock<PersonRepository>();
@@ -52,22 +53,22 @@ describe('HooksService', () => {
 		const usersToInvite: Invitation[] = [{ email: 'test@n8n.io', role: 'global:member' }];
 
 		// ACT
-		await hooksService.inviteUsers(mockedPerson, usersToInvite);
+		await hooksService.inviteUsers(mockedUser, usersToInvite);
 
 		// ASSERT
-		expect(userService.inviteUsers).toHaveBeenCalledWith(mockedPerson, usersToInvite);
+		expect(userService.inviteUsers).toHaveBeenCalledWith(mockedUser, usersToInvite);
 	});
 
 	it('hooksService.issueCookie should call authService.issueCookie', async () => {
 		// ARRANGE
 		const res = mock<Response>();
-		mockedPerson.mfaEnabled = false; // Mock mfaEnabled property
+		mockedUser.mfaEnabled = false; // Mock mfaEnabled property
 
 		// ACT
-		hooksService.issueCookie(res, mockedPerson);
+		hooksService.issueCookie(res, mockedUser);
 
 		// ASSERT
-		expect(authService.issueCookie).toHaveBeenCalledWith(res, mockedPerson, false);
+		expect(authService.issueCookie).toHaveBeenCalledWith(res, mockedUser, false);
 	});
 
 	it('hooksService.findOneUser should search people only', async () => {
@@ -83,11 +84,11 @@ describe('HooksService', () => {
 
 	it('hooksService.saveUser should save through the people collection', async () => {
 		// ACT
-		await hooksService.saveUser(mockedPerson);
+		await hooksService.saveUser(mockedUser);
 
 		// ASSERT
 
-		expect(personCollection.save).toHaveBeenCalledWith(mockedPerson);
+		expect(personCollection.save).toHaveBeenCalledWith(mockedUser);
 	});
 
 	it('hooksService.updateSettings should call settingRepository.update', async () => {

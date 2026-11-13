@@ -5,12 +5,16 @@ import {
 	createOrchestratorDomainTools,
 	getActiveOrchestratorDomainToolNames,
 } from '..';
+import { isParseableAttachment } from '../../parsers/structured-file-parser';
 import type { InstanceAiContext, OrchestrationContext } from '../../types';
-import { ALWAYS_LOADED_TOOL_NAMES, getMcpToolGroup, getToolGroup } from '../tool-ids';
+import { ALWAYS_LOADED_TOOL_NAMES } from '../tool-ids';
+
+vi.mock('../../parsers/structured-file-parser', () => ({
+	isParseableAttachment: vi.fn(() => false),
+}));
 
 vi.mock('../attachments/parse-file.tool', () => ({
 	createParseFileTool: vi.fn(() => ({ id: 'parse-file' })),
-	createParseStoredFileTool: vi.fn(() => ({ id: 'parse-file', storedFiles: true })),
 }));
 
 vi.mock('../credentials.tool', () => ({
@@ -129,6 +133,7 @@ function makeContext(overrides: Partial<InstanceAiContext> = {}): InstanceAiCont
 describe('domain tool construction', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(isParseableAttachment).mockReturnValue(false);
 	});
 
 	it('creates the native orchestrator domain tool map', async () => {
@@ -230,26 +235,9 @@ describe('domain tool construction', () => {
 		});
 	});
 
-	it('lists n8n resource tools in the tool catalog under their tool group', () => {
+	it('never defers model catalog search behind search_tools', () => {
 		expect(getActiveOrchestratorDomainToolNames(makeContext())).toContain('search_models');
-		expect(ALWAYS_LOADED_TOOL_NAMES.has('search_models')).toBe(false);
-		expect(getToolGroup('search_models')).toBe('nodes');
-		expect(getToolGroup('list_workflows')).toBe('workflows');
-		expect(getToolGroup('workflow_builder_build_workflow')).toBe('workflows');
-		expect(getToolGroup('run_workflow')).toBe('executions');
-		expect(getToolGroup('insert_data_table_rows')).toBe('data_tables');
-		expect(getToolGroup('setup_credentials')).toBe('credentials');
-		expect(getToolGroup('agent_builder_write_config')).toBe('agents');
-		expect(getToolGroup('list_folders')).toBe('instance');
-		expect(getToolGroup('ask_user')).toBeUndefined();
-	});
-
-	it('keeps an MCP server named like an n8n tool group in a group of its own', () => {
-		expect(getMcpToolGroup('linear')).toBe('linear');
-		expect(getMcpToolGroup('credentials')).toBe('mcp_credentials');
-		expect(getMcpToolGroup('instance')).toBe('mcp_instance');
-		expect(getMcpToolGroup('tools')).toBe('mcp_tools');
-		expect(getMcpToolGroup('constructor')).toBe('constructor');
+		expect(ALWAYS_LOADED_TOOL_NAMES.has('search_models')).toBe(true);
 	});
 
 	it('does not include local MCP server tools in orchestrator domain tools', () => {
@@ -263,31 +251,16 @@ describe('domain tool construction', () => {
 		expect(orchestratorTools.has('browser_navigate')).toBe(false);
 	});
 
-	it('registers the current-message parse-file on a turn without files', () => {
-		expect(createOrchestratorDomainTools(makeContext()).get('parse-file')).toEqual({
-			id: 'parse-file',
-		});
-	});
-
-	it('registers the stored-file parse-file on every turn when a file reader is wired', () => {
-		const context = makeContext({ storedFiles: { read: vi.fn() } });
-
-		expect(createOrchestratorDomainTools(context).get('parse-file')).toMatchObject({
-			id: 'parse-file',
-			storedFiles: true,
-		});
-	});
-
-	it('prefers the stored-file parse-file over the current-message version', () => {
+	it('includes parse-file tools when attachments are parseable', () => {
+		vi.mocked(isParseableAttachment).mockReturnValue(true);
 		const context = makeContext({
-			storedFiles: { read: vi.fn() },
 			currentUserAttachments: [
-				{ type: 'file', data: '', mimeType: 'text/csv', fileName: 'data.csv' },
+				{ type: 'file', data: '', mimeType: 'text/html', fileName: 'page.html' },
 			],
 		});
 
 		expect(createOrchestratorDomainTools(context).get('parse-file')).toMatchObject({
-			storedFiles: true,
+			id: 'parse-file',
 		});
 	});
 
@@ -319,27 +292,8 @@ describe('domain tool construction', () => {
 		expect(createOrchestratorDomainTools(enabled).get('skills')).toBeDefined();
 	});
 
-	it.each([
-		['the current Instance AI runtime', {}],
-		['the Assistant agent', { storedFiles: { read: vi.fn() } }],
-	])(
-		'keeps the same tool names with and without files on %s, so the cached prefix stays valid',
-		(_label, runtimeContext: Partial<InstanceAiContext>) => {
-			const withoutFiles = makeContext(runtimeContext);
-			const withFiles = makeContext({
-				...runtimeContext,
-				currentUserAttachments: [
-					{ type: 'file', data: '', mimeType: 'text/csv', fileName: 'data.csv' },
-				],
-			});
-
-			expect(getActiveOrchestratorDomainToolNames(withFiles)).toEqual(
-				getActiveOrchestratorDomainToolNames(withoutFiles),
-			);
-		},
-	);
-
 	it('reports the same active names that the domain registry exposes', () => {
+		vi.mocked(isParseableAttachment).mockReturnValue(true);
 		const context = makeContext({
 			evaluationConfigService: {} as InstanceAiContext['evaluationConfigService'],
 			mcpService: {} as InstanceAiContext['mcpService'],

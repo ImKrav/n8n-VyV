@@ -2,10 +2,7 @@ operationId: deleteDataTable
 tags:
   - DataTable
 summary: Delete a data table
-description: |-
-  Delete a data table. This will also delete all rows in the table.
-
-  Requires the `dataTable:delete` API key scope.
+description: Delete a data table. This will also delete all rows in the table.
 x-required-scope: dataTable:delete
 parameters:
   - schema:

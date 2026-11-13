@@ -95,9 +95,8 @@ beforeAll(async () => {
 		searchExecutions,
 		findLatestExecution: vi.fn(),
 		cancelExecution,
-		locateResume: vi.fn(),
+		locateResumeTarget: vi.fn(),
 		resolveStep: vi.fn(),
-		readApprovalCallback: vi.fn(),
 	});
 });
 

@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 import { promisify } from 'node:util';
 import { inflateRaw } from 'node:zlib';
 

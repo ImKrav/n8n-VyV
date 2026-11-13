@@ -2,7 +2,6 @@ import type {
 	DependenciesBatchResponse,
 	DependencyCountsBatchResponse,
 	DependencyResourceType,
-	DependencyVersion,
 	ResolvedDependency,
 } from '@n8n/api-types';
 import {
@@ -70,8 +69,6 @@ interface RawDepMaps {
 	allAgentIds: Set<string>;
 	allWfIds: Set<string>;
 	allDtIds: Set<string>;
-	/** The versions that hold each link, keyed by `linkKey`. */
-	versionMap: Map<string, Set<DependencyVersion>>;
 }
 
 @Service()
@@ -168,14 +165,9 @@ export class WorkflowDependencyQueryService {
 		resourceIds: string[],
 		resourceType: DependencyResourceType,
 		user: User,
-		options: { listUnavailableCredentials?: boolean; includeVersions?: boolean } = {},
+		options: { listUnavailableCredentials?: boolean } = {},
 	): Promise<DependenciesBatchResponse> {
-		const loaded = await this.loadDepsForResources(
-			resourceIds,
-			resourceType,
-			user,
-			options.includeVersions === true,
-		);
+		const loaded = await this.loadDepsForResources(resourceIds, resourceType, user);
 		if (!loaded) return {};
 
 		const { accessibleInputIds, maps } = loaded;
@@ -196,17 +188,12 @@ export class WorkflowDependencyQueryService {
 		const workflowFindOptions: FindManyOptions<WorkflowEntity> = needsWorkflowProject
 			? {
 					where: { id: In([...maps.allWfIds]) },
-					select: {
-						id: true,
-						name: true,
-						isArchived: true,
-						shared: { role: true, project: { id: true } },
-					},
+					select: { id: true, name: true, shared: { role: true, project: { id: true } } },
 					relations: { shared: { project: true } },
 				}
 			: {
 					where: { id: In([...maps.allWfIds]) },
-					select: ['id', 'name', 'isArchived'],
+					select: ['id', 'name'],
 				};
 
 		// Load all referenced resources (not just accessible ones) so that ids whose
@@ -236,7 +223,7 @@ export class WorkflowDependencyQueryService {
 		const accessibleDtIdSet = new Set(accessibleDtIds);
 
 		const agentNames = new Map<string, { name: string; projectId: string }>();
-		const wfNames = new Map<string, { name: string; projectId?: string; archived: boolean }>();
+		const wfNames = new Map<string, { name: string; projectId?: string }>();
 		const credNames = new Map<string, string>();
 		const unavailableCredNames = new Map<string, string>();
 		const dtNames = new Map<string, { name: string; projectId: string }>();
@@ -281,7 +268,6 @@ export class WorkflowDependencyQueryService {
 				wfNames.set(w.id, {
 					name: w.name ?? w.id,
 					projectId: ownerShare?.project?.id,
-					archived: w.isArchived,
 				});
 			}
 		}
@@ -302,27 +288,7 @@ export class WorkflowDependencyQueryService {
 				dtNames,
 			},
 			{ existingAgentIds, existingWfIds, existingCredIds, existingDtIds },
-			options.includeVersions === true,
 		);
-	}
-
-	/**
-	 * Whether the user can read the resource. Unlike the batch reads, this also says no for an ID
-	 * that does not exist, so a caller can tell "no dependencies" from "no such resource".
-	 */
-	async canReadResource(
-		resourceId: string,
-		resourceType: DependencyResourceType,
-		user: User,
-	): Promise<boolean> {
-		// The data table access check passes every ID for a user with global scope.
-		if (resourceType === 'dataTable') {
-			const exists = await this.dataTableRepository.existsBy({ id: resourceId });
-			if (!exists) return false;
-		}
-
-		const accessible = await this.filterByAccess([resourceId], resourceType, user);
-		return accessible.length > 0;
 	}
 
 	/**
@@ -359,7 +325,6 @@ export class WorkflowDependencyQueryService {
 		resourceIds: string[],
 		resourceType: DependencyResourceType,
 		user: User,
-		includeVersions = false,
 	): Promise<{ accessibleInputIds: string[]; maps: RawDepMaps } | null> {
 		const accessibleInputIds = await this.filterByAccess(resourceIds, resourceType, user);
 		if (accessibleInputIds.length === 0) return null;
@@ -375,10 +340,7 @@ export class WorkflowDependencyQueryService {
 
 		if (rawDeps.length === 0 && agentDeps.length === 0) return null;
 
-		return {
-			accessibleInputIds,
-			maps: this.buildDepMaps(rawDeps, agentDeps, resourceType, includeVersions),
-		};
+		return { accessibleInputIds, maps: this.buildDepMaps(rawDeps, agentDeps, resourceType) };
 	}
 
 	/** Agents using the resources, as `{ agentId, resourceId }` regardless of resource type. */
@@ -390,15 +352,9 @@ export class WorkflowDependencyQueryService {
 	}
 
 	private buildDepMaps(
-		rawDeps: Array<
-			Pick<
-				WorkflowDependency,
-				'workflowId' | 'dependencyType' | 'dependencyKey' | 'publishedVersionId'
-			>
-		>,
+		rawDeps: Array<Pick<WorkflowDependency, 'workflowId' | 'dependencyType' | 'dependencyKey'>>,
 		agentDeps: Array<{ agentId: string; resourceId: string }>,
 		resourceType: DependencyResourceType,
-		includeVersions: boolean,
 	): RawDepMaps {
 		const agentUsageMap = new Map<string, Set<string>>();
 		const credMap = new Map<string, Set<string>>();
@@ -411,28 +367,13 @@ export class WorkflowDependencyQueryService {
 		const allAgentIds = new Set<string>();
 		const allWfIds = new Set<string>();
 		const allDtIds = new Set<string>();
-		const versionMap = new Map<string, Set<DependencyVersion>>();
-		const addVersion = (
-			dep: (typeof rawDeps)[number],
-			type: ResolvedDependency['type'],
-			resourceId: string,
-			id: string,
-		) => {
-			if (!includeVersions) return;
-			const version: DependencyVersion = dep.publishedVersionId ? 'published' : 'draft';
-			addToSet(versionMap, linkKey(type, resourceId, id), version);
-		};
 
 		for (const dep of rawDeps) {
 			allWfIds.add(dep.workflowId);
-
 			// Batch queries also load outgoing dependencies. Only matching target types can add parents.
 			if (RESOURCE_DEPENDENCY_TYPES[resourceType].includes(dep.dependencyType)) {
-				const isErrorParent = dep.dependencyType === 'errorWorkflow';
-				addToSet(isErrorParent ? errorWfParentMap : parentMap, dep.dependencyKey, dep.workflowId);
-				addVersion(
-					dep,
-					isErrorParent ? 'errorWorkflowParent' : 'workflowParent',
+				addToSet(
+					dep.dependencyType === 'errorWorkflow' ? errorWfParentMap : parentMap,
 					dep.dependencyKey,
 					dep.workflowId,
 				);
@@ -456,10 +397,7 @@ export class WorkflowDependencyQueryService {
 					addToSet(errorWfMap, dep.workflowId, dep.dependencyKey);
 					allWfIds.add(dep.dependencyKey);
 					break;
-				default:
-					continue;
 			}
-			addVersion(dep, dep.dependencyType, dep.workflowId, dep.dependencyKey);
 		}
 
 		for (const dep of agentDeps) {
@@ -479,7 +417,6 @@ export class WorkflowDependencyQueryService {
 			allAgentIds,
 			allWfIds,
 			allDtIds,
-			versionMap,
 		};
 	}
 
@@ -492,7 +429,7 @@ export class WorkflowDependencyQueryService {
 		maps: RawDepMaps,
 		accessMaps: {
 			agentNames: Map<string, { name: string; projectId: string }>;
-			wfNames: Map<string, { name: string; projectId?: string; archived: boolean }>;
+			wfNames: Map<string, { name: string; projectId?: string }>;
 			credNames: Map<string, string>;
 			unavailableCredNames: Map<string, string>;
 			dtNames: Map<string, { name: string; projectId: string }>;
@@ -503,22 +440,12 @@ export class WorkflowDependencyQueryService {
 			existingCredIds: Set<string>;
 			existingDtIds: Set<string>;
 		},
-		includeVersions: boolean,
 	): DependenciesBatchResponse {
 		const result: DependenciesBatchResponse = {};
 
 		for (const resourceId of resourceIds) {
 			const dependencies: ResolvedDependency[] = [];
 			let inaccessibleCount = 0;
-
-			const versionsOf = (type: ResolvedDependency['type'], id: string) => {
-				if (!includeVersions) return {};
-				const versions = maps.versionMap.get(linkKey(type, resourceId, id));
-				// Fixed order, so the output does not depend on the row order.
-				return versions
-					? { versions: (['draft', 'published'] as const).filter((v) => versions.has(v)) }
-					: {};
-			};
 
 			for (const id of maps.agentUsageMap.get(resourceId) ?? []) {
 				if (!existing.existingAgentIds.has(id)) continue;
@@ -546,15 +473,9 @@ export class WorkflowDependencyQueryService {
 					const name = nameMap.get(id);
 					const unavailableName = accessMaps.unavailableCredNames.get(id);
 					if (name !== undefined) {
-						dependencies.push({ id, name, type, ...versionsOf(type, id) });
+						dependencies.push({ id, name, type });
 					} else if (type === 'credentialId' && unavailableName !== undefined) {
-						dependencies.push({
-							id,
-							name: unavailableName,
-							type,
-							unavailable: true,
-							...versionsOf(type, id),
-						});
+						dependencies.push({ id, name: unavailableName, type, unavailable: true });
 					} else {
 						inaccessibleCount++;
 					}
@@ -574,8 +495,6 @@ export class WorkflowDependencyQueryService {
 							name: workflow.name,
 							type,
 							projectId: workflow.projectId,
-							...(workflow.archived ? { archived: true as const } : {}),
-							...versionsOf(type, id),
 						});
 					} else {
 						inaccessibleCount++;
@@ -598,13 +517,7 @@ export class WorkflowDependencyQueryService {
 				if (!existing.existingDtIds.has(id)) continue;
 				const dt = accessMaps.dtNames.get(id);
 				if (dt) {
-					dependencies.push({
-						id,
-						name: dt.name,
-						type: 'dataTableId',
-						projectId: dt.projectId,
-						...versionsOf('dataTableId', id),
-					});
+					dependencies.push({ id, name: dt.name, type: 'dataTableId', projectId: dt.projectId });
 				} else {
 					inaccessibleCount++;
 				}
@@ -677,11 +590,7 @@ export class WorkflowDependencyQueryService {
 	}
 }
 
-function linkKey(type: ResolvedDependency['type'], resourceId: string, id: string) {
-	return `${type}:${resourceId}:${id}`;
-}
-
-function addToSet<T>(map: Map<string, Set<T>>, key: string, val: T) {
+function addToSet(map: Map<string, Set<string>>, key: string, val: string) {
 	let set = map.get(key);
 	if (!set) {
 		set = new Set();

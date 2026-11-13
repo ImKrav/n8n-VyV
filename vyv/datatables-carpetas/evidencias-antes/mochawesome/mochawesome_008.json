@@ -1,0 +1,124 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 2,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-11-11T02:28:10.715Z",
+    "end": "2026-11-11T02:28:21.125Z",
+    "duration": 10410,
+    "testsRegistered": 2,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "88cabbd6-0826-44f5-9b06-c9f19d21ed94",
+      "title": "",
+      "fullFile": "cypress\\e2e\\ui\\co03-csv.ui.cy.js",
+      "file": "cypress\\e2e\\ui\\co03-csv.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c933aa34-3cae-4610-a162-0c3f6a0cef99",
+          "title": "CO-03 · CSV (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-018-01 · importa valido.csv desde el modal de nueva data table",
+              "fullTitle": "CO-03 · CSV (UI) CP-018-01 · importa valido.csv desde el modal de nueva data table",
+              "timedOut": null,
+              "duration": 6140,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui_csv\").then((nombre) => {\n  cy.visitarN8n(\"/home/datatables\");\n  cy.abrirModalDataTable();\n  cy.campo(\"data-table-name-input-select\").type(nombre);\n  cy.tid(\"import-csv-option\").first().click();\n  cy.get('input[type=\"file\"]').selectFile(\"cypress/fixtures/csv/valido.csv\", { force: true });\n  cy.tid(\"proceed-from-select-button\").should(\"not.be.disabled\").click();\n  cy.campo(\"column-name-3\").should(\"have.value\", \"fecha\");\n  cy.screenshot(\"CP-018-01_vista_previa\");\n  cy.tid(\"confirm-add-data-table-button\").first().click();\n  cy.tid(\"data-table-details-view\").should(\"be.visible\");\n  cy.get('[data-test-id=\"data-table-grid\"] .ag-center-cols-container [row-index]').should(\"have.length\", 5);\n  cy.location(\"pathname\").then((ruta) => {\n    const id = ruta.split(\"/\").filter(Boolean).pop();\n    n8nApi.filasOk(p, id).should(\"have.length\", 5);\n  });\n  cy.screenshot(\"CP-018-01_tabla_importada\");\n});",
+              "err": {},
+              "uuid": "1897f198-08c3-4922-831c-5debe2aad8cc",
+              "parentUUID": "c933aa34-3cae-4610-a162-0c3f6a0cef99",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-018-06 · descarga el CSV desde la vista de la tabla",
+              "fullTitle": "CO-03 · CSV (UI) CP-018-06 · descarga el CSV desde la vista de la tabla",
+              "timedOut": null,
+              "duration": 4126,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui_dl\").then((n) => {\n  n8nApi.crearTablaOk(p, n, [{ name: \"nombre\", type: \"string\" }, { name: \"edad\", type: \"number\" }]).then((t) => {\n    n8nApi.insertar(p, t.id, [{ nombre: \"Ana\", edad: 30 }]);\n    cy.intercept(\"GET\", \"**/download-csv*\").as(\"descarga\");\n    cy.visitarN8n(`/projects/${p}/datatables/${t.id}`);\n    cy.tid(\"data-table-details-view\").should(\"be.visible\");\n    cy.tid(\"data-table-card-actions\").first().find(\"button\").first().click();\n    cy.get('[data-test-id=\"action-toggle-dropdown\"]').contains(/download/i).click();\n    cy.tid(\"download-modal-confirm\").first().click();\n    cy.wait(\"@descarga\").its(\"response.statusCode\").should(\"eq\", 200);\n    cy.get(\"@descarga\").its(\"response.body.data.csvContent\").should(\"contain\", \"Ana\");\n    cy.screenshot(\"CP-018-06_descarga\");\n  });\n});",
+              "err": {},
+              "uuid": "24f20adf-14c4-4cba-b84e-7a018dbc411b",
+              "parentUUID": "c933aa34-3cae-4610-a162-0c3f6a0cef99",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "1897f198-08c3-4922-831c-5debe2aad8cc",
+            "24f20adf-14c4-4cba-b84e-7a018dbc411b"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 10266,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

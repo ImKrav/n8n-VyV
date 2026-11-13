@@ -9,7 +9,7 @@ test.use({ capability: 'proxy' });
 test.describe(
 	'Poll Trigger (legacy in-memory scheduler)',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('should fire an activated poll trigger through the legacy in-memory path', async ({

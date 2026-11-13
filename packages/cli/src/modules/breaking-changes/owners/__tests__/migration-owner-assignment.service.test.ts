@@ -1,5 +1,5 @@
 import type { WorkflowSharingService } from '@n8n/backend-services';
-import { Person, type User, type UserRepository, type WorkflowRepository } from '@n8n/db';
+import type { User, UserRepository, WorkflowRepository } from '@n8n/db';
 import { BadRequestError, NotFoundError } from '@n8n/errors';
 import type { MockProxy } from 'vitest-mock-extended';
 import { mock } from 'vitest-mock-extended';
@@ -10,13 +10,12 @@ import type { MigrationOwnerSuggestionService } from '../migration-owner-suggest
 
 const WORKFLOW_ID = 'wf-1';
 const admin = { id: 'admin-1' } as User;
-const alice = Object.assign(new Person(), {
+const alice = {
 	id: 'alice',
 	firstName: 'Alice',
 	lastName: 'A',
 	email: 'alice@example.com',
-});
-const aliceWith = (attributes: Partial<Person>) => Object.assign(new Person(), alice, attributes);
+} as User;
 
 describe('MigrationOwnerAssignmentService', () => {
 	let workflowRepository: MockProxy<WorkflowRepository>;
@@ -90,7 +89,7 @@ describe('MigrationOwnerAssignmentService', () => {
 			['pending', { isPending: true }],
 			['disabled', { disabled: true }],
 		])('rejects a %s user before writing', async (_, flags) => {
-			userRepository.findManyByIds.mockResolvedValue([aliceWith(flags)]);
+			userRepository.findManyByIds.mockResolvedValue([{ ...alice, ...flags } as User]);
 
 			await expect(service.assign(WORKFLOW_ID, alice.id, admin)).rejects.toBeInstanceOf(
 				BadRequestError,
@@ -130,8 +129,8 @@ describe('MigrationOwnerAssignmentService', () => {
 		it('leaves out the users who cannot sign in', async () => {
 			userRepository.findManyByIds.mockResolvedValue([
 				alice,
-				aliceWith({ id: 'pending', isPending: true }),
-				aliceWith({ id: 'disabled', disabled: true }),
+				{ ...alice, id: 'pending', isPending: true } as User,
+				{ ...alice, id: 'disabled', disabled: true } as User,
 			]);
 
 			const candidates = await service.candidates(WORKFLOW_ID);

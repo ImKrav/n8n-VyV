@@ -2,14 +2,11 @@ import {
 	activeLifecycleState,
 	droppedLifecycleState,
 	estimateObservationTokens,
-	fromObservationResumeColumns,
 	normalizeObservationLogReflection,
-	toObservationResumeColumns,
 	supersededLifecycleState,
 	type AgentDbMessage,
 	type BuiltObservationLogStore,
 	type BuiltObservationLogTaskLockStore,
-	type BuiltObservationResumeStore,
 	type NewObservationLogEntry,
 	type ObservationCursor,
 	type ObservationLogBatch,
@@ -21,11 +18,11 @@ import {
 	type ObservationLogScope,
 	type ObservationLogTaskKind,
 	type ObservationLogTaskLockHandle,
-	type ObservationResumeState,
 } from '@n8n/agents';
 import { Equal, In, IsNull, MoreThan, type FindOptionsWhere } from '@n8n/typeorm';
 
 import type { InstanceAiMessage } from '../entities/instance-ai-message.entity';
+import { InstanceAiObservationLock } from '../entities/instance-ai-observation-lock.entity';
 import { InstanceAiObservation } from '../entities/instance-ai-observation.entity';
 import type { InstanceAiMessageRepository } from '../repositories/instance-ai-message.repository';
 import type { InstanceAiObservationCursorRepository } from '../repositories/instance-ai-observation-cursor.repository';
@@ -47,7 +44,7 @@ function toObservationLogEntry(entity: InstanceAiObservation): ObservationLogEnt
 }
 
 export class TypeORMObservationLogStore
-	implements BuiltObservationLogStore, BuiltObservationLogTaskLockStore, BuiltObservationResumeStore
+	implements BuiltObservationLogStore, BuiltObservationLogTaskLockStore
 {
 	constructor(
 		private readonly observationRepo: InstanceAiObservationRepository,
@@ -251,22 +248,6 @@ export class TypeORMObservationLogStore
 		);
 	}
 
-	async getResumeState(observationScopeId: string): Promise<ObservationResumeState | null> {
-		const entity = await this.observationCursorRepo.findOneBy({ observationScopeId });
-		return entity ? fromObservationResumeColumns(observationScopeId, entity) : null;
-	}
-
-	async saveResumeState(state: ObservationResumeState): Promise<void> {
-		const { observationScopeId } = state;
-		const entity = await this.observationCursorRepo.findOneBy({ observationScopeId });
-		if (!entity) return;
-		// Keep updatedAt: the Observer commit matches the cursor row on it.
-		await this.observationCursorRepo.update(
-			{ observationScopeId, updatedAt: entity.updatedAt },
-			{ ...toObservationResumeColumns(state), updatedAt: entity.updatedAt },
-		);
-	}
-
 	async acquireObservationLogTaskLock(
 		observationScopeId: string,
 		taskKind: ObservationLogTaskKind,
@@ -275,33 +256,43 @@ export class TypeORMObservationLogStore
 		const now = new Date();
 		const heldUntil = new Date(now.getTime() + opts.ttlMs);
 
-		const updated = await this.observationLockRepo.updateIfAvailable(
-			observationScopeId,
-			taskKind,
-			opts.holderId,
-			heldUntil,
-			now,
-			{},
-		);
+		const updateResult = await this.observationLockRepo
+			.createQueryBuilder()
+			.update(InstanceAiObservationLock)
+			.set({ taskKind, holderId: opts.holderId, heldUntil })
+			.where('"observationScopeId" = :observationScopeId')
+			.andWhere('"taskKind" = :taskKind')
+			.andWhere('("holderId" = :holderId OR "heldUntil" <= :now)')
+			.setParameters({
+				observationScopeId,
+				taskKind,
+				holderId: opts.holderId,
+				now,
+			})
+			.execute();
 
-		if (updated) {
+		if ((updateResult.affected ?? 0) > 0) {
 			return { observationScopeId, taskKind, holderId: opts.holderId, heldUntil };
 		}
 
-		await this.observationLockRepo.insertIfAbsent(
-			observationScopeId,
-			taskKind,
-			opts.holderId,
-			heldUntil,
-			{},
-		);
+		await this.observationLockRepo
+			.createQueryBuilder()
+			.insert()
+			.into(InstanceAiObservationLock)
+			.values({
+				observationScopeId,
+				taskKind,
+				holderId: opts.holderId,
+				heldUntil,
+			})
+			.orIgnore()
+			.execute();
 
-		const claimed = await this.observationLockRepo.findByScopeKindAndHolder(
+		const claimed = await this.observationLockRepo.findOneBy({
 			observationScopeId,
 			taskKind,
-			opts.holderId,
-			{},
-		);
+			holderId: opts.holderId,
+		});
 
 		if (!claimed) return null;
 
@@ -309,11 +300,10 @@ export class TypeORMObservationLogStore
 	}
 
 	async releaseObservationLogTaskLock(handle: ObservationLogTaskLockHandle): Promise<void> {
-		await this.observationLockRepo.deleteByScopeKindAndHolder(
-			handle.observationScopeId,
-			handle.taskKind,
-			handle.holderId,
-			{},
-		);
+		await this.observationLockRepo.delete({
+			observationScopeId: handle.observationScopeId,
+			taskKind: handle.taskKind,
+			holderId: handle.holderId,
+		});
 	}
 }

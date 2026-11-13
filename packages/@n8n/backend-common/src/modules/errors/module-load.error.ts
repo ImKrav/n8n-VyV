@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 /**
  * The module's entrypoint was found but could not be evaluated, e.g. because one

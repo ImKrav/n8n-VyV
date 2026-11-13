@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import type { SlotCodeDiffProps } from '@n8n/frontend-module-sdk';
-
 import { useUIStore } from '@/app/stores/ui.store';
 import { CodeDiff } from 'v-code-diff';
 
 const uiStore = useUIStore();
 
 const props = withDefaults(
-	defineProps<
-		SlotCodeDiffProps & {
-			outputFormat?: 'side-by-side' | 'line-by-line';
-			language?: string;
-			hideStat?: boolean;
-			hideHeader?: boolean;
-			forceInlineComparison?: boolean;
-			diffStyle?: 'word' | 'char';
-			theme?: 'light' | 'dark';
-		}
-	>(),
+	defineProps<{
+		oldString: string;
+		newString: string;
+		outputFormat?: 'side-by-side' | 'line-by-line';
+		language?: string;
+		hideStat?: boolean;
+		hideHeader?: boolean;
+		forceInlineComparison?: boolean;
+		diffStyle?: 'word' | 'char';
+		theme?: 'light' | 'dark';
+	}>(),
 	{
 		outputFormat: 'line-by-line',
 		language: 'json',

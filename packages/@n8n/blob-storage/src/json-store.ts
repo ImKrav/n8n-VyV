@@ -1,6 +1,5 @@
 import chunk from 'lodash/chunk';
-import { jsonParse, jsonStringify } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import { jsonParse, jsonStringify, UnexpectedError } from 'n8n-workflow';
 
 import { ByteStoreRegistry } from './byte-store-registry';
 import { SkippedEntryDeletionError } from './skipped-entry-deletion.error';

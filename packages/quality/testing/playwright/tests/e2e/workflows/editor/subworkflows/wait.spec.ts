@@ -25,7 +25,7 @@ async function getResumeUrl(
 test.describe(
 	'Parent that does not wait for sub-workflow',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('should not wait for the sub-workflow @engine:v2', async ({ api }) => {

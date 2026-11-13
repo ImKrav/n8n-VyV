@@ -5,7 +5,8 @@ import type { InstanceSettings } from 'n8n-core';
 import { EventEmitter } from 'node:events';
 import { mock } from 'vitest-mock-extended';
 
-import type { Publisher, Subscriber } from '@n8n/backend-services';
+import type { Publisher } from '@/scaling/pubsub/publisher.service';
+import type { Subscriber } from '@/scaling/pubsub/subscriber.service';
 
 import { AgentQueuedTestStreamService } from '../agent-queued-test-stream.service';
 import type { initSseStream } from '../agent-sse-stream';

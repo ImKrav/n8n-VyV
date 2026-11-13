@@ -1,5 +1,4 @@
 import { errorToSentinel } from './error-transfer';
-import { isArray, objectKeys } from './intrinsics';
 import { encodeLuxonValue } from './luxon-transfer';
 import type { ObjectWalk, SentinelEncoder } from './transfer';
 import {
@@ -77,7 +76,7 @@ function prepareObject(value: object, walk: ObjectWalk | undefined): unknown {
 		return errorToSentinel(value, prepareChild);
 	}
 
-	if (isArray(value)) return value.map(prepareChild);
+	if (Array.isArray(value)) return value.map(prepareChild);
 
 	if (!isPlainObject(value)) {
 		if (isStructuredCloneBuiltin(value)) return value;
@@ -93,7 +92,7 @@ function prepareObject(value: object, walk: ObjectWalk | undefined): unknown {
 
 	const result: Record<string, unknown> = {};
 	let collides = false;
-	for (const key of objectKeys(value)) {
+	for (const key of Object.keys(value)) {
 		if (TRANSFER_FRAMING_KEYS.includes(key)) collides = true;
 		defineOwnValue(result, key, prepareChild(value[key]));
 	}

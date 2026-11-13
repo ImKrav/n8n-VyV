@@ -2,10 +2,7 @@ operationId: getNodeTypePolicyDocument
 tags:
   - NodeTypePolicy
 summary: 'Preview: Retrieve a node type policy document'
-description: |-
-  **Preview** — breaking changes may still occur without major version bump.
-
-  Requires the `nodeTypePolicy:manage` API key scope.
+description: '**Preview** — breaking changes may still occur without major version bump.'
 x-required-scope: nodeTypePolicy:manage
 parameters:
   - schema:

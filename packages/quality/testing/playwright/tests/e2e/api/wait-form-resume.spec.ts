@@ -5,7 +5,7 @@ import { PublicFormPage } from '../../../pages/PublicFormPage';
 
 test.describe(
 	'Wait Node Form Resume',
-	{ annotation: [{ type: 'owner', description: 'Core Execution' }] },
+	{ annotation: [{ type: 'owner', description: 'Catalysts' }] },
 	() => {
 		test.describe('signature validation', () => {
 			test('should reject unsigned and tampered requests, accept valid signature @engine:v2', async ({

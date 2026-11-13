@@ -16,9 +16,12 @@ description: >-
 dependencies:
   tools:
     - search_models
-recommended_tool_groups:
-  - nodes
-  - credentials
+recommended_tools:
+  - get_node_types
+  - get_node_parameter_options
+  - list_credentials
+  - search_models
+  - research
 ---
 
 # Model selection
@@ -48,7 +51,7 @@ call `search_models` before writing the workflow.** Do not substitute a remember
    edit. If evidence shows it cannot meet the request, explain that evidence and
    agree on an alternative before changing it.
 2. For a new choice, check relevant credentials, including Gateway credits.
-   Run `get_node_parameter_options` through `call_tool` with that credential and the parameter path (or lookup
+   Use `get_node_parameter_options` with that credential and the parameter path (or lookup
    method from the node definition). Its available models take precedence
    over builder hints and public catalogs. Choose one that fits the operation,
    task, and budget. Explain access constraints if they require an older model.

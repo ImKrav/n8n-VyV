@@ -12,7 +12,7 @@ import {
 	getNodeCredentialForSelectedAuthType,
 } from '@/app/utils/nodeTypesUtils';
 import { useCredentialOAuth } from '@/features/credentials/composables/useCredentialOAuth';
-import { hasAutomaticOAuthApp, hasManagedOAuthApp } from '@/features/credentials/credentials.utils';
+import { hasManagedOAuthApp } from '@/features/credentials/credentials.utils';
 import { useCredentialsStore } from '@/features/credentials/credentials.store';
 
 export interface CredentialModeOption {
@@ -70,29 +70,14 @@ const hasManualCredentialFields = computed(() =>
 	hasManualCredentialInputFields(props.credentialType),
 );
 
-const OAUTH_APP_LABEL_KEYS = {
-	automatic: {
-		plain: 'credentialEdit.credentialConfig.oauthModeAutomatic',
-		withAuthType: 'credentialEdit.credentialConfig.oauthModeAutomaticWithAuthType',
-	},
-	managed: {
-		plain: 'credentialEdit.credentialConfig.oauthModeManaged',
-		withAuthType: 'credentialEdit.credentialConfig.oauthModeManagedWithAuthType',
-	},
-} as const;
-
-function getManagedOAuthOptions(
-	authType: string,
-	automatic: boolean,
-	authTypeLabel?: string,
-): Option[] {
-	const keys = OAUTH_APP_LABEL_KEYS[automatic ? 'automatic' : 'managed'];
-	const appLabel = authTypeLabel
-		? i18n.baseText(keys.withAuthType, { interpolate: { authType: authTypeLabel } })
-		: i18n.baseText(keys.plain);
+function getManagedOAuthOptions(authType: string, authTypeLabel?: string): Option[] {
 	return [
 		{
-			name: appLabel,
+			name: authTypeLabel
+				? i18n.baseText('credentialEdit.credentialConfig.oauthModeManagedWithAuthType', {
+						interpolate: { authType: authTypeLabel },
+					})
+				: i18n.baseText('credentialEdit.credentialConfig.oauthModeManaged'),
 			value: { type: authType, customOauth: false },
 		},
 		{
@@ -126,10 +111,7 @@ const manualOptions = computed<Option[]>(() => {
 	const authOptions = getNodeAuthOptions(activeNodeType.value, activeNode.value?.typeVersion);
 
 	if (authOptions.length === 0 && hasManagedOAuth.value) {
-		return getManagedOAuthOptions(
-			managedFallbackType.value,
-			hasAutomaticOAuthApp(props.credentialType),
-		);
+		return getManagedOAuthOptions(managedFallbackType.value);
 	}
 
 	const withExpansion = authOptions.map((option) => {
@@ -138,15 +120,13 @@ const manualOptions = computed<Option[]>(() => {
 			: null;
 		// Not `canOAuthCredentialQuickConnect`: the managed app can exist while a
 		// required field, such as Jira's Site URL, stays the user's to fill.
-		const type = credential ? credentialsStore.getCredentialTypeByName(credential.name) : undefined;
-		const automatic = hasAutomaticOAuthApp(type);
 		const splitsIntoManagedPair = !!(
 			credential &&
 			props.showManagedOauthOptions &&
 			isOAuthCredentialType(credential.name) &&
-			(hasManagedOAuthApp(type) || automatic)
+			hasManagedOAuthApp(credentialsStore.getCredentialTypeByName(credential.name))
 		);
-		return { option, splitsIntoManagedPair, automatic };
+		return { option, splitsIntoManagedPair };
 	});
 	// Disambiguate managed labels only when several auth options expand into managed pairs
 	const managedPairCount = withExpansion.filter((o) => o.splitsIntoManagedPair).length;
@@ -154,17 +134,13 @@ const manualOptions = computed<Option[]>(() => {
 		'credentialEdit.credentialConfig.recommendedAuthTypeSuffix',
 	);
 
-	return withExpansion.flatMap<Option>(({ option, splitsIntoManagedPair, automatic }) => {
+	return withExpansion.flatMap<Option>(({ option, splitsIntoManagedPair }) => {
 		if (splitsIntoManagedPair) {
 			// strip the "(recommended)" suffix getNodeAuthOptions appends via the same i18n key
 			const label = option.name.endsWith(recommendedSuffix)
 				? option.name.slice(0, -recommendedSuffix.length).trimEnd()
 				: option.name;
-			return getManagedOAuthOptions(
-				option.value,
-				automatic,
-				managedPairCount > 1 ? label : undefined,
-			);
+			return getManagedOAuthOptions(option.value, managedPairCount > 1 ? label : undefined);
 		}
 		return { name: option.name, value: { type: option.value } };
 	});

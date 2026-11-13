@@ -9,9 +9,9 @@ import {
 	GLOBAL_CHAT_USER_ROLE,
 	GLOBAL_MEMBER_ROLE,
 	GLOBAL_OWNER_ROLE,
-	type Person,
 	Project,
 	type TagEntity,
+	type User,
 	WorkflowEntity,
 } from '@n8n/db';
 import { Container } from '@n8n/di';
@@ -84,7 +84,7 @@ function toExportableFolder(folder: Folder): ExportableFolder {
 
 function toExportableCredential(
 	cred: CredentialsEntity,
-	owner: Project | Person,
+	owner: Project | User,
 ): ExportableCredential {
 	let resourceOwner: RemoteResourceOwner;
 
@@ -113,7 +113,7 @@ function toExportableCredential(
 
 function toExportableWorkflow(
 	wf: WorkflowEntity,
-	owner: Project | Person,
+	owner: Project | User,
 	versionId?: string,
 ): ExportableWorkflow {
 	let resourceOwner: RemoteResourceOwner;
@@ -146,7 +146,7 @@ function toExportableWorkflow(
 	};
 }
 
-function toExportableDataTable(table: DataTable, owner: Project | Person): ExportableDataTable {
+function toExportableDataTable(table: DataTable, owner: Project | User): ExportableDataTable {
 	let resourceOwner: NonNullable<ExportableDataTable['ownedBy']>;
 
 	if (owner instanceof Project) {
@@ -199,11 +199,11 @@ describe('SourceControlService', () => {
 				TBD!
 		*/
 
-	let globalAdmin: Person;
-	let globalOwner: Person;
-	let globalMember: Person;
-	let globalChatPerson: Person;
-	let projectAdmin: Person;
+	let globalAdmin: User;
+	let globalOwner: User;
+	let globalMember: User;
+	let globalChatUser: User;
+	let projectAdmin: User;
 
 	let projectA: Project;
 	let projectB: Project;
@@ -280,7 +280,7 @@ describe('SourceControlService', () => {
 				1. Workflow moved in git to other project
 			*/
 
-		[globalAdmin, globalOwner, globalMember, projectAdmin, globalChatPerson] = await Promise.all([
+		[globalAdmin, globalOwner, globalMember, projectAdmin, globalChatUser] = await Promise.all([
 			createUser({ role: GLOBAL_ADMIN_ROLE }),
 			createUser({ role: GLOBAL_OWNER_ROLE }),
 			createUser({ role: GLOBAL_MEMBER_ROLE }),
@@ -820,7 +820,7 @@ describe('SourceControlService', () => {
 			describe('global:chatUser user', () => {
 				it('should not be allowed to get push status', async () => {
 					await expect(
-						service.getStatus(globalChatPerson, {
+						service.getStatus(globalChatUser, {
 							direction: 'push',
 							preferLocalVersion: true,
 							verbose: false,
@@ -1414,7 +1414,7 @@ describe('SourceControlService', () => {
 	});
 
 	describe('isGlobal flag modification detection', () => {
-		let testGlobalOwner: Person;
+		let testGlobalOwner: User;
 		let testProject: Project;
 
 		beforeAll(async () => {

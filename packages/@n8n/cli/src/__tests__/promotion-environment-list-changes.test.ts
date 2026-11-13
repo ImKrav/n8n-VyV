@@ -1,13 +1,16 @@
 import type { Config } from '@oclif/core';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
-import type { N8nClient, PromotionPreview } from '../client';
+import type { N8nClient, ProjectPromotionChanges } from '../client';
 import PromotionEnvironmentListChanges from '../commands/promotion-environment/list-changes';
 
 interface ListChangesFlags {
 	format?: string;
 	json?: boolean;
 	jq?: string;
+	search?: string;
+	sort?: string;
+	order?: string;
 }
 
 /** The command methods we stub to isolate behaviour from oclif/networking. */
@@ -18,78 +21,28 @@ interface ListChangesInternals {
 	}>;
 	getClient: () => N8nClient;
 	output: (data: unknown, flags: unknown, options?: unknown) => void;
-	logToStderr: (message: string) => void;
 }
 
-type Resource = PromotionPreview['resources'][number];
-
-const resource = (overrides: Partial<Resource> & Pick<Resource, 'key' | 'type'>): Resource => ({
-	id: overrides.key.slice(overrides.key.indexOf(':') + 1),
-	name: overrides.key,
-	parentKey: 'project:proj-1',
-	change: 'unchanged',
-	selectable: false,
-	revision: { before: 'a', after: 'a' },
-	...overrides,
-});
-
-const PREVIEW: PromotionPreview = {
+const CHANGES: ProjectPromotionChanges = {
 	commitSha: 'abc123',
-	source: { environmentId: 'env-1', branchName: 'main' },
-	resources: [
-		resource({ key: 'project:proj-1', type: 'project', parentKey: null }),
-		resource({ key: 'folder:folder-1', type: 'folder', name: 'Reports' }),
-		resource({
-			key: 'workflow:wf-1',
+	changes: [
+		{
+			id: 'wf-1',
+			name: 'First',
 			type: 'workflow',
-			name: 'Weekly report',
-			parentKey: 'folder:folder-1',
-			change: 'modified',
-			selectable: true,
-		}),
-		// Unchanged, but listed because it carries the changed credential.
-		resource({ key: 'workflow:wf-2', type: 'workflow', selectable: true }),
-		resource({
-			key: 'credential:cred-1',
-			type: 'credential',
-			name: 'Billing API',
-			parentKey: null,
-			change: 'modified',
-		}),
-	],
-	dependencies: [
-		{ workflowKey: 'workflow:wf-2', resourceKey: 'credential:cred-1', included: true },
-		{ workflowKey: 'workflow:wf-1', resourceKey: 'workflow:wf-2', included: false },
+			status: 'modified',
+			version: 3,
+			updatedAt: '2026-01-01T00:00:00.000Z',
+			updatedBy: 'user-1',
+			dependencyCount: 0,
+		},
 	],
 };
 
-const COLUMNS = ['type', 'id', 'name', 'change', 'folder', 'usedBy', 'selectable'];
-
-const ROWS = [
-	{
-		type: 'workflow',
-		id: 'wf-1',
-		name: 'Weekly report',
-		change: 'modified',
-		folder: 'Reports',
-		usedBy: undefined,
-		selectable: true,
-	},
-	{
-		type: 'credential',
-		id: 'cred-1',
-		name: 'Billing API',
-		change: 'modified',
-		folder: undefined,
-		usedBy: 'wf-2',
-		selectable: false,
-	},
-];
-
-function stubCommand(flags: ListChangesFlags, preview: PromotionPreview = PREVIEW) {
+function stubCommand(flags: ListChangesFlags) {
 	const command = new PromotionEnvironmentListChanges([], {} as Config);
 	const internals = command as unknown as ListChangesInternals;
-	const listProjectPromotionChanges = vi.fn().mockResolvedValue(preview);
+	const listProjectPromotionChanges = vi.fn().mockResolvedValue(CHANGES);
 
 	// Bypass oclif arg parsing, connection setup, and rendering.
 	vi.spyOn(internals, 'parse').mockResolvedValue({
@@ -100,9 +53,8 @@ function stubCommand(flags: ListChangesFlags, preview: PromotionPreview = PREVIE
 		listProjectPromotionChanges,
 	} as unknown as N8nClient);
 	const output = vi.spyOn(internals, 'output').mockImplementation(() => {});
-	const logToStderr = vi.spyOn(internals, 'logToStderr').mockImplementation(() => {});
 
-	return { command, output, logToStderr, listProjectPromotionChanges };
+	return { command, output, listProjectPromotionChanges };
 }
 
 describe('promotion-environment list-changes command', () => {
@@ -110,37 +62,60 @@ describe('promotion-environment list-changes command', () => {
 		vi.restoreAllMocks();
 	});
 
-	it('lists the changed resources with their folder and the workflows that carry them', async () => {
-		const { command, output, listProjectPromotionChanges } = stubCommand({ format: 'table' });
+	it('passes the search, sort, and order flags to the change preview', async () => {
+		const { command, listProjectPromotionChanges } = stubCommand({
+			search: 'checkout',
+			sort: 'updatedAt',
+			order: 'desc',
+		});
 
 		await command.run();
 
-		expect(listProjectPromotionChanges).toHaveBeenCalledWith('proj-1', 'promote');
-		expect(output).toHaveBeenCalledWith(ROWS, expect.anything(), { columns: COLUMNS });
+		expect(listProjectPromotionChanges).toHaveBeenCalledWith('proj-1', 'promote', {
+			search: 'checkout',
+			sort: 'updatedAt',
+			order: 'desc',
+		});
 	});
 
-	it('keeps the whole preview for JSON output', async () => {
+	it('unwraps the changes array for table output so rows render individually', async () => {
+		const { command, output } = stubCommand({ format: 'table' });
+
+		await command.run();
+
+		// The array reaches `output` directly; otherwise the wrapper serializes the
+		// whole list into a single `changes` cell.
+		expect(output).toHaveBeenCalledWith(CHANGES.changes, expect.anything(), {
+			columns: ['id', 'name', 'type', 'status', 'version', 'updatedAt'],
+		});
+	});
+
+	it('unwraps the changes array for id-only output', async () => {
+		const { command, output } = stubCommand({ format: 'id-only' });
+
+		await command.run();
+
+		// The wrapper has no top-level `id`, so id-only would print nothing without
+		// unwrapping.
+		expect(output).toHaveBeenCalledWith(CHANGES.changes, expect.anything(), {
+			columns: ['id', 'name', 'type', 'status', 'version', 'updatedAt'],
+		});
+	});
+
+	it('keeps the wrapper for JSON output', async () => {
 		const { command, output } = stubCommand({ json: true });
 
 		await command.run();
 
-		// JSON consumers need the commit, the dependencies and the Apply revision too.
-		expect(output).toHaveBeenCalledWith(PREVIEW, expect.anything());
+		// JSON consumers want the `commitSha` context alongside the changes.
+		expect(output).toHaveBeenCalledWith(CHANGES, expect.anything());
 	});
 
-	it('names the open review that holds the changes', async () => {
-		const { command, logToStderr } = stubCommand(
-			{ format: 'table' },
-			{
-				...PREVIEW,
-				resources: [],
-				dependencies: [],
-				blocker: { code: 'reviewOpen', reviewId: 'review-1' },
-			},
-		);
+	it('keeps the wrapper for jq output', async () => {
+		const { command, output } = stubCommand({ jq: '.changes[].id' });
 
 		await command.run();
 
-		expect(logToStderr).toHaveBeenCalledWith(expect.stringContaining('review-1'));
+		expect(output).toHaveBeenCalledWith(CHANGES, expect.anything());
 	});
 });

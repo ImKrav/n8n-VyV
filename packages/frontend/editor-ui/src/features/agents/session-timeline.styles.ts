@@ -30,7 +30,7 @@ const COLOR_FAMILIES: Record<TimelineColorKind, ColorFamily> = {
 	node: 'neutral',
 	workflow: 'pink',
 	'execution-error': 'red',
-	suspension: 'purple',
+	suspension: 'yellow',
 	'hitl-response': 'blue',
 	'background-task-signal': 'mint',
 	'background-task': 'mint',

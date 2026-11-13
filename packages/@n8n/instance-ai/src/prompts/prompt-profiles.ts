@@ -1,6 +1,6 @@
 import type { RuntimeSkillSource } from '@n8n/agents';
 import type { InstanceAiBuildMode, InstanceAiPromptConfiguration } from '@n8n/api-types';
-import { UnexpectedError, UserError } from '@n8n/errors';
+import { UnexpectedError, UserError } from 'n8n-workflow';
 
 import { CONCISE_COMMUNICATION_STYLE_SECTION } from '../agent/communication-style.prompt';
 import { createSystemPromptRenderer, getSystemPrompt } from '../agent/system-prompt';

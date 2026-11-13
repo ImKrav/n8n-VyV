@@ -35,7 +35,7 @@ export function showAgentPublishedConfirmation(agent: AgentResource): void {
 	// `AgentRepository.publishedN8nChatSql`), and a republish can differ from the draft.
 	const n8nChatLive =
 		useAgentsN8nChatFlag().value &&
-		(agent.activeVersion?.integrations ?? []).some(
+		(agent.activeVersion?.schema?.integrations ?? []).some(
 			({ type }) => type === N8N_CHAT_INTEGRATION_TYPE,
 		);
 	useUIStore().openModalWithData({
@@ -69,22 +69,9 @@ export function useAgentPublish() {
 		publishing.value = true;
 
 		try {
-			const currentDraft = versionId
-				? undefined
-				: await getAgent(rootStore.restApiContext, projectId, agentId);
-			const selectedId = versionId ?? currentDraft?.versionId;
+			const selectedId =
+				versionId ?? (await getAgent(rootStore.restApiContext, projectId, agentId)).versionId;
 			if (!selectedId) return null;
-			const draft = currentDraft
-				? {
-						versionId: selectedId,
-						skillVersions: Object.fromEntries(
-							Object.entries(currentDraft.skillVersions ?? {}).map(([id, info]) => [
-								id,
-								info.draft,
-							]),
-						),
-					}
-				: undefined;
 
 			const version = await getAgentVersion(
 				rootStore.restApiContext,
@@ -97,7 +84,6 @@ export function useAgentPublish() {
 			let updated: AgentResource | null = null;
 			const published = await openVersionMetadata({
 				mode: 'publish',
-				versionId: selectedId,
 				isCurrent,
 				name: version.name,
 				description: version.description,
@@ -107,9 +93,8 @@ export function useAgentPublish() {
 							rootStore.restApiContext,
 							projectId,
 							agentId,
-							versionId,
+							selectedId,
 							metadata,
-							draft,
 						);
 						upsertProjectAgentsListCache(projectId, updated);
 						showMessage({

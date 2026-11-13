@@ -5,7 +5,7 @@ test.describe
 		test.describe(
 			'unlicensed',
 			{
-				annotation: [{ type: 'owner', description: 'Core Execution' }],
+				annotation: [{ type: 'owner', description: 'Catalysts' }],
 			},
 			() => {
 				test.beforeEach(async ({ n8n }) => {

@@ -44,6 +44,7 @@ const stubs = [
 	'N8nIcon',
 	'N8nIconButton',
 	'N8nChatInput',
+	'AssistantIcon',
 	'AssistantText',
 	'InlineAskAssistantButton',
 ];

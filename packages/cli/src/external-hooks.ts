@@ -5,7 +5,6 @@ import { GlobalConfig } from '@n8n/config';
 import type { TagEntity, User, ICredentialsDb, CloudHooksPeople, PublicUser } from '@n8n/db';
 import {
 	CredentialsRepository,
-	isPerson,
 	WorkflowRepository,
 	SettingsRepository,
 	PersonRepository,
@@ -61,13 +60,11 @@ export function toWorkflowLifecycleHookActor(user?: User): WorkflowLifecycleHook
 		return undefined;
 	}
 
-	// A service account has no email or name.
-	const person = isPerson(user) ? user : undefined;
 	return {
 		id: user.id,
-		email: person?.email ?? null,
-		firstName: person?.firstName ?? null,
-		lastName: person?.lastName ?? null,
+		email: user.email,
+		firstName: user.firstName,
+		lastName: user.lastName,
 		role: user.role?.slug,
 	};
 }

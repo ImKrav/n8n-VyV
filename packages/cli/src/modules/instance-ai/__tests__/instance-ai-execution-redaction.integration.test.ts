@@ -3,7 +3,6 @@ import { ExecutionRedactionServiceProxy } from '@n8n/backend-services';
 import {
 	createTeamProject,
 	createWorkflowWithHistory,
-	getPersonalProject,
 	linkUserToProject,
 	mockInstance,
 	randomCredentialPayload,
@@ -385,13 +384,10 @@ describe('Instance AI execution redaction (integration)', () => {
 			expect(JSON.stringify(result)).toContain('tok_secret');
 		});
 
-		it.each([
-			['a team project', async () => teamProject.id],
-			["the owner's personal project", async () => (await getPersonalProject(owner)).id],
-		])('names the credential the user cannot use in %s', async (_, getProjectId) => {
+		it('names the credential the user cannot use in a team project', async () => {
 			redactionFloor.get.mockResolvedValue('off');
 
-			const result = await executeNodeFor(owner, await getProjectId()).execute({
+			const result = await executeNodeFor(owner, teamProject.id).execute({
 				...secretNode,
 				config: {
 					parameters: {},

@@ -5,7 +5,6 @@ import {
 	type SkillSourceConnectResponse,
 	type SkillSourceDiscovery,
 } from '@n8n/api-types';
-import { PostHogClient } from '@n8n/backend-services';
 import {
 	createTeamProject,
 	linkUserToProject,
@@ -16,7 +15,6 @@ import { GLOBAL_OWNER_ROLE, type Project, type User } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { DataSource } from '@n8n/typeorm';
 import nock from 'nock';
-import { randomUUID } from 'node:crypto';
 
 import { createSkill, deleteAllSkills, findLatestSkillVersion } from '../../testing';
 import { SkillSourceConnection } from '../../database/entities/skill-source-connection.entity';
@@ -28,6 +26,7 @@ import { SkillSourceNotFoundError } from '../../errors/skill-source-not-found.er
 import { SkillSourceRepository } from '../../database/repositories/skill-source.repository';
 import { GitHubSkillSourceClient } from '../../sources/github/github-skill-source-client';
 import { FakeGitHub } from '../test-utils/fake-github';
+import { PostHogClient } from '@/posthog';
 
 import { createMember, createOwner } from '@test-integration/db/users';
 import type { SuperAgentTest } from '@test-integration/types';
@@ -85,7 +84,7 @@ describe('Skill source checks', () => {
 		await db().delete(SkillSourceConnection, {});
 		postHog.getFeatureFlags.mockResolvedValue({ [SKILL_SYNC_FLAG]: true });
 		// The rate limit budget lives in memory on the service, so one test's limit stays there.
-		(Reflect.get(sync(), 'backoff') as Map<string, unknown>).clear();
+		(Reflect.get(sync(), 'retryAt') as Map<string, number>).clear();
 		github.start();
 		github.push('acme/skills', FILES);
 	});
@@ -93,7 +92,6 @@ describe('Skill source checks', () => {
 	afterEach(() => {
 		github.stop();
 		vi.restoreAllMocks();
-		vi.useRealTimers();
 	});
 
 	/** Imports every skill of the repository into the team, and answers their ids by name. */
@@ -134,15 +132,11 @@ describe('Skill source checks', () => {
 	const age = async (sourceId: string) =>
 		await db().update(SkillSourceConnection, { id: sourceId }, { lastCheckedAt: new Date(0) });
 
-	/** Check for updates on the source of the skill. A skill with no source posts an unknown id. */
-	const checkNow = async (agent: SuperAgentTest, skillId: string, status = 200) => {
-		const link = await db().findOneBy(SkillSourceLink, { skillId });
-		const sourceId = link?.sourceId ?? randomUUID();
-		return (await agent.post(`/skill-sources/${sourceId}/check`).send().expect(status)).body as {
+	const checkNow = async (agent: SuperAgentTest, skillId: string, status = 200) =>
+		(await agent.post(`/skill-sources/skills/${skillId}/check`).send().expect(status)).body as {
 			data: SkillSourceCheckResponse;
 			meta?: { reason: string };
 		};
-	};
 
 	describe('the check of a source', () => {
 		it('costs one request when the source did not change', async () => {
@@ -416,54 +410,14 @@ describe('Skill source checks', () => {
 			await importAll();
 			github.failWith = { status: 429, headers: { 'retry-after': '600' } };
 			await sync().checkAll();
-			const backoff = Reflect.get(sync(), 'backoff') as Map<string, unknown>;
-			const until = backoff.get('public:github');
+			const retryAt = Reflect.get(sync(), 'retryAt') as Map<string, number>;
+			const until = retryAt.get('public:github');
 
 			await sync().checkAll();
 			await sync().checkAll();
 
-			expect(backoff.get('public:github')).toBe(until);
+			expect(retryAt.get('public:github')).toBe(until);
 		});
-
-		it.each([false, true])(
-			'backs off repeated limits and resets after success (changed: %s)',
-			async (changed) => {
-				const { sourceId } = await importAll();
-				vi.spyOn(Math, 'random').mockReturnValue(0);
-				vi.useFakeTimers({ toFake: ['Date'] });
-				const start = Date.now();
-				github.failWith = { status: 429, headers: { 'retry-after': '1' } };
-				const requests = () => github.requests.refs;
-
-				await sync().checkAll();
-				const first = requests();
-				vi.setSystemTime(start + 59_999);
-				await sync().checkAll();
-				expect(requests()).toBe(first);
-
-				vi.setSystemTime(start + 60_000);
-				await sync().checkAll();
-				expect(requests()).toBe(first + 1);
-				vi.setSystemTime(start + 179_999);
-				await sync().checkAll();
-				expect(requests()).toBe(first + 1);
-
-				github.failWith = undefined;
-				if (changed) pushChange({ 'skills/docx/SKILL.md': skillMd('docx', 'v2') });
-				vi.setSystemTime(start + 180_000);
-				await sync().checkAll();
-				expect(requests()).toBe(first + 2);
-				expect(await sourceOf(sourceId)).toMatchObject({ lastErrorReason: null });
-
-				github.failWith = 429;
-				await sync().checkAll();
-				expect(requests()).toBe(first + 3);
-				github.failWith = undefined;
-				vi.setSystemTime(start + 240_000);
-				await sync().checkAll();
-				expect(requests()).toBe(first + 4);
-			},
-		);
 
 		it('keeps the check time of a source that waits, so it goes first next time', async () => {
 			const { sourceId } = await importAll();
@@ -713,7 +667,7 @@ describe('Skill source checks', () => {
 			const rows = body.data.data as SkillListItem[];
 			expect(rows.find((row) => row.id === xlsx)).toMatchObject({
 				syncState: 'update_available',
-				sourceId: expect.any(String),
+				canCheckForUpdates: true,
 			});
 			expect(rows.find((row) => row.id === docx)).toMatchObject({ syncState: 'up_to_date' });
 		});

@@ -21,12 +21,7 @@ let otherProject: Project;
 const fixture = looseAgentsFixture();
 const sources: PreparedAgent[] = fixture.manifest.agents.map(({ target }) => {
 	const { id, ...content } = serializedAgentSchema.parse(fixture.files[`${target}/agent.json`]);
-	return {
-		...content,
-		isArchived: false,
-		sourceAgentId: id,
-		metadata: { versionId: null, publishedVersionId: null },
-	};
+	return { ...content, sourceAgentId: id, metadata: { versionId: null, publishedVersionId: null } };
 });
 const taskBody = sources[0].tasks.support_source_task;
 

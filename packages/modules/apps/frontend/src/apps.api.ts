@@ -3,7 +3,6 @@ import {
 	type AppBinding,
 	type AppBindingKind,
 	type AppBindingsResponse,
-	type AppPublishPreviewResponse,
 	type AppBuildResponse,
 	type AppListResponse,
 	type AppPreviewResponse,
@@ -108,19 +107,6 @@ export async function publishApp(
 		'POST',
 		`/projects/${projectId}/apps/${appId}/publish`,
 		publication,
-	);
-}
-
-export async function getAppPublishPreview(
-	context: IRestApiContext,
-	projectId: string,
-	appId: string,
-	versionId: string,
-): Promise<AppPublishPreviewResponse> {
-	return await makeRestApiRequest(
-		context,
-		'GET',
-		`/projects/${projectId}/apps/${appId}/versions/${versionId}/publish-preview`,
 	);
 }
 

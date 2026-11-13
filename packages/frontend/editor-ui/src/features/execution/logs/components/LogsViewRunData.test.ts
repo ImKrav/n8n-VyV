@@ -21,8 +21,7 @@ import { AGENT_NODE_TYPE, OPEN_AI_CHAT_MODEL_NODE_TYPE } from '@/app/constants';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { mockedStore } from '@/__tests__/utils';
 import { useWorkflowExecutionStateStore } from '@/app/stores/workflowExecutionState.store';
-import { i18nInstance, useI18n } from '@n8n/i18n';
-import { flushPromises } from '@vue/test-utils';
+import { useI18n } from '@n8n/i18n';
 
 // Instantiates a store that derives the workflow id from the route. These tests run
 // without a router, so resolve the id directly.
@@ -60,13 +59,6 @@ describe('LogsViewRunData', () => {
 		nodeTypesStore.setNodeTypes(defaultNodeDescriptions);
 	});
 
-	afterEach(async () => {
-		// RunData loads its views lazily. Finish their imports before cleanup
-		// so they cannot continue after the test environment is torn down.
-		await flushPromises();
-		await vi.dynamicImportSettled();
-	});
-
 	it('shows the credential cause without a sharing action', () => {
 		const documentId = createWorkflowDocumentId('test-workflow-id');
 		const redactedExecution = createRunExecutionData({
@@ -87,7 +79,7 @@ describe('LogsViewRunData', () => {
 					[WorkflowIdKey as symbol]: computed(() => 'test-workflow-id'),
 					[WorkflowDocumentStoreKey as symbol]: shallowRef(useWorkflowDocumentStore(documentId)),
 				},
-				plugins: [pinia, i18nInstance],
+				plugins: [pinia],
 			},
 			props: {
 				title: '',
@@ -113,7 +105,7 @@ describe('LogsViewRunData', () => {
 						useWorkflowDocumentStore(createWorkflowDocumentId('test-workflow-id')),
 					),
 				},
-				plugins: [pinia, i18nInstance],
+				plugins: [pinia],
 			},
 			props: { title: '', logEntry, collapsingTableColumnName: null, paneType: 'output' },
 		});
@@ -130,7 +122,7 @@ describe('LogsViewRunData', () => {
 						useWorkflowDocumentStore(createWorkflowDocumentId('test-workflow-id')),
 					),
 				},
-				plugins: [pinia, i18nInstance],
+				plugins: [pinia],
 			},
 			props: { title: '', logEntry, collapsingTableColumnName: null, paneType: 'output' },
 		});
@@ -188,7 +180,7 @@ describe('LogsViewRunData', () => {
 						useWorkflowDocumentStore(createWorkflowDocumentId('test-workflow-id')),
 					),
 				},
-				plugins: [pinia, i18nInstance],
+				plugins: [pinia],
 			},
 			props: {
 				title: '',
@@ -211,9 +203,6 @@ describe('LogsViewRunData', () => {
 			},
 		});
 
-		// Wait for the lazy AI view before starting the text query.
-		await flushPromises();
-		await vi.dynamicImportSettled();
 		await rendered.findByText(/hello/);
 	});
 });

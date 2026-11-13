@@ -138,7 +138,7 @@ onBeforeUnmount(() => {
 			<OpenInN8nButton @click="emit('open')" />
 		</header>
 		<div class="iframe-shell">
-			<N8nSpinner v-if="!previewSent" class="preview-spinner" type="brand" size="xxlarge" />
+			<N8nSpinner v-if="!previewSent" class="preview-spinner" type="ring" />
 			<iframe
 				ref="iframeRef"
 				class="preview-frame"

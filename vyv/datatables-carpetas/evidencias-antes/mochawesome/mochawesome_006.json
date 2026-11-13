@@ -1,0 +1,243 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 8,
+    "passes": 7,
+    "pending": 0,
+    "failures": 1,
+    "start": "2026-11-11T02:26:54.689Z",
+    "end": "2026-11-11T02:27:00.958Z",
+    "duration": 6269,
+    "testsRegistered": 8,
+    "passPercent": 87.5,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "a8af60de-176f-4e6e-bf49-f8dcc16c00be",
+      "title": "",
+      "fullFile": "cypress\\e2e\\seguridad\\owasp-datatables-carpetas.cy.js",
+      "file": "cypress\\e2e\\seguridad\\owasp-datatables-carpetas.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+          "title": "Seguridad · Data tables y carpetas (OWASP Top 10)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "A01 Broken Access Control · la API exige sesión válida (sin cookie → 401)",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) A01 Broken Access Control · la API exige sesión válida (sin cookie → 401)",
+              "timedOut": null,
+              "duration": 411,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.clearCookies();\nconst rutas = [`/rest/projects/${p}/data-tables`, `/rest/projects/${p}/folders`, `/rest/projects/${p}/data-tables/${t}/rows`];\nrutas.forEach((url) => {\n  cy.request({ url, failOnStatusCode: false, headers: { \"browser-id\": Cypress.env(\"browserId\") } }).then((r) => {\n    expect(r.status, url).to.eq(401);\n  });\n});\ncy.then(() => registrar({ owasp: \"A01\", resultado: \"OK\", detalle: \"Endpoints protegidos devuelven 401 sin sesi\\xF3n\", severidad: \"N/A\" }));",
+              "err": {},
+              "uuid": "166c45c8-2fa0-4c63-b314-073ff9fd1442",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión)",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión)",
+              "timedOut": null,
+              "duration": 85,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.request({ url: `/rest/projects/${p}/data-tables`, failOnStatusCode: false, headers: { \"browser-id\": \"otro-navegador\" } }).its(\"status\").should(\"eq\", 401);\ncy.then(() => registrar({ owasp: \"A07\", resultado: \"OK\", detalle: \"Sesi\\xF3n ligada al browser-id\", severidad: \"N/A\" }));",
+              "err": {},
+              "uuid": "11af2b71-c5d0-44e7-b45b-8bc8674fb175",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "A01 · path traversal en fileId al crear una tabla desde CSV",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) A01 · path traversal en fileId al crear una tabla desde CSV",
+              "timedOut": null,
+              "duration": 163,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "n8nApi.req(\"POST\", n8nApi.dt(p), {\n  name: `vyv_trav_${Date.now()}`,\n  fileId: \"../../../../etc/passwd\",\n  hasHeaders: true,\n  columns: [{ name: \"a\", type: \"string\", csvColumnName: \"a\" }]\n}).then((r) => {\n  expect(r.status, \"no debe leer archivos fuera del directorio de subidas\").to.be.within(400, 599);\n  expect(JSON.stringify(r.body)).not.to.match(/root:x:0:0/);\n  registrar({ owasp: \"A01\", resultado: \"OK\", detalle: `fileId con ../ rechazado (${r.status}: ${mensaje(r).slice(0, 80)})`, severidad: \"N/A\" });\n});",
+              "err": {},
+              "uuid": "df49f3ba-a218-40fd-a647-83ae8ce1af5e",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "A03 Injection · nombres con SQL no alteran la base de datos",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) A03 Injection · nombres con SQL no alteran la base de datos",
+              "timedOut": null,
+              "duration": 171,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const malicioso = \"x'); DROP TABLE data_table; --\";\nn8nApi.crearTabla(p, malicioso, []).then((r) => {\n  expect(r.status).to.be.oneOf([200, 400]);\n  if (r.status === 200) n8nApi.borrarTabla(p, r.body.data.id);\n});\nn8nApi.listarTablas(p).its(\"count\").should(\"be.gte\", 1);\nn8nApi.filasOk(p, t, { filter: { type: \"and\", filters: [{ columnName: \"nombre\", condition: \"eq\", value: \"' OR '1'='1\" }] } }).should(\"have.length\", 0);\ncy.then(() => registrar({ owasp: \"A03\", resultado: \"OK\", detalle: \"Sin inyecci\\xF3n SQL en nombres ni filtros\", severidad: \"N/A\" }));",
+              "err": {},
+              "uuid": "cbd2f4a1-46e8-4ede-89f4-2e9456bcf19f",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto",
+              "timedOut": null,
+              "duration": 4407,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const xss = `<img src=x onerror=\"window.__xss=1\">${Date.now()}`;\nn8nApi.crearCarpeta(p, xss).then((r) => {\n  expect(r.status).to.eq(400);\n  registrar({ owasp: \"A03\", resultado: \"OK\", detalle: \"Nombre de carpeta con < > rechazado\", severidad: \"N/A\" });\n});\nconst xssTabla = `<img src=x onerror=\"window.__xss=1\">_${Date.now()}`;\nn8nApi.crearTabla(p, xssTabla, []).then((r) => {\n  if (r.status !== 200) return;\n  cy.visitarN8n(\"/home/datatables\");\n  cy.contains(xssTabla).should(\"exist\");\n  cy.window().its(\"__xss\").should(\"be.undefined\");\n  registrar({ owasp: \"A03\", resultado: \"OK\", detalle: \"Nombre de tabla con HTML se renderiza escapado\", severidad: \"N/A\" });\n  n8nApi.borrarTabla(p, r.body.data.id);\n});",
+              "err": {},
+              "uuid": "66cf398d-ddaf-48cb-a69b-533801f98b05",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236)",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236)",
+              "timedOut": null,
+              "duration": 365,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "const peligrosos = ['=HYPERLINK(\"https://example.com\";\"clic\")', \"+1+1\", \"-2+3\", \"@SUM(1+1)\"];\nn8nApi.insertar(p, t, peligrosos.map((f) => ({ nombre: \"x\", formula: f }))).its(\"status\").should(\"eq\", 200);\nn8nApi.descargarCsv(p, t).then((d) => {\n  const csv = (d.body.data ?? d.body).csvContent;\n  const lineas = csv.split(/\\r?\\n/).slice(1);\n  const sinNeutralizar = lineas.filter((l) => /,\"?[=+\\-@]/.test(l));\n  registrar({\n    owasp: \"A03\",\n    resultado: sinNeutralizar.length ? \"HALLAZGO\" : \"OK\",\n    detalle: sinNeutralizar.length ? `${sinNeutralizar.length} celdas exportadas empiezan por = + - @ sin neutralizar (se ejecutan al abrir en Excel)` : \"Las f\\xF3rmulas se neutralizan al exportar\",\n    severidad: sinNeutralizar.length ? \"Media\" : \"N/A\",\n    recomendacion: \"Prefijar con comilla simple (') las celdas que empiezan por = + - @ en escapeCsvValue (data-table.service.ts).\"\n  });\n  expect(sinNeutralizar, \"celdas con f\\xF3rmulas sin neutralizar\").to.have.length(0);\n});",
+              "err": {
+                "message": "AssertionError: celdas con fórmulas sin neutralizar: expected [ Array(4) ] to have a length of 0 but got 4",
+                "estack": "AssertionError: celdas con fórmulas sin neutralizar: expected [ Array(4) ] to have a length of 0 but got 4\n    at Context.eval (http://localhost:5678/__cypress/tests?p=cypress\\e2e\\seguridad\\owasp-datatables-carpetas.cy.js:164:82)\n    at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)\n    at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)",
+                "diff": null
+              },
+              "uuid": "855f2cf0-7733-498d-90b6-5fb47ad6df68",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "A04 Insecure Design · solo se aceptan archivos .csv",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) A04 Insecure Design · solo se aceptan archivos .csv",
+              "timedOut": null,
+              "duration": 107,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "n8nApi.subirArchivo(\"csv/no_es_csv.txt\", \"script.exe\").its(\"status\").should(\"eq\", 400);\ncy.then(() => registrar({ owasp: \"A04\", resultado: \"OK\", detalle: \"Extensiones distintas de .csv rechazadas\", severidad: \"N/A\" }));",
+              "err": {},
+              "uuid": "91a1a439-1c74-4da8-8bc5-758c556ab220",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor",
+              "fullTitle": "Seguridad · Data tables y carpetas (OWASP Top 10) A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor",
+              "timedOut": null,
+              "duration": 90,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.request(\"/\").then((r) => {\n  const h2 = r.headers;\n  const revisadas = {\n    \"x-content-type-options\": h2[\"x-content-type-options\"],\n    \"x-frame-options / CSP frame-ancestors\": h2[\"x-frame-options\"] ?? (h2[\"content-security-policy\"] || \"\").includes(\"frame-ancestors\"),\n    \"x-powered-by (no debe exponerse)\": h2[\"x-powered-by\"] ?? \"ausente\"\n  };\n  cy.task(\"table\", revisadas);\n  registrar({ owasp: \"A05\", resultado: \"REVISAR\", detalle: JSON.stringify(revisadas), severidad: \"Baja\" });\n});",
+              "err": {},
+              "uuid": "b4a2f1e6-94a6-4f5e-b8f5-dbe0e53a23fe",
+              "parentUUID": "e250d6f4-05f9-4767-ac8f-6e12757417f3",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "166c45c8-2fa0-4c63-b314-073ff9fd1442",
+            "11af2b71-c5d0-44e7-b45b-8bc8674fb175",
+            "df49f3ba-a218-40fd-a647-83ae8ce1af5e",
+            "cbd2f4a1-46e8-4ede-89f4-2e9456bcf19f",
+            "66cf398d-ddaf-48cb-a69b-533801f98b05",
+            "91a1a439-1c74-4da8-8bc5-758c556ab220",
+            "b4a2f1e6-94a6-4f5e-b8f5-dbe0e53a23fe"
+          ],
+          "failures": [
+            "855f2cf0-7733-498d-90b6-5fb47ad6df68"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 5799,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

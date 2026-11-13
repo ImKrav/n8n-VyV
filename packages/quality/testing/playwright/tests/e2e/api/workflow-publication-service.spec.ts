@@ -15,7 +15,7 @@ test.use({
 test.describe(
 	'Workflow Publication Service',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('webhook fires the published version even when the draft has diverged @engine:v2', async ({

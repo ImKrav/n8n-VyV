@@ -1,6 +1,7 @@
 import { WikipediaQueryRun } from '@langchain/community/tools/wikipedia_query_run';
 import {
 	type IExecuteFunctions,
+	BaseError,
 	NodeConnectionTypes,
 	NodeOperationError,
 	type INodeType,
@@ -10,7 +11,6 @@ import {
 	type INodeExecutionData,
 	nodeNameToToolName,
 } from 'n8n-workflow';
-import { BaseError } from '@n8n/errors';
 
 import { logWrapper, getConnectionHintNoticeField } from '@n8n/ai-utilities';
 

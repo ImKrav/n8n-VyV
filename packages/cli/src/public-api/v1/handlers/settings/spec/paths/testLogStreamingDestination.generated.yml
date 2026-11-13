@@ -2,10 +2,7 @@ operationId: testLogStreamingDestination
 tags:
   - LogStreaming
 summary: Send a test message to a log streaming destination
-description: |-
-  Send a test message to the destination to verify it is reachable and configured correctly. Requires the Log Streaming feature to be licensed.
-
-  Requires the `eventBusDestination:test` API key scope.
+description: Send a test message to the destination to verify it is reachable and configured correctly. Requires the `eventBusDestination:test` scope and the Log Streaming feature to be licensed.
 x-required-scope: eventBusDestination:test
 parameters:
   - schema:

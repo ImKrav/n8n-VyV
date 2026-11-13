@@ -20,7 +20,7 @@ interface ExportFlags {
 	dependencyPolicy?: string;
 	versionPolicy?: string;
 	credentialExportPolicy?: string;
-	includeArchived?: string;
+	includeArchivedWorkflows?: string;
 }
 
 /** The command methods we stub to isolate behaviour from oclif/networking. */
@@ -225,11 +225,11 @@ describe('package export command', () => {
 		});
 	});
 
-	it('forwards includeArchived when set to true', async () => {
+	it('forwards includeArchivedWorkflows when set to true', async () => {
 		const { command, exportPackage } = stubCommand({
 			workflowId: ['wf-1'],
 			output: '/tmp/archive.n8np',
-			includeArchived: 'true',
+			includeArchivedWorkflows: 'true',
 		});
 
 		await command.run();
@@ -240,7 +240,7 @@ describe('package export command', () => {
 			includeVariableValues: true,
 			includeTags: true,
 			dependencyPolicy: 'fail',
-			includeArchived: true,
+			includeArchivedWorkflows: true,
 		});
 	});
 

@@ -1,0 +1,48 @@
+{
+  "name": "pruebas-n8n-datatables-carpetas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pruebas VyV de n8n – Data tables y carpetas (ESC-016 a ESC-020) · Mario Andrade",
+  "type": "module",
+  "scripts": {
+    "n8n": "npx --yes n8n@2.46.6",
+    "n8n:limite": "cross-env N8N_DATA_TABLES_MAX_SIZE_BYTES=1048576 npx --yes n8n@2.46.6",
+    "cy:open": "cypress open",
+    "test:api": "cypress run --spec \"cypress/e2e/api/**/*.cy.js\"",
+    "test:ui": "cypress run --browser chrome --spec \"cypress/e2e/ui/**/*.cy.js\"",
+    "test:bdd": "cypress run --browser chrome --spec \"cypress/e2e/features/**/*.feature\"",
+    "test:seguridad": "cypress run --spec \"cypress/e2e/seguridad/**/*.cy.js\"",
+    "test:a11y": "cypress run --browser chrome --spec \"cypress/e2e/accesibilidad/**/*.cy.js\"",
+    "test:regresion": "cypress run --spec \"cypress/e2e/regresion/**/*.cy.js\"",
+    "test:limite": "cypress run --spec \"cypress/e2e/api/co02-limite-almacenamiento.api.cy.js\" --env limite=true",
+    "test:todo": "cypress run --browser chrome --spec \"cypress/e2e/{api,ui,features,seguridad,accesibilidad}/**/*\"",
+    "reporte": "node scripts/unir-reportes.mjs",
+    "regresion:comparar": "node scripts/comparar-regresion.mjs",
+    "audit": "npm audit --omit=dev --json > evidencias/npm-audit.json || exit 0",
+    "evidencias": "node scripts/organizar-evidencias.mjs",
+    "test:refactor": "cypress run --spec \"cypress/e2e/api/co03-importar-exportar-csv.api.cy.js,cypress/e2e/seguridad/**/*.cy.js,cypress/e2e/ui/co01-co02-datatables.ui.cy.js\" --browser chrome"
+  },
+  "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^22.0.1",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.4",
+    "axe-core": "^4.10.2",
+    "cross-env": "^7.0.3",
+    "cypress": "^14.3.2",
+    "cypress-axe": "^1.6.0",
+    "esbuild": "^0.25.2",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^5.0.0",
+    "mochawesome-report-generator": "^6.2.0"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": "cypress/support/step_definitions/**/*.js",
+    "html": {
+      "enabled": true,
+      "output": "evidencias/cucumber-report.html"
+    },
+    "json": {
+      "enabled": true,
+      "output": "evidencias/cucumber-report.json"
+    }
+  }
+}

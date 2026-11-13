@@ -279,8 +279,8 @@ export async function loadMemory(
  * @param input - The user input/prompt
  * @param output - The agent's output/response
  * @param memory - The memory instance to save to
- * @param steps - Optional tool call data of every round of the turn. Memory is written once,
- *   at the end of the turn, so all steps are new and saved.
+ * @param steps - Optional tool call data to save as proper message sequence
+ * @param previousStepsCount - Number of steps from previous turns (to filter out duplicates)
  *
  * @example
  * ```typescript
@@ -288,7 +288,7 @@ export async function loadMemory(
  * await saveToMemory('What is 2+2?', 'The answer is 4', memory);
  *
  * // With tool calls (saves full message sequence)
- * await saveToMemory('Calculate 2+2', 'The answer is 4', memory, steps);
+ * await saveToMemory('Calculate 2+2', 'The answer is 4', memory, steps, 0);
  * ```
  */
 export async function saveToMemory(
@@ -296,6 +296,7 @@ export async function saveToMemory(
 	output: string,
 	memory?: BaseChatMemory,
 	steps?: ToolCallData[],
+	previousStepsCount?: number,
 ): Promise<void> {
 	if (!output || !memory) {
 		return;
@@ -307,13 +308,21 @@ export async function saveToMemory(
 		return;
 	}
 
+	// Filter out previous steps to avoid duplicates (they're already in memory)
+	const newSteps = previousStepsCount ? steps.slice(previousStepsCount) : steps;
+
+	if (newSteps.length === 0) {
+		await memory.saveContext({ input }, { output });
+		return;
+	}
+
 	// Check if memory supports addMessages (feature detection)
 	if (
 		!('addMessages' in memory.chatHistory) ||
 		typeof memory.chatHistory.addMessages !== 'function'
 	) {
-		// Fallback: use old string format
-		const toolContext = buildToolContext(steps);
+		// Fallback: use old string format (only with new steps to avoid duplicates)
+		const toolContext = buildToolContext(newSteps);
 		const fullOutput = `[Used tools: ${toolContext}] ${output}`;
 		await memory.saveContext({ input }, { output: fullOutput });
 		return;
@@ -326,7 +335,7 @@ export async function saveToMemory(
 	messages.push(new HumanMessage(input));
 
 	// 2. Tool call sequence (AIMessage with tool_calls → ToolMessage for each)
-	const toolMessages = buildMessagesFromSteps(steps);
+	const toolMessages = buildMessagesFromSteps(newSteps);
 	messages.push.apply(messages, toolMessages);
 
 	// 3. Final AI response (no tool_calls)

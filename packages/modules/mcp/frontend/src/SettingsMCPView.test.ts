@@ -805,7 +805,7 @@ describe('SettingsMCPView', () => {
 			const { getByTestId } = createComponent({ pinia });
 			await waitAllPromises();
 
-			await userEvent.click(getByTestId('mcp-auto-expose-toggle'));
+			await userEvent.click(getByTestId('mcp-auto-expose-toggle').querySelector('input')!);
 
 			expect(mcpStore.setAutoExposeNewWorkflows).toHaveBeenCalledWith(true);
 			expect(trackAutoExposeToggledSpy).toHaveBeenCalledWith({ enabled: true, source: 'settings' });
@@ -819,7 +819,7 @@ describe('SettingsMCPView', () => {
 			const { getByTestId } = createComponent({ pinia });
 			await waitAllPromises();
 
-			await userEvent.click(getByTestId('mcp-auto-expose-toggle'));
+			await userEvent.click(getByTestId('mcp-auto-expose-toggle').querySelector('input')!);
 			await waitAllPromises();
 
 			expect(trackAutoExposeToggledSpy).not.toHaveBeenCalled();

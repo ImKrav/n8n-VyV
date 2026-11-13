@@ -1,4 +1,4 @@
-import { Person } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { simpleGit } from 'simple-git';
 import type { SimpleGit } from 'simple-git';
 import type { Mock } from 'vitest';
@@ -242,7 +242,7 @@ describe('SourceControlGitService', () => {
 				 */
 				const gitService = new SourceControlGitService(mock(), mock(), mock());
 				const prefs = mock<SourceControlPreferences>({ branchName: 'main' });
-				const person = new Person();
+				const user = mock<User>();
 				const git = mock<SimpleGit>();
 				gitService.git = git;
 				vi.spyOn(gitService, 'setGitCommand').mockResolvedValue();
@@ -258,7 +258,7 @@ describe('SourceControlGitService', () => {
 				/**
 				 * Act
 				 */
-				await gitService.initRepository(prefs, person);
+				await gitService.initRepository(prefs, user);
 
 				/**
 				 * Assert
@@ -272,7 +272,7 @@ describe('SourceControlGitService', () => {
 				const mockLogger = mock<any>();
 				const gitService = new SourceControlGitService(mockLogger, mock(), mock());
 				const prefs = mock<SourceControlPreferences>({ branchName: 'main' });
-				const person = new Person();
+				const user = mock<User>();
 				const git = mock<SimpleGit>();
 				gitService.git = git;
 				vi.spyOn(gitService, 'setGitCommand').mockResolvedValue();
@@ -280,7 +280,7 @@ describe('SourceControlGitService', () => {
 				const fetchError = new Error('Authentication failed for HTTPS remote');
 				vi.spyOn(gitService, 'fetch').mockRejectedValue(fetchError);
 
-				await gitService.initRepository(prefs, person, {
+				await gitService.initRepository(prefs, user, {
 					tolerateTrackingFetchFailure: true,
 				});
 
@@ -293,7 +293,7 @@ describe('SourceControlGitService', () => {
 			it('should throw when tracking fetch failures are NOT tolerated', async () => {
 				const gitService = new SourceControlGitService(mock(), mock(), mock());
 				const prefs = mock<SourceControlPreferences>({ branchName: 'main' });
-				const person = new Person();
+				const user = mock<User>();
 				const git = mock<SimpleGit>();
 				gitService.git = git;
 				vi.spyOn(gitService, 'setGitCommand').mockResolvedValue();
@@ -302,7 +302,7 @@ describe('SourceControlGitService', () => {
 				vi.spyOn(gitService, 'fetch').mockRejectedValue(fetchError);
 
 				await expect(
-					gitService.initRepository(prefs, person, {
+					gitService.initRepository(prefs, user, {
 						tolerateTrackingFetchFailure: false,
 					}),
 				).rejects.toThrow(fetchError);
@@ -319,7 +319,7 @@ describe('SourceControlGitService', () => {
 					connectionType: 'ssh',
 					branchName: 'main',
 				});
-				const person = new Person();
+				const user = mock<User>();
 				const git = mock<SimpleGit>();
 				const addRemoteSpy = git.addRemote;
 				vi.spyOn(gitService, 'setGitUserDetails').mockResolvedValue();
@@ -331,7 +331,7 @@ describe('SourceControlGitService', () => {
 				vi.spyOn(gitService, 'fetch').mockResolvedValue({} as any);
 				gitService.git = git;
 
-				await gitService.initRepository(prefs, person);
+				await gitService.initRepository(prefs, user);
 
 				expect(addRemoteSpy).toHaveBeenCalledWith('origin', originUrl);
 				expect(mockPreferencesService.getDecryptedHttpsCredentials).not.toHaveBeenCalled();
@@ -349,7 +349,7 @@ describe('SourceControlGitService', () => {
 					connectionType: 'https',
 					branchName: 'main',
 				});
-				const person = new Person();
+				const user = mock<User>();
 				const git = mock<SimpleGit>();
 				const addRemoteSpy = git.addRemote;
 				vi.spyOn(gitService, 'setGitUserDetails').mockResolvedValue();
@@ -361,7 +361,7 @@ describe('SourceControlGitService', () => {
 				vi.spyOn(gitService, 'fetch').mockResolvedValue({} as any);
 				gitService.git = git;
 
-				await gitService.initRepository(prefs, person);
+				await gitService.initRepository(prefs, user);
 
 				expect(addRemoteSpy).toHaveBeenCalledWith('origin', originUrl);
 			});
@@ -383,11 +383,11 @@ describe('SourceControlGitService', () => {
 					connectionType: 'https',
 					branchName: 'main',
 				});
-				const person = new Person();
+				const user = mock<User>();
 				const git = mock<SimpleGit>();
 				gitService.git = git;
 
-				await expect(gitService.initRepository(prefs, person)).rejects.toThrow(errorMessage);
+				await expect(gitService.initRepository(prefs, user)).rejects.toThrow(errorMessage);
 				expect(mockPreferencesService.getDecryptedHttpsCredentials).toHaveBeenCalled();
 			});
 		});

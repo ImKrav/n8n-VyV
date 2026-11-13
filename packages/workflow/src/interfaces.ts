@@ -462,14 +462,12 @@ export interface ICredentialType {
 	__overwrittenProperties?: string[];
 	__skipManagedCreation?: boolean;
 	__showManagedOAuthScopes?: boolean;
-	/** Lets n8n register the OAuth2 client at the `serverUrl` property, so users need no app of their own. */
-	dynamicClientRegistration?: boolean;
 	authenticate?: IAuthenticate;
 	preAuthentication?: (
 		this: IHttpRequestHelper,
 		credentials: ICredentialDataDecryptedObject,
 	) => Promise<IDataObject>;
-	test?: ICredentialTestRequest | ICredentialTestFunction;
+	test?: ICredentialTestRequest;
 	genericAuth?: boolean;
 	httpRequestNode?: ICredentialHttpRequestNode;
 	supportedNodes?: string[];
@@ -1430,18 +1428,8 @@ export type IExecuteFunctions = ExecuteFunctions.GetNodeParameterFn &
 		 * a restart. Without the option the engine suspends and persists the execution.
 		 */
 		putExecutionToWait(waitTill: Date, options?: { acceptsResumeRequest?: boolean }): Promise<void>;
-		/**
-		 * Builds the signed reference that an approval button carries, for example
-		 * Telegram's `callback_data` (64 bytes at most). The reference carries the
-		 * decision. The node never reads the secret that signs it.
-		 */
-		getApprovalCallbackReference(decision: 'approve' | 'decline'): string;
 		sendMessageToUI(message: any): void;
-		/**
-		 * Whether the run's resolved redaction policy redacts output that leaves the
-		 * execution-data pipeline (console output, AI event payloads) for this
-		 * execution's mode
-		 */
+		/** Whether the run's resolved redaction policy redacts console output for this execution's mode */
 		isConsoleOutputRedacted(): boolean;
 		sendResponse(response: IExecuteResponsePromiseData): Promise<void>;
 		sendChunk(type: ChunkType, itemIndex: number, content?: IDataObject | string): void;
@@ -3879,8 +3867,6 @@ export type WorkflowExecutionMockDataSource =
 
 export interface IWorkflowExecutionTelemetryMetadata {
 	mockDataSources?: WorkflowExecutionMockDataSource[];
-	/** Credentials the run uses only through the acting user's own access, not the workflow's project. */
-	personalCredentialsCount?: number;
 }
 
 /**
@@ -4388,8 +4374,6 @@ export interface INodeGraphItem {
 	toolSettings?: IDataObject; //various langchain tool's settings
 	sql?: string; //merge node combineBySql, cloud only
 	workflow_id?: string; //@n8n/n8n-nodes-langchain.toolWorkflow and n8n-nodes-base.executeWorkflow
-	agent_source?: 'inline' | 'referenced'; // n8n-nodes-base.messageAnAgent(Tool)
-	agent_id?: string; // n8n-nodes-base.messageAnAgent(Tool), referenced agent with a fixed id
 	response_mode?: string; // @n8n/n8n-nodes-langchain.chatTrigger, n8n-nodes-base.webhook selected response mode
 	public_chat?: boolean; // @n8n/n8n-nodes-langchain.chatTrigger
 	runs?: number;

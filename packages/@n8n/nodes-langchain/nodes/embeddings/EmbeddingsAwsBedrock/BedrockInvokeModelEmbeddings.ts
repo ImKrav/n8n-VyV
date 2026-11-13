@@ -1,7 +1,6 @@
 import { InvokeModelCommand, type BedrockRuntimeClient } from '@aws-sdk/client-bedrock-runtime';
 import { Embeddings } from '@langchain/core/embeddings';
-import { jsonParse } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import { jsonParse, OperationalError } from 'n8n-workflow';
 
 type CohereInputType = 'search_document' | 'search_query';
 

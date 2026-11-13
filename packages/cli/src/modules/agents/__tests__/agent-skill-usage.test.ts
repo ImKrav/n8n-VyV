@@ -16,7 +16,7 @@ vi.mock('@n8n/di', async (importOriginal) => {
 		...actual,
 		Container: {
 			...actual.Container,
-			get: vi.fn(() => ({ clearRuntimes })),
+			get: vi.fn(() => ({ clearRuntimes, captureVersion: vi.fn() })),
 		},
 	};
 });
@@ -31,25 +31,24 @@ describe('AgentSkillUsage', () => {
 	const agents = mock<AgentRepository>();
 	const broadcaster = mock<AgentUpdateBroadcaster>();
 	const skillRuntime = mock<SkillRuntimeService>();
-	const service = new AgentSkillUsage(agentSkills, agents, skillRuntime, broadcaster);
+	const service = new AgentSkillUsage(agentSkills, agents, skillRuntime, broadcaster, mock());
 
 	beforeEach(() => {
 		vi.resetAllMocks();
 		agentSkills.findFollowingAgentIds.mockResolvedValue([]);
+		agents.markFollowerDraftsChanged.mockResolvedValue([]);
 		agents.findProjectIdsByIds.mockResolvedValue([]);
 	});
 
 	describe('markFollowersChanged', () => {
-		it('returns followers without loading or writing agent rows', async () => {
+		it('marks the following agents in the caller transaction and returns them', async () => {
 			agentSkills.findFollowingAgentIds.mockResolvedValue(['agent-1', 'agent-2']);
 
 			const ids = await service.markFollowersChanged('skill_a', TX_CTX);
 
 			expect(ids).toEqual(['agent-1', 'agent-2']);
 			expect(agentSkills.findFollowingAgentIds).toHaveBeenCalledWith(['skill_a'], TX_CTX);
-			for (const method of Object.values(agents)) {
-				if (vi.isMockFunction(method)) expect(method).not.toHaveBeenCalled();
-			}
+			expect(agents.markFollowerDraftsChanged).toHaveBeenCalledWith(['agent-1', 'agent-2'], TX_CTX);
 		});
 	});
 

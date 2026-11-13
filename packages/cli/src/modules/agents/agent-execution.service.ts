@@ -12,7 +12,6 @@ import { Logger } from '@n8n/backend-common';
 import type { StorageLocation } from '@n8n/blob-storage';
 import { TransactionRunner, type OperationContext } from '@n8n/db';
 import { Service } from '@n8n/di';
-import { isRecord } from '@n8n/utils/is-record';
 import chunk from 'lodash/chunk';
 import groupBy from 'lodash/groupBy';
 import { ErrorReporter, StorageConfig } from 'n8n-core';
@@ -461,7 +460,7 @@ export class AgentExecutionService {
 		this.pendingTimelineSnapshots.delete(executionId);
 		const record = applyFatalSessionOutcome(params.record);
 		const settled = record === params.record ? params : { ...params, record };
-		const status = executionStatus(settled);
+		const status = executionStatus(record);
 		const stoppedAt = new Date(record.startTime + record.duration);
 		const failureSummary = computeExecutionFailureSummary({
 			timeline: record.timeline,
@@ -518,8 +517,7 @@ export class AgentExecutionService {
 	): Promise<boolean> {
 		const timeline = execution.timeline ?? [];
 		const stoppedAt = new Date();
-		const error =
-			'Agent execution stopped because n8n restarted, for example after a crash or an update.';
+		const error = 'Agent execution was interrupted by a process restart.';
 		const duration = execution.startedAt
 			? Math.max(0, stoppedAt.getTime() - execution.startedAt.getTime())
 			: 0;
@@ -1411,8 +1409,7 @@ export class AgentExecutionService {
 	}
 
 	private trackFinishedTurn(params: RecordMessageParams, status: AgentExecutionStatus): void {
-		// A parked approval is neither a success nor a failure.
-		if (status === 'awaiting' || !params.telemetry) return;
+		if (!params.telemetry) return;
 		const { agentId, threadId, record } = params;
 		try {
 			this.telemetry.trackAgentTurnFinished({
@@ -1452,28 +1449,10 @@ function cleanUserMessage(message: string | null, agentName: string): string | n
 	return cleaned.length > 0 ? cleaned : null;
 }
 
-function executionStatus(
-	params: Pick<RecordMessageParams, 'record' | 'hitlStatus' | 'source'>,
-): AgentExecution['status'] {
-	const { record } = params;
+function executionStatus(record: MessageRecord): AgentExecution['status'] {
 	if (record.error !== null || record.finishReason === 'error') return 'error';
 	if (record.finishReason === 'cancelled') return 'cancelled';
-	if (
-		params.hitlStatus === 'suspended' &&
-		params.source === 'task' &&
-		record.timeline.some(isApprovalSuspension)
-	) {
-		return 'awaiting';
-	}
 	return 'success';
-}
-
-function isApprovalSuspension(event: TimelineEvent): boolean {
-	return (
-		event.type === 'suspension' &&
-		isRecord(event.suspendPayload) &&
-		event.suspendPayload.type === 'approval'
-	);
 }
 
 /** Maps a thread (with `agent` and `agent.activeVersion` loaded) to the

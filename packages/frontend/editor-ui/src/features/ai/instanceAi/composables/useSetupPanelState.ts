@@ -9,7 +9,6 @@ import {
 import type { InstanceAiAgentNode, InstanceAiSetupItem } from '@n8n/api-types';
 import { isRecord } from '@n8n/utils/is-record';
 import { useWorkflowSetupItems } from '@/features/setupPanel/composables/useWorkflowSetupItems';
-import type { ArtifactTurn } from '../artifactTurns';
 import { isAgentEditingWorkflow } from '../canvasPreview.utils';
 
 export interface SetupPanelRow {
@@ -24,7 +23,6 @@ export interface SetupPanelRow {
  */
 export interface SetupPanelThreadSource {
 	messages: ReadonlyArray<{ agentTree?: InstanceAiAgentNode }>;
-	artifactTurns: readonly ArtifactTurn[];
 	setupItemsByWorkflowId: Record<string, InstanceAiSetupItem[]>;
 }
 
@@ -70,7 +68,9 @@ export function useSetupPanelState(options: {
 	const isAgentBuilding = computed(() => {
 		const id = toValue(options.workflowId);
 		if (!id) return false;
-		return isAgentEditingWorkflow(thread.artifactTurns, id);
+		return thread.messages.some(
+			(message) => message.agentTree && isAgentEditingWorkflow(message.agentTree, id),
+		);
 	});
 
 	const derivation = useWorkflowSetupItems(options.workflowId, {
@@ -85,8 +85,6 @@ export function useSetupPanelState(options: {
 		if (!id || !Object.hasOwn(thread.setupItemsByWorkflowId, id)) return [];
 		return thread.setupItemsByWorkflowId[id];
 	});
-	// Reads the agent tree, not the artifact turns: it compares `completedAt`,
-	// and only the current runtime mounts this panel.
 	const isAwaitingFirstBuild = computed(() => {
 		const id = toValue(options.workflowId);
 		let pending = false;

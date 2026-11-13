@@ -1,12 +1,14 @@
 import { appSchema } from '@n8n/api-types';
-import { ProjectScopeService } from '@n8n/backend-services';
+import { RoleService } from '@n8n/backend-services';
 import type { ProtectedResourceResolver } from '@n8n/backend-services/auth';
+import { ProjectRelationRepository } from '@n8n/db';
 import { Service } from '@n8n/di';
 import {
 	SYSTEM_TRUSTED_SOURCE_ID,
 	type ProtectedResource,
 	type ResourcePrincipal,
 } from '@n8n/inbound-auth';
+import { hasGlobalScope } from '@n8n/permissions';
 
 import type { App } from '../app.entity';
 import { AppRepository } from '../app.repository';
@@ -20,7 +22,8 @@ export class AppProtectedResource implements ProtectedResourceResolver {
 	constructor(
 		private readonly apps: AppRepository,
 		private readonly hosts: AppHostService,
-		private readonly projectScope: ProjectScopeService,
+		private readonly roles: RoleService,
+		private readonly projects: ProjectRelationRepository,
 	) {}
 
 	forApp(app: App): ProtectedResource {
@@ -53,7 +56,10 @@ export class AppProtectedResource implements ProtectedResourceResolver {
 	}
 
 	async canRead(app: App, user: ResourcePrincipal): Promise<boolean> {
-		return await this.projectScope.hasScopes(user, app.projectId, ['app:read']);
+		if (hasGlobalScope(user, 'app:read')) return true;
+		const roles = await this.roles.rolesWithScope('project', ['app:read']);
+		const projects = await this.projects.getAccessibleProjectsByRoles(user.id, roles);
+		return projects.includes(app.projectId);
 	}
 
 	matchesVirtualClientUrl(value: string): boolean {

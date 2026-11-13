@@ -403,7 +403,6 @@ function onRenameNode(value: string) {
 		data-test-id="focus-panel"
 		:class="[
 			$style.content,
-			'ph-no-capture',
 			{ [$style.isNdvInFocusPanelEnabled]: experimentalNdvStore.isNdvInFocusPanelEnabled },
 		]"
 	>

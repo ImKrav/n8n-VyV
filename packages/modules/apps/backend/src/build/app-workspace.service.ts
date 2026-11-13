@@ -11,6 +11,7 @@ import { raceAbort } from '@n8n/utils/race-abort';
 
 import { APP_BUILD_SCRIPT } from './app-build-script';
 import { loadAppSdkFiles } from './app-sdk-files';
+import { APP_DEPENDENCY_KEY } from '../scaffold/app-scaffold';
 import { AppSandboxSettings, type AppSandboxResolveOptions } from './app-sandbox-settings';
 import { AppBuildError, type AppBuildAttempt, type AppBuildStage } from './app-build.types';
 import { AppsConfig } from '../apps.config';
@@ -38,7 +39,6 @@ export class AppWorkspaceService {
 		versionId: string,
 		attempt: AppBuildAttempt,
 		files: AppFiles,
-		dependencyKey: string,
 		signal: AbortSignal,
 	): Promise<AppFiles> {
 		const config = await this.sandboxConfig(projectId, appId);
@@ -87,7 +87,7 @@ export class AppWorkspaceService {
 					`${stage}/build.sh`,
 					root,
 					stage,
-					dependencyKey,
+					APP_DEPENDENCY_KEY,
 					String(deadline),
 					String(this.config.maxBuildLogBytes),
 					String(this.config.buildTimeoutMs),

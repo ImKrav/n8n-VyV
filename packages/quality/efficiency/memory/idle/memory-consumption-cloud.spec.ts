@@ -9,4 +9,4 @@ test.use({
 	},
 });
 
-runMemoryBaseline({ name: 'memory', owner: 'Core Application' });
+runMemoryBaseline({ name: 'memory', owner: 'Catalysts' });

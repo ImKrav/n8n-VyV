@@ -17,15 +17,8 @@ import { useDocumentTitle } from '@/app/composables/useDocumentTitle';
 import { useI18n } from '@n8n/i18n';
 import { injectWorkflowDocumentStore } from '@/app/stores/workflowDocument.store';
 
-import { ElCol, ElRow } from 'element-plus';
-import {
-	N8nEmptyState,
-	N8nButton,
-	N8nHeading,
-	N8nInfoTip,
-	N8nNotice,
-	N8nSwitch,
-} from '@n8n/design-system';
+import { ElCol, ElRow, ElSwitch } from 'element-plus';
+import { N8nEmptyState, N8nButton, N8nHeading, N8nInfoTip, N8nNotice } from '@n8n/design-system';
 const environment = process.env.NODE_ENV;
 
 const settingsStore = useSettingsStore();
@@ -185,7 +178,7 @@ async function onEdit(destinationId?: string) {
 				</N8nHeading>
 				<template v-if="environment !== 'production'">
 					<span class="ml-m">Disable License ({{ environment }})&nbsp;</span>
-					<N8nSwitch v-model="disableLicense" size="large" data-test-id="disable-license-toggle" />
+					<ElSwitch v-model="disableLicense" size="large" data-test-id="disable-license-toggle" />
 				</template>
 			</div>
 		</div>

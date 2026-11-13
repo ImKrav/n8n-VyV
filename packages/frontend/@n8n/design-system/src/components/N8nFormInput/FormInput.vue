@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ElSwitch } from 'element-plus';
 import { computed, reactive, onMounted, ref, watch } from 'vue';
 
 import { getValidationError, VALIDATORS } from './validators';
@@ -20,7 +21,6 @@ import N8nInputLabel from '../N8nInputLabel';
 import N8nLink from '../N8nLink';
 import N8nOption from '../N8nOption';
 import N8nSelect from '../N8nSelect';
-import N8nSwitch from '../N8nSwitch';
 
 export interface Props {
 	modelValue: Validatable;
@@ -45,7 +45,9 @@ export interface Props {
 	labelSize?: 'small' | 'medium' | 'large';
 	disabled?: boolean;
 	activeLabel?: string;
+	activeColor?: string;
 	inactiveLabel?: string;
+	inactiveColor?: string;
 	teleported?: boolean;
 	tagSize?: 'small' | 'medium' | 'large';
 	autosize?: boolean | { minRows: number; maxRows: number };
@@ -195,14 +197,13 @@ defineExpose({ inputRef });
 		<template #content>
 			{{ tooltipText }}
 		</template>
-		<N8nSwitch
+		<ElSwitch
 			:id="name"
-			size="large"
-			:aria-label="label"
-			:disabled="disabled"
 			:model-value="modelValue as SwitchModelValuePropType"
+			:active-color="activeColor"
+			:inactive-color="inactiveColor"
 			@update:model-value="onUpdateModelValue"
-		/>
+		></ElSwitch>
 	</N8nInputLabel>
 	<N8nInputLabel
 		v-else

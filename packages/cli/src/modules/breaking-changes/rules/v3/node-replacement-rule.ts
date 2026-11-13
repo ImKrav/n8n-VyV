@@ -15,7 +15,6 @@ type NodeReplacement = {
 	removedNodeName: string;
 	removedNodeType: string;
 	recommendations: BreakingChangeRecommendation[];
-	assistant?: BreakingChangeRuleMetadata['assistant'];
 };
 
 /** Creates and registers a v3 rule that flags every node of one removed node type. */
@@ -24,7 +23,6 @@ export function createNodeReplacementRule({
 	removedNodeName,
 	removedNodeType,
 	recommendations,
-	assistant,
 }: NodeReplacement) {
 	@BreakingChangeRule({ version: 'v3' })
 	class NodeReplacementRule implements IBreakingChangeWorkflowRule {
@@ -37,7 +35,6 @@ export function createNodeReplacementRule({
 				description: `The ${removedNodeName} node is no longer supported. ${recommendations.map(({ description }) => description).join(' ')}`,
 				category: BreakingChangeCategory.workflow,
 				impact: 'executionsFail',
-				assistant,
 			};
 		}
 

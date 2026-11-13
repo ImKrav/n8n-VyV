@@ -1,17 +1,13 @@
 import { Logger } from '@n8n/backend-common';
 import { InstanceAiConfig } from '@n8n/config';
 import { SharedWorkflowRepository } from '@n8n/db';
-import {
-	OnLifecycleEvent,
-	OnPubSubEvent,
-	type WorkflowExecuteAfterContext,
-	type PubSubCommandMap,
-} from '@n8n/decorators';
+import { OnLifecycleEvent, OnPubSubEvent, type WorkflowExecuteAfterContext } from '@n8n/decorators';
 import { Container, Service } from '@n8n/di';
 import { InstanceSettings } from 'n8n-core';
 
 import { toSaveSettings } from '@/execution-lifecycle/to-save-settings';
-import { Publisher } from '@n8n/backend-services';
+import type { PubSubCommandMap } from '@/scaling/pubsub/pubsub.event-map';
+import { Publisher } from '@/scaling/pubsub/publisher.service';
 
 @Service()
 export class SelfHealingTriggerService {

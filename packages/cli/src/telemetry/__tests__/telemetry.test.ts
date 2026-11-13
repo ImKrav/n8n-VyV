@@ -1,6 +1,6 @@
 import type { Logger } from '@n8n/backend-common';
 import type { OutboundHttp } from '@n8n/backend-network';
-import { InstanceRegistryProxyService, type PostHogClient } from '@n8n/backend-services';
+import { InstanceRegistryProxyService } from '@n8n/backend-services';
 import { mockInstance } from '@n8n/backend-test-utils';
 import type { GlobalConfig } from '@n8n/config';
 import { ProjectRelationRepository, ProjectRepository, UserRepository } from '@n8n/db';
@@ -15,9 +15,11 @@ import { z } from 'zod/v4';
 import type { License } from '@/license';
 import { USER_CALLED_MCP_TOOL_EVENT } from '@/modules/mcp/mcp.constants';
 import { SourceControlPreferencesService } from '@/modules/source-control.ee/source-control-preferences.service.ee';
+import { PostHogClient } from '@/posthog';
 import { Telemetry } from '@/telemetry';
 
 vi.unmock('@/telemetry');
+vi.mock('@/posthog');
 
 const rudderStackConstructor = vi.fn().mockImplementation(function () {
 	return mock<RudderStack>();
@@ -57,7 +59,8 @@ describe('Telemetry', () => {
 	beforeEach(async () => {
 		spyTrack = vi.spyOn(Telemetry.prototype, 'track').mockName('track');
 
-		postHog = mock<PostHogClient>();
+		postHog = new PostHogClient(instanceSettings, mock());
+		await postHog.init();
 
 		telemetry = new Telemetry(
 			mock(),
@@ -98,7 +101,7 @@ describe('Telemetry', () => {
 			initConfig.diagnostics.backendConfig = 'test-key;https://data-plane.test';
 			initTelemetry = new Telemetry(
 				mock(),
-				mock<PostHogClient>(),
+				new PostHogClient(instanceSettings, mock()),
 				mock(),
 				instanceSettings,
 				mock(),
@@ -235,34 +238,6 @@ describe('Telemetry', () => {
 			expect(execBuffer['1'].instance_ai_real_prod_success?.first).toEqual(
 				instanceAiRealProdExecTime,
 			);
-		});
-
-		test('should count runs that use personal credentials in the aggregate, not as events', async () => {
-			const payload: Parameters<Telemetry['trackWorkflowExecution']>[0] = {
-				workflow_id: '1',
-				is_manual: false,
-				success: true,
-				personal_credentials_count: 2,
-			};
-
-			const firstProdExecTime = fakeTestSystemTime('2022-01-01 12:00:00');
-			telemetry.trackWorkflowExecution(payload);
-			fakeTestSystemTime('2022-01-01 12:30:00');
-			telemetry.trackWorkflowExecution({ ...payload, success: false });
-
-			const manualExecTime = fakeTestSystemTime('2022-01-01 13:00:00');
-			telemetry.trackWorkflowExecution({ ...payload, is_manual: true });
-
-			telemetry.trackWorkflowExecution({ ...payload, personal_credentials_count: undefined });
-
-			expect(spyTrack).not.toHaveBeenCalled();
-
-			const execBuffer = telemetry.getCountsBuffer();
-
-			expect(execBuffer['1'].personal_credentials_prod?.count).toBe(2);
-			expect(execBuffer['1'].personal_credentials_prod?.first).toEqual(firstProdExecTime);
-			expect(execBuffer['1'].personal_credentials_manual?.count).toBe(1);
-			expect(execBuffer['1'].personal_credentials_manual?.first).toEqual(manualExecTime);
 		});
 
 		test('should fire "Workflow execution errored" event for failed executions', async () => {
@@ -1474,7 +1449,7 @@ describe('Telemetry', () => {
 			const logger = mock<Logger>();
 			const validationTelemetry = new Telemetry(
 				logger,
-				mock<PostHogClient>(),
+				new PostHogClient(instanceSettings, mock()),
 				mock(),
 				instanceSettings,
 				mock(),
@@ -1506,7 +1481,7 @@ describe('Telemetry', () => {
 			const logger = mock<Logger>();
 			const uninitializedTelemetry = new Telemetry(
 				logger,
-				mock<PostHogClient>(),
+				new PostHogClient(instanceSettings, mock()),
 				mock(),
 				instanceSettings,
 				mock(),
@@ -1535,7 +1510,7 @@ describe('Telemetry', () => {
 				const logger = mock<Logger>();
 				const instance = new Telemetry(
 					logger,
-					mock<PostHogClient>(),
+					new PostHogClient(instanceSettings, mock()),
 					mock(),
 					instanceSettings,
 					mock(),
@@ -1598,7 +1573,7 @@ describe('Telemetry', () => {
 
 			pulseTelemetry = new Telemetry(
 				mock(),
-				mock<PostHogClient>(),
+				new PostHogClient(instanceSettings, mock()),
 				license,
 				instanceSettings,
 				workflowRepository,
@@ -1680,29 +1655,6 @@ describe('Telemetry', () => {
 			telemetry.flushBuffers();
 
 			expect(spyTrack).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('stopTracking', () => {
-		test('should send the buffered events before it drains the queue', async () => {
-			telemetry.trackApiInvocation({
-				user_id: 'user1',
-				path: '/workflows',
-				method: 'GET',
-				api_version: 'v1',
-				client: 'other',
-			});
-
-			await telemetry.stopTracking();
-
-			expect(spyTrack).toHaveBeenCalledWith(
-				'Public API usage',
-				expect.objectContaining({ user_id: 'user1', total_calls: 1 }),
-			);
-			expect(mockRudderStack.track.mock.invocationCallOrder.at(-1)).toBeLessThan(
-				mockRudderStack.flush.mock.invocationCallOrder.at(-1)!,
-			);
-			expect(telemetry.getApiInvocationsBuffer()).toEqual({});
 		});
 	});
 });

@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 import { mock } from 'vitest-mock-extended';
 
 import { executeTool } from '../../__tests__/tool-test-utils';

@@ -75,6 +75,7 @@ export const defaultSettings: FrontendSettings = {
 	posthog: {
 		apiHost: '',
 		apiKey: '',
+		autocapture: false,
 		debug: false,
 		disableSessionRecording: false,
 		enabled: false,

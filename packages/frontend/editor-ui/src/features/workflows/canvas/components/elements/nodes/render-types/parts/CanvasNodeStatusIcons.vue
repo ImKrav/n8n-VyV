@@ -109,9 +109,7 @@ const hasExecutionPinData = computed(
 const hasVisiblePinData = computed(() => hasPinnedData.value || hasExecutionPinData.value);
 const route = useRoute();
 
-// Hosts such as template previews opt out of issue indicators (validation
-// and execution errors) when the viewer can't act on them.
-const hideNodeIssues = computed(() => editorFeatures?.value.showNodeIssues === false);
+const hideNodeIssues = computed(() => false); // @TODO Implement this
 const isDemoRoute = computed(() => route.name === VIEWS.DEMO);
 const dirtiness = computed(() =>
 	render.value.type === CanvasNodeRenderType.Default ? render.value.options.dirtiness : undefined,

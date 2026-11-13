@@ -185,7 +185,6 @@ const previewDocumentId = computed(() =>
 						v-if="showPreview && !loading && strippedWorkflow"
 						:document-id="previewDocumentId"
 						:workflow="strippedWorkflow"
-						:show-node-issues="false"
 					/>
 				</div>
 			</div>

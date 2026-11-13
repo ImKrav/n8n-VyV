@@ -1,15 +1,21 @@
 import { waitFor } from '@testing-library/vue';
-import userEvent from '@testing-library/user-event';
-import { nextTick } from 'vue';
 import { createComponentRenderer } from '@/__tests__/render';
 import { type MockedStore, mockedStore } from '@/__tests__/utils';
 import { createTestingPinia } from '@pinia/testing';
 import { i18n, i18nInstance } from '@n8n/i18n';
-import { useUIStore } from '@/app/stores/ui.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import BinaryDataViewModal from './BinaryDataViewModal.vue';
 import { BINARY_DATA_VIEW_MODAL_KEY } from '@/app/constants';
 import type { BinaryMetadata } from '@/Interface';
+
+vi.mock('@/app/components/Modal.vue', () => ({
+	default: {
+		name: 'Modal',
+		template:
+			'<div data-test-id="modal"><span data-test-id="modal-title">{{ title }}</span><slot name="content" /></div>',
+		props: ['name', 'title', 'width', 'height', 'center'],
+	},
+}));
 
 const createBinaryMetadata = (overrides: Partial<BinaryMetadata> = {}): BinaryMetadata => ({
 	data: '',
@@ -20,7 +26,7 @@ const createBinaryMetadata = (overrides: Partial<BinaryMetadata> = {}): BinaryMe
 	...overrides,
 });
 
-describe('BinaryDataViewModal.vue', async () => {
+describe('BinaryDataViewModal.vue', () => {
 	let workflowsStore: MockedStore<typeof useWorkflowsStore>;
 
 	const renderComponent = createComponentRenderer(BinaryDataViewModal, {
@@ -37,12 +43,6 @@ describe('BinaryDataViewModal.vue', async () => {
 		}),
 	});
 
-	async function renderOpenModal(options: Parameters<typeof renderComponent>[0]) {
-		const rendered = renderComponent(options);
-		await nextTick();
-		return rendered;
-	}
-
 	beforeEach(() => {
 		workflowsStore = mockedStore(useWorkflowsStore);
 		global.fetch = vi.fn();
@@ -53,205 +53,183 @@ describe('BinaryDataViewModal.vue', async () => {
 		vi.resetAllMocks();
 	});
 
-	it('closes the modal when the dialog reports closed', async () => {
-		const binaryData = createBinaryMetadata({ mimeType: 'text/plain' });
-		const { getByRole } = await renderOpenModal({
-			props: {
-				data: { binaryData },
-			},
-		});
-
-		await userEvent.click(getByRole('button', { name: 'Close dialog' }));
-
-		expect(mockedStore(useUIStore).closeModal).toHaveBeenCalledWith(BINARY_DATA_VIEW_MODAL_KEY);
-	});
-
-	describe('File Type Detection', async () => {
-		it('should detect image file type from mimeType', async () => {
+	describe('File Type Detection', () => {
+		it('should detect image file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'image/png' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.image')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.image')).toBeInTheDocument();
 		});
 
-		it('should detect audio file type from mimeType', async () => {
+		it('should detect audio file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'audio/mp3' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.audio')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.audio')).toBeInTheDocument();
 		});
 
-		it('should detect video file type from mimeType', async () => {
+		it('should detect video file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'video/mp4' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.video')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.video')).toBeInTheDocument();
 		});
 
-		it('should detect PDF file type from mimeType', async () => {
+		it('should detect PDF file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'application/pdf' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.pdf')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.pdf')).toBeInTheDocument();
 		});
 
-		it('should detect JSON file type from mimeType', async () => {
+		it('should detect JSON file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'application/json' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.json')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.json')).toBeInTheDocument();
 		});
 
 		it.each(['application/pdfx', 'application/jsonx', 'text/htmlx'])(
 			'should not treat %s as the type its name starts with',
-			async (mimeType) => {
+			(mimeType) => {
 				const binaryData = createBinaryMetadata({ mimeType, fileType: 'pdf' });
 				workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
 
-				await renderOpenModal({
+				const { container } = renderComponent({
 					props: {
 						data: { binaryData },
 					},
 				});
 
-				expect(
-					document.body.querySelector('.binary-data-modal-content.pdf'),
-				).not.toBeInTheDocument();
-				expect(
-					document.body.querySelector('.binary-data-modal-content.json'),
-				).not.toBeInTheDocument();
-				expect(
-					document.body.querySelector('.binary-data-modal-content.html'),
-				).not.toBeInTheDocument();
+				expect(container.querySelector('.binary-data-modal-content.pdf')).not.toBeInTheDocument();
+				expect(container.querySelector('.binary-data-modal-content.json')).not.toBeInTheDocument();
+				expect(container.querySelector('.binary-data-modal-content.html')).not.toBeInTheDocument();
 			},
 		);
 
-		it('should detect JSON file type from a text/json mimeType', async () => {
+		it('should detect JSON file type from a text/json mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/json' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.json')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.json')).toBeInTheDocument();
 		});
 
-		it('should detect HTML file type from mimeType', async () => {
+		it('should detect HTML file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/html' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.html')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.html')).toBeInTheDocument();
 		});
 
-		it('should detect markdown file type from mimeType', async () => {
+		it('should detect markdown file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/markdown' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(
-				document.body.querySelector('.binary-data-modal-content.markdown'),
-			).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.markdown')).toBeInTheDocument();
 		});
 
-		it('should keep an html mimeType that carries a markdown parameter as html', async () => {
+		it('should keep an html mimeType that carries a markdown parameter as html', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/html; x=markdown' });
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
 			(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
 				text: vi.fn().mockResolvedValue('<div>hi</div>'),
 			});
 
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.html')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.html')).toBeInTheDocument();
 		});
 
-		it('should detect text file type from mimeType', async () => {
+		it('should detect text file type from mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/plain' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.text')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.text')).toBeInTheDocument();
 		});
 
-		it('should default to other file type for unknown mimeType', async () => {
+		it('should default to other file type for unknown mimeType', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'application/octet-stream' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.other')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.other')).toBeInTheDocument();
 		});
 
-		it('should ignore the declared fileType when mimeType is not provided', async () => {
+		it('should ignore the declared fileType when mimeType is not provided', () => {
 			const binaryData = createBinaryMetadata({
 				mimeType: undefined,
 				fileType: 'image',
 			});
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.other')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.other')).toBeInTheDocument();
 		});
 
-		it('should detect text file type from a mimeType carrying parameters', async () => {
+		it('should detect text file type from a mimeType carrying parameters', () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/csv; charset=utf-8' });
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
-			expect(document.body.querySelector('.binary-data-modal-content.text')).toBeInTheDocument();
+			expect(container.querySelector('.binary-data-modal-content.text')).toBeInTheDocument();
 		});
 	});
 
-	describe('Loading State', async () => {
-		it('should show loading message initially', async () => {
+	describe('Loading State', () => {
+		it('should show loading message initially', () => {
 			const binaryData = createBinaryMetadata();
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
-			(global.fetch as ReturnType<typeof vi.fn>).mockReturnValue(new Promise(() => {}));
 
-			const { getByText } = await renderOpenModal({
+			const { getByText } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -267,7 +245,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue('test content'),
 			});
 
-			const { queryByText } = await renderOpenModal({
+			const { queryByText } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -279,13 +257,13 @@ describe('BinaryDataViewModal.vue', async () => {
 		});
 	});
 
-	describe('Error State', async () => {
+	describe('Error State', () => {
 		it('should show error message when fetch fails', async () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/plain' });
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
 			(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Fetch failed'));
 
-			const { getByText } = await renderOpenModal({
+			const { getByText } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -297,7 +275,7 @@ describe('BinaryDataViewModal.vue', async () => {
 		});
 	});
 
-	describe('Binary Data Fetching', async () => {
+	describe('Binary Data Fetching', () => {
 		it('should fetch text data and display it', async () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/plain' });
 			const testContent = 'This is test content';
@@ -306,7 +284,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue(testContent),
 			});
 
-			const { getByText } = await renderOpenModal({
+			const { getByText } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -332,7 +310,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				json: vi.fn().mockResolvedValue(jsonData),
 			});
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -353,7 +331,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue(htmlContent),
 			});
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -381,7 +359,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue(markdownContent),
 			});
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -406,7 +384,7 @@ describe('BinaryDataViewModal.vue', async () => {
 			const binaryUrl = 'http://test.com/binary-image';
 			workflowsStore.getBinaryUrl.mockReturnValue(binaryUrl);
 
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -422,27 +400,27 @@ describe('BinaryDataViewModal.vue', async () => {
 			});
 
 			await waitFor(() => {
-				const img = document.body.querySelector('img');
+				const img = container.querySelector('img');
 				expect(img).toBeInTheDocument();
 				expect(img?.src).toBe(binaryUrl);
 			});
 		});
 	});
 
-	describe('Content Rendering', async () => {
+	describe('Content Rendering', () => {
 		it('should render video element for video files', async () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'video/mp4' });
 			const videoUrl = 'http://test.com/video.mp4';
 			workflowsStore.getBinaryUrl.mockReturnValue(videoUrl);
 
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
 			await waitFor(() => {
-				const video = document.body.querySelector('video');
+				const video = container.querySelector('video');
 				expect(video).toBeInTheDocument();
 				expect(video?.querySelector('source')?.src).toBe(videoUrl);
 				expect(video?.querySelector('source')?.type).toBe('video/mp4');
@@ -454,14 +432,14 @@ describe('BinaryDataViewModal.vue', async () => {
 			const audioUrl = 'http://test.com/audio.mp3';
 			workflowsStore.getBinaryUrl.mockReturnValue(audioUrl);
 
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
 			await waitFor(() => {
-				const audio = document.body.querySelector('audio');
+				const audio = container.querySelector('audio');
 				expect(audio).toBeInTheDocument();
 				expect(audio?.querySelector('source')?.src).toBe(audioUrl);
 				expect(audio?.querySelector('source')?.type).toBe('audio/mp3');
@@ -473,14 +451,14 @@ describe('BinaryDataViewModal.vue', async () => {
 			const imageUrl = 'http://test.com/image.jpg';
 			workflowsStore.getBinaryUrl.mockReturnValue(imageUrl);
 
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
 			await waitFor(() => {
-				const img = document.body.querySelector('img');
+				const img = container.querySelector('img');
 				expect(img).toBeInTheDocument();
 				expect(img?.src).toBe(imageUrl);
 			});
@@ -502,18 +480,18 @@ describe('BinaryDataViewModal.vue', async () => {
 
 			workflowsStore.getBinaryUrl.mockReturnValue(pdfUrl);
 
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
 			await waitFor(() => {
-				const iframe = document.body.querySelector('iframe');
+				const iframe = container.querySelector('iframe');
 				expect(iframe).toBeInTheDocument();
 				expect(iframe?.classList.contains('binary-data')).toBe(true);
 				expect(iframe?.src).toBe(mockObjectUrl);
-				expect(document.body.querySelector('embed')).not.toBeInTheDocument();
+				expect(container.querySelector('embed')).not.toBeInTheDocument();
 			});
 		});
 
@@ -525,14 +503,14 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue(textContent),
 			});
 
-			await renderOpenModal({
+			const { container } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
 			});
 
 			await waitFor(() => {
-				const pre = document.body.querySelector('pre.text-content');
+				const pre = container.querySelector('pre.text-content');
 				expect(pre).toBeInTheDocument();
 				expect(pre?.textContent?.trim()).toBe(textContent);
 			});
@@ -542,7 +520,7 @@ describe('BinaryDataViewModal.vue', async () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'application/zip' });
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/file.zip');
 
-			const { getByText } = await renderOpenModal({
+			const { getByText } = renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -574,17 +552,16 @@ describe('BinaryDataViewModal.vue', async () => {
 			i18n.clearCache();
 		});
 
-		it('should localize the modal title and the loading message', async () => {
+		it('should localize the modal title and the loading message', () => {
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
-			(global.fetch as ReturnType<typeof vi.fn>).mockReturnValue(new Promise(() => {}));
 
-			const { getByRole, getByText } = await renderOpenModal({
+			const { getByTestId, getByText } = renderComponent({
 				props: {
 					data: { binaryData: createBinaryMetadata() },
 				},
 			});
 
-			expect(getByRole('heading', { name: 'Translated file preview' })).toBeInTheDocument();
+			expect(getByTestId('modal-title')).toHaveTextContent('Translated file preview');
 			expect(getByText('Translated loading')).toBeInTheDocument();
 		});
 
@@ -592,7 +569,7 @@ describe('BinaryDataViewModal.vue', async () => {
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
 			(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Fetch failed'));
 
-			const { getByText } = await renderOpenModal({
+			const { getByText } = renderComponent({
 				props: {
 					data: { binaryData: createBinaryMetadata({ mimeType: 'text/plain' }) },
 				},
@@ -606,7 +583,7 @@ describe('BinaryDataViewModal.vue', async () => {
 		it('should localize the message for file types without a preview', async () => {
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/file.zip');
 
-			const { getByText } = await renderOpenModal({
+			const { getByText } = renderComponent({
 				props: {
 					data: { binaryData: createBinaryMetadata({ mimeType: 'application/zip' }) },
 				},
@@ -618,7 +595,7 @@ describe('BinaryDataViewModal.vue', async () => {
 		});
 	});
 
-	describe('Props Changes', async () => {
+	describe('Props Changes', () => {
 		it('should reload data when binaryData prop changes', async () => {
 			const binaryData1 = createBinaryMetadata({ id: 'binary-1', mimeType: 'text/plain' });
 			const binaryData2 = createBinaryMetadata({ id: 'binary-2', mimeType: 'text/plain' });
@@ -628,7 +605,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue('content'),
 			});
 
-			const { rerender } = await renderOpenModal({
+			const { rerender } = renderComponent({
 				props: {
 					data: { binaryData: binaryData1 },
 				},
@@ -652,7 +629,7 @@ describe('BinaryDataViewModal.vue', async () => {
 		});
 	});
 
-	describe('URL Generation', async () => {
+	describe('URL Generation', () => {
 		it('should call getBinaryUrl with correct parameters for download action', async () => {
 			const binaryData = createBinaryMetadata({
 				id: 'test-id',
@@ -664,7 +641,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue('<html></html>'),
 			});
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -688,7 +665,7 @@ describe('BinaryDataViewModal.vue', async () => {
 			});
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -712,7 +689,7 @@ describe('BinaryDataViewModal.vue', async () => {
 			});
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -737,7 +714,7 @@ describe('BinaryDataViewModal.vue', async () => {
 			});
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -749,7 +726,7 @@ describe('BinaryDataViewModal.vue', async () => {
 		});
 	});
 
-	describe('Fetch Options', async () => {
+	describe('Fetch Options', () => {
 		it('should include credentials in fetch request', async () => {
 			const binaryData = createBinaryMetadata({ mimeType: 'text/plain' });
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/binary');
@@ -757,7 +734,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				text: vi.fn().mockResolvedValue('content'),
 			});
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},
@@ -771,7 +748,7 @@ describe('BinaryDataViewModal.vue', async () => {
 		});
 	});
 
-	describe('Preview hardening', async () => {
+	describe('Preview hardening', () => {
 		it.each([
 			['unrecognised', 'application/xhtml+xml'],
 			['empty', ''],
@@ -787,7 +764,7 @@ describe('BinaryDataViewModal.vue', async () => {
 				const createObjectURL = vi.fn((_blob: Blob) => 'blob:http://test.com/mock-blob-url');
 				global.URL.createObjectURL = createObjectURL;
 
-				const { getByText } = await renderOpenModal({
+				const { container, getByText } = renderComponent({
 					props: {
 						data: { binaryData },
 					},
@@ -797,7 +774,7 @@ describe('BinaryDataViewModal.vue', async () => {
 					expect(getByText('Preview not available for this file type')).toBeInTheDocument();
 				});
 
-				expect(document.body.querySelector('iframe')).not.toBeInTheDocument();
+				expect(container.querySelector('iframe')).not.toBeInTheDocument();
 				expect(createObjectURL).not.toHaveBeenCalled();
 			},
 		);
@@ -814,7 +791,7 @@ describe('BinaryDataViewModal.vue', async () => {
 			});
 			workflowsStore.getBinaryUrl.mockReturnValue('http://test.com/document.pdf');
 
-			await renderOpenModal({
+			renderComponent({
 				props: {
 					data: { binaryData },
 				},

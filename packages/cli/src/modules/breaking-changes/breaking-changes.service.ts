@@ -5,7 +5,7 @@ import {
 	BreakingChangeVersion,
 	BreakingChangeWorkflowRuleResult,
 } from '@n8n/api-types';
-import { getN8nVersion, Logger } from '@n8n/backend-common';
+import { Logger } from '@n8n/backend-common';
 import {
 	WorkflowHistoryRepository,
 	WorkflowRepository,
@@ -31,6 +31,7 @@ import type {
 	WorkflowScanContext,
 } from './types';
 import { createWorkflowScanContext } from './types';
+import { N8N_VERSION } from '../../constants';
 
 /** One rule check on one workflow that threw, so its result is unknown. */
 export interface FailedRuleCheck {
@@ -589,7 +590,7 @@ export class BreakingChangeService {
 		return {
 			generatedAt: new Date(),
 			targetVersion,
-			currentVersion: getN8nVersion(),
+			currentVersion: N8N_VERSION,
 			workflowResults,
 			instanceResults,
 		};

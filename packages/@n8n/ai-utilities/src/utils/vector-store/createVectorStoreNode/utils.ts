@@ -1,6 +1,5 @@
 import type { VectorStore } from '@langchain/core/vectorstores';
-import { NodeApiError } from 'n8n-workflow';
-import { BaseError } from '@n8n/errors';
+import { BaseError, NodeApiError } from 'n8n-workflow';
 import type { INode, INodeProperties, INodePropertyOptions, JsonObject } from 'n8n-workflow';
 
 import { DEFAULT_OPERATION_MODES, OPERATION_MODE_DESCRIPTIONS } from './constants';

@@ -371,12 +371,7 @@ describe('useAgentVersionHistory', () => {
 		mocks.listAgentVersions.mockResolvedValue([version]);
 		mocks.openVersionMetadata.mockImplementationOnce(
 			async (options: AgentVersionMetadataModalData) => {
-				expect(options).toMatchObject({
-					mode: 'edit',
-					versionId: 'v1',
-					name: 'Release',
-					description: 'Notes',
-				});
+				expect(options).toMatchObject({ mode: 'edit', name: 'Release', description: 'Notes' });
 				return await options.onSubmit({ name: null, description: null });
 			},
 		);

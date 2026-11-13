@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 import type { ListModelsFn, ListModelsOptions, ProviderModel } from './types';
 

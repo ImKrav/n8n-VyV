@@ -12,7 +12,7 @@ import {
 	isThinkingGroupMessage,
 	isWorkflowUpdatedMessage,
 } from '../../types/assistant';
-import N8nIcon from '../N8nIcon';
+import AssistantIcon from '../AskAssistantIcon/AssistantIcon.vue';
 import AssistantText from '../AskAssistantText/AssistantText.vue';
 import InlineAskAssistantButton from '../InlineAskAssistantButton/InlineAskAssistantButton.vue';
 import N8nButton from '../N8nButton';
@@ -474,7 +474,7 @@ defineExpose({
 			<div :class="$style.chatTitle">
 				<div :class="$style.headerText">
 					<div :class="$style.assistantTitle">
-						<N8nIcon icon="n8n-assistant" :size="18" />
+						<AssistantIcon size="large" />
 						<AssistantText size="large" :text="t('assistantChat.aiAssistantLabel')" />
 					</div>
 				</div>

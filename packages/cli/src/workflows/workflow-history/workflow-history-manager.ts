@@ -13,7 +13,7 @@ export class WorkflowHistoryManager {
 		private license: License,
 	) {}
 
-	async prune(signal: AbortSignal): Promise<void> {
+	async prune() {
 		const pruneHours = getWorkflowHistoryPruneTime();
 		// No prune time set (infinite retention)
 		if (pruneHours === -1) {
@@ -25,7 +25,6 @@ export class WorkflowHistoryManager {
 		await this.workflowHistoryRepo.deleteEarlierThanExceptCurrentAndActive(
 			pruneDateTime,
 			preserveNamedVersions,
-			signal,
 		);
 	}
 }

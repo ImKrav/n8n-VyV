@@ -54,25 +54,9 @@ defineSlots<{
 </template>
 
 <style lang="scss" module>
-@use '../../css/mixins/breakpoints';
-
 .message {
 	display: block;
 	width: 100%;
-}
-
-.userBubble,
-.assistantContent {
-	--n8n-markdown--font-size--base: var(--font-size--sm);
-	font-size: var(--n8n-markdown--font-size--base);
-}
-
-/** Use larger text only on large desktop screens. */
-@include breakpoints.breakpoint('xl-only') {
-	.userBubble,
-	.assistantContent {
-		--n8n-markdown--font-size--base: var(--font-size--md);
-	}
 }
 
 .userMessage {
@@ -82,15 +66,13 @@ defineSlots<{
 }
 
 .userBubble {
-	max-width: 80%;
-	width: fit-content;
+	max-width: 90%;
 	padding: var(--spacing--xs) var(--spacing--sm);
 	border-radius: var(--radius--xl);
 	background: var(--assistant--color--background--user-bubble);
-	color: var(--assistant--color--text--user-bubble, var(--text-color));
+	color: var(--assistant--color--text--user-bubble);
 	white-space: pre-wrap;
 	word-break: break-word;
-	line-height: var(--line-height--xl);
 }
 
 .assistantMessage {
@@ -101,7 +83,6 @@ defineSlots<{
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing--xs);
-	padding-inline: var(--spacing--sm);
 
 	&:hover ~ .actions,
 	&:focus-within ~ .actions {
@@ -113,8 +94,6 @@ defineSlots<{
 	margin-top: var(--spacing--xs);
 	opacity: 0;
 	transition: opacity var(--duration--snappy) var(--easing--ease-out);
-	/** Use smaller padding so icon aligns vertically with text block in assistant message **/
-	padding-inline: var(--spacing--xs);
 
 	&:hover,
 	&:focus-within {

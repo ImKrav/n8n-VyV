@@ -1,10 +1,11 @@
 import type { InstanceRegistration } from '@n8n/api-types';
-import { getN8nVersion, Logger } from '@n8n/backend-common';
+import { Logger } from '@n8n/backend-common';
 import { ExecutionsConfig, ScalingModeConfig } from '@n8n/config';
 import { Service } from '@n8n/di';
 import { InstanceSettings } from 'n8n-core';
 import { randomUUID } from 'node:crypto';
 
+import { N8N_VERSION } from '@/constants';
 import { resolveWorkerPoolName } from '@/scaling/queue-name';
 import { getCpuLimit, getMemoryLimit } from '@/utils/container-limits';
 
@@ -147,7 +148,7 @@ export class InstanceRegistryService {
 			hostId: this.instanceSettings.hostId,
 			instanceType: this.instanceSettings.instanceType,
 			instanceRole: this.instanceSettings.instanceRole,
-			version: getN8nVersion(),
+			version: N8N_VERSION,
 			registeredAt: this.registeredAt,
 			lastSeen: Date.now(),
 			memoryLimit: getMemoryLimit(),

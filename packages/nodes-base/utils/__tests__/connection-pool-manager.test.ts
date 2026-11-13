@@ -1,6 +1,5 @@
 import { mock } from 'vitest-mock-extended';
-import type { Logger } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import { OperationalError, type Logger } from 'n8n-workflow';
 
 import { ConnectionPoolManager } from '@utils/connection-pool-manager';
 

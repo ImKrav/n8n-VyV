@@ -1,0 +1,11 @@
+node_modules/
+evidencias/
+ia/stagehand/capturas/
+ia/stagehand/resultados.json
+ia/generador/salida/
+ia/deepeval/.venv/
+.env
+
+cypress.env.json
+
+cypress.env.json

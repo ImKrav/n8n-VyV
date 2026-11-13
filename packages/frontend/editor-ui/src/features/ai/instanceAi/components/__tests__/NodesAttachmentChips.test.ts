@@ -310,15 +310,6 @@ describe('NodesAttachmentChips', () => {
 			return await waitFor(() => screen.getByTestId('tooltip-content'));
 		}
 
-		function expectTooltipPath(tooltip: HTMLElement, segments: readonly string[]) {
-			expect(tooltip).toHaveTextContent(segments.join(''));
-			expect(
-				[...tooltip.querySelectorAll('[role="img"][aria-label]')].map((element) =>
-					element.getAttribute('aria-label')?.trim(),
-				),
-			).toEqual(segments.slice(0, -1).map(() => '>'));
-		}
-
 		it('shows the workflow the set belongs to, then the chip label', async () => {
 			const { getByTestId } = renderComponent(NodesAttachmentChips, {
 				props: {
@@ -328,7 +319,7 @@ describe('NodesAttachmentChips', () => {
 
 			const tooltip = await openTooltip(getByTestId('nodes-chip-node'));
 
-			expectTooltipPath(tooltip, ['Leads', 'Start Enrichment']);
+			expect(tooltip).toHaveTextContent('Leads > Start Enrichment');
 		});
 
 		it('labels a group chip with its workflow and group name', async () => {
@@ -345,7 +336,7 @@ describe('NodesAttachmentChips', () => {
 
 			const tooltip = await openTooltip(getByTestId('nodes-chip-group'));
 
-			expectTooltipPath(tooltip, ['Leads', 'Enrichment']);
+			expect(tooltip).toHaveTextContent('Leads > Enrichment');
 		});
 
 		it('falls back to the open workflow document for a canvas selection without a workflow name', async () => {
@@ -356,7 +347,7 @@ describe('NodesAttachmentChips', () => {
 
 			const tooltip = await openTooltip(getByTestId('nodes-chip-node'));
 
-			expectTooltipPath(tooltip, ['Leads', 'A']);
+			expect(tooltip).toHaveTextContent('Leads > A');
 		});
 
 		it('shows only the label when the workflow is unknown', async () => {

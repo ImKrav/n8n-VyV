@@ -1,5 +1,6 @@
 import set from 'lodash/set';
 import {
+	BaseError,
 	NodeOperationError,
 	type IExecuteFunctions,
 	type INodeExecutionData,
@@ -8,7 +9,6 @@ import {
 	type INodeTypeDescription,
 	NodeConnectionTypes,
 } from 'n8n-workflow';
-import { BaseError } from '@n8n/errors';
 
 import { ENABLE_LESS_STRICT_TYPE_VALIDATION } from '../../../utils/constants';
 import { looseTypeValidationProperty } from '../../../utils/descriptions';

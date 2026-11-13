@@ -187,70 +187,30 @@ export function getRestrictionMessage(
 	return verdict?.scope ?? 'generic';
 }
 
-export type RestrictedCalloutSurface = 'tool' | 'credential';
-
-const CALLOUT_COPY: Record<
-	RestrictedCalloutSurface,
-	{ keys: Record<RestrictionMessage, BaseTextKey>; interpolationKey: 'nodeType' | 'credentialType' }
-> = {
-	tool: {
-		keys: {
-			instance: 'typeAvailabilityPolicies.restrictedNode.agentTool.instance',
-			project: 'typeAvailabilityPolicies.restrictedNode.agentTool.project',
-			optIn: 'typeAvailabilityPolicies.restrictedNode.agentTool.optIn',
-			generic: 'typeAvailabilityPolicies.restrictedNode.agentTool.generic',
-		},
-		interpolationKey: 'nodeType',
-	},
-	credential: {
-		keys: {
-			instance: 'typeAvailabilityPolicies.restrictedCredentialType.callout.instance',
-			project: 'typeAvailabilityPolicies.restrictedCredentialType.callout.project',
-			optIn: 'typeAvailabilityPolicies.restrictedCredentialType.callout.optIn',
-			generic: 'typeAvailabilityPolicies.restrictedCredentialType.callout.generic',
-		},
-		interpolationKey: 'credentialType',
-	},
+const AGENT_TOOL_DESCRIPTION_KEY: Record<RestrictionMessage, BaseTextKey> = {
+	instance: 'typeAvailabilityPolicies.restrictedNode.agentTool.instance',
+	project: 'typeAvailabilityPolicies.restrictedNode.agentTool.project',
+	optIn: 'typeAvailabilityPolicies.restrictedNode.agentTool.optIn',
+	generic: 'typeAvailabilityPolicies.restrictedNode.agentTool.generic',
 };
-
-export function describeTypeRestriction(
-	surface: RestrictedCalloutSurface,
-	typeName: string,
-	verdict: OptionalVerdict,
-): string {
-	const { keys, interpolationKey } = CALLOUT_COPY[surface];
-	return useI18n().baseText(keys[getRestrictionMessage(verdict)], {
-		interpolate: { [interpolationKey]: typeName },
-	});
-}
 
 export function describeAgentToolRestriction(
 	nodeTypeName: string,
 	verdict: OptionalVerdict,
 ): string {
-	return describeTypeRestriction('tool', nodeTypeName, verdict);
-}
-
-function useTypeRestriction<T extends TypeRestriction>(
-	type: MaybeRefOrGetter<string | null | undefined>,
-	lookup: (type: string) => T | null,
-) {
-	const restriction = computed(() => {
-		const name = toValue(type);
-		return name ? lookup(name) : null;
+	return useI18n().baseText(AGENT_TOOL_DESCRIPTION_KEY[getRestrictionMessage(verdict)], {
+		interpolate: { nodeType: nodeTypeName },
 	});
-
-	return { restriction, isRestricted: computed(() => restriction.value !== null) };
 }
 
 export function useNodeTypeRestriction(nodeType: MaybeRefOrGetter<string | null | undefined>) {
-	const { restriction, isRestricted } = useTypeRestriction(nodeType, getNodeTypeRestriction);
+	const restriction = computed(() => {
+		const type = toValue(nodeType);
+		return type ? getNodeTypeRestriction(type) : null;
+	});
 
-	return { restriction, isRestricted, restrictionScope: computed(() => restriction.value?.scope) };
-}
+	const isRestricted = computed(() => restriction.value !== null);
+	const restrictionScope = computed(() => restriction.value?.scope);
 
-export function useCredentialTypeRestriction(
-	credentialType: MaybeRefOrGetter<string | null | undefined>,
-) {
-	return useTypeRestriction(credentialType, getCredentialTypeRestriction);
+	return { restriction, isRestricted, restrictionScope };
 }

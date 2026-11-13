@@ -9,6 +9,7 @@ import {
 import type { PublicUser } from '@n8n/db';
 import {
 	User,
+	UserRepository,
 	PersonRepository,
 	AuthenticatedRequest,
 	GLOBAL_ADMIN_ROLE,
@@ -44,6 +45,7 @@ const ownUserDetailSchema = userDetailSchema.omit({ disabled: true });
 @RestController('/users')
 export class UsersController {
 	constructor(
+		private readonly userRepository: UserRepository,
 		private readonly personRepository: PersonRepository,
 		private readonly authService: AuthService,
 		private readonly userService: UserService,
@@ -103,10 +105,11 @@ export class UsersController {
 
 		const scope = listQueryOptions.filter?.scope;
 		const roleSlugs = scope ? await this.roleService.rolesWithScope('global', scope) : undefined;
-		const [{ users, count }, statusCounts] = await Promise.all([
-			this.personRepository.listUsers(listQueryOptions, roleSlugs),
+		const userQuery = this.userRepository.buildUserQuery(listQueryOptions, roleSlugs);
+		const [[users, count], statusCounts] = await Promise.all([
+			userQuery.getManyAndCount(),
 			includeStatusCounts
-				? this.personRepository.countUserListStatuses(filter, roleSlugs)
+				? this.userRepository.countUsersListStatuses(filter, roleSlugs)
 				: undefined,
 		]);
 
@@ -191,7 +194,15 @@ export class UsersController {
 		@Body payload: SettingsUpdateRequestDto,
 		@Param('id') id: string,
 	) {
-		return await this.userService.updateSettings(id, payload);
+		await this.userService.updateSettings(id, payload);
+
+		const user = await this.userRepository.findOneOrFail({
+			// TypeORM needs `id` here because `ServiceAccount.details` is an eager join.
+			select: ['id', 'settings'],
+			where: { id },
+		});
+
+		return user.settings;
 	}
 
 	/**

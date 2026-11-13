@@ -1,0 +1,105 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 0,
+    "pending": 1,
+    "failures": 0,
+    "start": "2026-11-11T02:26:14.718Z",
+    "end": "2026-11-11T02:26:14.759Z",
+    "duration": 41,
+    "testsRegistered": 1,
+    "passPercent": null,
+    "pendingPercent": 100,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "c180413b-8a43-4ec1-9868-715d3605dda4",
+      "title": "",
+      "fullFile": "cypress\\e2e\\api\\co02-limite-almacenamiento.api.cy.js",
+      "file": "cypress\\e2e\\api\\co02-limite-almacenamiento.api.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "43ffae4a-d7b7-4bc7-a062-bfb467f4b56e",
+          "title": "CO-02 · Límite de almacenamiento (API)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-017-08 · rechaza inserciones al superar el límite configurado",
+              "fullTitle": "CO-02 · Límite de almacenamiento (API) CP-017-08 · rechaza inserciones al superar el límite configurado",
+              "timedOut": null,
+              "duration": 0,
+              "state": "pending",
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": true,
+              "context": null,
+              "code": "cy.proyectoPersonal().then((p) => {\n  cy.nombreUnico(\"vyv_limite\").then((n) => {\n    n8nApi.crearTablaOk(p, n, [{ name: \"texto\", type: \"string\" }]).then((t) => {\n      const bloque = Array.from({ length: 10 }, () => ({ texto: \"x\".repeat(5e3) }));\n      let rechazada = null;\n      const intentar = (i) => {\n        if (i > 60 || rechazada) return;\n        n8nApi.insertar(p, t.id, bloque).then((r) => {\n          if (r.status !== 200) {\n            rechazada = { i, r };\n            return;\n          }\n          if (i % 5 === 4) cy.wait(1500);\n          intentar(i + 1);\n        });\n      };\n      intentar(0);\n      cy.then(() => {\n        expect(rechazada, \"se esperaba que alguna inserci\\xF3n fuera rechazada\").to.not.equal(null);\n        expect(rechazada.r.status).to.eq(400);\n        expect(mensaje(rechazada.r)).to.match(/size limit exceeded/i);\n        cy.evidencia(`Rechazo en el bloque ${rechazada.i}: ${mensaje(rechazada.r)}`);\n      });\n      n8nApi.borrarTabla(p, t.id);\n    });\n  });\n});",
+              "err": {},
+              "uuid": "a443a2c1-bef8-423c-9d79-54f5d7ff3cec",
+              "parentUUID": "43ffae4a-d7b7-4bc7-a062-bfb467f4b56e",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [],
+          "pending": [
+            "a443a2c1-bef8-423c-9d79-54f5d7ff3cec"
+          ],
+          "skipped": [],
+          "duration": 0,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

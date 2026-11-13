@@ -1,6 +1,10 @@
 import set from 'lodash/set';
-import { isResourceMapperValue, type IDataObject, type NodeApiError } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import {
+	isResourceMapperValue,
+	UserError,
+	type IDataObject,
+	type NodeApiError,
+} from 'n8n-workflow';
 
 import type { UpdateRecord } from './interfaces';
 

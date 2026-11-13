@@ -16,9 +16,8 @@ type Activity = Omit<WorkflowSuggestionActivity, 'action'> & {
 const entries = computed<Activity[]>(() => {
 	const result = props.detail;
 	let activity: Activity[];
-	const [suggestion] = result.suggestions;
-	if (suggestion) {
-		activity = [...suggestion.activity];
+	if (result.suggestion) {
+		activity = [...result.suggestion.activity];
 	} else {
 		activity = [
 			{
@@ -41,13 +40,13 @@ const entries = computed<Activity[]>(() => {
 		});
 	}
 
-	if (!suggestion && result.reviewState === 'dismissed') {
+	if (result.dismissedAt) {
 		activity.push({
 			id: `${result.resultId}:dismissed`,
 			action: 'dismissed',
 			author: 'human',
-			actorId: null,
-			createdAt: result.updatedAt,
+			actorId: result.dismissedById,
+			createdAt: result.dismissedAt,
 		});
 	}
 

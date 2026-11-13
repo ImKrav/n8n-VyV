@@ -74,9 +74,6 @@ export class CredentialsTester {
 	): ICredentialTestFunction | ICredentialTestRequestData | undefined {
 		// Check if test is defined on credentials
 		const type = this.credentialTypes.getByName(credentialType);
-		if (typeof type.test === 'function') {
-			return type.test;
-		}
 		if (type.test) {
 			return {
 				testRequest: type.test,
@@ -289,7 +286,7 @@ export class CredentialsTester {
 		}
 
 		if (typeof credentialTestFunction === 'function') {
-			// The credentials get tested via a function.
+			// The credentials get tested via a function that is defined on the node.
 			// Pass the base additional data so the test's HTTP requests honour the
 			// egress policy carried by its SSRF bridge.
 			const context = new CredentialTestContext(baseAdditionalData);

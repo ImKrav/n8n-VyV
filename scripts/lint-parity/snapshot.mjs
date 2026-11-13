@@ -28,15 +28,12 @@ const root = join(here, '..', '..');
 
 const outIndex = process.argv.indexOf('--out');
 if (outIndex === -1) {
-	console.error('usage: snapshot.mjs --out <file.json> [--only <pkgDir>] [--config <file>]');
+	console.error('usage: snapshot.mjs --out <file.json> [--only <pkgDir>]');
 	process.exit(2);
 }
 const outFile = process.argv[outIndex + 1];
 const onlyIndex = process.argv.indexOf('--only');
 const only = onlyIndex === -1 ? undefined : process.argv[onlyIndex + 1];
-const configIndex = process.argv.indexOf('--config');
-const config = configIndex === -1 ? undefined : process.argv[configIndex + 1];
-const configPath = config ? resolve(root, config) : undefined;
 
 const samples = JSON.parse(readFileSync(join(here, 'samples.json'), 'utf8'));
 const env = { ...process.env, CI: 'true', NODE_ENV: 'production', FORCE_COLOR: '0' };
@@ -51,10 +48,7 @@ function normalise(entry) {
 
 function printConfig(pkgDir, file) {
 	return new Promise((resolve) => {
-		const args = ['exec', 'eslint'];
-		if (configPath) args.push('--config', configPath);
-		args.push('--print-config', file);
-		const child = spawn('pnpm', args, {
+		const child = spawn('pnpm', ['exec', 'eslint', '--print-config', file], {
 			cwd: join(root, pkgDir),
 			env,
 		});

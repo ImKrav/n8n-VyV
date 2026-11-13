@@ -4,17 +4,10 @@ import {
 	SSO_LOGIN_REQUIRED_ERROR_CODE,
 } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
-import { EventService, PostHogClient } from '@n8n/backend-services';
+import { EventService } from '@n8n/backend-services';
 import { Time } from '@n8n/constants';
-import type { Person, PublicUser, AuthProviderType } from '@n8n/db';
-import {
-	UserRepository,
-	AuthenticatedRequest,
-	GLOBAL_OWNER_ROLE,
-	isPerson,
-	PersonRepository,
-	accountSummary,
-} from '@n8n/db';
+import type { User, PublicUser, AuthProviderType } from '@n8n/db';
+import { UserRepository, AuthenticatedRequest, GLOBAL_OWNER_ROLE, PersonRepository } from '@n8n/db';
 import {
 	Body,
 	createBodyKeyedRateLimiter,
@@ -32,6 +25,7 @@ import { RESPONSE_ERROR_MESSAGES } from '@/constants';
 import { AuthError, BadRequestError, ForbiddenError, InternalServerError } from '@n8n/errors';
 import { License } from '@/license';
 import { MfaService } from '@/mfa/mfa.service';
+import { PostHogClient } from '@/posthog';
 import { AuthlessRequest } from '@/requests';
 import { UserService } from '@/services/user.service';
 import {
@@ -88,29 +82,29 @@ export class AuthController {
 			throw new InternalServerError('Email authentication method not available');
 		}
 
-		const preliminaryPerson = await emailHandler.handleLogin(emailOrLdapLoginId, password);
-		this.validateSsoRestrictions(preliminaryPerson, emailOrLdapLoginId);
+		const preliminaryUser = await emailHandler.handleLogin(emailOrLdapLoginId, password);
+		this.validateSsoRestrictions(preliminaryUser, emailOrLdapLoginId);
 
-		const { person, usedAuthenticationMethod } = await this.authenticateWithPassword(
+		const { user, usedAuthenticationMethod } = await this.authenticateWithPassword(
 			currentAuthenticationMethod,
 			emailOrLdapLoginId,
 			password,
-			preliminaryPerson,
+			preliminaryUser,
 		);
 
-		await this.validateMfa(person, mfaCode, mfaRecoveryCode);
+		await this.validateMfa(user, mfaCode, mfaRecoveryCode);
 
-		this.authService.issueCookie(res, person, person.mfaEnabled, req.browserId);
+		this.authService.issueCookie(res, user, user.mfaEnabled, req.browserId);
 
 		this.eventService.emit('user-logged-in', {
-			user: person,
+			user,
 			authenticationMethod: usedAuthenticationMethod,
 		});
 
-		return await this.userService.toPublic(person, {
+		return await this.userService.toPublic(user, {
 			posthog: this.postHog,
 			withScopes: true,
-			mfaAuthenticated: person.mfaEnabled,
+			mfaAuthenticated: user.mfaEnabled,
 		});
 	}
 
@@ -120,11 +114,11 @@ export class AuthController {
 		}
 	}
 
-	private validateSsoRestrictions(preliminaryPerson: Person | undefined, userEmail: string): void {
+	private validateSsoRestrictions(preliminaryUser: User | undefined, userEmail: string): void {
 		const shouldBlockSsoUser =
 			(isSamlCurrentAuthenticationMethod() || isOidcCurrentAuthenticationMethod()) &&
-			preliminaryPerson?.role.slug !== GLOBAL_OWNER_ROLE.slug &&
-			!preliminaryPerson?.settings?.allowSSOManualLogin;
+			preliminaryUser?.role.slug !== GLOBAL_OWNER_ROLE.slug &&
+			!preliminaryUser?.settings?.allowSSOManualLogin;
 
 		if (shouldBlockSsoUser) {
 			this.eventService.emit('user-login-failed', {
@@ -140,24 +134,24 @@ export class AuthController {
 		getCurrentAuthenticationMethod: AuthProviderType,
 		emailOrLdapLoginId: string,
 		password: string,
-		preliminaryPerson: Person | undefined,
-	): Promise<{ person: Person; usedAuthenticationMethod: AuthProviderType }> {
-		let person = preliminaryPerson;
+		preliminaryUser: User | undefined,
+	): Promise<{ user: User; usedAuthenticationMethod: AuthProviderType }> {
+		let user = preliminaryUser;
 		let usedAuthenticationMethod: AuthProviderType = 'email';
 
 		const shouldTryAlternativeAuth =
 			getCurrentAuthenticationMethod !== 'email' &&
-			preliminaryPerson?.role.slug !== GLOBAL_OWNER_ROLE.slug;
+			preliminaryUser?.role.slug !== GLOBAL_OWNER_ROLE.slug;
 
 		if (shouldTryAlternativeAuth) {
 			const authHandler = this.authHandlerRegistry.get(getCurrentAuthenticationMethod, 'password');
 			if (authHandler) {
-				person = await authHandler.handleLogin(emailOrLdapLoginId, password);
+				user = await authHandler.handleLogin(emailOrLdapLoginId, password);
 				usedAuthenticationMethod = getCurrentAuthenticationMethod;
 			}
 		}
 
-		if (!person) {
+		if (!user) {
 			this.eventService.emit('user-login-failed', {
 				authenticationMethod: usedAuthenticationMethod,
 				userEmail: emailOrLdapLoginId,
@@ -166,15 +160,15 @@ export class AuthController {
 			throw new AuthError('Wrong username or password. Do you have caps lock on?');
 		}
 
-		return { person, usedAuthenticationMethod };
+		return { user, usedAuthenticationMethod };
 	}
 
 	private async validateMfa(
-		person: Person,
+		user: User,
 		mfaCode: string | undefined,
 		mfaRecoveryCode: string | undefined,
 	): Promise<void> {
-		if (!person.mfaEnabled) {
+		if (!user.mfaEnabled) {
 			return;
 		}
 
@@ -183,7 +177,7 @@ export class AuthController {
 		}
 
 		const isMfaCodeOrMfaRecoveryCodeValid = await this.mfaService.validateMfa(
-			person.id,
+			user.id,
 			mfaCode,
 			mfaRecoveryCode,
 		);
@@ -274,8 +268,7 @@ export class AuthController {
 			throw new BadRequestError('The invitation was likely either deleted or already claimed');
 		}
 
-		// A person who has not set up their account cannot invite. A service account has no email.
-		if (isPerson(inviter) && !inviter.email) {
+		if (!inviter.email) {
 			this.logger.error(
 				'Request to resolve signup token failed because inviter does not exist or is not set up',
 				{
@@ -287,7 +280,7 @@ export class AuthController {
 
 		this.eventService.emit('user-invite-email-click', { inviter, invitee });
 
-		const { firstName, lastName } = accountSummary(inviter);
+		const { firstName, lastName } = inviter;
 		return { inviter: { firstName, lastName } };
 	}
 
@@ -296,9 +289,6 @@ export class AuthController {
 	async logout(req: AuthenticatedRequest, res: Response) {
 		await this.authService.invalidateToken(req);
 		this.authService.clearCookie(res);
-
-		this.eventService.emit('user-logged-out', { user: req.user });
-
 		return { loggedOut: true };
 	}
 }

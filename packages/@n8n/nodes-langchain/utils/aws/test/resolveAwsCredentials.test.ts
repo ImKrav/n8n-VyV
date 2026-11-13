@@ -1,6 +1,5 @@
 import type * as AwsCredentialsModule from 'n8n-nodes-base/aws-credentials';
-import type { ISupplyDataFunctions, INode } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { UserError, type ISupplyDataFunctions, type INode } from 'n8n-workflow';
 import { mock } from 'vitest-mock-extended';
 
 // Mock the SDK provider factory. Each call returns a function identity we can inspect.

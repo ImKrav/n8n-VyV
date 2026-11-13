@@ -2,25 +2,21 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import type { IExecuteFunctions } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
-import {
-	createCustomRegexCheckFn,
-	createJailbreakCheckFn,
-	createKeywordsCheckFn,
-	createNSFWCheckFn,
-	createPiiCheckFn,
-	createSecretKeysCheckFn,
-	createTopicalAlignmentCheckFn,
-	createUrlsCheckFn,
-	JAILBREAK_PROMPT,
-	NSFW_SYSTEM_PROMPT,
-	TOPICAL_ALIGNMENT_SYSTEM_PROMPT,
-} from '@n8n/ai-utilities/guardrails';
-
 import { runStageGuardrails } from '../helpers/base';
 import { splitByComma } from '../helpers/common';
 import { mapGuardrailErrorsToMessage, mapGuardrailResultToUserResult } from '../helpers/mappers';
-import { createLangChainGuardrailRunner, createLLMCheckFn } from '../helpers/model';
+import { createLLMCheckFn } from '../helpers/model';
 import { applyPreflightModifications } from '../helpers/preflight';
+import { createJailbreakCheckFn, JAILBREAK_PROMPT } from './checks/jailbreak';
+import { createKeywordsCheckFn } from './checks/keywords';
+import { createNSFWCheckFn, NSFW_SYSTEM_PROMPT } from './checks/nsfw';
+import { createCustomRegexCheckFn, createPiiCheckFn } from './checks/pii';
+import { createSecretKeysCheckFn } from './checks/secretKeys';
+import {
+	createTopicalAlignmentCheckFn,
+	TOPICAL_ALIGNMENT_SYSTEM_PROMPT,
+} from './checks/topicalAlignment';
+import { createUrlsCheckFn } from './checks/urls';
 import type {
 	GroupedGuardrailResults,
 	GuardrailsOptions,
@@ -144,7 +140,7 @@ export async function process(
 			stageGuardrails.input.push({
 				name: 'jailbreak',
 				check: createJailbreakCheckFn({
-					run: createLangChainGuardrailRunner(model),
+					model,
 					prompt: prompt?.trim() || JAILBREAK_PROMPT,
 					threshold,
 					systemMessage,
@@ -157,7 +153,7 @@ export async function process(
 			stageGuardrails.input.push({
 				name: 'nsfw',
 				check: createNSFWCheckFn({
-					run: createLangChainGuardrailRunner(model),
+					model,
 					prompt: prompt?.trim() || NSFW_SYSTEM_PROMPT,
 					threshold,
 					systemMessage,
@@ -170,7 +166,7 @@ export async function process(
 			stageGuardrails.input.push({
 				name: 'topicalAlignment',
 				check: createTopicalAlignmentCheckFn({
-					run: createLangChainGuardrailRunner(model),
+					model,
 					prompt: prompt?.trim() || TOPICAL_ALIGNMENT_SYSTEM_PROMPT,
 					systemMessage,
 					threshold,

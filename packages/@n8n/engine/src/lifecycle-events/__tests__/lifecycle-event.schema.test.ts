@@ -28,9 +28,7 @@ const every: LifecycleEvent[] = [
 	{ type: 'execution:cancelled', ...executionEvent },
 	{ type: 'step:started', ...stepEvent },
 	{ type: 'step:completed', ...stepEvent, outputs: [[{ json: { x: 1 } }], null] },
-	{ type: 'step:completed', ...stepEvent },
 	{ type: 'step:failed', ...stepEvent },
-	{ type: 'step:waiting', ...stepEvent },
 ];
 
 describe('lifecycleEventSchema', () => {
@@ -47,9 +45,9 @@ describe('lifecycleEventSchema', () => {
 	});
 
 	it('keeps the completed outputs in step with StepSlots', () => {
-		expectTypeOf<Extract<LifecycleEvent, { type: 'step:completed' }>['outputs']>().toEqualTypeOf<
-			StepSlots | undefined
-		>();
+		expectTypeOf<
+			Extract<LifecycleEvent, { type: 'step:completed' }>['outputs']
+		>().toEqualTypeOf<StepSlots>();
 	});
 
 	it.each(every.map((event) => [event.type, event] as const))(
@@ -99,9 +97,9 @@ describe('lifecycleEventSchema', () => {
 		expect(parsed.success).toBe(true);
 	});
 
-	it('accepts a completed step without outputs', () => {
+	it('rejects a completed step without outputs', () => {
 		expect(lifecycleEventSchema.safeParse({ type: 'step:completed', ...stepEvent }).success).toBe(
-			true,
+			false,
 		);
 	});
 });

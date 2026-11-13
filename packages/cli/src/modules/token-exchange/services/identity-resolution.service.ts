@@ -4,14 +4,13 @@ import {
 	AuthIdentity,
 	AuthIdentityRepository,
 	GLOBAL_MEMBER_ROLE,
-	isPerson,
 	PersonRepository,
 	UserRepository,
 	type Person,
 	type User,
 } from '@n8n/db';
 import { Service } from '@n8n/di';
-import { GLOBAL_OWNER_ROLE_SLUG, isBuiltInRole, isReservedGlobalRole } from '@n8n/permissions';
+import { GLOBAL_OWNER_ROLE_SLUG, isBuiltInRole } from '@n8n/permissions';
 import { createHash } from 'node:crypto';
 
 import { UserService } from '@/services/user.service';
@@ -222,7 +221,7 @@ export class IdentityResolutionService {
 		const qualifiedSub = qualifiedProviderId(claims.iss, claims.sub);
 
 		const user = await this.userRepository.manager.transaction(async (trx) => {
-			const { user: newUser } = await this.personRepository.createPersonWithProject(
+			const { user: newUser } = await this.userRepository.createUserWithProject(
 				{
 					email,
 					firstName: trimName(claims.given_name),
@@ -279,8 +278,9 @@ export class IdentityResolutionService {
 
 		const role = roleClaim;
 
-		if (isReservedGlobalRole(role)) {
-			this.logger.warn('Ignoring a reserved role claim for existing user', { role });
+		// Never change a user's role to global:owner via token exchange
+		if (role === 'global:owner') {
+			this.logger.warn('Ignoring global:owner role claim for existing user');
 			return undefined;
 		}
 
@@ -325,10 +325,10 @@ export class IdentityResolutionService {
 
 		const role = roleClaim;
 
-		if (isReservedGlobalRole(role)) {
+		if (role === 'global:owner') {
 			throw new TokenExchangeAuthError(
 				TokenExchangeFailureReason.RoleNotAllowed,
-				`Cannot provision ${role} role via token exchange`,
+				'Cannot provision global:owner role via token exchange',
 			);
 		}
 
@@ -371,17 +371,17 @@ export class IdentityResolutionService {
 	): Promise<User> {
 		let needsReload = false;
 
-		// Sync profile fields (firstName, lastName). Only a person has a name.
-		const profileUpdates: Pick<Partial<Person>, 'firstName' | 'lastName'> = {};
+		// Sync profile fields (firstName, lastName)
+		const profileUpdates: Pick<Partial<User>, 'firstName' | 'lastName'> = {};
 
-		if (isPerson(user) && claims.given_name !== undefined) {
+		if (claims.given_name !== undefined) {
 			const trimmed = trimName(claims.given_name);
 			if (trimmed !== user.firstName) {
 				profileUpdates.firstName = trimmed;
 			}
 		}
 
-		if (isPerson(user) && claims.family_name !== undefined) {
+		if (claims.family_name !== undefined) {
 			const trimmed = trimName(claims.family_name);
 			if (trimmed !== user.lastName) {
 				profileUpdates.lastName = trimmed;

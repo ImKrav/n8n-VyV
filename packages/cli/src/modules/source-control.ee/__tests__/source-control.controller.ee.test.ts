@@ -1,7 +1,6 @@
 import type { PullWorkFolderRequestDto, PushWorkFolderRequestDto } from '@n8n/api-types';
 import type { EventService } from '@n8n/backend-services';
 import type { AuthenticatedRequest, Project, User } from '@n8n/db';
-import { Person } from '@n8n/db';
 import { ControllerRegistryMetadata, type Controller } from '@n8n/decorators';
 import { Container } from '@n8n/di';
 import * as permissions from '@n8n/permissions';
@@ -68,11 +67,7 @@ describe('SourceControlController', () => {
 	describe('pushWorkfolder', () => {
 		it('should push workfolder with expected parameters', async () => {
 			const req = mock<AuthenticatedRequest>({
-				user: Object.assign(new Person(), {
-					firstName: 'John',
-					lastName: 'Doe',
-					email: 'john.doe@example.com',
-				}),
+				user: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
 			});
 			const res = mock<Response>();
 			const payload = { force: true } as PushWorkFolderRequestDto;
@@ -83,11 +78,7 @@ describe('SourceControlController', () => {
 
 		it('should return commit info when push result includes commit hash', async () => {
 			const req = mock<AuthenticatedRequest>({
-				user: Object.assign(new Person(), {
-					firstName: 'John',
-					lastName: 'Doe',
-					email: 'john.doe@example.com',
-				}),
+				user: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
 			});
 			const res = mock<Response>();
 			const payload = { force: true, commitMessage: 'Test commit' } as PushWorkFolderRequestDto;
@@ -117,11 +108,7 @@ describe('SourceControlController', () => {
 
 		it('should return null commit info when push result has no commit hash', async () => {
 			const req = mock<AuthenticatedRequest>({
-				user: Object.assign(new Person(), {
-					firstName: 'John',
-					lastName: 'Doe',
-					email: 'john.doe@example.com',
-				}),
+				user: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
 			});
 			const res = mock<Response>();
 			const payload = { force: true } as PushWorkFolderRequestDto;
@@ -142,11 +129,7 @@ describe('SourceControlController', () => {
 
 		it('should throw BadRequestError when push fails', async () => {
 			const req = mock<AuthenticatedRequest>({
-				user: Object.assign(new Person(), {
-					firstName: 'John',
-					lastName: 'Doe',
-					email: 'john.doe@example.com',
-				}),
+				user: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
 			});
 			const res = mock<Response>();
 			const payload = { force: true } as PushWorkFolderRequestDto;
@@ -162,11 +145,7 @@ describe('SourceControlController', () => {
 	describe('pullWorkfolder', () => {
 		it('should pull workfolder with expected parameters', async () => {
 			const req = mock<AuthenticatedRequest>({
-				user: Object.assign(new Person(), {
-					firstName: 'John',
-					lastName: 'Doe',
-					email: 'john.doe@example.com',
-				}),
+				user: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' },
 			});
 			const res = mock<Response>();
 			const payload = { force: true, autoPublish: 'all' } as PullWorkFolderRequestDto;
@@ -178,11 +157,7 @@ describe('SourceControlController', () => {
 
 	describe('getStatus', () => {
 		it('should authorize before calling getStatus with expected parameters', async () => {
-			const person = Object.assign(new Person(), {
-				firstName: 'John',
-				lastName: 'Doe',
-				email: 'john.doe@example.com',
-			});
+			const user = { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' };
 			const query = {
 				direction: 'pull',
 				preferLocalVersion: true,
@@ -192,12 +167,12 @@ describe('SourceControlController', () => {
 			// vitest-mock-extended doesn't populate `user` from the partial here, so set it
 			// explicitly. The controller passes `new SourceControlGetStatus(req.query)`, so
 			// match the query fields with `objectContaining` rather than the raw object.
-			req.user = person;
+			req.user = user as (typeof req)['user'];
 
 			await controller.getStatus(req);
 			expect(sourceControlScopedService.ensureIsAllowedToGetStatus).toHaveBeenCalledWith(req);
 			expect(sourceControlService.getStatus).toHaveBeenCalledWith(
-				person,
+				user,
 				expect.objectContaining({ direction: 'pull', preferLocalVersion: true, verbose: false }),
 			);
 		});
@@ -223,23 +198,19 @@ describe('SourceControlController', () => {
 
 	describe('status', () => {
 		it('should authorize before calling getStatus with expected parameters', async () => {
-			const person = Object.assign(new Person(), {
-				firstName: 'John',
-				lastName: 'Doe',
-				email: 'john.doe@example.com',
-			});
+			const user = { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' };
 			const query = {
 				direction: 'pull',
 				preferLocalVersion: true,
 				verbose: false,
 			} as SourceControlGetStatus;
 			const req = mock<SourceControlRequest.GetStatus>({ query });
-			req.user = person;
+			req.user = user as (typeof req)['user'];
 
 			await controller.status(req);
 			expect(sourceControlScopedService.ensureIsAllowedToGetStatus).toHaveBeenCalledWith(req);
 			expect(sourceControlService.getStatus).toHaveBeenCalledWith(
-				person,
+				user,
 				expect.objectContaining({ direction: 'pull', preferLocalVersion: true, verbose: false }),
 			);
 		});

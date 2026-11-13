@@ -5,12 +5,10 @@ import {
 	AgentModelSchema,
 	AI_GATEWAY_MANAGED_TAG,
 	agentTaskSchema,
-	findToolGuardrailRefIssues,
 	findVectorStoreToolNameCollisions,
 	getAgentModelProviderCredentialTypes,
 	getWorkflowToolIncompatibilityReason,
 	isDraftAgentConfig,
-	integrationNeedsCredential,
 	isDraftIntegration,
 	nodeTypeAvailabilityScopeSchema,
 	type AgentConfigValidationIssue,
@@ -37,7 +35,7 @@ import {
 
 import { getMissingSkillIds } from '@/modules/agents/utils/agent-missing-skill-ids';
 import { deniedNodeTypes } from '@/modules/type-availability-policies/type-violation';
-import { NodeTypesProxy } from '@n8n/backend-services';
+import { NodeTypes } from '@/node-types';
 import {
 	toPolicedMcpNodes,
 	toPolicedNodes,
@@ -144,7 +142,7 @@ export class AgentValidationService {
 	constructor(
 		private readonly agentRepository: AgentRepository,
 		private readonly definitionService: AgentDefinitionService,
-		private readonly nodeTypes: NodeTypesProxy,
+		private readonly nodeTypes: NodeTypes,
 		private readonly workflowRepository: WorkflowRepository,
 		private readonly chatIntegrationRegistry: ChatIntegrationRegistry,
 		private readonly aiGatewayService: AiGatewayService,
@@ -374,9 +372,6 @@ export class AgentValidationService {
 
 		this.collectCoreIssues(config, issues);
 		this.collectVectorStoreIssues(config, issues);
-		// Runs in both scopes: a dangling guardrail ref blocks publish and run,
-		// but never the draft save (which does not reach this service).
-		this.collectToolGuardrailRefIssues(config, issues);
 		await this.collectMainCredentialIssues(
 			config,
 			findCredential,
@@ -636,22 +631,6 @@ export class AgentValidationService {
 		}
 	}
 
-	/** A dangling guardrail tool ref blocks publish and run, never the draft save. */
-	private collectToolGuardrailRefIssues(
-		config: AgentJsonConfig,
-		issues: AgentConfigValidationIssue[],
-	) {
-		const guardrails = config.config?.guardrails?.tools ?? [];
-		for (const { guardrailIndex, toolIndex } of findToolGuardrailRefIssues(config)) {
-			issues.push(
-				issue('invalid_value', `config.guardrails.tools.${guardrailIndex}.tools.${toolIndex}`, {
-					kind: 'guardrail',
-					id: guardrails[guardrailIndex].id,
-				}),
-			);
-		}
-	}
-
 	private async collectChannelIssues(
 		integrations: AgentIntegrationConfig[],
 		findCredential: FindCredential,
@@ -659,7 +638,7 @@ export class AgentValidationService {
 	) {
 		for (let index = 0; index < integrations.length; index++) {
 			const integration = integrations[index];
-			if (!integrationNeedsCredential(integration)) continue;
+			if (integration.type === 'n8n_chat') continue;
 			const path = `integrations.${index}.credentialId`;
 			const capability: AgentConfigValidationIssue['capability'] = {
 				kind: 'channel',
@@ -679,10 +658,7 @@ export class AgentValidationService {
 			}
 
 			const integrationImpl = this.chatIntegrationRegistry.get(integration.type);
-			if (
-				integrationImpl &&
-				!integrationImpl.acceptedCredentialTypes(integration).includes(credential.type)
-			) {
+			if (integrationImpl && !integrationImpl.credentialTypes.includes(credential.type)) {
 				issues.push(issue('incompatible_credential', path, capability));
 			}
 		}

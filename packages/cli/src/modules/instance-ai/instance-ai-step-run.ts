@@ -373,10 +373,10 @@ export function findRootsAboveOtherRoots(
 }
 
 /**
- * Whether an earlier run left items on one output of a node. Mirrors how the
- * engine's `getIncomingDataForConnection` reads run data: any run of the node
- * counts, and an empty output does not. The engine follows only the outputs
- * that carried items, so an untaken IF branch never runs on a replay.
+ * Whether an earlier run left items on one output of a node. Mirrors the
+ * engine's `getIncomingDataFromAnyRun`: any run of the node counts, and an
+ * empty output does not. The engine follows only the outputs that carried
+ * items, so an untaken IF branch never runs on a replay.
  */
 function outputCarriedItems(runData: IRunData, nodeName: string, outputIndex: number): boolean {
 	return (runData[nodeName] ?? []).some(
@@ -429,8 +429,7 @@ function reachesItself(
  *   The engine retries a failed node, even a pinned one.
  * - A Loop Over Items node whose last run left its `done` output empty did not
  *   finish, so the engine restarts the loop.
- * - Only an output that carried items leads anywhere. A pinned node carries
- *   items only on its first output, and only if it pins at least one item.
+ * - Only an output that carried items leads anywhere.
  *
  * It therefore accepts the replays the engine can honour — an untaken branch
  * above the target needs no data, and a second trigger the earlier run never
@@ -443,19 +442,19 @@ export function findUncoveredAncestors(args: {
 	targetName: string;
 	rootNames: string[];
 	runData: IRunData;
-	pinData?: IPinData;
+	pinnedNodeNames?: string[];
 }): string[] {
 	const { nodes, connections, targetName, rootNames, runData } = args;
 	const nodesByName = new Map(nodes.map((node) => [node.name, node]));
 	const connectionsByDestination = mapConnectionsByDestination(connections);
-	const pinData = args.pinData ?? {};
+	const pinned = new Set(args.pinnedNodeNames ?? []);
 
 	const ancestors = new Set(collectAncestorNames(nodes, connections, targetName, rootNames));
 	if (ancestors.size === 0) return [];
 
 	const failed = (name: string) => (runData[name] ?? []).some((task) => task.error !== undefined);
 	const isClean = (name: string) =>
-		!failed(name) && (runData[name] !== undefined || pinData[name] !== undefined);
+		!failed(name) && (runData[name] !== undefined || pinned.has(name));
 
 	const stopAt = new Set([...rootNames, targetName]);
 
@@ -490,14 +489,8 @@ export function findUncoveredAncestors(args: {
 			// The root runs by design — it is the node the target runs through — and
 			// a node off the path to the target is not part of the run at all.
 			if (stopAt.has(child) || !ancestors.has(child)) continue;
-			// The engine sends the pinned items of a node only through its first
-			// output, and sends nothing on when the node pins no items.
-			const pinnedItems = pinData[current];
-			const carriedItems =
-				pinnedItems !== undefined
-					? edge.outputIndex === 0 && pinnedItems.length > 0
-					: outputCarriedItems(runData, current, edge.outputIndex);
-			if (!carriedItems) continue;
+			// A pinned node feeds every output, so the engine always walks on.
+			if (!pinned.has(current) && !outputCarriedItems(runData, current, edge.outputIndex)) continue;
 
 			if (!isClean(child) || isUnfinishedLoop(child)) {
 				uncovered.add(child);
@@ -534,8 +527,8 @@ export function planStepRun(args: {
 	targetName: string;
 	mockItems?: INodeExecutionData[];
 	priorRunData?: IRunData;
-	/** The pin data of the workflow. A pinned node is clean, so a replay may skip it. */
-	pinData?: IPinData;
+	/** Nodes the workflow pins. A pinned node is clean, so a replay may skip it. */
+	pinnedNodeNames?: string[];
 }): StepRunPlan & { inputMode: StepRunInputMode } {
 	const { nodes, connections, targetName, mockItems, priorRunData } = args;
 
@@ -609,7 +602,7 @@ export function planStepRun(args: {
 			targetName,
 			rootNames,
 			runData: priorRunData,
-			pinData: args.pinData,
+			pinnedNodeNames: args.pinnedNodeNames,
 		});
 
 		if (reusedNodeNames.length > 0 && uncovered.length === 0) {

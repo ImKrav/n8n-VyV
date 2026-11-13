@@ -1,4 +1,4 @@
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 import { Readable } from 'node:stream';
 
 import { createFixedSizeChunker } from '../stream-utils';

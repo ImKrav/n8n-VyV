@@ -9,7 +9,6 @@ import { AgentEvalDataset, type AgentEvalColumnMapping } from './agent-eval-data
 import { AgentEvalRating, type AgentEvalVote } from './agent-eval-rating.ee';
 import { AgentEvalResult, type AgentEvalResultStatus } from './agent-eval-result.ee';
 import { AgentEvalRun, type AgentEvalRunStatus } from './agent-eval-run.ee';
-import { AgentTagMapping } from './agent-tag-mapping';
 import { AiBuilderTemporaryWorkflow } from './ai-builder-temporary-workflow';
 import { AiPreference } from './ai-preference';
 import { AnnotationTagEntity } from './annotation-tag-entity.ee';
@@ -138,7 +137,6 @@ export {
 	type AgentEvalResultStatus,
 	AgentEvalRating,
 	type AgentEvalVote,
-	AgentTagMapping,
 	IdempotencyKey,
 	idempotencyKeyStatuses,
 	IDEMPOTENCY_KEY_TTL_MS,
@@ -238,7 +236,6 @@ export const entities = {
 	AgentEvalRun,
 	AgentEvalResult,
 	AgentEvalRating,
-	AgentTagMapping,
 	IdempotencyKey,
 	InvalidAuthToken,
 	InstanceCredentialAssignment,

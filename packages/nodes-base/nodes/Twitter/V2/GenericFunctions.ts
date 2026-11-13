@@ -8,8 +8,7 @@ import type {
 	IRequestOptions,
 	IHttpRequestMethods,
 } from 'n8n-workflow';
-import { NodeApiError, NodeOperationError } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { NodeApiError, NodeOperationError, UserError } from 'n8n-workflow';
 
 export async function twitterApiRequest(
 	this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions,

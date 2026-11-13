@@ -3,7 +3,6 @@ export * from './api-keys';
 export * from './cloudPlans';
 export * from './communityNodes';
 export * from './credentialResolvers';
-export * from './credentials';
 export * from './ctas';
 export * from './eventbus.ee';
 export * from './instance-registry';
