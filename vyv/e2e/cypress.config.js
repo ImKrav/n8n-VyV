@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress';
 import createBundler from '@bahmutov/cypress-esbuild-preprocessor';
 import { addCucumberPreprocessorPlugin } from '@badeball/cypress-cucumber-preprocessor';
 import { createEsbuildPlugin } from '@badeball/cypress-cucumber-preprocessor/esbuild';
+import { execSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
 
 export default defineConfig({
@@ -42,6 +43,20 @@ export default defineConfig({
         log(msg) { console.log(msg); return null; },
         table(rows) { console.table(rows); return null; },
         leerArchivo(ruta) { return existsSync(ruta) ? readFileSync(ruta, 'utf8') : null; },
+        // Searches raw bytes (e.g. the SQLite file and its WAL) without sending the file to the browser.
+        contieneTexto({ rutas, textos }) {
+          const datos = Buffer.concat(rutas.filter((r) => existsSync(r)).map((r) => readFileSync(r)));
+          return { leidos: datos.length, ...Object.fromEntries(textos.map((t) => [t, datos.includes(Buffer.from(t))])) };
+        },
+        // Runs a local command, e.g. the n8n restart of CP-WF-03-08 (CYPRESS_restartCommand).
+        ejecutar(comando) {
+          // Cypress sets NODE_OPTIONS (ts-node loader); a restarted n8n must not inherit it.
+          const env = { ...process.env };
+          delete env.NODE_OPTIONS;
+          delete env.ELECTRON_RUN_AS_NODE;
+          execSync(comando, { stdio: 'inherit', timeout: 180000, shell: true, env });
+          return null;
+        },
       });
       return config;
     },

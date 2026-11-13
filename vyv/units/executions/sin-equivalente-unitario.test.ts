@@ -5,11 +5,13 @@
  */
 
 describe('CP-EX-01-08 · Rendimiento con más de 1 000 ejecuciones', () => {
-	it.todo('Prueba de rendimiento: más de 1 000 ejecuciones en una instancia real.');
+	it.todo(
+		'Prueba de rendimiento en una instancia real. Cubierto en Cypress: e2e/executions/EX-01/many-executions.api.cy.js.',
+	);
 });
 
 describe('CP-EX-04-08 · La cola se procesa al liberar capacidad', () => {
 	it.todo(
-		'Necesita el servidor: el procesamiento de la cola por límite de concurrencia ocurre en el backend.',
+		'La cola la procesa el backend. Cubierto en Cypress: e2e/executions/EX-04/concurrency-queue.api.cy.js.',
 	);
 });

@@ -14,7 +14,9 @@ vyv/
 │   ├── credentials/CR-01 … CR-05/
 │   └── core/CO-01 … CO-05/
 ├── e2e/                 pruebas funcionales (Cypress): API, UI, Gherkin + Screenplay
-│   ├── workflows/ executions/ credentials/   sin pruebas Cypress todavía
+│   ├── workflows/WF-01, WF-03/               casos que necesitan servidor o navegador
+│   ├── executions/EX-01, EX-04/
+│   ├── credentials/CR-01 … CR-05/
 │   ├── core/CO-01 … CO-05/                   *.api.cy.js, *.ui.cy.js, *.feature
 │   ├── core/security/ core/accessibility/ core/regression/
 │   └── support/ screenplay/ fixtures/ scripts/
@@ -27,7 +29,7 @@ vyv/
 | Carpeta | Qué contiene | Módulos | Herramienta |
 | --- | --- | --- | --- |
 | [`units/`](units/README.md) | Un `describe` por caso del plan, TDD, AAA, FIRST y dobles de prueba | 1 Workflows · 2 Ejecuciones · 3 Credenciales · 4 Core | Vitest |
-| [`e2e/`](e2e/README.md) | Data tables y carpetas por API, UI y Gherkin + Screenplay; seguridad (OWASP), accesibilidad (WCAG) y regresión | 4 Core | Cypress |
+| [`e2e/`](e2e/README.md) | Módulos 1–3: los casos que necesitan el servidor, la base de datos o un navegador real. Módulo 4: data tables y carpetas por API, UI y Gherkin + Screenplay; seguridad (OWASP), accesibilidad (WCAG) y regresión | 1 · 2 · 3 · 4 | Cypress |
 | [`ai/`](e2e/README.md#6-inteligencia-artificial-punto-14) | Flujos en lenguaje natural, evaluación de un asistente y generación de casos | 4 Core | Stagehand, DeepEval, LLM |
 
 Las pruebas unitarias de backend de data tables y carpetas (`*.vyv.test.ts`) están junto al código que verifican, en `packages/` (ver la sección 5 de [`e2e/README.md`](e2e/README.md)). `run-tests.sh` también las ejecuta.
@@ -70,6 +72,15 @@ CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' ./vyv/run-tests.sh all
 
 Sin la licencia community, las carpetas se pueden activar con el modo de pruebas de n8n: arranque n8n con `E2E_TESTS=true` y ejecute `curl -X PATCH -H 'content-type: application/json' -d '{"feature":"feat:folders","enabled":true}' http://localhost:5678/rest/e2e/feature`. Ese modo no envía la cabecera anti-clickjacking, así que la prueba de seguridad (BUG-018-06) se ejecuta sin él.
 
+Cuatro casos necesitan una configuración extra. Sin ella, Cypress los marca como pendientes:
+
+| Caso | Qué necesita | Cómo |
+| --- | --- | --- |
+| CP-WF-03-08 (reinicio) | Un comando que reinicie n8n y termine cuando n8n responda | `CYPRESS_restartCommand='docker restart n8n && until curl -sf http://localhost:5678/healthz/readiness; do sleep 2; done'` |
+| CP-CR-01-07 (cifrado en la base) | La ruta del archivo SQLite de n8n | `CYPRESS_dbPath=~/.n8n/database.sqlite` |
+| CP-EX-04-08 (cola de concurrencia) | n8n con límite de concurrencia | Arranque n8n con `N8N_CONCURRENCY_PRODUCTION_LIMIT=2` y ejecute `npx cypress run --spec executions/EX-04/*.cy.js` |
+| CP-017-08 (límite de almacenamiento) | n8n con límite de 1 MB | `npm run n8n:storage-limit` y `npm run test:storage-limit` |
+
 La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/después tienen sus propios comandos. Consulte las secciones 4 y 5 de [`e2e/README.md`](e2e/README.md).
 
 ## Resultados
@@ -80,6 +91,33 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | `backend` | **64 pruebas en verde** (data-table 40, `folderNameSchema` 19, `FolderService.deleteFolder` 5) | 13/11/2026 · n8n 2.47.0 |
 | `e2e` | **94 pruebas en Chromium: 92 aprobadas, 1 fallida (hallazgo CP-CO-03-04, separador «;»), 1 pendiente** (CP-017-08, que pasa aparte con el límite de 1 MB). Regresión frente a la línea base: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Seguridad sin modo E2E: BUG-018-06 se confirma (no hay `X-Frame-Options` ni `frame-ancestors`). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 13/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con Folders activada; Chromium 1243 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
+
+## Módulos 1–3: casos que necesitan el servidor
+
+Estos casos no tienen equivalente unitario. En `units/` quedan como `it.todo` con el motivo, y su prueba está en `e2e/`:
+
+| Caso del plan | Caso | Spec (`e2e/…`) | Resultado (13/11/2026, n8n 2.47.0) |
+| --- | --- | --- | --- |
+| CP-WF-01-08 | Lienzo con 100 nodos | `workflows/WF-01/large-workflow.ui.cy.js` | ❌ **hallazgo**: carga 3,96 s (mediana; límite 3 s). La referencia con 1 nodo tarda 2,58 s, así que los 100 nodos suman unos 1,4 s. Zoom y desplazamiento ✅ (la acción más lenta, 705 ms). Depende del equipo: repetir en el hardware del plan |
+| CP-WF-03-02 | Webhook de producción | `workflows/WF-03/webhook-publish.api.cy.js` | ✅ responde 200 y registra la ejecución `webhook` |
+| CP-WF-03-04 | Mismo path, métodos distintos | `workflows/WF-03/webhook-publish.api.cy.js` | ✅ GET llega a A y POST a B |
+| CP-WF-03-08 | Publicación tras reiniciar | `workflows/WF-03/webhook-publish.api.cy.js` | ✅ con `CYPRESS_restartCommand` |
+| CP-EX-01-08 | Más de 1 000 ejecuciones | `executions/EX-01/many-executions.api.cy.js` | ✅ API 18 ms; la lista se abre en 660 ms; desplazamiento 26 ms |
+| CP-EX-04-08 | Cola con límite de concurrencia | `executions/EX-04/concurrency-queue.api.cy.js` | ✅ con límite 2: 2 en ejecución, 3 en cola; las 5 terminan en orden de llegada |
+| CP-CR-01-07 | Secreto cifrado en la base | `credentials/CR-01/encryption-at-rest.api.cy.js` | ✅ con `CYPRESS_dbPath`: el nombre aparece en el archivo y el secreto no |
+| CP-CR-02-03 | La API no devuelve el secreto | `credentials/CR-02/secret-exposure.api.cy.js` | ✅ con `includeData=true` el valor viene enmascarado (`__n8n_BLANK_VALUE_…`) |
+| CP-CR-02-04 | El JSON del workflow no tiene secretos | `credentials/CR-02/secret-exposure.api.cy.js` | ✅ la credencial solo se referencia por `id` y `name` |
+| CP-CR-03-05 | Token revocado en el proveedor | — (manual) | ⏳ ver el procedimiento abajo |
+| CP-CR-04-08 | La ejecución usa la credencial nueva | `credentials/CR-04/credential-switch.api.cy.js` | ✅ el eco recibe `x-token: abc` y no `x-api-key` |
+| CP-CR-05-02 | Orden del listado | `credentials/CR-05/sort.ui.cy.js` | ✅ A-Z, última actualización y la editada pasa primero |
+| CP-CR-05-05 | Aislamiento entre usuarios | `credentials/CR-05/isolation.api.cy.js` | ✅ el miembro ve 0 credenciales y recibe 403 |
+
+**CP-CR-03-05 (manual).** Necesita una cuenta real de Google y la app OAuth2 de prueba, que no se pueden automatizar en el repositorio:
+
+1. Cree una credencial Google Sheets OAuth2 y conéctela con la cuenta de prueba.
+2. En la cuenta de Google: *Seguridad → Acceso de terceros*, quite la app de prueba.
+3. Ejecute un workflow con el nodo Google Sheets que use esa credencial.
+4. Resultado esperado: la ejecución falla y el error indica un problema de autorización o un token inválido. Guarde la captura del error como evidencia.
 
 ## Equivalencia de IDs en el módulo Core
 

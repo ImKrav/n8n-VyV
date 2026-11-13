@@ -5,29 +5,31 @@
  */
 
 describe('CP-CR-01-07 · Secretos cifrados en la base de datos', () => {
-	it.todo('Necesita la base de datos: el cifrado de la columna de datos ocurre en el servidor.');
-});
-
-describe('CP-CR-02-03 · Secretos no expuestos por la API', () => {
-	it.todo('Necesita la API: la respuesta del servidor no debe incluir el secreto en claro.');
-});
-
-describe('CP-CR-02-04 · Exportar un workflow no incluye secretos', () => {
 	it.todo(
-		'Necesita el servidor: los secretos nunca llegan al editor, así que la exportación se verifica con la API.',
+		'Necesita la base de datos. Cubierto en Cypress: e2e/credentials/CR-01/encryption-at-rest.api.cy.js (CYPRESS_dbPath).',
 	);
 });
 
+describe('CP-CR-02-03 · Secretos no expuestos por la API', () => {
+	it.todo('Necesita la API. Cubierto en Cypress: e2e/credentials/CR-02/secret-exposure.api.cy.js.');
+});
+
+describe('CP-CR-02-04 · Exportar un workflow no incluye secretos', () => {
+	it.todo('Necesita la API. Cubierto en Cypress: e2e/credentials/CR-02/secret-exposure.api.cy.js.');
+});
+
 describe('CP-CR-03-05 · Token revocado produce error al ejecutar', () => {
-	it.todo('Necesita un proveedor OAuth2 real: revocar el acceso desde la cuenta del proveedor.');
+	it.todo('Necesita un proveedor OAuth2 real: prueba manual (procedimiento en vyv/README.md).');
 });
 
 describe('CP-CR-04-08 · La ejecución usa la credencial nueva', () => {
 	it.todo(
-		'Necesita ejecutar el workflow: la cabecera enviada se ve en la petición real del nodo HTTP Request.',
+		'Necesita ejecutar el workflow. Cubierto en Cypress: e2e/credentials/CR-04/credential-switch.api.cy.js.',
 	);
 });
 
 describe('CP-CR-05-05 · Miembro no ve credenciales no compartidas', () => {
-	it.todo('Necesita el servidor: el aislamiento entre usuarios lo aplican los permisos de la API.');
+	it.todo(
+		'Necesita los permisos de la API. Cubierto en Cypress: e2e/credentials/CR-05/isolation.api.cy.js.',
+	);
 });

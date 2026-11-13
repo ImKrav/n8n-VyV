@@ -6,22 +6,24 @@
 
 describe('CP-WF-01-08 · Rendimiento del lienzo con 100 nodos', () => {
 	it.todo(
-		'Prueba de rendimiento: mide la carga del lienzo con 100 nodos en un navegador real (Lighthouse / Playwright).',
+		'Prueba de rendimiento en un navegador real. Cubierto en Cypress: e2e/workflows/WF-01/large-workflow.ui.cy.js.',
 	);
 });
 
 describe('CP-WF-03-02 · Publicar workflow con Webhook y responder en producción', () => {
 	it.todo(
-		'Necesita el servidor: el webhook de producción debe responder y registrar la ejecución.',
+		'Necesita el servidor. Cubierto en Cypress: e2e/workflows/WF-03/webhook-publish.api.cy.js.',
 	);
 });
 
 describe('CP-WF-03-04 · Mismo path con distinto método HTTP', () => {
 	it.todo(
-		'Necesita el servidor: el registro de webhooks decide si dos workflows comparten path con métodos distintos.',
+		'Necesita el servidor. Cubierto en Cypress: e2e/workflows/WF-03/webhook-publish.api.cy.js.',
 	);
 });
 
 describe('CP-WF-03-08 · Publicación persiste tras reiniciar la instancia', () => {
-	it.todo('Necesita reiniciar el servidor y comprobar que el trigger se reactiva.');
+	it.todo(
+		'Necesita reiniciar el servidor. Cubierto en Cypress: e2e/workflows/WF-03/webhook-publish.api.cy.js (CYPRESS_restartCommand).',
+	);
 });

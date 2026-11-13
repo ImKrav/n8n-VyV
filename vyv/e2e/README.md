@@ -39,7 +39,7 @@ Los IDs de las pruebas son los mismos de la matriz de casos y de la RTM (que van
 
 ```
 vyv/e2e/                    ← pruebas funcionales (esta carpeta)
-  workflows/ executions/ credentials/   módulos 1–3 (sin pruebas Cypress todavía)
+  workflows/ executions/ credentials/   módulos 1–3: casos que necesitan servidor, base de datos o navegador (ver su README)
   core/
     CO-01/ … CO-05/         una carpeta por funcionalidad del plan:
                               *.api.cy.js  por API (caja negra)

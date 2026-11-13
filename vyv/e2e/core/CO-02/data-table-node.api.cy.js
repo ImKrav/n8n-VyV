@@ -14,46 +14,28 @@ describe('CO-02 · Nodo Data Table en un workflow (API)', () => {
   before(() => cy.proyectoPersonal().then((id) => { p = id; }));
   beforeEach(() => cy.loginApi());
   after(() => {
-    workflows.forEach((id) => n8nApi.req('POST', `/rest/workflows/${id}/deactivate`));
+    workflows.forEach((id) => n8nApi.desactivarWorkflow(id));
     if (tabla) n8nApi.borrarTabla(p, tabla.id);
   });
 
-  /** Workflow Webhook → Data Table, guardado y activado. Devuelve la ruta del webhook. */
+  /** Workflow Webhook → Data Table, publicado. Devuelve la ruta del webhook. */
   const crearYActivar = (nombre, metodo, parametrosNodo) => {
-    const ruta = `vyv-${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
+    const ruta = n8nApi.rutaUnica();
     const nodes = [
-      {
-        id: 'webhook', name: 'Webhook', type: 'n8n-nodes-base.webhook', typeVersion: 2, position: [0, 0],
-        webhookId: crypto.randomUUID(),
-        parameters: { httpMethod: metodo, path: ruta, responseMode: 'lastNode', options: {} },
-      },
+      n8nApi.nodoWebhook(metodo, ruta),
       {
         id: 'datatable', name: 'Data table', type: 'n8n-nodes-base.dataTable', typeVersion: 1.1,
         position: [220, 0], parameters: parametrosNodo,
       },
     ];
     const connections = { Webhook: { main: [[{ node: 'Data table', type: 'main', index: 0 }]] } };
-    return n8nApi
-      .req('POST', '/rest/workflows', { name: nombre, nodes, connections, settings: {}, active: false, projectId: p })
-      .then(n8nApi.ok)
-      .then((wf) => {
-        workflows.push(wf.id);
-        return n8nApi
-          .req('POST', `/rest/workflows/${wf.id}/activate`, { versionId: wf.versionId })
-          .then((r) => {
-            expect(r.status, JSON.stringify(r.body).slice(0, 200)).to.eq(200);
-            return ruta;
-          });
-      });
+    return n8nApi.crearWorkflowActivo(nombre, nodes, connections, p).then((wf) => {
+      workflows.push(wf.id);
+      return ruta;
+    });
   };
 
   const idTabla = () => ({ __rl: true, mode: 'id', value: tabla.id });
-
-  /** n8n registra el webhook poco después de activar: se reintenta mientras responde 404. */
-  const llamarWebhook = (metodo, ruta, intentos = 10) =>
-    cy.request({ method: metodo, url: `/webhook/${ruta}`, body: {}, failOnStatusCode: false }).then((r) =>
-      r.status === 404 && intentos > 1 ? cy.wait(500).then(() => llamarWebhook(metodo, ruta, intentos - 1)) : r,
-    );
 
   it('CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro', () => {
     cy.nombreUnico('vyv_clientes').then((nombre) => {
@@ -79,7 +61,7 @@ describe('CO-02 · Nodo Data Table en un workflow (API)', () => {
         options: {},
       }),
     ).then((ruta) => {
-      llamarWebhook('POST', ruta).then((r) => {
+      n8nApi.llamarWebhook('POST', ruta).then((r) => {
         expect(r.status, 'la ejecución del workflow es exitosa').to.eq(200);
         cy.evidencia(`Insertar → HTTP ${r.status}: ${JSON.stringify(r.body).slice(0, 160)}`);
       });
@@ -103,7 +85,7 @@ describe('CO-02 · Nodo Data Table en un workflow (API)', () => {
         }),
       ),
     ).then((ruta) => {
-      llamarWebhook('GET', ruta).then((r) => {
+      n8nApi.llamarWebhook('GET', ruta).then((r) => {
         expect(r.status).to.eq(200);
         const salida = [].concat(r.body).map((f) => f.nombre);
         expect(salida, 'la salida incluye a Luis y excluye el valor fuera del filtro').to.include('Luis').and.not.include('Ana');

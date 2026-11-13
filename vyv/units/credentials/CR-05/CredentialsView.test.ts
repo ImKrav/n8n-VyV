@@ -221,6 +221,6 @@ describe('CP-CR-05-02 · Ordenar por nombre y fecha', () => {
 		await waitFor(() => expect(listedNames(getAllByTestId)).toEqual(['Alpha', 'Charlie', 'Bravo']));
 	});
 
-	// The element-plus sort dropdown does not open in jsdom with this view; cover it in E2E.
-	it.todo('cambiar a «Sort by name (A-Z)» y «(Z-A)» desde el desplegable (cubrir en E2E)');
+	// The element-plus sort dropdown does not open in jsdom with this view.
+	it.todo('el desplegable de orden se cubre en Cypress: e2e/credentials/CR-05/sort.ui.cy.js');
 });

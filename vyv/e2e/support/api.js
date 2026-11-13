@@ -89,4 +89,45 @@ export const n8nApi = {
   obtenerWorkflow: (id) => req('GET', `/rest/workflows/${id}`).then(ok),
   moverWorkflow: (wf, parentFolderId) =>
     req('PATCH', `/rest/workflows/${wf.id}`, { versionId: wf.versionId, parentFolderId }),
+
+  // ----------------------------------------------------------------------- Workflows publicados (webhook)
+  /** Nodo Webhook en la ruta dada. `lastNode` responde con la salida del último nodo. */
+  nodoWebhook: (metodo, ruta, responseMode = 'lastNode') => ({
+    id: `webhook-${ruta}-${metodo}`, name: 'Webhook', type: 'n8n-nodes-base.webhook', typeVersion: 2,
+    position: [0, 0], webhookId: crypto.randomUUID(),
+    parameters: { httpMethod: metodo, path: ruta, responseMode, options: {} },
+  }),
+  /** Ruta de webhook única para que las pruebas no choquen entre sí. */
+  rutaUnica: (prefijo = 'vyv') => `${prefijo}-${Date.now()}-${Math.floor(Math.random() * 1e6)}`,
+  /** Crea un workflow y lo publica (activa). Devuelve el workflow guardado. */
+  crearWorkflowActivo: (nombre, nodes, connections, projectId) =>
+    req('POST', '/rest/workflows', { name: nombre, nodes, connections, settings: {}, active: false, ...(projectId ? { projectId } : {}) })
+      .then(ok)
+      .then((wf) =>
+        req('POST', `/rest/workflows/${wf.id}/activate`, { versionId: wf.versionId }).then((r) => {
+          expect(r.status, `publicar: ${JSON.stringify(r.body).slice(0, 200)}`).to.eq(200);
+          return r.body.data ?? wf;
+        }),
+      ),
+  desactivarWorkflow: (id) => req('POST', `/rest/workflows/${id}/deactivate`),
+  /** n8n registra el webhook poco después de publicar: se reintenta mientras responde 404. */
+  llamarWebhook: (metodo, ruta, body = {}, intentos = 10) =>
+    cy.request({ method: metodo, url: `/webhook/${ruta}`, body, failOnStatusCode: false }).then((r) =>
+      r.status === 404 && intentos > 1
+        ? cy.wait(500).then(() => n8nApi.llamarWebhook(metodo, ruta, body, intentos - 1))
+        : r,
+    ),
+  // ----------------------------------------------------------------------- Credenciales
+  /** Credencial Header Auth (cabecera `cabecera: valor`). Devuelve la credencial creada. */
+  crearCredencialHeader: (name, cabecera, valor, projectId) =>
+    req('POST', '/rest/credentials', {
+      name, type: 'httpHeaderAuth', data: { name: cabecera, value: valor }, ...(projectId ? { projectId } : {}),
+    }).then(ok),
+  borrarCredencial: (id) => req('DELETE', `/rest/credentials/${id}`),
+
+  /** Ejecuciones de un workflow (las más recientes primero). */
+  ejecuciones: (workflowId, limit = 100) =>
+    req('GET', `/rest/executions?filter=${encodeURIComponent(JSON.stringify({ workflowId }))}&limit=${limit}`)
+      .then(ok)
+      .then((d) => d.results ?? d),
 };
