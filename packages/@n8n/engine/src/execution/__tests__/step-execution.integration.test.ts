@@ -353,7 +353,6 @@ describe('step execution (integration)', () => {
 		expect(events.map(({ type }) => type)).toEqual([
 			'execution:started',
 			'step:started',
-			'step:waiting',
 			'step:started',
 			'step:completed',
 			'step:started',

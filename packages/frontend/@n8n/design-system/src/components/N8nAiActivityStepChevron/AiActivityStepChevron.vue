@@ -15,7 +15,7 @@ withDefaults(
 <template>
 	<N8nIcon
 		icon="chevron-right"
-		:size="10"
+		size="small"
 		color="text-light"
 		:class="[$style.chevron, direction === 'down' && $style.down, open && $style.open]"
 		aria-hidden="true"

@@ -68,8 +68,10 @@ export class DynamicNodeParametersService {
 		user: User,
 		payload: { projectId?: string; workflowId?: string; credentials?: INodeCredentials },
 	) {
-		// Data tables are the only consumer of the project ID, so check dataTable:listProject,
-		// not the generic project:read. This keeps permissions specific to each resource.
+		// We want to avoid relying on generic project:read permissions to enable
+		// a future with fine-grained permission control dependent on the respective resource
+		// For now we use the dataTable:listProject scope as this is the existing consumer of
+		// the project id
 		if (
 			payload.projectId &&
 			!(await userHasScopes(user, ['dataTable:listProject'], false, {
@@ -92,14 +94,11 @@ export class DynamicNodeParametersService {
 					`Scrubbed inaccessible workflowId ${payload.workflowId} from DynamicNodeParameters request`,
 				);
 				payload.workflowId = undefined;
-			} else if (
-				await userHasScopes(user, ['workflow:update'], false, { workflowId: payload.workflowId })
-			) {
-				// The client's project ID can be stale. Editors run the workflow in its owning project.
+			} else if (payload.projectId === undefined) {
 				const project = await this.sharedWorkflowRepository.getWorkflowOwningProject(
 					payload.workflowId,
 				);
-				if (project) payload.projectId = project.id;
+				payload.projectId = project?.id;
 			}
 		}
 

@@ -1,19 +1,11 @@
 const { execFileSync } = require('node:child_process');
-const path = require('node:path');
 
-const packageDir = path.resolve(__dirname, '..');
+function runPostBuild(runCommand = execFileSync, platform = process.platform) {
+	const options = { stdio: 'inherit', shell: platform === 'win32' };
 
-// Run each step with node directly: no pnpm startup per step and no shell on Windows.
-const steps = [
-	[path.join(__dirname, 'copy-nodes-json.js'), '.'],
-	[require.resolve('tsc-alias/dist/bin/index.js'), '-p', 'tsconfig.build.cjs.json'],
-	[require.resolve('n8n-core/bin/generate-metadata')],
-];
-
-function runPostBuild(runCommand = execFileSync) {
-	for (const args of steps) {
-		runCommand(process.execPath, args, { cwd: packageDir, stdio: 'inherit' });
-	}
+	runCommand('pnpm', ['copy-nodes-json'], options);
+	runCommand('pnpm', ['exec', 'tsc-alias', '-p', 'tsconfig.build.cjs.json'], options);
+	runCommand('pnpm', ['n8n-generate-metadata'], options);
 }
 
 if (require.main === module) {

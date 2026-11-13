@@ -28,7 +28,7 @@ import {
 	CredentialsPermissionChecker,
 	SubworkflowPolicyChecker,
 } from '@/executions/pre-execution-checks';
-import { NodeTypesProxy } from '@n8n/backend-services';
+import { NodeTypes } from '@/node-types';
 import { toEngineWorkflowPayload } from '@/services/engine-v2-workflow-payload';
 import { findSubworkflowStart, withExpressionIsolate } from '@/utils';
 import {
@@ -60,7 +60,7 @@ export class EngineSubWorkflowService {
 		private readonly workflowRepository: WorkflowRepository,
 		private readonly policyChecker: SubworkflowPolicyChecker,
 		private readonly credentialsPermissionChecker: CredentialsPermissionChecker,
-		private readonly nodeTypes: NodeTypesProxy,
+		private readonly nodeTypes: NodeTypes,
 	) {}
 
 	async resolve({

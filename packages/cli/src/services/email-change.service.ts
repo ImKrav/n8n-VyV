@@ -1,6 +1,6 @@
 import { Logger } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
-import type { AuthIdentity, Person } from '@n8n/db';
+import type { AuthIdentity, User } from '@n8n/db';
 import { Service } from '@n8n/di';
 
 import { BadRequestError, ForbiddenError } from '@n8n/errors';
@@ -26,12 +26,12 @@ export class EmailChangeService {
 	) {}
 
 	/** The owner account is managed via environment variables and is immutable through the API. */
-	isManagedByEnv(person: Person): boolean {
+	isManagedByEnv(user: User): boolean {
 		const { instanceSettingsLoader } = this.globalConfig;
 		return (
 			instanceSettingsLoader.ownerManagedByEnv &&
-			!!person.email &&
-			person.email.toLowerCase() === instanceSettingsLoader.ownerEmail.toLowerCase()
+			!!user.email &&
+			user.email.toLowerCase() === instanceSettingsLoader.ownerEmail.toLowerCase()
 		);
 	}
 
@@ -40,18 +40,18 @@ export class EmailChangeService {
 	 * env-managed owner, an active SSO identity, or SAML. Run at both request and
 	 * confirm time.
 	 */
-	async assertMayApplyEmailChange(person: Person): Promise<void> {
-		if (this.isManagedByEnv(person)) {
+	async assertMayApplyEmailChange(user: User): Promise<void> {
+		if (this.isManagedByEnv(user)) {
 			throw new ForbiddenError(
 				'This account is managed via environment variables and cannot be modified through the API',
 			);
 		}
 
-		const ssoIdentity = await this.userService.findSsoIdentity(person.id);
+		const ssoIdentity = await this.userService.findSsoIdentity(user.id);
 		if (ssoIdentity && this.isAuthIdentityActive(ssoIdentity)) {
 			this.logger.debug(
 				`Request to change email failed because ${ssoIdentity.providerType} user may not change their profile information`,
-				{ userId: person.id },
+				{ userId: user.id },
 			);
 			throw new BadRequestError(
 				`${ssoIdentity.providerType.toUpperCase()} user may not change their profile information`,
@@ -61,7 +61,7 @@ export class EmailChangeService {
 		if (isSamlLicensedAndEnabled()) {
 			this.logger.debug(
 				'Request to change email failed because SAML user may not change their email',
-				{ userId: person.id },
+				{ userId: user.id },
 			);
 			throw new BadRequestError('SAML user may not change their email');
 		}
@@ -72,25 +72,25 @@ export class EmailChangeService {
 	 * password when MFA is disabled, or a valid MFA code when it is enabled.
 	 */
 	async assertMayRequestEmailChange(
-		person: Person,
+		user: User,
 		{ currentPassword, mfaCode }: { currentPassword?: string; mfaCode?: string },
 	): Promise<void> {
-		await this.assertMayApplyEmailChange(person);
+		await this.assertMayApplyEmailChange(user);
 
-		if (person.mfaEnabled) {
+		if (user.mfaEnabled) {
 			if (!mfaCode) {
 				throw new BadRequestError('Two-factor code is required to change email');
 			}
-			const isMfaCodeValid = await this.mfaService.validateMfa(person.id, mfaCode, undefined);
+			const isMfaCodeValid = await this.mfaService.validateMfa(user.id, mfaCode, undefined);
 			if (!isMfaCodeValid) {
 				throw new InvalidMfaCodeError();
 			}
 			return;
 		}
 
-		if (person.password === null) {
+		if (user.password === null) {
 			// SSO-provisioned users without a local password have no password to confirm.
-			this.logger.debug('User with no password changed their email', { userId: person.id });
+			this.logger.debug('User with no password changed their email', { userId: user.id });
 			return;
 		}
 
@@ -100,7 +100,7 @@ export class EmailChangeService {
 
 		const isProvidedPasswordCorrect = await this.passwordUtility.compare(
 			currentPassword,
-			person.password,
+			user.password,
 		);
 		if (!isProvidedPasswordCorrect) {
 			throw new BadRequestError(

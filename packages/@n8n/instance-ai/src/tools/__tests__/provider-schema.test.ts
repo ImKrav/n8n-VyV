@@ -1,5 +1,4 @@
 import type { BuiltTool } from '@n8n/agents';
-import { zodSchema } from 'ai';
 import { z } from 'zod';
 
 import { createOrchestrationTools, createOrchestratorDomainTools } from '..';
@@ -58,14 +57,11 @@ function createOrchestrationContext(): OrchestrationContext {
 	} as unknown as OrchestrationContext;
 }
 
-async function isProviderObjectInputSchema(schema: BuiltTool['inputSchema']): Promise<boolean> {
+function isProviderObjectInputSchema(schema: BuiltTool['inputSchema']): boolean {
 	if (!schema) return true;
 
-	// Check the JSON schema that the AI SDK sends, not the Zod class: a
-	// refinement wraps the object in ZodEffects but serializes as the object.
-	if (schema instanceof z.ZodType) {
-		const jsonSchema = await zodSchema(schema).jsonSchema;
-		return jsonSchema.type === 'object';
+	if (schema instanceof z.ZodObject || schema instanceof z.ZodRecord) {
+		return true;
 	}
 
 	if (typeof schema === 'object' && schema !== null && !Array.isArray(schema)) {
@@ -76,19 +72,18 @@ async function isProviderObjectInputSchema(schema: BuiltTool['inputSchema']): Pr
 }
 
 describe('provider-facing tool schemas', () => {
-	it('registers only top-level object input schemas for native Instance AI tools', async () => {
+	it('registers only top-level object input schemas for native Instance AI tools', () => {
 		const domainContext = createInstanceAiContext();
 		const orchestrationContext = createOrchestrationContext();
 		const toolSets = [
 			createOrchestratorDomainTools(domainContext),
 			createOrchestrationTools(orchestrationContext),
 		];
-		const invalidTools: string[] = [];
-		for (const [name, tool] of toolSets.flatMap((tools) => Array.from(tools))) {
-			if (!(await isProviderObjectInputSchema(tool.inputSchema))) {
-				invalidTools.push(`${name}:${tool.inputSchema?.constructor.name ?? 'unknown'}`);
-			}
-		}
+		const invalidTools = toolSets.flatMap((tools) =>
+			Array.from(tools)
+				.filter(([, tool]) => !isProviderObjectInputSchema(tool.inputSchema))
+				.map(([name, tool]) => `${name}:${tool.inputSchema?.constructor.name ?? 'unknown'}`),
+		);
 
 		expect(invalidTools).toEqual([]);
 	});

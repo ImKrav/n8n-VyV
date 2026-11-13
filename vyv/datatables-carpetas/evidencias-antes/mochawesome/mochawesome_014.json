@@ -1,0 +1,181 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 5,
+    "passes": 5,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-11-11T02:29:40.843Z",
+    "end": "2026-11-11T02:29:59.495Z",
+    "duration": 18652,
+    "testsRegistered": 5,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "42cbcde1-4f9f-491a-a909-b258e3d4d5c2",
+      "title": "",
+      "fullFile": "cypress\\e2e\\accesibilidad\\a11y-datatables-carpetas.cy.js",
+      "file": "cypress\\e2e\\accesibilidad\\a11y-datatables-carpetas.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "dd325169-aeed-43c0-933e-e1c311355104",
+          "title": "Accesibilidad · Data tables y carpetas",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "Auditoría WCAG · Listado /home/datatables (WCAG 1.1.1, 1.3.1, 1.4.3, 2.4.x, 4.1.2)",
+              "fullTitle": "Accesibilidad · Data tables y carpetas Auditoría WCAG · Listado /home/datatables (WCAG 1.1.1, 1.3.1, 1.4.3, 2.4.x, 4.1.2)",
+              "timedOut": null,
+              "duration": 5411,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.visitarN8n(\"/home/datatables\");\ncy.tid(\"data-table-card\").should(\"exist\");\nauditar(\"listado-datatables\");",
+              "err": {},
+              "uuid": "d5a1470c-c9cc-4bf3-8c33-cd9d4be91dfe",
+              "parentUUID": "dd325169-aeed-43c0-933e-e1c311355104",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Auditoría WCAG · Detalle de una data table (grid)",
+              "fullTitle": "Accesibilidad · Data tables y carpetas Auditoría WCAG · Detalle de una data table (grid)",
+              "timedOut": null,
+              "duration": 3539,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.visitarN8n(`/projects/${p}/datatables/${t}`);\ncy.tid(\"data-table-details-view\").should(\"be.visible\");\nauditar(\"detalle-datatable\");",
+              "err": {},
+              "uuid": "c3093c00-e139-40af-baec-0975b3912a81",
+              "parentUUID": "dd325169-aeed-43c0-933e-e1c311355104",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Auditoría WCAG · Modal de nueva data table: etiquetas y foco (WCAG 1.3.1, 2.4.3, 3.3.2)",
+              "fullTitle": "Accesibilidad · Data tables y carpetas Auditoría WCAG · Modal de nueva data table: etiquetas y foco (WCAG 1.3.1, 2.4.3, 3.3.2)",
+              "timedOut": null,
+              "duration": 3463,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.visitarN8n(\"/home/datatables\");\ncy.abrirModalDataTable();\ncy.campo(\"data-table-name-input-select\").focus();\ncy.focused().should(\"have.prop\", \"tagName\", \"INPUT\");\nauditar(\"modal-nueva-datatable\");\ncy.get(\"body\").type(\"{esc}\");",
+              "err": {},
+              "uuid": "ef4a5c76-ec98-4a3b-a718-0d6dfb85f0dd",
+              "parentUUID": "dd325169-aeed-43c0-933e-e1c311355104",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Auditoría WCAG · Vista de carpetas y breadcrumbs",
+              "fullTitle": "Accesibilidad · Data tables y carpetas Auditoría WCAG · Vista de carpetas y breadcrumbs",
+              "timedOut": null,
+              "duration": 2764,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (!f) this.skip();\ncy.visitarN8n(`/projects/${p}/folders/${f.id}/workflows`);\ncy.tid(\"breadcrumbs-item-current\").should(\"be.visible\");\nauditar(\"carpeta-breadcrumbs\");",
+              "err": {},
+              "uuid": "02024965-f030-4252-8b0a-c6e44bfbed8e",
+              "parentUUID": "dd325169-aeed-43c0-933e-e1c311355104",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Teclado: se llega con Tab a las acciones principales y el foco es visible (WCAG 2.1.1, 2.4.7)",
+              "fullTitle": "Accesibilidad · Data tables y carpetas Teclado: se llega con Tab a las acciones principales y el foco es visible (WCAG 2.1.1, 2.4.7)",
+              "timedOut": null,
+              "duration": 3245,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.visitarN8n(\"/home/datatables\");\ncy.tid(\"data-table-card\").should(\"exist\");\nconst visitados = [];\nconst sinFocoVisible = [];\nCypress._.times(25, () => {\n  cy.press(Cypress.Keyboard.Keys.TAB);\n  cy.document().then((doc) => {\n    const el = doc.activeElement;\n    if (!el || el === doc.body) return;\n    const nombre = (el.getAttribute(\"data-test-id\") || el.getAttribute(\"aria-label\") || el.innerText || el.tagName).trim().slice(0, 40);\n    visitados.push(nombre);\n    const st = doc.defaultView.getComputedStyle(el);\n    if (st.outlineStyle === \"none\" && st.boxShadow === \"none\") sinFocoVisible.push(nombre);\n  });\n});\ncy.then(() => {\n  cy.writeFile(\"evidencias/a11y-orden-tab.json\", { visitados, sinFocoVisible });\n  cy.evidencia(`Tab recorri\\xF3 ${visitados.length} elementos; ${sinFocoVisible.length} sin foco visible (WCAG 2.4.7)`);\n  expect(visitados.length, \"elementos alcanzables con Tab (WCAG 2.1.1)\").to.be.greaterThan(5);\n});",
+              "err": {},
+              "uuid": "36c4e64e-4e1f-4080-9deb-614c65257fbc",
+              "parentUUID": "dd325169-aeed-43c0-933e-e1c311355104",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "d5a1470c-c9cc-4bf3-8c33-cd9d4be91dfe",
+            "c3093c00-e139-40af-baec-0975b3912a81",
+            "ef4a5c76-ec98-4a3b-a718-0d6dfb85f0dd",
+            "02024965-f030-4252-8b0a-c6e44bfbed8e",
+            "36c4e64e-4e1f-4080-9deb-614c65257fbc"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 18422,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

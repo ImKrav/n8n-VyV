@@ -14,7 +14,7 @@ import { nodeNameToToolName } from 'n8n-workflow';
 import { z } from 'zod';
 
 import { resolveToolNodeType, type EphemeralNodeExecutor } from '@/node-execution';
-import { NodeTypesProviderMissingError, NodeTypesProxy } from '@n8n/backend-services';
+import { NodeTypes } from '@/node-types';
 
 import { AgentFileBridge, FILES_INPUT_SCHEMA } from '../agent-file-bridge.service';
 import type { InstrumentToolAdditionalData } from '../evaluation/agent-evaluation.contracts';
@@ -105,12 +105,11 @@ async function resolveInputSchema(
 		toolSchema.node.nodeTypeVersion,
 	);
 	try {
-		nodeType = Container.get(NodeTypesProxy).getByNameAndVersion(
+		nodeType = Container.get(NodeTypes).getByNameAndVersion(
 			nodeTypeName,
 			toolSchema.node.nodeTypeVersion,
 		);
-	} catch (error) {
-		if (error instanceof NodeTypesProviderMissingError) throw error;
+	} catch {
 		// If the node type can't be resolved here, fall through — the executor
 		// will surface a clearer error at invocation time.
 		return { schema: { type: 'object', properties: {} }, acceptsFiles: false };

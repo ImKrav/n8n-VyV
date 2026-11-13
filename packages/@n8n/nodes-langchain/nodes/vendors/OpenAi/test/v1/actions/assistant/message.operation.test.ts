@@ -2,8 +2,12 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { aiClientFetch } from '@n8n/ai-utilities';
 import { createMockExecuteFunction } from 'n8n-nodes-base/test/nodes/Helpers';
-import { type IExecuteFunctions, type INode, NodeOperationError } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import {
+	type IExecuteFunctions,
+	type INode,
+	NodeOperationError,
+	OperationalError,
+} from 'n8n-workflow';
 import { AgentExecutor } from '@langchain/classic/agents';
 import { OpenAI as OpenAIClient } from 'openai';
 import type { Mocked } from 'vitest';

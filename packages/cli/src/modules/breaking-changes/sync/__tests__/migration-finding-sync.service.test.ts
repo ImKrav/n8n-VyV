@@ -373,13 +373,7 @@ describe('MigrationFindingSyncService', () => {
 		expect(syncRepository.upsertForVersion).toHaveBeenCalledTimes(1);
 	});
 
-	it('returns true when every batch succeeded', async () => {
-		givenWorkflows(150);
-
-		await expect(service.sync(TARGET_VERSION)).resolves.toBe(true);
-	});
-
-	it('continues with the next batch when one batch fails, records no sync, and returns false', async () => {
+	it('continues with the next batch when one batch fails, and records no sync', async () => {
 		givenWorkflows(250);
 		const failure = new Error('batch failed');
 		txRunner.run
@@ -388,7 +382,7 @@ describe('MigrationFindingSyncService', () => {
 				throw failure;
 			});
 
-		await expect(service.sync(TARGET_VERSION)).resolves.toBe(false);
+		await service.sync(TARGET_VERSION);
 
 		expect(txRunner.run).toHaveBeenCalledTimes(3);
 		expect(findingRepository.listForWorkflows).toHaveBeenCalledTimes(2);
@@ -464,10 +458,10 @@ describe('MigrationFindingSyncService', () => {
 					throw new Error('batch failed');
 				});
 
-			await expect(service.sync(TARGET_VERSION)).resolves.toBe(false);
+			await service.sync(TARGET_VERSION);
 			expect(await syncRepository.getForVersion(TARGET_VERSION, {})).toBeNull();
 
-			await expect(service.syncIfStale(TARGET_VERSION)).resolves.toBe(true);
+			await service.syncIfStale(TARGET_VERSION);
 
 			expect(breakingChangeService.detect).toHaveBeenCalledTimes(2);
 			expect(await syncRepository.getForVersion(TARGET_VERSION, {})).not.toBeNull();
@@ -660,7 +654,7 @@ describe('MigrationFindingSyncService', () => {
 				failedChecks: [],
 			});
 
-			await expect(service.syncWorkflow(WORKFLOW_ID)).resolves.toBe(true);
+			await service.syncWorkflow(WORKFLOW_ID);
 
 			expect(breakingChangeService.detectWorkflowHits).toHaveBeenCalledWith(
 				REPORT_VERSION,
@@ -845,10 +839,10 @@ describe('MigrationFindingSyncService', () => {
 			expect(txRunner.run).not.toHaveBeenCalled();
 		});
 
-		it('reports a failure instead of throwing it, and returns false', async () => {
+		it('reports a failure instead of throwing it', async () => {
 			breakingChangeService.detectWorkflowHits.mockRejectedValue(new Error('db down'));
 
-			await expect(service.syncWorkflow(WORKFLOW_ID)).resolves.toBe(false);
+			await expect(service.syncWorkflow(WORKFLOW_ID)).resolves.toBeUndefined();
 
 			expect(errorReporter.error).toHaveBeenCalledWith(
 				expect.any(Error),
@@ -857,28 +851,6 @@ describe('MigrationFindingSyncService', () => {
 				}),
 			);
 			expect(txRunner.run).not.toHaveBeenCalled();
-		});
-
-		describe('awaitWorkflowSync()', () => {
-			it('joins the re-check that a save queued and returns its result', async () => {
-				breakingChangeService.detectWorkflowHits.mockRejectedValue(new Error('db down'));
-
-				const queued = service.syncWorkflow(WORKFLOW_ID);
-				const joined = service.awaitWorkflowSync(WORKFLOW_ID);
-
-				await expect(Promise.all([queued, joined])).resolves.toEqual([false, false]);
-				expect(breakingChangeService.detectWorkflowHits).toHaveBeenCalledTimes(1);
-			});
-
-			it('runs a re-check when none is queued', async () => {
-				await expect(service.awaitWorkflowSync(WORKFLOW_ID)).resolves.toBe(true);
-
-				expect(breakingChangeService.detectWorkflowHits).toHaveBeenCalledWith(
-					REPORT_VERSION,
-					WORKFLOW_ID,
-				);
-				expect(txRunner.run).toHaveBeenCalledTimes(1);
-			});
 		});
 	});
 
@@ -961,23 +933,10 @@ describe('MigrationFindingSyncService', () => {
 			givenWorkflows(2);
 			syncRepository.getForVersion.mockResolvedValue(syncRecord(['rule-b', 'rule-a']));
 
-			await expect(service.syncIfStale(TARGET_VERSION)).resolves.toBe(true);
+			await service.syncIfStale(TARGET_VERSION);
 
 			expect(breakingChangeService.detect).not.toHaveBeenCalled();
 			expect(syncRepository.upsertForVersion).not.toHaveBeenCalled();
-		});
-
-		it('returns false when the sync in flight that it joined was partial', async () => {
-			givenWorkflows(150);
-			txRunner.run.mockImplementationOnce(async () => {
-				throw new Error('batch failed');
-			});
-
-			const running = service.sync(TARGET_VERSION);
-			const joined = service.syncIfStale(TARGET_VERSION);
-
-			await expect(Promise.all([running, joined])).resolves.toEqual([false, false]);
-			expect(breakingChangeService.detect).toHaveBeenCalledTimes(1);
 		});
 
 		it('reads the record for the requested version', async () => {

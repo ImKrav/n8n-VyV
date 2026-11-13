@@ -1,12 +1,8 @@
 import { createScopedWorkspace } from '@n8n/agents';
 import type { Workspace } from '@n8n/agents';
-import {
-	DAYTONA_WORKSPACE_ROOT,
-	getWorkspaceRoot,
-	PORTABLE_WORKSPACE_ROOT,
-} from '@n8n/agents/sandbox';
+import { getPromptWorkspaceRoot, getWorkspaceRoot } from '@n8n/agents/sandbox';
 import { applyBranchReadOnlyOverrides, buildProxyHeaders } from '@n8n/api-types';
-import { getN8nVersion, Logger, ModuleRegistry } from '@n8n/backend-common';
+import { Logger, ModuleRegistry } from '@n8n/backend-common';
 import { InstanceWriteAccessService, UrlService } from '@n8n/backend-services';
 import { GlobalConfig, type AiConfig, type InstanceAiConfig } from '@n8n/config';
 import { type User } from '@n8n/db';
@@ -22,7 +18,6 @@ import {
 	isSetupPanelEnabled,
 	orchestratorAgentId,
 	type InstanceAiContext,
-	type InstanceAiTraceContext,
 	type ModelConfig,
 	type OrchestrationContext,
 	type ServiceProxyConfig,
@@ -35,6 +30,7 @@ import { redactTelemetryProperties } from '@n8n/telemetry';
 import { getErrorMessage } from '@n8n/utils/errors/get-error-message';
 import { setSchemaBaseDirs } from '@n8n/workflow-sdk';
 import { nanoid } from 'nanoid';
+import { N8N_VERSION } from '@/constants';
 import { ForbiddenError, UnexpectedError } from '@n8n/errors';
 import { modelStreamStallOptions } from '@/utils/model-stream-stall-options';
 import { AiUsageService } from '@/services/ai-usage.service';
@@ -92,6 +88,7 @@ export interface AssistantTurnEnvironment {
 	memoryModelId: ModelConfig | undefined;
 	orchestrationContext: OrchestrationContext;
 	conversationHistory: ScopedConversationHistory | undefined;
+	aiPreferencesEnabled: boolean;
 	instanceContextEnabled: boolean;
 	nodeUsageEnabled: boolean;
 	skillScope: InstanceAiSkillScope;
@@ -109,7 +106,6 @@ export interface AssistantTurnEnvironmentParams {
 	/** Resumed segments use the gates bound to the original turn. */
 	instanceContextGates?: InstanceContextGates;
 	experimentGates?: InstanceAiFeatureFlags;
-	tracing?: InstanceAiTraceContext;
 }
 
 export type AssistantProxyRunConfig = Awaited<
@@ -179,7 +175,7 @@ export class AssistantTurnEnvironmentFactory {
 		});
 		const featureHeaders = buildProxyHeaders({
 			feature: 'instance-ai',
-			n8nVersion: getN8nVersion(),
+			n8nVersion: N8N_VERSION,
 		});
 
 		return {
@@ -238,7 +234,6 @@ export class AssistantTurnEnvironmentFactory {
 			proxyRunConfig,
 			instanceContextGates,
 			experimentGates,
-			tracing,
 		} = params;
 		const { memory } = runtime;
 		const thread = await memory.getThread(threadId);
@@ -285,6 +280,7 @@ export class AssistantTurnEnvironmentFactory {
 			setupPanelVariant,
 			folderExplorationEnabled,
 			credentialDescriptionsEnabled,
+			aiPreferencesEnabled,
 			assistantSkillsEnabled,
 		} = gates;
 		runtime.turnState.setSetupPanelEnabled(setupPanelEnabled);
@@ -335,6 +331,7 @@ export class AssistantTurnEnvironmentFactory {
 			folderExplorationEnabled,
 			onboardingThread,
 			credentialDescriptionsEnabled,
+			aiPreferencesEnabled,
 			assistantSkillsEnabled,
 			modelId,
 			modelFetch: this.modelService.getModelFetch(),
@@ -446,21 +443,16 @@ export class AssistantTurnEnvironmentFactory {
 		const sandboxStatus = this.settingsService.getSandboxStatus();
 		let runtimeWorkspace: Workspace | undefined;
 		let workspaceRoot: string | undefined;
-		let fallbackWorkspaceRoot: string | undefined;
 
 		if (sandboxStatus.workflowBuilderAvailable) {
 			const sandboxConfig = await this.instanceAiErrorReporter.withBoundary(
 				'instance-ai-sandbox-setup',
-				{ threadId, runId, userId: user.id, messageGroupId, tracing },
+				{ threadId, runId, userId: user.id, messageGroupId },
 				async () => await runtime.sandbox.resolveConfig(),
 			);
 
 			if (sandboxConfig.enabled) {
-				// The same text for every provider keeps the prompt independent of the provider.
-				// Older Daytona sandboxes link this root to the Daytona root, so the tools also
-				// accept paths under the Daytona root.
-				workspaceRoot = PORTABLE_WORKSPACE_ROOT;
-				fallbackWorkspaceRoot = DAYTONA_WORKSPACE_ROOT;
+				workspaceRoot = getPromptWorkspaceRoot(sandboxConfig.provider);
 
 				const scopeWorkspaceForAgent = async (
 					workspace: Workspace | undefined,
@@ -501,7 +493,6 @@ export class AssistantTurnEnvironmentFactory {
 
 		context.workspace = runtimeWorkspace;
 		context.workspaceRoot = workspaceRoot;
-		context.fallbackWorkspaceRoot = fallbackWorkspaceRoot;
 		context.threadId = threadId;
 		context.threadMemory = memory;
 		// Tool-emitted telemetry is an open-ended property bag (search queries,
@@ -521,7 +512,6 @@ export class AssistantTurnEnvironmentFactory {
 			setupPanelEnabled: isSetupPanelEnabled(context),
 			orchestratorAgentId: orchestratorAgentId(runId),
 			modelId,
-			...(tracing ? { tracing } : {}),
 			modelFetch: this.modelService.getModelFetch(),
 			modelStreamStallOptions: modelStreamStallOptions(this.aiConfig),
 			eventBus: runtime.eventBus,
@@ -546,7 +536,6 @@ export class AssistantTurnEnvironmentFactory {
 						component: 'instance-ai-agent-builder-usage',
 						threadId,
 						runId,
-						tracing: orchestrationContext.tracing,
 						userId: user.id,
 						...(boundProjectId ? { projectId: boundProjectId } : {}),
 						...(messageGroupId ? { messageGroupId } : {}),
@@ -586,6 +575,7 @@ export class AssistantTurnEnvironmentFactory {
 			memoryModelId,
 			orchestrationContext,
 			conversationHistory,
+			aiPreferencesEnabled,
 			// Reuse the gate results so a rollout change cannot split this turn.
 			instanceContextEnabled,
 			nodeUsageEnabled,

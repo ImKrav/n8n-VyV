@@ -265,9 +265,8 @@ describe('GET /executions/:id', () => {
 				searchExecutions: vi.fn().mockResolvedValue({ items: [], nextCursor: null, total: 0 }),
 				findLatestExecution: vi.fn(),
 				cancelExecution: vi.fn(),
-				locateResume: vi.fn(),
+				locateResumeTarget: vi.fn(),
 				resolveStep: vi.fn(),
-				readApprovalCallback: vi.fn(),
 			});
 		});
 

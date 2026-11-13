@@ -7,7 +7,6 @@ import {
 	getThreadDetail as getThreadDetailApi,
 	deleteThread as deleteThreadApi,
 	exportThreadToLangSmith as exportThreadToLangSmithApi,
-	resumeTaskApproval as resumeTaskApprovalApi,
 	type AgentExecutionThread,
 	type AgentSessionFilters,
 	type ThreadDetail,
@@ -180,16 +179,6 @@ export const useAgentSessionsStore = defineStore('agentSessions', () => {
 		}
 	}
 
-	async function resumeTaskApproval(
-		projectId: string,
-		agentId: string,
-		threadId: string,
-		body: { toolCallId: string; resumeData: unknown },
-	): Promise<void> {
-		const rootStore = useRootStore();
-		await resumeTaskApprovalApi(rootStore.restApiContext, projectId, agentId, threadId, body);
-	}
-
 	async function getThreadDetail(
 		projectId: string,
 		agentId: string,
@@ -287,7 +276,6 @@ export const useAgentSessionsStore = defineStore('agentSessions', () => {
 		refreshThreads,
 		loadMore,
 		getThreadDetail,
-		resumeTaskApproval,
 		upsertThread,
 		deleteThread,
 		exportThreadToLangSmith,

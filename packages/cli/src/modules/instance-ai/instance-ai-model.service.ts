@@ -6,7 +6,7 @@ import {
 	type InstanceAiCredits,
 	type ProxyContext,
 } from '@n8n/api-types';
-import { getN8nVersion, Logger } from '@n8n/backend-common';
+import { Logger } from '@n8n/backend-common';
 import { OutboundHttp, type CustomFetch } from '@n8n/backend-network';
 import { InstanceAiConfig } from '@n8n/config';
 import type { User } from '@n8n/db';
@@ -15,6 +15,7 @@ import { isEndpointModelConfig, type ModelConfig } from '@n8n/instance-ai';
 import { getErrorMessage } from '@n8n/utils/errors/get-error-message';
 import { nanoid } from 'nanoid';
 
+import { N8N_VERSION } from '@/constants';
 import { AiService } from '@/services/ai.service';
 import { ProxyTokenManager } from '@/services/proxy-token-manager';
 import { createAiProxyFetch } from '@/utils/ai-proxy-fetch';
@@ -67,7 +68,7 @@ export class InstanceAiModelService {
 		if (!this.instanceAiConfig.modelRequestLabels) return baseFetch;
 		const labels = buildProxyHeaders({
 			feature: 'instance-ai',
-			n8nVersion: getN8nVersion(),
+			n8nVersion: N8N_VERSION,
 			...proxyContext,
 		});
 		return async (input, init) => {
@@ -181,7 +182,7 @@ export class InstanceAiModelService {
 			modelId,
 			tokenManager,
 			feature: 'instance-ai',
-			n8nVersion: getN8nVersion(),
+			n8nVersion: N8N_VERSION,
 			outboundHttp: this.outboundHttp,
 			...proxyContext,
 		});

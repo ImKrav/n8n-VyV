@@ -1,6 +1,6 @@
 import { EmbedLoginBodyDto, EmbedLoginQueryDto } from '@n8n/api-types';
 import type { EventService, UrlService } from '@n8n/backend-services';
-import { GLOBAL_MEMBER_ROLE, type Person } from '@n8n/db';
+import { GLOBAL_MEMBER_ROLE, type User } from '@n8n/db';
 import type { Response } from 'express';
 import { mock } from 'vitest-mock-extended';
 
@@ -25,14 +25,14 @@ const controller = new EmbedAuthController(
 	eventService,
 );
 
-const mockPerson = mock<Person>({
+const mockUser = mock<User>({
 	id: '123',
 	email: 'user@example.com',
 	role: GLOBAL_MEMBER_ROLE,
 });
 
 const embedLoginResult = {
-	user: mockPerson,
+	user: mockUser,
 	subject: 'ext-sub-1',
 	issuer: 'https://issuer.example.com',
 	kid: 'key-id-1',
@@ -83,7 +83,7 @@ describe('EmbedAuthController', () => {
 			expect(tokenExchangeService.embedLogin).toHaveBeenCalledWith('subject-token');
 			expect(authService.issueCookie).toHaveBeenCalledWith(
 				res,
-				mockPerson,
+				mockUser,
 				true,
 				'browser-id-123',
 				true,
@@ -114,7 +114,7 @@ describe('EmbedAuthController', () => {
 			expect(tokenExchangeService.embedLogin).toHaveBeenCalledWith('subject-token');
 			expect(authService.issueCookie).toHaveBeenCalledWith(
 				res,
-				mockPerson,
+				mockUser,
 				true,
 				'browser-id-456',
 				true,

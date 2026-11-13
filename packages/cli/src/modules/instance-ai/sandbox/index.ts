@@ -6,5 +6,4 @@ export {
 	type InstanceAiSandboxServiceOptions,
 	type InstanceAiSandboxSettings,
 	type RuntimeSandboxEntry,
-	type SandboxIdentityScheme,
 } from './instance-ai-sandbox.service';

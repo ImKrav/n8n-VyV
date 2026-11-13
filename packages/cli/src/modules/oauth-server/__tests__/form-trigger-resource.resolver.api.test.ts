@@ -8,7 +8,6 @@ import { GlobalConfig } from '@n8n/config';
 import type { User } from '@n8n/db';
 import { WebhookRepository, WorkflowRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
-import { DataSource } from '@n8n/typeorm';
 import type { INode } from 'n8n-workflow';
 import { FORM_TRIGGER_NODE_TYPE } from 'n8n-workflow';
 import { randomUUID } from 'node:crypto';
@@ -20,7 +19,7 @@ import { OAuthTokenService } from '@/modules/oauth-server/oauth-token.service';
 import { CacheService, UrlService } from '@n8n/backend-services';
 import { ProtectedResourceRegistry } from '@n8n/backend-services/auth';
 
-import { OAuthClient } from '../database/entities/oauth-client.entity';
+import { OAuthClientRepository } from '../database/repositories/oauth-client.repository';
 
 const testServer = setupTestServer({
 	modules: ['oauth-server', 'mcp', 'inbound-auth-core'],
@@ -336,8 +335,7 @@ describe('runtime gate: verifyOAuthAccessToken enforces workflow:execute', () =>
 		const tokenService = Container.get(OAuthTokenService);
 		// A registered client is needed only to satisfy the token rows' FK.
 		const clientId = `client-${randomUUID()}`;
-		const clients = Container.get(DataSource).getRepository(OAuthClient);
-		await clients.save({
+		await Container.get(OAuthClientRepository).save({
 			id: clientId,
 			name: 'Form resolver tests',
 			redirectUris: ['https://example.com/callback'],

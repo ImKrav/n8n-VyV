@@ -1,10 +1,10 @@
-import type {
-	IRunExecutionData,
-	IWorkflowExecuteAdditionalData,
-	Workflow,
-	WorkflowExecuteMode,
+import {
+	type IRunExecutionData,
+	type IWorkflowExecuteAdditionalData,
+	UnexpectedError,
+	type Workflow,
+	type WorkflowExecuteMode,
 } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
 
 export type PreExecutionAdditionalData = Pick<
 	IWorkflowExecuteAdditionalData,

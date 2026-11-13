@@ -106,8 +106,7 @@ declare global {
 				options?: {
 					api_host?: string;
 					tracing_headers?: string[];
-					autocapture?: boolean | { element_attribute_ignorelist?: string[] };
-					mask_all_text?: boolean;
+					autocapture?: boolean;
 					disable_session_recording?: boolean;
 					advanced_disable_feature_flags?: boolean;
 					debug?: boolean;

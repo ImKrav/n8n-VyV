@@ -1,8 +1,7 @@
 import { isRecord } from '@n8n/utils/is-record';
 import type { Canvas } from '@napi-rs/canvas';
 import type { IBinaryData, IExecuteFunctions, INode } from 'n8n-workflow';
-import { isSafeObjectProperty, NodeOperationError } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { isSafeObjectProperty, NodeOperationError, UserError } from 'n8n-workflow';
 
 export type EditImageNodeOptions = {
 	destinationKey?: string;

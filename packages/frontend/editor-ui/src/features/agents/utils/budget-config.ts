@@ -1,10 +1,6 @@
 import type { AgentJsonConfig, BudgetGuardrailConfig } from '@n8n/api-types';
 
-export type BudgetNoticeCode =
-	| 'budget.monthly'
-	| 'budget.session'
-	| 'budget.alert'
-	| 'budget.credits';
+export type BudgetNoticeCode = 'budget.monthly' | 'budget.session' | 'budget.alert';
 
 export type BudgetAmountField = 'monthlyBudgetUsd' | 'sessionCostCapUsd';
 
@@ -147,10 +143,8 @@ export function raisedBudgetCaps(
 	return raised;
 }
 
-export function isBudgetStopCode(
-	code: string,
-): code is 'budget.monthly' | 'budget.session' | 'budget.credits' {
-	return code === 'budget.monthly' || code === 'budget.session' || code === 'budget.credits';
+export function isBudgetStopCode(code: string): code is 'budget.monthly' | 'budget.session' {
+	return code === 'budget.monthly' || code === 'budget.session';
 }
 
 /** Notice codes a persisted change to one cap resolves. The alert rides with the monthly cap. */

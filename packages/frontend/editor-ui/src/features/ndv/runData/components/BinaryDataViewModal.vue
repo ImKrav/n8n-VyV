@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch, onBeforeUnmount } from 'vue';
-import { N8nDialog, N8nDialogBody } from '@n8n/design-system';
+import Modal from '@/app/components/Modal.vue';
 import VueJsonPretty from 'vue-json-pretty';
 import RunDataMarkdown from './RunDataMarkdown.vue';
 import { BINARY_DATA_VIEW_MODAL_KEY } from '@/app/constants';
 import { useI18n } from '@n8n/i18n';
-import { useUIStore } from '@/app/stores/ui.store';
 import { useWorkflowsStore } from '@/app/stores/workflows.store';
 import { N8nHtmlPreview, type BinaryMetadata } from '@n8n/design-system';
 
-defineOptions({ inheritAttrs: false });
-
 const i18n = useI18n();
-const uiStore = useUIStore();
 const workflowsStore = useWorkflowsStore();
 
 const props = defineProps<{
@@ -129,31 +125,18 @@ watch(
 onBeforeUnmount(() => {
 	revokeBlobUrl();
 });
-
-const modalOpen = computed(() => uiStore.modalsById[BINARY_DATA_VIEW_MODAL_KEY]?.open === true);
-
-function closeDialog() {
-	uiStore.closeModal(BINARY_DATA_VIEW_MODAL_KEY);
-}
-
-function onDialogOpenUpdate(open: boolean) {
-	if (!open) closeDialog();
-}
 </script>
 
 <template>
-	<N8nDialog
-		:open="modalOpen"
-		size="2xlarge"
-		:header="i18n.baseText('binaryDataDisplay.filePreview')"
-		container-class="binary-data-view-dialog"
-		@update:open="onDialogOpenUpdate"
+	<Modal
+		width="60%"
+		height="90%"
+		:title="i18n.baseText('binaryDataDisplay.filePreview')"
+		:name="BINARY_DATA_VIEW_MODAL_KEY"
+		:center="true"
 	>
-		<N8nDialogBody>
-			<div
-				:class="['binary-data-modal-content', binaryData.fileType]"
-				data-test-id="binaryDataView-modal"
-			>
+		<template #content>
+			<div :class="['binary-data-modal-content', binaryData.fileType]">
 				<div v-if="isLoading" class="loading-message">
 					{{ i18n.baseText('binaryDataDisplay.loading') }}
 				</div>
@@ -219,24 +202,21 @@ function onDialogOpenUpdate(open: boolean) {
 					</div>
 				</div>
 			</div>
-		</N8nDialogBody>
-	</N8nDialog>
+		</template>
+	</Modal>
 </template>
 
 <style lang="scss">
-.binary-data-view-dialog {
-	/* Previews size their children with percentages. A max-height alone leaves
-	   the dialog at its content height, so a PDF collapses. */
-	height: 90dvh;
-	max-height: calc(100dvh - var(--spacing--lg));
+.el-overlay:has([data-test-id='binaryDataView-modal']),
+.el-dialog__wrapper:has([data-test-id='binaryDataView-modal']) {
+	z-index: 10000000 !important;
 }
 </style>
 
 <style lang="scss" scoped>
 .binary-data-modal-content {
 	width: 100%;
-	flex: 1;
-	min-height: 0;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;

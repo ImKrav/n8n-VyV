@@ -120,7 +120,7 @@ const toggleNodeExclusiveAndScrollTop = (id: string) => {
 	scroller.value?.scrollToItem(0);
 };
 
-const getNodeSchema = (fullNode: INodeUi, connectedNode: IConnectedNode) => {
+const getNodeSchema = async (fullNode: INodeUi, connectedNode: IConnectedNode) => {
 	const rawPinData = workflowDocumentStore?.value?.getNodePinData(connectedNode.name);
 	const pinData = rawPinData ? executionDataToJson(rawPinData) : undefined;
 	const hasPinnedData = pinData ? pinData.length > 0 : false;
@@ -177,14 +177,24 @@ const getNodeSchema = (fullNode: INodeUi, connectedNode: IConnectedNode) => {
 	const data = pinData ?? executionDataToJson(nodeData);
 	const isDataEmpty = data.length === 0 || (data.length === 1 && Object.keys(data[0]).length === 0);
 
+	let schema = getSchemaForExecutionData(data);
 	const lastSuccessfulPreview = !isDataEmpty && Boolean(previewExecutionData);
+	let preview = lastSuccessfulPreview;
+
+	if (isDataEmpty && !preview) {
+		const previewSchema = await getSchemaPreview(fullNode);
+		if (previewSchema.ok) {
+			schema = getSchemaForJsonSchema(previewSchema.result);
+			preview = true;
+		}
+	}
 
 	return {
-		schema: getSchemaForExecutionData(data),
+		schema,
 		connectedOutputIndexes,
 		itemsCount: !isDataEmpty ? data.length : 0,
 		runIndex: connectedOutputsWithData[0]?.runIndex ?? 0,
-		preview: lastSuccessfulPreview,
+		preview,
 		lastSuccessfulPreview,
 		hasBinary,
 		isNodeExecuted,
@@ -273,21 +283,17 @@ const contextItems = computed(() => {
 	return [header as Renders].concat(fields);
 });
 
-// The schemas do not depend on the search, so a search change only filters them again
-const unfilteredNodeSchema = asyncComputed(async () => {
+const nodeSchema = asyncComputed(async () => {
+	const search = props.search;
 	if (props.data.length === 0) {
 		const previewSchema = await getSchemaPreview(props.node);
 		if (previewSchema.ok) {
-			return getSchemaForJsonSchema(previewSchema.result);
+			return filterSchema(getSchemaForJsonSchema(previewSchema.result), search);
 		}
 	}
 
-	return getSchemaForExecutionData(props.data);
+	return filterSchema(getSchemaForExecutionData(props.data), search);
 }, null);
-
-const nodeSchema = computed(() =>
-	unfilteredNodeSchema.value ? filterSchema(unfilteredNodeSchema.value, props.search) : null,
-);
 
 async function getSchemaPreview(node: INodeUi | null) {
 	if (!node) return createResultError(new Error());
@@ -311,38 +317,51 @@ async function getSchemaPreview(node: INodeUi | null) {
 	});
 }
 
-const unfilteredNodesSchemas = asyncComputed<SchemaNode[]>(async () => {
-	// asyncComputed tracks only the reads before the first await,
-	// so read the data of all nodes before the schema previews are loaded
-	const result: SchemaNode[] = props.nodes.flatMap((node) => {
+const nodesSchemas = asyncComputed<SchemaNode[]>(async () => {
+	const result: SchemaNode[] = [];
+	const search = props.search;
+
+	for (const node of props.nodes) {
 		const fullNode = workflowDocumentStore?.value?.getNodeByName(node.name) ?? null;
-		if (!fullNode) return [];
+		if (!fullNode) continue;
 
 		const nodeType = nodeTypesStore.getNodeType(fullNode.type, fullNode.typeVersion);
-		if (!nodeType) return [];
+		if (!nodeType) continue;
 
-		return [{ ...getNodeSchema(fullNode, node), node: fullNode, depth: node.depth, nodeType }];
-	});
+		const {
+			schema,
+			connectedOutputIndexes,
+			itemsCount,
+			preview,
+			hasBinary,
+			isNodeExecuted,
+			isDataEmpty,
+			runIndex,
+			lastSuccessfulPreview,
+		} = await getNodeSchema(fullNode, node);
 
-	for (const schemaNode of result) {
-		if (!schemaNode.isDataEmpty || schemaNode.preview) continue;
+		const filteredSchema = filterSchema(schema, search);
 
-		const previewSchema = await getSchemaPreview(schemaNode.node);
-		if (previewSchema.ok) {
-			schemaNode.schema = getSchemaForJsonSchema(previewSchema.result);
-			schemaNode.preview = true;
-		}
+		if (!filteredSchema) continue;
+
+		result.push({
+			node: fullNode,
+			connectedOutputIndexes,
+			depth: node.depth,
+			itemsCount,
+			nodeType,
+			schema: filteredSchema,
+			preview,
+			hasBinary,
+			isNodeExecuted,
+			isDataEmpty,
+			runIndex,
+			lastSuccessfulPreview,
+		});
 	}
 
 	return result;
 }, []);
-
-const nodesSchemas = computed(() =>
-	unfilteredNodesSchemas.value.flatMap((schemaNode) => {
-		const schema = filterSchema(schemaNode.schema, props.search);
-		return schema ? [{ ...schemaNode, schema }] : [];
-	}),
-);
 
 const nodeAdditionalInfo = (node: INodeUi) => {
 	const returnData: string[] = [];

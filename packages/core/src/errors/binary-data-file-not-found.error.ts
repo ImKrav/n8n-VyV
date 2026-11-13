@@ -1,4 +1,4 @@
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 
 export class BinaryDataFileNotFoundError extends UnexpectedError {
 	constructor(fileId: string) {

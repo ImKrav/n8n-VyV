@@ -4,7 +4,7 @@ import {
 	Person,
 	TransactionRunner,
 	User,
-	PersonRepository,
+	UserRepository,
 	type AuthProviderType,
 	type OperationContext,
 } from '@n8n/db';
@@ -25,7 +25,7 @@ export class ScimUserRepository extends BaseRepository<User> {
 	constructor(
 		dataSource: DataSource,
 		transactionRunner: TransactionRunner,
-		private readonly personRepository: PersonRepository,
+		private readonly userRepository: UserRepository,
 	) {
 		super(User, dataSource.manager, transactionRunner);
 	}
@@ -67,12 +67,12 @@ export class ScimUserRepository extends BaseRepository<User> {
 	 * identity that lets them sign in.
 	 */
 	async createProvisioned(
-		person: DeepPartial<Person>,
+		user: DeepPartial<User>,
 		identity: { providerId: string; providerType: AuthProviderType } | undefined,
 		ctx: OperationContext,
-	): Promise<Person> {
+	): Promise<User> {
 		return await this.runInTransaction(ctx, async (tx) => {
-			const { user: created } = await this.personRepository.createPersonWithProject(person, tx);
+			const { user: created } = await this.userRepository.createUserWithProject(user, tx);
 
 			if (identity) {
 				await tx.save(tx.create(AuthIdentity, { ...identity, userId: created.id }));

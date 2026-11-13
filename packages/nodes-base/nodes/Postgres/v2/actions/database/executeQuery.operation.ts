@@ -6,8 +6,6 @@ import type {
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
-import { createEventLoopYielder } from '@n8n/utils/promise/create-event-loop-yielder';
-
 import { getResolvables, updateDisplayOptions } from '@utils/utilities';
 
 import type {
@@ -61,11 +59,10 @@ export async function execute(
 	nodeOptions: PostgresNodeOptions,
 	_db?: PgpDatabase,
 ): Promise<INodeExecutionData[]> {
-	const yieldToEventLoop = createEventLoopYielder();
-	const queries: QueryWithValues[] = [];
-	replaceEmptyStringsByNulls(items, nodeOptions.replaceEmptyStrings as boolean);
-	for (let index = 0; index < items.length; index++) {
-		await yieldToEventLoop();
+	const queries: QueryWithValues[] = replaceEmptyStringsByNulls(
+		items,
+		nodeOptions.replaceEmptyStrings as boolean,
+	).map((_, index) => {
 		let query = this.getNodeParameter('query', index) as string;
 
 		for (const resolvable of getResolvables(query)) {
@@ -179,8 +176,8 @@ export async function execute(
 			}
 		}
 
-		queries.push({ query, values, options: { partial: true } });
-	}
+		return { query, values, options: { partial: true } };
+	});
 
 	return await runQueries(queries, nodeOptions);
 }

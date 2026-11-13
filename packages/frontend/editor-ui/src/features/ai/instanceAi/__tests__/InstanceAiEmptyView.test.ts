@@ -12,13 +12,11 @@ import { createDeferredPromise } from '@n8n/utils/promise/deferred-promise';
 import { createComponentRenderer } from '@/__tests__/render';
 import { mockedStore } from '@/__tests__/utils';
 import {
-	ASSISTANT_AGENT_ACCEPTED_MIME_TYPES,
 	consumePendingAssistantAgentMessage,
 	knownAssistantThreadRuntime,
 } from '../assistantAgent/assistantAgentThreads';
 import InstanceAiEmptyView from '../InstanceAiEmptyView.vue';
 import { useInstanceAiStore, type ThreadRuntime } from '../instanceAi.store';
-import { useAssistantCreditsStore } from '../assistantCredits.store';
 import { useSettingsStore } from '@n8n/stores/settings.store';
 import { usePostHog } from '@/app/stores/posthog.store';
 import { INSTANCE_AI_THREAD_VIEW } from '../constants';
@@ -391,6 +389,11 @@ vi.mock('vue-router', async (importOriginal) => ({
 	useRouter: () => ({ push: pushMock, replace: replaceMock }),
 }));
 
+// Shared across all stub submits (not just the agent hand-off tests below) so
+// the n8n Chat variant B test can assert it without widening the stub's emit
+// contract for every other caller.
+const acceptDraftMock = vi.fn();
+
 const InstanceAiInputStub = defineComponent({
 	name: 'InstanceAiInputStub',
 	props: {
@@ -410,7 +413,6 @@ const InstanceAiInputStub = defineComponent({
 		mentionsEnabled: { type: Boolean, required: false },
 		isOutOfCredits: { type: Boolean, required: false },
 		attachOnlyMimeTypes: { type: String, required: false },
-		acceptedMimeTypes: { type: String, required: false },
 	},
 	emits: ['submit'],
 	setup(props, { emit, expose, slots }) {
@@ -451,6 +453,8 @@ const InstanceAiInputStub = defineComponent({
 							promptModified: message !== prefill.text.trim(),
 						}
 					: USER_TYPED_MESSAGE,
+				undefined,
+				acceptDraftMock,
 			);
 			currentText.value = '';
 			activePrefill.value = null;
@@ -585,11 +589,6 @@ const InstanceAiInputStub = defineComponent({
 					props.attachOnlyMimeTypes ?? 'unset',
 				),
 				h(
-					'span',
-					{ 'data-test-id': 'instance-ai-input-accepted-mime-types' },
-					props.acceptedMimeTypes ?? 'unset',
-				),
-				h(
 					'button',
 					{
 						'data-test-id': 'instance-ai-input-stub-submit',
@@ -618,20 +617,6 @@ const InstanceAiInputStub = defineComponent({
 							}),
 					},
 					'attach',
-				),
-				h(
-					'button',
-					{
-						'data-test-id': 'instance-ai-input-stub-attach-unsupported-file',
-						onClick: () =>
-							stagedFileAttachments.value.push({
-								type: 'file',
-								data: btoa('zip content'),
-								mimeType: 'application/zip',
-								fileName: 'archive.zip',
-							}),
-					},
-					'attach unsupported',
 				),
 				h(
 					'button',
@@ -700,7 +685,6 @@ const renderView = createComponentRenderer(InstanceAiEmptyView, {
 
 describe('InstanceAiEmptyView', () => {
 	let store: ReturnType<typeof mockedStore<typeof useInstanceAiStore>>;
-	let creditsStore: ReturnType<typeof mockedStore<typeof useAssistantCreditsStore>>;
 	let thread: ThreadRuntime;
 
 	beforeEach(() => {
@@ -720,7 +704,6 @@ describe('InstanceAiEmptyView', () => {
 			'instance-ai': { ...defaultModuleSettings },
 		};
 		store = mockedStore(useInstanceAiStore);
-		creditsStore = mockedStore(useAssistantCreditsStore);
 		const projectsStore = mockedStore(useProjectsStore);
 		projectsStore.personalProject = { id: PERSONAL_PROJECT_ID } as Project;
 		projectsStore.isTeamProjectFeatureEnabled = true;
@@ -735,8 +718,8 @@ describe('InstanceAiEmptyView', () => {
 		} as unknown as ThreadRuntime;
 		store.getOrCreateRuntime.mockReturnValue(thread);
 		store.deleteThread.mockResolvedValue(true);
-		creditsStore.creditsQuota = 100;
-		creditsStore.isLowCredits = false;
+		store.creditsQuota = 100;
+		store.isLowCredits = false;
 		experimentMocks.proactiveAgentEnabled.value = false;
 		experimentMocks.promptSuggestionsV2Enabled.value = false;
 		// Experiment cleanup (124_workflow_previews_above_assistant)
@@ -1301,7 +1284,7 @@ describe('InstanceAiEmptyView', () => {
 	// fuse onto a sidebar input reads as a stray inset box floating above it.
 	it('renders the credit banner as a self-contained card in the split layout', () => {
 		experimentMocks.splitBelowInputVariant.value = true;
-		creditsStore.isLowCredits = true;
+		store.isLowCredits = true;
 
 		const { getByTestId } = renderView();
 
@@ -1405,21 +1388,21 @@ describe('InstanceAiEmptyView', () => {
 	});
 
 	it('keeps the free nudge ineligible until credits are loaded', async () => {
-		creditsStore.creditsQuota = undefined;
+		store.creditsQuota = undefined;
 
 		const { getByTestId } = renderView();
 
 		expect(getByTestId('instance-ai-free-nudge-stub')).toHaveAttribute('data-eligible', 'false');
 
-		creditsStore.creditsQuota = 100;
+		store.creditsQuota = 100;
 		await flushPromises();
 
 		expect(getByTestId('instance-ai-free-nudge-stub')).toHaveAttribute('data-eligible', 'true');
 	});
 
 	it('blocks the composer when credits are gone and does not let the banner be dismissed', () => {
-		creditsStore.isOutOfCredits = true;
-		creditsStore.isLowCredits = true;
+		store.isOutOfCredits = true;
+		store.isLowCredits = true;
 
 		const { getByTestId, queryByTestId } = renderView();
 
@@ -1429,7 +1412,7 @@ describe('InstanceAiEmptyView', () => {
 	});
 
 	it('keeps the free nudge mounted and reveals it after the credit warning is dismissed', async () => {
-		creditsStore.isLowCredits = true;
+		store.isLowCredits = true;
 
 		const { getByTestId } = renderView();
 		const nudge = getByTestId('instance-ai-free-nudge-stub');
@@ -1443,7 +1426,7 @@ describe('InstanceAiEmptyView', () => {
 	});
 
 	it('keeps the free nudge ineligible when credits run out after the warning was dismissed', async () => {
-		creditsStore.isLowCredits = true;
+		store.isLowCredits = true;
 
 		const { getByTestId, queryByTestId } = renderView();
 		const nudge = getByTestId('instance-ai-free-nudge-stub');
@@ -1453,7 +1436,7 @@ describe('InstanceAiEmptyView', () => {
 
 		expect(nudge).toHaveAttribute('data-eligible', 'true');
 
-		creditsStore.isOutOfCredits = true;
+		store.isOutOfCredits = true;
 		await flushPromises();
 
 		expect(nudge).toHaveAttribute('data-eligible', 'false');
@@ -1662,14 +1645,6 @@ describe('InstanceAiEmptyView', () => {
 			};
 		});
 
-		it('restricts the composer to the file types of the Assistant agent', () => {
-			const { getByTestId } = renderView();
-
-			expect(getByTestId('instance-ai-input-accepted-mime-types')).toHaveTextContent(
-				ASSISTANT_AGENT_ACCEPTED_MIME_TYPES,
-			);
-		});
-
 		it('opens a new Assistant agent thread with its first message, without a current Assistant thread', async () => {
 			pushMock.mockResolvedValue(undefined);
 			const { getByTestId } = renderView();
@@ -1684,6 +1659,7 @@ describe('InstanceAiEmptyView', () => {
 			});
 			expect(store.syncThread).not.toHaveBeenCalled();
 			expect(thread.sendMessage).not.toHaveBeenCalled();
+			expect(acceptDraftMock).toHaveBeenCalledOnce();
 			expect(
 				knownAssistantThreadRuntime('thread-placeholder', {
 					assistantAgentEnabled: true,
@@ -1708,7 +1684,6 @@ describe('InstanceAiEmptyView', () => {
 			expect(pendingMessage?.text).toBe('hello');
 			expect(pendingMessage?.files.map((file) => file.name)).toEqual(['screenshot.png']);
 			expect(pendingMessage?.references).toEqual([]);
-			expect(pendingMessage?.authorship).toEqual(USER_TYPED_MESSAGE);
 		});
 
 		it('drops the first message and restores the draft when the navigation fails', async () => {
@@ -1733,20 +1708,22 @@ describe('InstanceAiEmptyView', () => {
 			await flushPromises();
 
 			expect(pushMock).not.toHaveBeenCalled();
+			expect(acceptDraftMock).not.toHaveBeenCalled();
 			expect(consumePendingAssistantAgentMessage('thread-placeholder')).toBeUndefined();
 		});
 
 		it('keeps the draft and reports the file when the message has only an unsupported file', async () => {
 			const { getByTestId } = renderView();
 
-			await fireEvent.click(getByTestId('instance-ai-input-stub-attach-unsupported-file'));
+			await fireEvent.click(getByTestId('instance-ai-input-stub-attach-file'));
 			await fireEvent.click(getByTestId('instance-ai-input-stub-submit-empty'));
 			await flushPromises();
 
 			expect(pushMock).not.toHaveBeenCalled();
+			expect(acceptDraftMock).not.toHaveBeenCalled();
 			expect(consumePendingAssistantAgentMessage('thread-placeholder')).toBeUndefined();
 			expect(showMessageMock).toHaveBeenCalledWith(
-				expect.objectContaining({ type: 'error', title: expect.stringContaining('archive.zip') }),
+				expect.objectContaining({ type: 'error', title: expect.stringContaining('context.txt') }),
 			);
 		});
 
@@ -1754,7 +1731,7 @@ describe('InstanceAiEmptyView', () => {
 			pushMock.mockResolvedValue(undefined);
 			const { getByTestId } = renderView();
 
-			await fireEvent.click(getByTestId('instance-ai-input-stub-attach-unsupported-file'));
+			await fireEvent.click(getByTestId('instance-ai-input-stub-attach-file'));
 			await fireEvent.click(getByTestId('instance-ai-input-stub-submit'));
 			await flushPromises();
 
@@ -1763,21 +1740,8 @@ describe('InstanceAiEmptyView', () => {
 			expect(pendingMessage?.text).toBe('hello');
 			expect(pendingMessage?.files).toEqual([]);
 			expect(showMessageMock).toHaveBeenCalledWith(
-				expect.objectContaining({ type: 'error', title: expect.stringContaining('archive.zip') }),
+				expect.objectContaining({ type: 'error', title: expect.stringContaining('context.txt') }),
 			);
-		});
-
-		it('hands off a text file that parse-file reads', async () => {
-			pushMock.mockResolvedValue(undefined);
-			const { getByTestId } = renderView();
-
-			await fireEvent.click(getByTestId('instance-ai-input-stub-attach-file'));
-			await fireEvent.click(getByTestId('instance-ai-input-stub-submit'));
-			await flushPromises();
-
-			const pendingMessage = consumePendingAssistantAgentMessage('thread-placeholder');
-			expect(pendingMessage?.files.map((file) => file.name)).toEqual(['context.txt']);
-			expect(showMessageMock).not.toHaveBeenCalled();
 		});
 	});
 
@@ -2210,8 +2174,6 @@ describe('InstanceAiEmptyView', () => {
 			const { getByTestId } = renderView();
 
 			expect(getByTestId('instance-ai-input-attach-only')).toHaveTextContent('unset');
-			// The current Assistant runtime accepts every file type.
-			expect(getByTestId('instance-ai-input-accepted-mime-types')).toHaveTextContent('unset');
 
 			await fireEvent.click(getByTestId('n8n-chat-agent-picker-stub-select-agent'));
 			await nextTick();
@@ -2238,7 +2200,7 @@ describe('InstanceAiEmptyView', () => {
 			expect(thread.sendMessage).not.toHaveBeenCalled();
 		});
 
-		it('stores the hand-off with the typed text and converted file attachments, and does not start an Assistant thread', async () => {
+		it('stores the hand-off with the typed text and converted file attachments, calls acceptDraft, and does not start an Assistant thread', async () => {
 			const { getByTestId } = renderView();
 
 			await fireEvent.click(getByTestId('n8n-chat-agent-picker-stub-select-agent'));
@@ -2253,6 +2215,7 @@ describe('InstanceAiEmptyView', () => {
 			});
 			expect(store.syncThread).not.toHaveBeenCalled();
 			expect(thread.sendMessage).not.toHaveBeenCalled();
+			expect(acceptDraftMock).toHaveBeenCalledOnce();
 
 			const pendingMessage = consumePendingN8nChatMessage('agent-1');
 			expect(pendingMessage?.text).toBe('hello');

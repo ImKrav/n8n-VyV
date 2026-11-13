@@ -1,10 +1,16 @@
-import type {
-	CreateEnvironmentVariable,
-	EnvironmentVariable,
-	ResourceEditorDestination,
-} from '@n8n/frontend-module-sdk';
+import type { ResourceEditorDestination } from '@/features/collaboration/projects/projects.types';
+export interface EnvironmentVariable {
+	id: string;
+	key: string;
+	value: string;
+	project?: { id: string; name: string } | null;
+}
 
-export type { CreateEnvironmentVariable, EnvironmentVariable };
+export interface CreateEnvironmentVariable {
+	key: string;
+	value: string;
+	projectId?: string | null;
+}
 
 export interface UpdateEnvironmentVariable extends CreateEnvironmentVariable {
 	id: string;

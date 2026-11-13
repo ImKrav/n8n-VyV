@@ -1,5 +1,12 @@
 import { mockInstance } from '@n8n/backend-test-utils';
-import { generateNanoId, AuthIdentity, Person, PersonRepository, UserRepository } from '@n8n/db';
+import {
+	generateNanoId,
+	AuthIdentity,
+	Person,
+	PersonRepository,
+	User,
+	UserRepository,
+} from '@n8n/db';
 import type { EntityManager } from '@n8n/typeorm';
 import type { Mock } from 'vitest';
 import { mock } from 'vitest-mock-extended';
@@ -80,7 +87,7 @@ describe('Ldap/helpers', () => {
 			const authIdentity = Object.assign(new AuthIdentity(), {
 				user: { id: person.id },
 			} as AuthIdentity);
-			const data: Partial<Person> = { firstName: 'Nathan', lastName: 'Nathaniel' };
+			const data: Partial<User> = { firstName: 'Nathan', lastName: 'Nathaniel' };
 
 			personRepository.findById.mockResolvedValueOnce(person);
 
@@ -113,7 +120,7 @@ describe('Ldap/helpers', () => {
 			mockRunInTransaction = userRepository.runInTransaction;
 			mockRunInTransaction.mockReset();
 
-			personRepository.createPersonWithProject.mockReset();
+			userRepository.createUserWithProject.mockReset();
 		});
 
 		test('does not link an existing account by email when linking by email is disabled', async () => {
@@ -121,36 +128,36 @@ describe('Ldap/helpers', () => {
 			// ARRANGE
 			//
 			const ldapId = 'ldap123';
-			const existingPerson = Object.assign(new Person(), {
+			const existingUser = Object.assign(new User(), {
 				id: generateNanoId(),
 				email: 'existing@example.com',
 				firstName: 'Existing',
 				lastName: 'Account',
-			} as Person);
+			} as User);
 
-			const ldapPerson = Object.assign(new Person(), {
+			const ldapUser = Object.assign(new User(), {
 				email: 'existing@example.com',
 				firstName: 'From',
 				lastName: 'Ldap',
-			} as Person);
+			} as User);
 
 			mockRunInTransaction.mockImplementation(
 				async (_ctx, fn: (manager: EntityManager) => Promise<unknown>) =>
 					await fn(transactionManager),
 			);
 
-			(transactionManager.findOne as Mock).mockResolvedValueOnce(existingPerson);
+			(transactionManager.findOne as Mock).mockResolvedValueOnce(existingUser);
 
 			//
 			// ACT
 			//
-			await helpers.processUsers([[ldapId, ldapPerson]], [], [], false);
+			await helpers.processUsers([[ldapId, ldapUser]], [], [], false);
 
 			//
 			// ASSERT
 			//
 			expect(transactionManager.save).not.toHaveBeenCalled();
-			expect(personRepository.createPersonWithProject).not.toHaveBeenCalled();
+			expect(userRepository.createUserWithProject).not.toHaveBeenCalled();
 		});
 
 		test('does not update user when data has not changed', async () => {
@@ -159,19 +166,19 @@ describe('Ldap/helpers', () => {
 			//
 			const userId = generateNanoId();
 			const ldapId = 'ldap123';
-			const existingPerson = Object.assign(new Person(), {
+			const existingUser = Object.assign(new User(), {
 				id: userId,
 				email: 'same@example.com',
 				firstName: 'Same',
 				lastName: 'Name',
-			} as Person);
+			} as User);
 
 			// User data from LDAP is identical to existing user
-			const ldapPerson = Object.assign(new Person(), {
+			const ldapUser = Object.assign(new User(), {
 				email: 'same@example.com',
 				firstName: 'Same',
 				lastName: 'Name',
-			} as Person);
+			} as User);
 
 			const authIdentity = Object.assign(new AuthIdentity(), {
 				providerId: ldapId,
@@ -186,12 +193,12 @@ describe('Ldap/helpers', () => {
 
 			(transactionManager.findOneBy as Mock)
 				.mockResolvedValueOnce(authIdentity) // First call for AuthIdentity
-				.mockResolvedValueOnce(existingPerson); // Second call for User
+				.mockResolvedValueOnce(existingUser); // Second call for User
 
 			//
 			// ACT
 			//
-			await helpers.processUsers([], [[ldapId, ldapPerson]], [], true);
+			await helpers.processUsers([], [[ldapId, ldapUser]], [], true);
 
 			//
 			// ASSERT
@@ -207,18 +214,18 @@ describe('Ldap/helpers', () => {
 			//
 			const userId = generateNanoId();
 			const ldapId = 'ldap123';
-			const existingPerson = Object.assign(new Person(), {
+			const existingUser = Object.assign(new User(), {
 				id: userId,
 				email: 'old@example.com',
 				firstName: 'Same',
 				lastName: 'Name',
-			} as Person);
+			} as User);
 
-			const updatedPerson = Object.assign(new Person(), {
+			const updatedUser = Object.assign(new User(), {
 				email: 'new@example.com',
 				firstName: 'Same',
 				lastName: 'Name',
-			} as Person);
+			} as User);
 
 			const authIdentity = Object.assign(new AuthIdentity(), {
 				providerId: ldapId,
@@ -233,18 +240,18 @@ describe('Ldap/helpers', () => {
 
 			(transactionManager.findOneBy as Mock)
 				.mockResolvedValueOnce(authIdentity) // First call for AuthIdentity
-				.mockResolvedValueOnce(existingPerson); // Second call for User
+				.mockResolvedValueOnce(existingUser); // Second call for User
 
 			//
 			// ACT
 			//
-			await helpers.processUsers([], [[ldapId, updatedPerson]], [], true);
+			await helpers.processUsers([], [[ldapId, updatedUser]], [], true);
 
 			//
 			// ASSERT
 			//
-			expect(transactionManager.save).toHaveBeenCalledWith(Person, existingPerson);
-			expect(existingPerson.email).toBe('new@example.com');
+			expect(transactionManager.save).toHaveBeenCalledWith(Person, existingUser);
+			expect(existingUser.email).toBe('new@example.com');
 		});
 
 		test('links existing local user by email instead of creating a duplicate', async () => {
@@ -252,41 +259,41 @@ describe('Ldap/helpers', () => {
 			// ARRANGE
 			//
 			const ldapId = 'ldap-new';
-			const ldapPerson = Object.assign(new Person(), {
+			const ldapUser = Object.assign(new User(), {
 				email: 'shared@example.com',
 				firstName: 'Jane',
 				lastName: 'Doe',
-			} as Person);
+			} as User);
 
-			const existingLocalPerson = Object.assign(new Person(), {
+			const existingLocalUser = Object.assign(new User(), {
 				id: generateNanoId(),
 				email: 'shared@example.com',
 				firstName: 'Jane',
 				lastName: 'Doe',
-			} as Person);
+			} as User);
 
 			mockRunInTransaction.mockImplementation(
 				async (_ctx, fn: (manager: EntityManager) => Promise<unknown>) =>
 					await fn(transactionManager),
 			);
 
-			(transactionManager.findOne as Mock).mockResolvedValueOnce(existingLocalPerson);
+			(transactionManager.findOne as Mock).mockResolvedValueOnce(existingLocalUser);
 
 			//
 			// ACT
 			//
-			await helpers.processUsers([[ldapId, ldapPerson]], [], [], true);
+			await helpers.processUsers([[ldapId, ldapUser]], [], [], true);
 
 			//
 			// ASSERT
 			//
-			expect(personRepository.createPersonWithProject).not.toHaveBeenCalled();
+			expect(userRepository.createUserWithProject).not.toHaveBeenCalled();
 			expect(transactionManager.save).toHaveBeenCalledTimes(1);
 			const savedAuthIdentity = (transactionManager.save as Mock).mock.calls[0][0];
 			expect(savedAuthIdentity).toBeInstanceOf(AuthIdentity);
 			expect(savedAuthIdentity.providerId).toBe(ldapId);
 			expect(savedAuthIdentity.providerType).toBe('ldap');
-			expect(savedAuthIdentity.userId).toBe(existingLocalPerson.id);
+			expect(savedAuthIdentity.userId).toBe(existingLocalUser.id);
 		});
 
 		test('updates firstName/lastName when linking an existing local user with stale names', async () => {
@@ -294,37 +301,37 @@ describe('Ldap/helpers', () => {
 			// ARRANGE
 			//
 			const ldapId = 'ldap-new';
-			const ldapPerson = Object.assign(new Person(), {
+			const ldapUser = Object.assign(new User(), {
 				email: 'shared@example.com',
 				firstName: 'Jane',
 				lastName: 'Doe',
-			} as Person);
+			} as User);
 
-			const existingLocalPerson = Object.assign(new Person(), {
+			const existingLocalUser = Object.assign(new User(), {
 				id: generateNanoId(),
 				email: 'shared@example.com',
 				firstName: 'Stale',
 				lastName: 'Name',
-			} as Person);
+			} as User);
 
 			mockRunInTransaction.mockImplementation(
 				async (_ctx, fn: (manager: EntityManager) => Promise<unknown>) =>
 					await fn(transactionManager),
 			);
 
-			(transactionManager.findOne as Mock).mockResolvedValueOnce(existingLocalPerson);
+			(transactionManager.findOne as Mock).mockResolvedValueOnce(existingLocalUser);
 
 			//
 			// ACT
 			//
-			await helpers.processUsers([[ldapId, ldapPerson]], [], [], true);
+			await helpers.processUsers([[ldapId, ldapUser]], [], [], true);
 
 			//
 			// ASSERT
 			//
-			expect(transactionManager.save).toHaveBeenCalledWith(Person, existingLocalPerson);
-			expect(existingLocalPerson.firstName).toBe('Jane');
-			expect(existingLocalPerson.lastName).toBe('Doe');
+			expect(transactionManager.save).toHaveBeenCalledWith(Person, existingLocalUser);
+			expect(existingLocalUser.firstName).toBe('Jane');
+			expect(existingLocalUser.lastName).toBe('Doe');
 		});
 
 		test('creates a new user when no local user matches by email', async () => {
@@ -332,18 +339,18 @@ describe('Ldap/helpers', () => {
 			// ARRANGE
 			//
 			const ldapId = 'ldap-new';
-			const ldapPerson = Object.assign(new Person(), {
+			const ldapUser = Object.assign(new User(), {
 				email: 'brand-new@example.com',
 				firstName: 'New',
 				lastName: 'Person',
-			} as Person);
+			} as User);
 
-			const createdPerson = Object.assign(new Person(), {
+			const createdUser = Object.assign(new User(), {
 				id: generateNanoId(),
 				email: 'brand-new@example.com',
 				firstName: 'New',
 				lastName: 'Person',
-			} as Person);
+			} as User);
 
 			mockRunInTransaction.mockImplementation(
 				async (_ctx, fn: (manager: EntityManager) => Promise<unknown>) =>
@@ -351,26 +358,26 @@ describe('Ldap/helpers', () => {
 			);
 
 			(transactionManager.findOne as Mock).mockResolvedValueOnce(null);
-			(personRepository.createPersonWithProject as Mock).mockResolvedValueOnce({
-				user: createdPerson,
+			(userRepository.createUserWithProject as Mock).mockResolvedValueOnce({
+				user: createdUser,
 			});
 
 			//
 			// ACT
 			//
-			await helpers.processUsers([[ldapId, ldapPerson]], [], [], true);
+			await helpers.processUsers([[ldapId, ldapUser]], [], [], true);
 
 			//
 			// ASSERT
 			//
-			expect(personRepository.createPersonWithProject).toHaveBeenCalledWith(
-				ldapPerson,
+			expect(userRepository.createUserWithProject).toHaveBeenCalledWith(
+				ldapUser,
 				transactionManager,
 			);
 			const savedAuthIdentity = (transactionManager.save as Mock).mock.calls[0][0];
 			expect(savedAuthIdentity).toBeInstanceOf(AuthIdentity);
 			expect(savedAuthIdentity.providerId).toBe(ldapId);
-			expect(savedAuthIdentity.userId).toBe(createdPerson.id);
+			expect(savedAuthIdentity.userId).toBe(createdUser.id);
 		});
 	});
 });

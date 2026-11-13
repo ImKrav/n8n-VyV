@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 

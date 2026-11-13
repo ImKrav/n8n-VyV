@@ -59,7 +59,7 @@ function handleClick(event: MouseEvent) {
 	max-width: 90%;
 	justify-content: flex-start;
 	color: var(--ai-activity-step--color, var(--text-color--subtler));
-	font-size: var(--button--font-size);
+	font-size: var(--font-size--sm);
 	position: relative;
 	padding: var(--ai-activity-step--padding, 0);
 	height: var(--ai-activity-step--height, var(--button--height));

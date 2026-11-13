@@ -355,25 +355,6 @@ export function traverseNodeParametersWithParamNames(
 }
 
 /**
- * Strips the `=` prefix, the outer `{{ }}` delimiters, and the auto-generated
- * marker comment from a `$fromAI()` expression.
- */
-function stripFromAIExpressionWrapper(expr: string): string {
-	let str = expr.startsWith('=') ? expr.slice(1) : expr;
-	str = str.trim();
-
-	if (str.startsWith('{{') && str.endsWith('}}')) {
-		str = str.slice(2, -2).trim();
-	}
-
-	if (str.startsWith(FROM_AI_AUTO_GENERATED_MARKER)) {
-		str = str.slice(FROM_AI_AUTO_GENERATED_MARKER.length).trim();
-	}
-
-	return str;
-}
-
-/**
  * Checks whether an expression string contains only a single `$fromAI()` call
  * with literal arguments and nothing else.
  *
@@ -382,11 +363,23 @@ function stripFromAIExpressionWrapper(expr: string): string {
  * calls like `$fromAI(evil())` are not supported.
  */
 export function isFromAIOnlyExpression(expr: string): boolean {
-	const str = stripFromAIExpressionWrapper(expr);
+	let str = expr;
 
-	// The expression engine finds `{{ }}` anywhere, even inside quoted arguments
-	if (str.includes('{{') || str.includes('}}')) {
-		return false;
+	// Strip leading `=` prefix
+	if (str.startsWith('=')) {
+		str = str.slice(1);
+	}
+
+	str = str.trim();
+
+	// Strip `{{ }}` delimiters if present
+	if (str.startsWith('{{') && str.endsWith('}}')) {
+		str = str.slice(2, -2).trim();
+	}
+
+	// Strip optional auto-generated marker comment
+	if (str.startsWith(FROM_AI_AUTO_GENERATED_MARKER)) {
+		str = str.slice(FROM_AI_AUTO_GENERATED_MARKER.length).trim();
 	}
 
 	// Must start with $fromAI( (case-insensitive)

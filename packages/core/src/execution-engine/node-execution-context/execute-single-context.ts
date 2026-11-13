@@ -12,8 +12,7 @@ import type {
 	ITaskDataConnections,
 	IExecuteData,
 } from 'n8n-workflow';
-import { NodeConnectionTypes } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError, NodeConnectionTypes } from 'n8n-workflow';
 
 import { BaseExecuteContext } from './base-execute-context';
 import {

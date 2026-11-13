@@ -81,6 +81,7 @@ export const deleteFolderQueryFieldDocs = {
 export const folderProjectIdParamDocs = {
 	param: {
 		description:
-			"The ID of the project, or `personal` for the calling user's own personal project.",
+			"The ID of the project, or `personal` to create the folder in the calling user's own " +
+			'personal project.',
 	},
 } as const satisfies ZodOpenAPIMetadata;

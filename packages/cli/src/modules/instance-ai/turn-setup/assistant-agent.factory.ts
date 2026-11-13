@@ -16,7 +16,6 @@ import {
 	type McpServerConfig,
 	type ModelConfig,
 	type InstanceAiTraceContext,
-	type OrchestrationContext,
 } from '@n8n/instance-ai';
 import { getErrorMessage } from '@n8n/utils/errors/get-error-message';
 import { ErrorReporter } from 'n8n-core';
@@ -175,7 +174,7 @@ export class AssistantAgentFactory {
 				},
 			});
 		}
-		this.subscribeToAgentErrors(agent, environment.orchestrationContext);
+		this.subscribeToAgentErrors(agent, threadId, runId);
 		return agent;
 	}
 
@@ -263,39 +262,6 @@ export class AssistantAgentFactory {
 		});
 	}
 
-	/**
-	 * Memory policy options from config. Thresholds are shares of the model's
-	 * window (capped by the max window), like Agents get from the SDK defaults.
-	 * An unknown window falls back to the cap, so the fixed token thresholds
-	 * apply only when the cap is 0 and the window is unknown. A per-run observer threshold (from
-	 * eval requests) wins over window shares.
-	 */
-	private buildObservationPolicy(
-		hasThresholdOverride: boolean,
-	): NonNullable<InstanceAiMemoryConfig['observationalMemory']>['policy'] {
-		const config = this.instanceAiConfig;
-		return {
-			// Empty shares use the SDK defaults and look the window up in the model catalog.
-			...(!hasThresholdOverride
-				? {
-						windowShares:
-							config.observationMaxWindowTokens > 0
-								? { maxContextWindowTokens: config.observationMaxWindowTokens }
-								: {},
-					}
-				: {}),
-			logPlacement: config.observationLogPlacement,
-			failurePolicy: config.observationFailurePolicy,
-			// 0 means no limit, so it must reach the SDK instead of its default.
-			// A negative value would skip every batch, so the SDK default applies.
-			...(config.observerMaxBatches >= 0 && {
-				maxObserverBatchesAfterTurn: config.observerMaxBatches,
-			}),
-			reflectionMode: config.reflectionMode,
-			historyRecall: config.historyRecall,
-		};
-	}
-
 	private createAgentMemoryOptions(
 		user: User,
 		threadId: string,
@@ -320,12 +286,8 @@ export class AssistantAgentFactory {
 				model: memoryModelId,
 				observerThresholdTokens:
 					observerThresholdTokens ?? this.instanceAiConfig.observerMessageTokens,
-				// Only a set value replaces the SDK's reflect share.
-				...(this.instanceAiConfig.reflectorObservationTokens !== undefined && {
-					reflectorThresholdTokens: this.instanceAiConfig.reflectorObservationTokens,
-				}),
+				reflectorThresholdTokens: this.instanceAiConfig.reflectorObservationTokens,
 				midRunObservation: this.instanceAiConfig.midRunObservation,
-				policy: this.buildObservationPolicy(observerThresholdTokens !== undefined),
 				// Observer/reflector calls run in the background outside the run's
 				// finish-chunk usage, so they are claimed here per report. Best-effort:
 				// a billing failure must never block observation persistence.
@@ -362,7 +324,7 @@ export class AssistantAgentFactory {
 	 * the `source`-tagged events — the main agentic-loop errors (no source) already
 	 * reach Sentry via the errored run/stream result.
 	 */
-	private subscribeToAgentErrors(agent: InstanceAgent, context: OrchestrationContext): void {
+	private subscribeToAgentErrors(agent: InstanceAgent, threadId: string, runId: string): void {
 		agent.on(AgentEvent.Error, (event: AgentEventData) => {
 			if (event.type !== AgentEvent.Error) return;
 			if (!event.source) return;
@@ -370,11 +332,8 @@ export class AssistantAgentFactory {
 			this.instanceAiErrorReporter.report(event.error, {
 				component: `instance-ai-${event.source}`,
 				...(severity ? { severity } : {}),
-				threadId: context.threadId,
-				runId: context.runId,
-				userId: context.userId,
-				...(context.messageGroupId ? { messageGroupId: context.messageGroupId } : {}),
-				...(context.tracing ? { tracing: context.tracing } : {}),
+				threadId,
+				runId,
 			});
 		});
 	}

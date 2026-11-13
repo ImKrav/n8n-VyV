@@ -4,7 +4,6 @@ import {
 	type BuiltMemory,
 	type BuiltObservationLogStore,
 	type BuiltObservationLogTaskLockStore,
-	type BuiltObservationResumeStore,
 	type MemoryDescriptor,
 	type NewObservationLogEntry,
 	type ObservationCursor,
@@ -17,7 +16,6 @@ import {
 	type ObservationLogScope,
 	type ObservationLogTaskKind,
 	type ObservationLogTaskLockHandle,
-	type ObservationResumeState,
 	type JSONObject,
 	type JSONValue,
 	type Thread,
@@ -194,11 +192,7 @@ function mergeSaveThreadMetadata(
 
 @Service()
 export class TypeORMAgentMemory
-	implements
-		BuiltMemory,
-		BuiltObservationLogStore,
-		BuiltObservationLogTaskLockStore,
-		BuiltObservationResumeStore
+	implements BuiltMemory, BuiltObservationLogStore, BuiltObservationLogTaskLockStore
 {
 	readonly skillState: RuntimeSkillStateStore = {
 		load: async ({ threadId, resourceId, agentName }) => {
@@ -482,41 +476,36 @@ export class TypeORMAgentMemory
 		});
 	}
 
-	/**
-	 * One page of a thread's messages, returned oldest-first, plus one lookahead
-	 * row so the caller can tell whether older rows exist. `before` is the oldest
-	 * row of the previous page and replaces `page`: keyset paging on
-	 * (createdAt, id) stays stable while new rows arrive.
-	 */
 	async listMessages(args: {
 		threadId: string;
 		limit?: number;
 		page?: number;
-		before?: { createdAt: Date; id: string };
-	}): Promise<{ messages: AgentDbMessage[]; hasMore: boolean }> {
-		const { threadId, before } = args;
+		/** Also resolve `newerBoundaryAt`: the createdAt of the row immediately
+		 *  newer than the page, i.e. where the next page starts. Read in the same
+		 *  scan as the page itself (one extra row), not a second query. */
+		withNewerBoundary?: boolean;
+	}): Promise<{ messages: AgentDbMessage[]; newerBoundaryAt?: Date }> {
 		const limit = args.limit ?? 50;
+		const page = args.page ?? 0;
+		const offset = page * limit;
+		// The newest page has no newer neighbour — its span is open-ended.
+		const withBoundary = args.withNewerBoundary === true && offset > 0;
 		const entities = await this.messageRepo.find({
-			where: before
-				? [
-						{ threadId, createdAt: LessThan(before.createdAt) },
-						{ threadId, createdAt: before.createdAt, id: LessThan(before.id) },
-					]
-				: { threadId },
+			where: { threadId: args.threadId },
 			order: { createdAt: 'DESC', id: 'DESC' },
-			take: limit + 1,
-			skip: before ? 0 : (args.page ?? 0) * limit,
+			take: withBoundary ? limit + 1 : limit,
+			skip: withBoundary ? offset - 1 : offset,
 		});
+		// Rows are newest-first, so the extra row is the neighbour, not part of
+		// the page.
+		const boundary = withBoundary ? entities.shift() : undefined;
 
 		return {
-			messages: entities
-				.slice(0, limit)
-				.reverse()
-				.flatMap((entity) => {
-					const message = this.toAgentMessage(entity);
-					return message ? [message] : [];
-				}),
-			hasMore: entities.length > limit,
+			messages: entities.reverse().flatMap((entity) => {
+				const message = this.toAgentMessage(entity);
+				return message ? [message] : [];
+			}),
+			newerBoundaryAt: boundary?.createdAt,
 		};
 	}
 
@@ -630,14 +619,6 @@ export class TypeORMAgentMemory
 
 	async setCursor(cursor: ObservationCursor): Promise<void> {
 		return await this.observationLog.setCursor(cursor);
-	}
-
-	async getResumeState(observationScopeId: string): Promise<ObservationResumeState | null> {
-		return await this.observationLog.getResumeState(observationScopeId);
-	}
-
-	async saveResumeState(state: ObservationResumeState): Promise<void> {
-		return await this.observationLog.saveResumeState(state);
 	}
 
 	async acquireObservationLogTaskLock(

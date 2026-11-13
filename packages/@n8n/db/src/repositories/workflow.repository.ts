@@ -13,8 +13,7 @@ import type {
 	EntityManager,
 } from '@n8n/typeorm';
 import type { QueryDeepPartialEntity } from '@n8n/typeorm/query-builder/QueryPartialEntity';
-import { PROJECT_ROOT, type IWorkflowSettings } from 'n8n-workflow';
-import { UnexpectedError, UserError } from '@n8n/errors';
+import { PROJECT_ROOT, UnexpectedError, UserError, type IWorkflowSettings } from 'n8n-workflow';
 
 import type { ActivityProjectScope } from './activity-event.repository';
 import { BaseRepository } from './base-repository';
@@ -1016,42 +1015,27 @@ export class WorkflowRepository extends BaseRepository<WorkflowEntity> {
 		return Number(response?.count) || 0;
 	}
 
-	/**
-	 * A folder view lists only the folder's direct children. A search, and a filter on a set of
-	 * workflow IDs, must reach the whole subtree, or a match in a nested folder stays hidden.
-	 */
-	private async expandParentFolderToSubtree(
-		options: WorkflowListQueryOptions,
-		{ onSearch }: { onSearch: boolean },
-	) {
-		if (
-			!options.filter?.parentFolderId ||
-			typeof options.filter.parentFolderId !== 'string' ||
-			options.filter.parentFolderId === PROJECT_ROOT ||
-			typeof options.filter.projectId !== 'string'
-		)
-			return;
-
-		const reachesSubtree =
-			(onSearch && !!options.filter.query) || options.workflowIdsIn !== undefined;
-		if (!reachesSubtree) return;
-
-		const folderIds = await this.folderRepository.getAllFolderIdsInHierarchy(
-			options.filter.parentFolderId,
-			options.filter.projectId,
-		);
-
-		options.filter.parentFolderIds = [options.filter.parentFolderId, ...folderIds];
-		options.filter.folderIds = folderIds;
-		delete options.filter.parentFolderId;
-	}
-
 	async getWorkflowsAndFoldersWithCount(
 		workflowIds: string[],
 		options: WorkflowListQueryOptions = {},
 		accessibleProjectIds?: string[],
 	) {
-		await this.expandParentFolderToSubtree(options, { onSearch: true });
+		if (
+			options.filter?.parentFolderId &&
+			typeof options.filter?.parentFolderId === 'string' &&
+			options.filter.parentFolderId !== PROJECT_ROOT &&
+			typeof options.filter?.projectId === 'string' &&
+			options.filter.query
+		) {
+			const folderIds = await this.folderRepository.getAllFolderIdsInHierarchy(
+				options.filter.parentFolderId,
+				options.filter.projectId,
+			);
+
+			options.filter.parentFolderIds = [options.filter.parentFolderId, ...folderIds];
+			options.filter.folderIds = folderIds;
+			delete options.filter.parentFolderId;
+		}
 
 		const [workflowsAndFolders, count] = await Promise.all([
 			this.getWorkflowsAndFoldersUnion(workflowIds, options, accessibleProjectIds),
@@ -1088,7 +1072,22 @@ export class WorkflowRepository extends BaseRepository<WorkflowEntity> {
 		options: WorkflowListQueryOptions = {},
 		accessibleProjectIds?: string[],
 	) {
-		await this.expandParentFolderToSubtree(options, { onSearch: true });
+		if (
+			options.filter?.parentFolderId &&
+			typeof options.filter?.parentFolderId === 'string' &&
+			options.filter.parentFolderId !== PROJECT_ROOT &&
+			typeof options.filter?.projectId === 'string' &&
+			options.filter.query
+		) {
+			const folderIds = await this.folderRepository.getAllFolderIdsInHierarchy(
+				options.filter.parentFolderId,
+				options.filter.projectId,
+			);
+
+			options.filter.parentFolderIds = [options.filter.parentFolderId, ...folderIds];
+			options.filter.folderIds = folderIds;
+			delete options.filter.parentFolderId;
+		}
 
 		const [workflowsAndFolders, count] = await Promise.all([
 			this.getWorkflowsAndFoldersUnionWithSharingSubquery(
@@ -1353,7 +1352,6 @@ export class WorkflowRepository extends BaseRepository<WorkflowEntity> {
 			return { workflows: [], count: 0 };
 		}
 
-		await this.expandParentFolderToSubtree(options, { onSearch: false });
 		const query = this.getManyQuery(sharedWorkflowIds, options);
 		const [workflows, count] = await query.getManyAndCount();
 		return { workflows, count };
@@ -1375,7 +1373,6 @@ export class WorkflowRepository extends BaseRepository<WorkflowEntity> {
 		},
 		options: WorkflowListQueryOptions = {},
 	): Promise<WorkflowListResult> {
-		await this.expandParentFolderToSubtree(options, { onSearch: false });
 		const query = this.getManyQueryWithSharingSubquery(user, sharingOptions, options);
 
 		const [workflows, count] = await query.getManyAndCount();

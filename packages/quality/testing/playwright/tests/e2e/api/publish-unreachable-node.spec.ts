@@ -76,7 +76,7 @@ function buildWorkflow(reachable: boolean): Partial<IWorkflowBase> {
 test.describe(
 	'Publishing a workflow with unmet required inputs',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		const cleanupWorkflowIds: string[] = [];

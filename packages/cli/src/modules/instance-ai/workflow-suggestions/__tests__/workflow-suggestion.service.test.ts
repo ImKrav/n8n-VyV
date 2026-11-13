@@ -18,7 +18,6 @@ import { mock } from 'vitest-mock-extended';
 import type { WorkflowPublicationStatusService } from '@/workflows/publication/workflow-publication-status.service';
 import type { WorkflowFinderService } from '@/workflows/workflow-finder.service';
 
-import type { SelfHealingResultRepository } from '../../self-healing/database/self-healing-result.repository';
 import { WorkflowSuggestion } from '../database/workflow-suggestion.entity';
 import type { WorkflowSuggestionRepository } from '../database/workflow-suggestion.repository';
 import { WorkflowSuggestionService } from '../workflow-suggestion.service';
@@ -41,7 +40,6 @@ const service = new WorkflowSuggestionService(
 	workflowRepository,
 	sharedWorkflowRepository,
 	workflowPublishHistoryRepository,
-	mock<SelfHealingResultRepository>(),
 );
 const user = mock<User>({ id: 'c22db9f1-8fc0-4a46-96e2-c3a0a592a851', disabled: false });
 const versionId = '2d97d917-00ae-4fce-98c0-9b4d708a6c94';
@@ -200,7 +198,7 @@ it('stores the exact final graph and activity in the caller transaction', async 
 	});
 	expect(suggestions.createPending).not.toHaveBeenCalled();
 	expect(tx.run).not.toHaveBeenCalled();
-	const result = await service.createSuggestion(prepared, 'result-1', ctx);
+	const result = await service.createSuggestion(prepared, ctx);
 	expect(result).toBe(suggestion);
 	expect(suggestions.createPending).toHaveBeenCalledWith(
 		baseline,
@@ -210,9 +208,8 @@ it('stores the exact final graph and activity in the caller transaction', async 
 			explanation: 'Prepared fix',
 			errorContext,
 		},
-		'fix_ready',
-		'result-1',
 		ctx,
+		'fix_ready',
 	);
 	expect(tx.run).toHaveBeenCalledWith(ctx, expect.any(Function));
 	expect(workflowRepository.findByIdInContext).toHaveBeenCalledWith(workflow.id, ctx);
@@ -336,13 +333,12 @@ it.each([
 		graph: candidate,
 		explanation: 'Fix',
 	});
-	await service.createSuggestion(prepared, 'result-1');
+	await service.createSuggestion(prepared);
 	expect(suggestions.createPending).toHaveBeenCalledWith(
 		baseline,
 		expect.objectContaining({ candidate }),
-		'needs_you',
-		'result-1',
 		ctx,
+		'needs_you',
 	);
 	expect(prepared.payload).not.toHaveProperty('validation');
 });
@@ -416,7 +412,7 @@ it.each([
 		if (change === 'missing owner')
 			sharedWorkflowRepository.getWorkflowOwningProject.mockResolvedValue(undefined);
 		if (change === 'deleted') workflowRepository.findByIdInContext.mockResolvedValue(null);
-		await expect(service.createSuggestion(prepared, 'result-1')).rejects.toThrow('baseline');
+		await expect(service.createSuggestion(prepared)).rejects.toThrow('baseline');
 		expect(suggestions.createPending).not.toHaveBeenCalled();
 		expect(suggestions.appendSubmittedActivity).not.toHaveBeenCalled();
 	},

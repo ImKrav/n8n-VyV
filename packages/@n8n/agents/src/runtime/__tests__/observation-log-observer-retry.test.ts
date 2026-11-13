@@ -57,8 +57,6 @@ function setup(doGenerate: () => Promise<GenerateResult>) {
 		observationalMemory: {
 			observerThresholdTokens: 10,
 			observationLogTailLimit: 20,
-			// Covers transport retries; the run-level failure policy has its own tests.
-			failurePolicy: 'disableForRun',
 			observe: createObservationLogObserveFn(model),
 		},
 		onMemoryTaskEvent: (event: ScopedMemoryTaskEvent) => events.push(event),

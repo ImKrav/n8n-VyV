@@ -1,7 +1,6 @@
 import { testDb, testModules } from '@n8n/backend-test-utils';
-import { CredentialsRepository, UserRepository, type Person } from '@n8n/db';
+import { CredentialsRepository, UserRepository } from '@n8n/db';
 import { Container } from '@n8n/di';
-import type { FindOptionsWhere } from '@n8n/typeorm';
 
 import { DynamicCredentialUserEntry } from '@/modules/dynamic-credentials.ee/database/entities/dynamic-credential-user-entry';
 import { DynamicCredentialResolverRepository } from '@/modules/dynamic-credentials.ee/database/repositories/credential-resolver.repository';
@@ -470,9 +469,9 @@ describe('DynamicCredentialUserEntryRepository', () => {
 			expect(foundEntry).toBeDefined();
 			expect(foundEntry?.user).toBeDefined();
 			expect(foundEntry?.user.id).toBe(user.id);
-			expect((foundEntry?.user as Person).email).toBe('testuser@example.com');
-			expect((foundEntry?.user as Person).firstName).toBe('Test');
-			expect((foundEntry?.user as Person).lastName).toBe('User');
+			expect(foundEntry?.user.email).toBe('testuser@example.com');
+			expect(foundEntry?.user.firstName).toBe('Test');
+			expect(foundEntry?.user.lastName).toBe('User');
 		});
 
 		it('should fetch DynamicCredentialResolver through ManyToOne relationship', async () => {
@@ -557,7 +556,7 @@ describe('DynamicCredentialUserEntryRepository', () => {
 			expect(foundEntry?.user).toBeDefined();
 			expect(foundEntry?.resolver).toBeDefined();
 			expect(foundEntry?.credential.name).toBe('Multi-Relation Credential');
-			expect((foundEntry?.user as Person).email).toBe('multirelation@example.com');
+			expect(foundEntry?.user.email).toBe('multirelation@example.com');
 			expect(foundEntry?.resolver.name).toBe('multi-resolver');
 		});
 	});
@@ -771,15 +770,15 @@ describe('DynamicCredentialUserEntryRepository', () => {
 				where: {
 					user: {
 						email: 'alice@example.com',
-					} as FindOptionsWhere<Person>,
+					},
 				},
 				relations: ['user'],
 			});
 
 			// ASSERT
 			expect(aliceEntries).toHaveLength(1);
-			expect((aliceEntries[0].user as Person).email).toBe('alice@example.com');
-			expect((aliceEntries[0].user as Person).firstName).toBe('Alice');
+			expect(aliceEntries[0].user.email).toBe('alice@example.com');
+			expect(aliceEntries[0].user.firstName).toBe('Alice');
 		});
 
 		it('should filter entries by multiple criteria', async () => {

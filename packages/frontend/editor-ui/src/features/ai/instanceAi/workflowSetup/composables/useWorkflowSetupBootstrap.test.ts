@@ -37,7 +37,6 @@ describe('useWorkflowSetupBootstrap', () => {
 
 		expect(credentialsStore.fetchUsableCredentials).toHaveBeenCalledWith({
 			workflowId: 'workflow-1',
-			forAssistant: true,
 		});
 		expect(credentialsStore.fetchCredentialTypes).toHaveBeenCalled();
 		expect(nodeTypesStore.loadNodeTypesIfNotLoaded).toHaveBeenCalled();
@@ -67,7 +66,6 @@ describe('useWorkflowSetupBootstrap', () => {
 
 		expect(credentialsStore.fetchUsableCredentials).toHaveBeenCalledWith({
 			workflowId: 'workflow-2',
-			forAssistant: true,
 		});
 	});
 });

@@ -13,7 +13,6 @@ import {
 	ProjectRelation,
 	ProjectRepository,
 	Role,
-	ServiceAccount,
 	type SharedCredentialsRepository,
 	type SharedWorkflowRepository,
 	User,
@@ -97,7 +96,7 @@ describe('UserService', () => {
 		transactions,
 	);
 
-	const commonMockPerson = Object.assign(new Person(), {
+	const commonMockUser = Object.assign(new User(), {
 		id: uuid(),
 		password: 'passwordHash',
 		role: GLOBAL_MEMBER_ROLE,
@@ -114,7 +113,7 @@ describe('UserService', () => {
 
 	describe('toPublic', () => {
 		it('should remove sensitive properties', async () => {
-			const mockPerson = Object.assign(new Person(), {
+			const mockUser = Object.assign(new User(), {
 				id: uuid(),
 				password: 'passwordHash',
 				mfaEnabled: false,
@@ -126,11 +125,11 @@ describe('UserService', () => {
 			});
 
 			type MaybeSensitiveProperties = Partial<
-				Pick<Person, 'password' | 'updatedAt' | 'authIdentities' | 'mfaSecret' | 'mfaRecoveryCodes'>
+				Pick<User, 'password' | 'updatedAt' | 'authIdentities' | 'mfaSecret' | 'mfaRecoveryCodes'>
 			>;
 
 			// to prevent typechecking from blocking assertions
-			const publicUser: MaybeSensitiveProperties = await userService.toPublic(mockPerson);
+			const publicUser: MaybeSensitiveProperties = await userService.toPublic(mockUser);
 
 			expect(publicUser.password).toBeUndefined();
 			expect(publicUser.updatedAt).toBeUndefined();
@@ -139,36 +138,9 @@ describe('UserService', () => {
 			expect(publicUser.mfaRecoveryCodes).toBeUndefined();
 		});
 
-		it('returns only the public fields of a service account', async () => {
-			const createdAt = new Date();
-			const serviceAccount = Object.assign(new ServiceAccount(), {
-				id: 'sa-1',
-				createdAt,
-				disabled: false,
-				settings: { userActivated: true },
-				mfaEnabled: false,
-				mfaRecoveryCodes: [],
-				role: GLOBAL_MEMBER_ROLE,
-			});
-
-			const publicUser = await userService.toPublic(serviceAccount);
-
-			expect(publicUser).toEqual({
-				id: 'sa-1',
-				createdAt,
-				disabled: false,
-				settings: { userActivated: true },
-				isPending: false,
-				signInType: 'email',
-				role: GLOBAL_MEMBER_ROLE.slug,
-				isOwner: false,
-				mfaAuthenticated: false,
-			});
-		});
-
 		it('should add scopes if requested', async () => {
-			const scoped = await userService.toPublic(commonMockPerson, { withScopes: true });
-			const unscoped = await userService.toPublic(commonMockPerson);
+			const scoped = await userService.toPublic(commonMockUser, { withScopes: true });
+			const unscoped = await userService.toPublic(commonMockUser);
 
 			expect(scoped.globalScopes).toEqual(GLOBAL_MEMBER_ROLE.scopes.map((s) => s.slug));
 			expect(unscoped.globalScopes).toBeUndefined();
@@ -182,9 +154,9 @@ describe('UserService', () => {
 			beforeEach(() => {
 				vi.spyOn(ssoHelpers, 'isSsoCurrentAuthenticationMethod').mockReturnValue(true);
 				roleService.checkRolesExist.mockResolvedValue();
-				personRepository.findManyByEmail.mockResolvedValue([]);
-				personRepository.createPersonWithProject.mockImplementation(async (userData) => {
-					return { user: { ...userData, id: uuid() } as Person, project: mock<Project>() };
+				userRepository.findManyByEmail.mockResolvedValue([]);
+				userRepository.createUserWithProject.mockImplementation(async (userData) => {
+					return { user: { ...userData, id: uuid() } as User, project: mock<Project>() };
 				});
 			});
 
@@ -219,13 +191,13 @@ describe('UserService', () => {
 
 			describe('toPublic', () => {
 				it('should not include inviteAcceptUrl', async () => {
-					const pendingPerson = Object.assign(new Person(), {
+					const pendingUser = Object.assign(new User(), {
 						id: uuid(),
 						role: GLOBAL_MEMBER_ROLE,
 						isPending: true,
 					});
 
-					const result = await userService.toPublic(pendingPerson);
+					const result = await userService.toPublic(pendingUser);
 
 					expect(result.inviteAcceptUrl).toBeUndefined();
 				});
@@ -237,9 +209,9 @@ describe('UserService', () => {
 					const invitations = [{ email: 'test@example.com', role: GLOBAL_MEMBER_ROLE.slug }];
 
 					roleService.checkRolesExist.mockResolvedValue();
-					personRepository.findManyByEmail.mockResolvedValue([]);
-					personRepository.createPersonWithProject.mockImplementation(async (userData) => {
-						return { user: { ...userData, id: uuid() } as Person, project: mock<Project>() };
+					userRepository.findManyByEmail.mockResolvedValue([]);
+					userRepository.createUserWithProject.mockImplementation(async (userData) => {
+						return { user: { ...userData, id: uuid() } as User, project: mock<Project>() };
 					});
 					mailer.invite.mockResolvedValue({ emailSent: false });
 
@@ -255,9 +227,9 @@ describe('UserService', () => {
 					const invitations = [{ email: 'test@example.com', role: GLOBAL_MEMBER_ROLE.slug }];
 
 					roleService.checkRolesExist.mockResolvedValue();
-					personRepository.findManyByEmail.mockResolvedValue([]);
-					personRepository.createPersonWithProject.mockImplementation(async (userData) => {
-						return { user: { ...userData, id: uuid() } as Person, project: mock<Project>() };
+					userRepository.findManyByEmail.mockResolvedValue([]);
+					userRepository.createUserWithProject.mockImplementation(async (userData) => {
+						return { user: { ...userData, id: uuid() } as User, project: mock<Project>() };
 					});
 					mailer.invite.mockResolvedValue({ emailSent: true });
 
@@ -275,13 +247,13 @@ describe('UserService', () => {
 
 			describe('toPublic', () => {
 				it('should not include inviteAcceptUrl', async () => {
-					const pendingPerson = Object.assign(new Person(), {
+					const pendingUser = Object.assign(new User(), {
 						id: uuid(),
 						role: GLOBAL_MEMBER_ROLE,
 						isPending: true,
 					});
 
-					const result = await userService.toPublic(pendingPerson);
+					const result = await userService.toPublic(pendingUser);
 
 					expect(result.inviteAcceptUrl).toBeUndefined();
 				});
@@ -293,9 +265,9 @@ describe('UserService', () => {
 					const invitations = [{ email: 'test@example.com', role: GLOBAL_MEMBER_ROLE.slug }];
 
 					roleService.checkRolesExist.mockResolvedValue();
-					personRepository.findManyByEmail.mockResolvedValue([]);
-					personRepository.createPersonWithProject.mockImplementation(async (userData) => {
-						return { user: { ...userData, id: uuid() } as Person, project: mock<Project>() };
+					userRepository.findManyByEmail.mockResolvedValue([]);
+					userRepository.createUserWithProject.mockImplementation(async (userData) => {
+						return { user: { ...userData, id: uuid() } as User, project: mock<Project>() };
 					});
 					mailer.invite.mockResolvedValue({ emailSent: false });
 
@@ -309,9 +281,9 @@ describe('UserService', () => {
 					const invitations = [{ email: 'test@example.com', role: GLOBAL_MEMBER_ROLE.slug }];
 
 					roleService.checkRolesExist.mockResolvedValue();
-					personRepository.findManyByEmail.mockResolvedValue([]);
-					personRepository.createPersonWithProject.mockImplementation(async (userData) => {
-						return { user: { ...userData, id: uuid() } as Person, project: mock<Project>() };
+					userRepository.findManyByEmail.mockResolvedValue([]);
+					userRepository.createUserWithProject.mockImplementation(async (userData) => {
+						return { user: { ...userData, id: uuid() } as User, project: mock<Project>() };
 					});
 					mailer.invite.mockResolvedValue({ emailSent: true });
 
@@ -320,28 +292,6 @@ describe('UserService', () => {
 					expect(result.usersInvited[0].user.inviteAcceptUrl).toBeUndefined();
 				});
 			});
-		});
-	});
-
-	describe('updateSettings', () => {
-		it('merges and saves the settings of a service account', async () => {
-			const serviceAccount = Object.assign(new ServiceAccount(), {
-				id: 'sa-1',
-				settings: { instanceAi: { modelName: 'old-model' } },
-			});
-			userRepository.findOneBy.mockResolvedValueOnce(serviceAccount);
-
-			const settings = await userService.updateSettings('sa-1', { userActivated: true });
-
-			expect(settings).toEqual({ instanceAi: { modelName: 'old-model' }, userActivated: true });
-			expect(userRepository.save).toHaveBeenCalledWith(serviceAccount);
-		});
-
-		it('throws when no account has the id', async () => {
-			userRepository.findOneBy.mockResolvedValueOnce(null);
-
-			await expect(userService.updateSettings('missing', {})).rejects.toThrow(NotFoundError);
-			expect(userRepository.save).not.toHaveBeenCalled();
 		});
 	});
 
@@ -396,14 +346,14 @@ describe('UserService', () => {
 			];
 
 			roleService.checkRolesExist.mockResolvedValue();
-			personRepository.findManyByEmail.mockResolvedValue([]);
-			personRepository.createPersonWithProject.mockImplementation(async (userData) => {
-				return { user: { ...userData, id: uuid() } as Person, project: mock<Project>() };
+			userRepository.findManyByEmail.mockResolvedValue([]);
+			userRepository.createUserWithProject.mockImplementation(async (userData) => {
+				return { user: { ...userData, id: uuid() } as User, project: mock<Project>() };
 			});
 
 			await userService.inviteUsers(owner, invitations);
 
-			expect(personRepository.createPersonWithProject).toHaveBeenCalledTimes(3);
+			expect(userRepository.createUserWithProject).toHaveBeenCalledTimes(3);
 		});
 
 		it('should fail if role do not exist', async () => {
@@ -413,9 +363,9 @@ describe('UserService', () => {
 			roleService.checkRolesExist.mockRejectedValue(
 				new BadRequestError('Role nonexistent:role does not exist'),
 			);
-			personRepository.findManyByEmail.mockResolvedValue([]);
-			personRepository.createPersonWithProject.mockImplementation(async (userData) => {
-				return { user: { ...userData, id: uuid() } as Person, project: mock<Project>() };
+			userRepository.findManyByEmail.mockResolvedValue([]);
+			userRepository.createUserWithProject.mockImplementation(async (userData) => {
+				return { user: { ...userData, id: uuid() } as User, project: mock<Project>() };
 			});
 
 			await expect(userService.inviteUsers(owner, invitations)).rejects.toThrowError(
@@ -853,42 +803,42 @@ describe('UserService', () => {
 	describe('getUser', () => {
 		it('looks up by id when the identifier is a uuid', async () => {
 			const id = uuid();
-			const person = Object.assign(new Person(), {
+			const user = Object.assign(new User(), {
 				id,
 				email: 'member@example.com',
 				role: GLOBAL_MEMBER_ROLE,
 			});
-			userRepository.findByIdWithRole.mockResolvedValue(person);
+			userRepository.findByIdWithRole.mockResolvedValue(user);
 
 			const result = await userService.getUser(id);
 
 			expect(userRepository.findByIdWithRole).toHaveBeenCalledWith(id);
-			expect(result).toBe(person);
+			expect(result).toBe(user);
 		});
 
 		it('looks up by email when the identifier is not a uuid', async () => {
-			const person = Object.assign(new Person(), {
+			const user = Object.assign(new User(), {
 				id: uuid(),
 				email: 'member@example.com',
 				role: GLOBAL_MEMBER_ROLE,
 			});
-			personRepository.findByEmailWithRole.mockResolvedValue(person);
+			userRepository.findByEmailWithRole.mockResolvedValue(user);
 
 			const result = await userService.getUser('member@example.com');
 
-			expect(personRepository.findByEmailWithRole).toHaveBeenCalledWith('member@example.com');
-			expect(result).toBe(person);
+			expect(userRepository.findByEmailWithRole).toHaveBeenCalledWith('member@example.com');
+			expect(result).toBe(user);
 		});
 	});
 
 	describe('getUsersAndCount', () => {
-		it('returns a page of persons and the total count of persons', async () => {
+		it('returns paginated users and the unfiltered total count', async () => {
 			const users = [
 				Object.assign(new User(), { id: uuid(), role: GLOBAL_MEMBER_ROLE }),
 				Object.assign(new User(), { id: uuid(), role: GLOBAL_OWNER_ROLE }),
 			];
 			userRepository.findManyByIds.mockResolvedValue(users);
-			userRepository.countAccounts.mockResolvedValue(10);
+			userRepository.count.mockResolvedValue(10);
 
 			const ids = [users[0].id];
 			const { users: result, count } = await userService.getUsersAndCount({
@@ -901,17 +851,16 @@ describe('UserService', () => {
 				includeRole: true,
 				offset: 0,
 				limit: 2,
-				kind: 'person',
 			});
-			expect(userRepository.countAccounts).toHaveBeenCalledWith({ kind: 'person' });
+			expect(userRepository.count).toHaveBeenCalled();
 			expect(count).toBe(10);
 			expect(result).toEqual(users);
 		});
 
-		it('lists all persons when no ids are given', async () => {
+		it('lists all users when no ids are given', async () => {
 			const users = [Object.assign(new User(), { id: uuid(), role: GLOBAL_MEMBER_ROLE })];
 			userRepository.findMany.mockResolvedValue(users);
-			userRepository.countAccounts.mockResolvedValue(1);
+			userRepository.count.mockResolvedValue(1);
 
 			const { users: result, count } = await userService.getUsersAndCount({
 				limit: 10,
@@ -922,9 +871,7 @@ describe('UserService', () => {
 				includeRole: true,
 				offset: 0,
 				limit: 10,
-				kind: 'person',
 			});
-			expect(userRepository.countAccounts).toHaveBeenCalledWith({ kind: 'person' });
 			expect(userRepository.findManyByIds).not.toHaveBeenCalled();
 			expect(count).toBe(1);
 			expect(result).toEqual(users);
@@ -932,7 +879,7 @@ describe('UserService', () => {
 	});
 
 	describe('inviteUser', () => {
-		const inviter = mock<Person>({ id: '123', email: 'owner@example.com' });
+		const inviter = mock<User>({ id: '123', email: 'owner@example.com' });
 		const payload = new InviteUsersRequestDto({
 			email: 'valid@email.com',
 			role: 'global:member',

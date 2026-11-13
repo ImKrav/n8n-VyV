@@ -826,17 +826,15 @@ defineExpose({
 						:inert="!ready || undefined"
 						data-testid="teams-file-access-step"
 					>
-						<N8nText v-if="setupState?.fileAccessConsentUrl" :class="$style.hint" size="small">
-							{{ i18n.baseText('agents.channels.teams.managed.fileAccess.hint') }}
+						<N8nText :class="$style.hint" size="small">
+							{{
+								i18n.baseText(
+									setupState?.fileAccessConsentUrl
+										? 'agents.channels.teams.managed.fileAccess.hint'
+										: 'agents.channels.teams.setup.availability.fileAccessPermission',
+								)
+							}}
 						</N8nText>
-						<template v-else>
-							<N8nText :class="$style.hint" size="small">
-								{{ i18n.baseText('agents.channels.teams.setup.availability.fileAccessPermission') }}
-							</N8nText>
-							<N8nText :class="$style.hint" size="small">
-								{{ i18n.baseText('agents.channels.teams.setup.availability.fileAccessDelegated') }}
-							</N8nText>
-						</template>
 						<N8nActionDropdown
 							:items="fileAccessMenuItems"
 							placement="bottom-start"
@@ -869,6 +867,15 @@ defineExpose({
 							data-testid="teams-stale-download"
 						>
 							{{ i18n.baseText('agents.channels.teams.setup.install.staleDownload') }}
+						</N8nText>
+						<!-- A failed load and a claimed credential already say so in steps 2 and 3. -->
+						<N8nText
+							v-if="!ready && !credentialVerified && !setupLoadFailed"
+							:class="$style.hint"
+							size="small"
+							data-testid="teams-package-blocked"
+						>
+							{{ i18n.baseText('agents.channels.teams.setup.install.needsReady') }}
 						</N8nText>
 						<N8nText
 							v-if="downloadError"

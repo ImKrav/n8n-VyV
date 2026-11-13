@@ -42,6 +42,7 @@ const DEFAULT_POSTHOG_SETTINGS: FrontendSettings['posthog'] = {
 	enabled: true,
 	apiHost: 'host',
 	apiKey: 'key',
+	autocapture: false,
 	disableSessionRecording: true,
 	debug: false,
 	proxy: 'proxy',

@@ -1,0 +1,224 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 7,
+    "passes": 6,
+    "pending": 0,
+    "failures": 1,
+    "start": "2026-11-11T02:27:19.419Z",
+    "end": "2026-11-11T02:28:08.037Z",
+    "duration": 48618,
+    "testsRegistered": 7,
+    "passPercent": 85.71428571428571,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "e57cfa51-1cd3-4aab-b2f6-a56b5b05a0f2",
+      "title": "",
+      "fullFile": "cypress\\e2e\\ui\\co01-co02-datatables.ui.cy.js",
+      "file": "cypress\\e2e\\ui\\co01-co02-datatables.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+          "title": "CO-01 / CO-02 · Data tables (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-016-01 · crea una data table desde cero y aparece su tarjeta",
+              "fullTitle": "CO-01 / CO-02 · Data tables (UI) CP-016-01 · crea una data table desde cero y aparece su tarjeta",
+              "timedOut": null,
+              "duration": 10440,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui\").then((nombre) => {\n  cy.visitarN8n(\"/home/datatables\");\n  cy.abrirModalDataTable();\n  cy.campo(\"data-table-name-input-select\").type(nombre);\n  cy.tid(\"create-from-scratch-option\").first().click();\n  cy.screenshot(\"CP-016-01_paso2_nombre\");\n  cy.tid(\"proceed-from-select-button\").first().click();\n  cy.tid(\"data-table-details-view\").should(\"be.visible\");\n  cy.screenshot(\"CP-016-01_paso3_detalle\");\n  cy.visitarN8n(\"/home/datatables\");\n  cy.tid(\"data-table-card\").filter(`:contains(\"${nombre}\")`).should(\"have.length\", 1);\n  cy.screenshot(\"CP-016-01_paso4_tarjeta\");\n});",
+              "err": {},
+              "uuid": "cb3b1f78-13f8-4bba-b223-73bc2fff8b37",
+              "parentUUID": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-016-02 · el botón Create queda deshabilitado con nombre vacío",
+              "fullTitle": "CO-01 / CO-02 · Data tables (UI) CP-016-02 · el botón Create queda deshabilitado con nombre vacío",
+              "timedOut": null,
+              "duration": 13469,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "cy.visitarN8n(\"/home/datatables\");\ncy.abrirModalDataTable();\ncy.tid(\"create-from-scratch-option\").first().click();\ncy.tid(\"proceed-from-select-button\").should(\"be.disabled\");\ncy.campo(\"data-table-name-input-select\").type(\"   \");\ncy.screenshot(\"CP-016-02_nombre_solo_espacios\");\ncy.tid(\"proceed-from-select-button\").should(\"be.disabled\");",
+              "err": {
+                "message": "AssertionError: Timed out retrying after 10000ms: expected '<button.button._button_1qir9_278._solid_1qir9_360._large_1qir9_348>' to be 'disabled'",
+                "estack": "AssertionError: Timed out retrying after 10000ms: expected '<button.button._button_1qir9_278._solid_1qir9_360._large_1qir9_348>' to be 'disabled'\n    at Context.eval (http://localhost:5678/__cypress/tests?p=cypress\\e2e\\ui\\co01-co02-datatables.ui.cy.js:113:44)",
+                "diff": null
+              },
+              "uuid": "fdb70608-0006-48d3-9aa5-8c7a877bc63d",
+              "parentUUID": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-016-04 · muestra los encabezados de las columnas de los 4 tipos",
+              "fullTitle": "CO-01 / CO-02 · Data tables (UI) CP-016-04 · muestra los encabezados de las columnas de los 4 tipos",
+              "timedOut": null,
+              "duration": 4919,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui_cols\").then((n) => {\n  n8nApi.crearTablaOk(p, n, [\n    { name: \"nombre\", type: \"string\" },\n    { name: \"edad\", type: \"number\" },\n    { name: \"activo\", type: \"boolean\" },\n    { name: \"fecha\", type: \"date\" }\n  ]).then((t) => {\n    abrirTabla(t.id);\n    [\"nombre\", \"edad\", \"activo\", \"fecha\"].forEach((c) => cy.tid(\"data-table-column-header-text\").should(\"contain.text\", c));\n    cy.screenshot(\"CP-016-04_encabezados\");\n  });\n});",
+              "err": {},
+              "uuid": "43a39651-a738-4291-ae84-e272bc437a26",
+              "parentUUID": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-016-05 · el popover de nueva columna no crea nombres inválidos",
+              "fullTitle": "CO-01 / CO-02 · Data tables (UI) CP-016-05 · el popover de nueva columna no crea nombres inválidos",
+              "timedOut": null,
+              "duration": 4122,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui_inv\").then((n) => {\n  n8nApi.crearTablaOk(p, n, [{ name: \"nombre\", type: \"string\" }]).then((t) => {\n    abrirTabla(t.id);\n    cy.tid(\"data-table-add-column-trigger-button\").first().click();\n    cy.campo(\"add-column-name-input\").type(\"1edad\");\n    cy.tid(\"data-table-add-column-submit-button\").first().click({ force: true });\n    cy.tid(\"add-column-popover-content\").invoke(\"text\").should(\"match\", /invalid column name/i);\n    cy.screenshot(\"CP-016-05_mensaje_formato\");\n    n8nApi.columnas(p, t.id).then((cols) => expect(cols.map((c) => c.name)).to.deep.equal([\"nombre\"]));\n  });\n});",
+              "err": {},
+              "uuid": "5654404e-032a-4074-9b53-cf79a62f3658",
+              "parentUUID": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-017-01 · añade una fila y los valores persisten tras recargar",
+              "fullTitle": "CO-01 / CO-02 · Data tables (UI) CP-017-01 · añade una fila y los valores persisten tras recargar",
+              "timedOut": null,
+              "duration": 7649,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui_fila\").then((n) => {\n  n8nApi.crearTablaOk(p, n, [{ name: \"nombre\", type: \"string\" }, { name: \"edad\", type: \"number\" }]).then((t) => {\n    abrirTabla(t.id);\n    cy.tid(\"data-table-header-add-row-button\").first().click();\n    filasGrid().should(\"have.length\", 1);\n    cy.wait(500);\n    cy.get(\"body\").then(($b) => {\n      if (!$b.find(\".ag-text-area-input\").length) celda(0, \"nombre\").dblclick({ force: true });\n    });\n    cy.get(\".ag-text-area-input\").should(\"be.visible\").clear().type(\"Ana{enter}\");\n    celda(0, \"edad\").dblclick({ force: true });\n    celda(0, \"edad\").find(\"input\").type(\"25{enter}\");\n    cy.get(\".ag-text-area-input\").should(\"not.exist\");\n    cy.wait(1e3);\n    cy.reload();\n    celda(0, \"nombre\").should(\"contain.text\", \"Ana\");\n    celda(0, \"edad\").should(\"contain.text\", \"25\");\n    cy.screenshot(\"CP-017-01_persistencia\");\n    n8nApi.filasOk(p, t.id).then((f) => expect(f[0]).to.include({ nombre: \"Ana\", edad: 25 }));\n  });\n});",
+              "err": {},
+              "uuid": "f96c3601-887b-4c4e-9654-ca21a1e8d1da",
+              "parentUUID": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-017-06/07 · ordena y busca filas en la vista",
+              "fullTitle": "CO-01 / CO-02 · Data tables (UI) CP-017-06/07 · ordena y busca filas en la vista",
+              "timedOut": null,
+              "duration": 4488,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui_orden\").then((n) => {\n  n8nApi.crearTablaOk(p, n, [{ name: \"nombre\", type: \"string\" }, { name: \"edad\", type: \"number\" }]).then((t) => {\n    n8nApi.insertar(p, t.id, [{ nombre: \"Ana\", edad: 30 }, { nombre: \"Juan\", edad: 12 }, { nombre: \"Mariana\", edad: 45 }]);\n    abrirTabla(t.id);\n    filasGrid().should(\"have.length\", 3);\n    cy.tid(\"data-table-column-header\").filter(':contains(\"edad\")').first().trigger(\"click\");\n    cy.wait(800);\n    valoresOrdenados(\"edad\").should(\"deep.equal\", [\"12\", \"30\", \"45\"]);\n    cy.screenshot(\"CP-017-06_orden_ascendente\");\n    cy.campo(\"data-table-search-input\").type(\"ari\");\n    filasGrid().should(\"have.length\", 1);\n    valoresOrdenados(\"nombre\").should(\"deep.equal\", [\"Mariana\"]);\n    cy.screenshot(\"CP-017-07_busqueda\");\n  });\n});",
+              "err": {},
+              "uuid": "a4645db1-c01f-4631-ab88-e1ffe66b2440",
+              "parentUUID": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Complementaria · elimina filas seleccionadas",
+              "fullTitle": "CO-01 / CO-02 · Data tables (UI) Complementaria · elimina filas seleccionadas",
+              "timedOut": null,
+              "duration": 2873,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"vyv_ui_del\").then((n) => {\n  n8nApi.crearTablaOk(p, n, [{ name: \"nombre\", type: \"string\" }]).then((t) => {\n    n8nApi.insertar(p, t.id, [{ nombre: \"Uno\" }, { nombre: \"Dos\" }, { nombre: \"Tres\" }]);\n    abrirTabla(t.id);\n    filasGrid().should(\"have.length\", 3);\n    cy.get(`${GRID} [row-index=\"0\"] [col-id=\"ag-Grid-SelectionColumn\"] input[type=\"checkbox\"]`).check({ force: true });\n    cy.get(`${GRID} [row-index=\"1\"] [col-id=\"ag-Grid-SelectionColumn\"] input[type=\"checkbox\"]`).check({ force: true });\n    cy.tid(\"selected-items-info\").should(\"be.visible\");\n    cy.tid(\"delete-selected-button\").first().click();\n    cy.get('.el-message-box, [role=\"dialog\"]').contains(\"button\", /delete/i).click();\n    filasGrid().should(\"have.length\", 1);\n    n8nApi.filasOk(p, t.id).should(\"have.length\", 1);\n    cy.screenshot(\"Complementaria_filas_eliminadas\");\n  });\n});",
+              "err": {},
+              "uuid": "f290ec7d-5474-450f-86b8-9d30b2992b1e",
+              "parentUUID": "c138a576-7aa8-41a0-809d-c68adee4d31a",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "cb3b1f78-13f8-4bba-b223-73bc2fff8b37",
+            "43a39651-a738-4291-ae84-e272bc437a26",
+            "5654404e-032a-4074-9b53-cf79a62f3658",
+            "f96c3601-887b-4c4e-9654-ca21a1e8d1da",
+            "a4645db1-c01f-4631-ab88-e1ffe66b2440",
+            "f290ec7d-5474-450f-86b8-9d30b2992b1e"
+          ],
+          "failures": [
+            "fdb70608-0006-48d3-9aa5-8c7a877bc63d"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 47960,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

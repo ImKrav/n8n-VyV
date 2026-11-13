@@ -1,4 +1,3 @@
-import { setN8nVersion } from '@n8n/backend-common';
 import { mockLogger } from '@n8n/backend-test-utils';
 import type { InstanceSettings } from 'n8n-core';
 import type { MockProxy } from 'vitest-mock-extended';
@@ -7,9 +6,10 @@ import { mock } from 'vitest-mock-extended';
 import type { InstanceVersionHistoryRepository } from '../database/repositories/instance-version-history.repository';
 import { InstanceVersionHistoryService } from '../instance-version-history.service';
 
-beforeEach(() => {
-	setN8nVersion('2.5.0');
-});
+// Mock N8N_VERSION
+vi.mock('@/constants', () => ({
+	N8N_VERSION: '2.5.0',
+}));
 
 describe('InstanceVersionHistoryService', () => {
 	let service: InstanceVersionHistoryService;

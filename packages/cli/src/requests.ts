@@ -5,7 +5,6 @@ import type {
 	Variables,
 	Project,
 	User,
-	UserKind,
 	ListQueryDb,
 	WorkflowHistory,
 } from '@n8n/db';
@@ -115,10 +114,7 @@ export declare namespace CredentialRequest {
 		{},
 		{},
 		{},
-		({ workflowId: string } | { projectId: string }) & {
-			forAgent?: 'true' | 'false';
-			forAssistant?: 'true' | 'false';
-		}
+		({ workflowId: string } | { projectId: string }) & { forAgent?: 'true' | 'false' }
 	>;
 }
 
@@ -295,7 +291,6 @@ export declare namespace ProjectRequest {
 		email: string;
 		firstName: string;
 		lastName: string;
-		kind: UserKind;
 		role: ProjectRole | AssignableProjectRole;
 	};
 	/**
@@ -308,7 +303,6 @@ export declare namespace ProjectRequest {
 		email: string;
 		firstName: string;
 		lastName: string;
-		kind: UserKind;
 		globalRole: { slug: string; displayName: string };
 	};
 	type ProjectWithRelations = {

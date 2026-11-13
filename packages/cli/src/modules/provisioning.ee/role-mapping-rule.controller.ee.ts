@@ -5,7 +5,7 @@ import {
 	PatchRoleMappingRuleDto,
 } from '@n8n/api-types';
 import { LicenseState } from '@n8n/backend-common';
-import { AuthenticatedRequest, isPerson } from '@n8n/db';
+import { AuthenticatedRequest } from '@n8n/db';
 import {
 	Body,
 	Delete,
@@ -76,7 +76,7 @@ export class RoleMappingRuleController {
 			id,
 			targetIndex: body.targetIndex,
 			userId: req.user.id,
-			userEmail: isPerson(req.user) ? req.user.email : undefined,
+			userEmail: req.user.email,
 		});
 	}
 
@@ -97,7 +97,7 @@ export class RoleMappingRuleController {
 			id,
 			dto: body,
 			userId: req.user.id,
-			userEmail: isPerson(req.user) ? req.user.email : undefined,
+			userEmail: req.user.email,
 		});
 	}
 
@@ -115,7 +115,7 @@ export class RoleMappingRuleController {
 		await this.roleMappingRuleService.delete({
 			id,
 			userId: req.user.id,
-			userEmail: isPerson(req.user) ? req.user.email : undefined,
+			userEmail: req.user.email,
 		});
 
 		return { success: true };

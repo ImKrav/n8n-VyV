@@ -40,7 +40,6 @@ import { getResourcePermissions } from '@n8n/permissions';
 import { useDebounceFn } from '@vueuse/core';
 import { useBuilderStore } from '@/features/ai/assistant/builder.store';
 import { useWorkflowId } from '@/app/composables/useWorkflowId';
-import { withoutNewWorkflowQuery } from '@/app/utils/workflowUtils';
 import { useWorkflowSaveStore } from '@/app/stores/workflowSave.store';
 import { useBackendConnectionStore } from '@/app/stores/backendConnection.store';
 import { useSettingsStore } from '@n8n/stores/settings.store';
@@ -768,7 +767,7 @@ export function useWorkflowSaving({
 				await router.replace({
 					name: route.name,
 					params: { ...route.params },
-					query: withoutNewWorkflowQuery(route.query),
+					query: { ...route.query, new: undefined },
 				});
 			}
 

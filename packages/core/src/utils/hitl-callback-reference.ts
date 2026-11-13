@@ -1,8 +1,10 @@
-import { APPROVAL_CALLBACK_PREFIX, decodeStepId } from '@n8n/utils/approval-callback';
 import { createHmac, timingSafeEqual } from 'crypto';
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 
-/** Prefix of an engine v1 callback reference. The Telegram Trigger keys its forwarding on it. */
+/**
+ * Versioned prefix for every HITL callback reference. Platform webhook handlers
+ * (e.g. the Telegram Trigger) key their forwarding decision off this prefix.
+ */
 export const HITL_CALLBACK_PREFIX = 'nhitl1|';
 
 /**
@@ -60,30 +62,13 @@ export function isTelegramInteractionRequest(req: object): boolean {
 	return (req as Record<PropertyKey, unknown>)[TELEGRAM_INTERACTION_REQUEST] === true;
 }
 
-/** Prefix of an engine v2 approval callback. It names a step. */
-export const HITL_CALLBACK_PREFIX_V2 = APPROVAL_CALLBACK_PREFIX;
-
 export type HitlCallbackDecision = 'a' | 'd';
 
-/** An engine v1 reference. The instance HMAC secret signs it. */
-export interface ExecutionBoundHitlCallbackReference {
-	kind: 'execution';
+export interface ParsedHitlCallbackReference {
 	executionId: string;
 	decision: HitlCallbackDecision;
 	hmac: string;
 }
-
-/** An engine v2 reference. The data plane's resume secret signs it. */
-export interface StepBoundHitlCallbackReference {
-	kind: 'step';
-	stepId: string;
-	decision: HitlCallbackDecision;
-	hmac: string;
-}
-
-export type ParsedHitlCallbackReference =
-	| ExecutionBoundHitlCallbackReference
-	| StepBoundHitlCallbackReference;
 
 function buildHmacInput(executionId: string, decision: HitlCallbackDecision): string {
 	return `n8n-hitl-callback:v1:${executionId}:${decision}`;
@@ -120,37 +105,26 @@ export function buildHitlCallbackReference(
 
 /**
  * Parses a raw callback payload into its constituent parts, without verifying
- * the HMAC. An engine v1 reference names the execution, an engine v2 reference
- * names the step. Returns `null` if the payload does not match either format.
+ * the HMAC. Returns `null` if the payload does not match the expected format.
  */
 export function parseHitlCallbackReference(data: string): ParsedHitlCallbackReference | null {
-	if (data.startsWith(HITL_CALLBACK_PREFIX_V2)) {
-		const [encodedStepId, decision, hmac] = data.slice(HITL_CALLBACK_PREFIX_V2.length).split('|');
-		if (!encodedStepId || !hmac || (decision !== 'a' && decision !== 'd')) return null;
-		const stepId = decodeStepId(encodedStepId);
-		if (!stepId) return null;
-		return { kind: 'step', stepId, decision, hmac };
-	}
-
 	if (!data.startsWith(HITL_CALLBACK_PREFIX)) return null;
 
 	const [executionId, decision, hmac] = data.slice(HITL_CALLBACK_PREFIX.length).split('|');
 	if (!executionId || !hmac || (decision !== 'a' && decision !== 'd')) return null;
 
-	return { kind: 'execution', executionId, decision, hmac };
+	return { executionId, decision, hmac };
 }
 
 /**
  * Verifies a parsed reference's HMAC against the instance secret, using a
  * timing-safe comparison. This is the only check needed to prove the reference
  * was minted by this instance; it says nothing about the caller's identity.
- * A step-bound reference never passes; the resume secret signs it.
  */
 export function verifyHitlCallbackReference(
 	parsed: ParsedHitlCallbackReference,
 	secret: string,
 ): boolean {
-	if (parsed.kind !== 'execution') return false;
 	const expected = computeHmac(parsed.executionId, parsed.decision, secret);
 	const expectedBuffer = Buffer.from(expected);
 	const providedBuffer = Buffer.from(parsed.hmac);

@@ -101,12 +101,7 @@ describe('AgentVersionHistoryPanel — RBAC gating of row actions', () => {
 
 		const list = wrapper.findComponent({ name: 'AgentVersionList' });
 		const actions = list.props('actions') as Array<{ value: string }>;
-		expect(actions.map((a) => a.value)).toEqual(['revert', 'publish', 'edit']);
-		expect(actions).toMatchObject([
-			{ label: 'agents.versionHistory.item.actions.revert' },
-			{ label: 'agents.versionHistory.item.actions.publish' },
-			{ label: 'agents.versionHistory.metadata.editTitle' },
-		]);
+		expect(actions.map((a) => a.value)).toEqual(['edit', 'revert', 'publish']);
 	});
 
 	it('omits the revert action when the user cannot update', async () => {
@@ -126,7 +121,7 @@ describe('AgentVersionHistoryPanel — RBAC gating of row actions', () => {
 
 		const list = wrapper.findComponent({ name: 'AgentVersionList' });
 		const actions = list.props('actions') as Array<{ value: string }>;
-		expect(actions.map((a) => a.value)).toEqual(['revert', 'edit']);
+		expect(actions.map((a) => a.value)).toEqual(['edit', 'revert']);
 	});
 
 	it('exposes no row actions for a read-only viewer', async () => {
@@ -166,7 +161,7 @@ describe('AgentVersionHistoryPanel — published-row actions', () => {
 
 		const list = wrapper.findComponent({ name: 'AgentVersionList' });
 		const activeActions = list.props('activeActions') as Array<{ value: string }>;
-		expect(activeActions.map((a) => a.value)).toEqual(['revert', 'unpublish', 'edit']);
+		expect(activeActions.map((a) => a.value)).toEqual(['edit', 'revert', 'unpublish']);
 	});
 
 	it('disables Revert when the draft already matches the published version', async () => {
@@ -200,7 +195,7 @@ describe('AgentVersionHistoryPanel — published-row actions', () => {
 
 		const list = wrapper.findComponent({ name: 'AgentVersionList' });
 		const activeActions = list.props('activeActions') as Array<{ value: string }>;
-		expect(activeActions.map((a) => a.value)).toEqual(['revert', 'edit']);
+		expect(activeActions.map((a) => a.value)).toEqual(['edit', 'revert']);
 	});
 
 	it('omits Revert on the published row when the user cannot update', async () => {
@@ -292,14 +287,6 @@ describe('AgentVersionHistoryPanel — history loading', () => {
 		await flushPromises();
 		versionHistoryMock.refresh.mockClear();
 		await wrapper.setProps({ currentVersionId: 'v2' });
-		expect(versionHistoryMock.refresh).toHaveBeenCalledWith('project-1', 'agent-1');
-	});
-
-	it('refreshes history when a skill changes without a new agent version', async () => {
-		const wrapper = mountPanel({ currentVersionId: 'v1', hasUnpublishedChanges: false });
-		await flushPromises();
-		versionHistoryMock.refresh.mockClear();
-		await wrapper.setProps({ hasUnpublishedChanges: true });
 		expect(versionHistoryMock.refresh).toHaveBeenCalledWith('project-1', 'agent-1');
 	});
 

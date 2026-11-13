@@ -1,11 +1,11 @@
 import {
 	BaseRepository,
 	OperationContext,
-	Person,
 	ProjectRelation,
 	Role,
 	TransactionRunner,
-	PersonRepository,
+	User,
+	UserRepository,
 } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { DataSource, type DeepPartial, In } from '@n8n/typeorm';
@@ -33,7 +33,7 @@ export class TrustedSourceIdentityRepository {
 	constructor(
 		dataSource: DataSource,
 		transactionRunner: TransactionRunner,
-		private readonly people: PersonRepository,
+		private readonly users: UserRepository,
 	) {
 		this.store = new TrustedSourceIdentityStore(dataSource, transactionRunner);
 	}
@@ -72,14 +72,11 @@ export class TrustedSourceIdentityRepository {
 		});
 	}
 
-	/**
-	 * Only a person has an email. Reads inside the identity transaction must reuse its
-	 * connection: the pool may hold one.
-	 */
-	async findUserByEmail(email: string, ctx: OperationContext): Promise<Person | null> {
+	/** Reads inside the identity transaction must reuse its connection: the pool may hold one. */
+	async findUserByEmail(email: string, ctx: OperationContext): Promise<User | null> {
 		return await this.store
 			.managerFor(ctx)
-			.findOne(Person, { where: { email }, relations: { role: true } });
+			.findOne(User, { where: { email }, relations: { role: true } });
 	}
 
 	async globalRoleExists(slug: string, ctx: OperationContext): Promise<boolean> {
@@ -126,12 +123,12 @@ export class TrustedSourceIdentityRepository {
 	 */
 	async createUserWithBinding(
 		ctx: OperationContext,
-		person: DeepPartial<Person>,
+		user: DeepPartial<User>,
 		binding: Pick<InsertTrustedSourceIdentityRow, 'sourceId' | 'subject' | 'provenance' | 'status'>,
 		projectRoles: { projectId: string; role: string }[] = [],
-	): Promise<Person> {
+	): Promise<User> {
 		return await this.store.runInTransaction(ctx, async (tx) => {
-			const { user: createdUser } = await this.people.createPersonWithProject(person, tx);
+			const { user: createdUser } = await this.users.createUserWithProject(user, tx);
 
 			await tx.insert(TrustedSourceIdentityEntity, {
 				...binding,

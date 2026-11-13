@@ -1,5 +1,5 @@
 import type { KafkaJS } from '@confluentinc/kafka-javascript';
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 import { formatAndValidatePem, type KafkaCredentials } from '../../utils';
 

@@ -66,12 +66,11 @@ describe('Memory builder — observation log memory', () => {
 
 		expect(resolved).toMatchObject({
 			observerThresholdTokens: 50_000,
+			reflectorThresholdTokens: 60_000,
 			renderTokenBudget: 67_500,
 			observationLogTailLimit: 20,
 			lockTtlMs: DEFAULT_OBSERVATION_LOG_LOCK_TTL_MS,
 		});
-		// The default window shares set the reflect threshold.
-		expect(resolved.reflectorThresholdTokens).toBeUndefined();
 		expect(resolved.midRunObservation).toBeUndefined();
 		expect(typeof resolved.observe).toBe('function');
 		expect(typeof resolved.reflect).toBe('function');
@@ -104,16 +103,6 @@ describe('Memory builder — observation log memory', () => {
 		});
 		expect(resolved.observe).toBe(observe);
 		expect(resolved.reflect).toBe(reflect);
-	});
-
-	it('keeps a reflector threshold set without an observer threshold', () => {
-		const resolved = resolveObservationalMemoryConfig(
-			{ reflectorThresholdTokens: 456 },
-			{ defaultModel: 'openai/gpt-4o-mini' },
-		);
-
-		expect(resolved.windowShares).toBeDefined();
-		expect(resolved.reflectorThresholdTokens).toBe(456);
 	});
 
 	it('preserves explicit observation-log render budget when resolving defaults', () => {
@@ -160,6 +149,7 @@ describe('Memory builder — observation log memory', () => {
 		});
 		expect(runtimeConfig.observationalMemory).toMatchObject({
 			observerThresholdTokens: 50_000,
+			reflectorThresholdTokens: 60_000,
 		});
 		expect(runtimeConfig.observationalMemory?.midRunObservation).toBeUndefined();
 		expect(typeof runtimeConfig.observationalMemory?.observe).toBe('function');
@@ -205,16 +195,6 @@ describe('Memory builder — observation log memory', () => {
 			/BuiltObservationLogStore/,
 		);
 	});
-
-	it.each(['getResumeState', 'saveResumeState', 'getCursor', 'getMessagesForObservationScope'])(
-		'rejects an observation-log backend without %s',
-		(method) => {
-			const backend = Object.assign(new InMemoryMemory(), { [method]: undefined });
-			expect(() => new Memory().storage(backend).observationalMemory().build()).toThrow(
-				/BuiltObservationResumeStore/,
-			);
-		},
-	);
 
 	describe('agent.snapshot.hasObservationalMemory', () => {
 		it('is false when no memory is configured', () => {

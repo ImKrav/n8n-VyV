@@ -95,10 +95,6 @@ type CredentialReferences = {
 export type CredentialGuardOptions = {
 	/** Allow content loaded at runtime only for users who can use every credential. */
 	allowUninspectableSource?: boolean;
-	/** What happens when a read-only node has edits. `restore` keeps the stored node `reject` fails the save. */
-	readOnlyNodeEdits?: 'restore' | 'reject';
-	/** Node fields the caller's payload never carries. The credential guard strips these when comparing with a saved node. */
-	unsentNodeFields?: readonly string[];
 };
 
 const EDITABLE_NODE_FIELDS = ['name', 'position', 'disabled'] as const;
@@ -190,10 +186,9 @@ export class EnterpriseWorkflowService {
 	): WorkflowWithSharingsMetaDataAndCredentials {
 		const workflowWithMetaData = this.ownershipService.addOwnedByAndSharedWith(workflow);
 
-		const { shared: _shared, ...enrichedWorkflow } = { ...workflow, ...workflowWithMetaData };
-
 		return {
-			...enrichedWorkflow,
+			...workflow,
+			...workflowWithMetaData,
 			usedCredentials: workflow.usedCredentials ?? [],
 		};
 	}
@@ -291,7 +286,6 @@ export class EnterpriseWorkflowService {
 		workflowId: string,
 		user: User,
 		restoredNodes: INode[] = [],
-		guardOptions: Pick<CredentialGuardOptions, 'readOnlyNodeEdits' | 'unsentNodeFields'> = {},
 	) {
 		const previousVersion = await this.workflowRepository.get({ id: workflowId });
 
@@ -304,10 +298,7 @@ export class EnterpriseWorkflowService {
 			{ workflowId },
 		);
 
-		const options = {
-			allowUninspectableSource: this.canUseEveryCredential(user),
-			...guardOptions,
-		};
+		const options = { allowUninspectableSource: this.canUseEveryCredential(user) };
 
 		// A node switched back to a credential the user cannot use is saved as the
 		// version that last stored it did, the same as a restore of that version.
@@ -418,10 +409,9 @@ export class EnterpriseWorkflowService {
 			return newWorkflowVersion;
 		}
 
-		// A node the user could not use before stays read only and is restored, or the
-		// save fails when the caller sets `readOnlyNodeEdits` to `reject`. A node the user could
-		// edit that now carries a credential they cannot use fails the save like a new
-		// node does; restoring it would drop the other edits silently.
+		// A node the user could not use before stays read only and is restored. A node
+		// the user could edit that now carries a credential they cannot use fails the
+		// save like a new node does; restoring it would drop the other edits silently.
 		const readOnlyNodeIds = new Set(
 			this.getNodesWithInaccessibleCreds(
 				previousWorkflowVersion,
@@ -473,28 +463,20 @@ export class EnterpriseWorkflowService {
 					nodeId: node.id,
 					nodeCredentials: node.credentials,
 				});
-
-				if (blockedBySource) {
-					throw new UninspectableSubworkflowSourceError(node);
-				}
-				throw this.inaccessibleCredentialsError(node);
+				if (blockedBySource) throw new UninspectableSubworkflowSourceError(node);
+				throw new NodeOperationError(
+					node,
+					`You don't have access to the credentials in the '${node.name}' node. Ask the owner to share them with you.`,
+				);
 			}
 
-			const mustMatchStoredNode = blockedBySource || options.readOnlyNodeEdits === 'reject';
-
-			// The caller cannot send these fields, so the stored value would always look like a change.
-			const unsentNodeFields = options.unsentNodeFields ?? [];
-			const definitionChanged = !isEqual(
-				this.getNodeDefinition(node, unsentNodeFields),
-				this.getNodeDefinition(previousNode, unsentNodeFields),
-			);
-
-			// Reject changes instead of silently discarding them when we restore the stored node.
-			if (mustMatchStoredNode && definitionChanged) {
-				if (blockedBySource) {
-					throw new UninspectableSubworkflowSourceError(node);
-				}
-				throw this.inaccessibleCredentialsError(node);
+			// The editor allows these source settings to be edited. Reject changes
+			// instead of silently discarding them when we restore the stored node.
+			if (
+				blockedBySource &&
+				!isEqual(this.getNodeDefinition(node), this.getNodeDefinition(previousNode))
+			) {
+				throw new UninspectableSubworkflowSourceError(node);
 			}
 
 			this.logger.debug('Replacing node with previous version when saving updated workflow', {
@@ -568,24 +550,11 @@ export class EnterpriseWorkflowService {
 		return this.getNodeCredentialRefs(node).hasUninspectableSource;
 	}
 
-	private inaccessibleCredentialsError(node: INode): NodeOperationError {
-		return new NodeOperationError(
-			node,
-			`You don't have access to the credentials in the '${node.name}' node. Ask the owner to share them with you.`,
-		);
-	}
-
 	/**
 	 * Compare node behavior without treating editor formatting or allowed edits as changes.
 	 */
-	private getNodeDefinition(
-		node: INode,
-		unsentNodeFields: readonly string[] = [],
-	): Record<string, unknown> {
-		const definition: Record<string, unknown> = omit(node, [
-			...FREELY_EDITABLE_NODE_FIELDS,
-			...unsentNodeFields,
-		]);
+	private getNodeDefinition(node: INode): Record<string, unknown> {
+		const definition: Record<string, unknown> = omit(node, FREELY_EDITABLE_NODE_FIELDS);
 		definition.parameters = this.getDisplayedParameters(node);
 
 		const credentials = node.credentials ?? {};

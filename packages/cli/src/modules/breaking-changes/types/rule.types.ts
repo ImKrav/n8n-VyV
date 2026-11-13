@@ -1,6 +1,5 @@
 import type {
 	BreakingChangeAffectedWorkflow,
-	BreakingChangeAssistantAction,
 	BreakingChangeRecommendation,
 	BreakingChangeRuleImpact,
 	BreakingChangeVersion,
@@ -30,8 +29,6 @@ export interface BreakingChangeRuleMetadata {
 	/** What happens if the user does not fix this breaking change. */
 	impact: BreakingChangeRuleImpact;
 	documentationUrl?: string;
-	/** What n8n Assistant can do with this workflow rule's findings. Defaults to `none`. */
-	assistant?: BreakingChangeAssistantAction;
 }
 
 export interface IBreakingChangeInstanceRule {

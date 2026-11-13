@@ -21,8 +21,7 @@ import { createOwner } from '../shared/db/users';
 
 describe('Agent conversations on project deletion', () => {
 	beforeAll(async () => {
-		// The knowledge module owns the file entity that the cleanup reads.
-		await testModules.loadModules(['knowledge', 'agents']);
+		await testModules.loadModules(['agents']);
 		await testDb.init();
 	});
 

@@ -1,5 +1,4 @@
 import { vi } from 'vitest';
-import { defineComponent, h, inject, type Ref } from 'vue';
 import { createPinia, setActivePinia } from 'pinia';
 import { waitFor } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
@@ -12,28 +11,15 @@ import type { IWorkflowDb } from '@/Interface';
 import type { IUser } from 'n8n-workflow';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import {
-	EditorEnabledFeaturesKey,
-	type EditorEnabledFeatures,
-} from '@/app/constants/injectionKeys';
-import {
 	createWorkflowDocumentId,
 	useWorkflowDocumentStore,
 } from '@/app/stores/workflowDocument.store';
 
-const { injected } = vi.hoisted(() => ({
-	injected: {
-		enabledFeatures: undefined as Ref<EditorEnabledFeatures> | undefined,
-	},
-}));
-
 vi.mock('@/app/views/NodeView.vue', () => ({
-	default: defineComponent({
+	default: {
 		name: 'NodeViewStub',
-		setup() {
-			injected.enabledFeatures = inject(EditorEnabledFeaturesKey);
-			return () => h('div', { 'data-test-id': 'node-view-stub' });
-		},
-	}),
+		template: '<div data-test-id="node-view-stub" />',
+	},
 }));
 
 const actionTypes: WorkflowHistoryActionTypes = ['restore', 'clone', 'open', 'download'];
@@ -53,7 +39,6 @@ describe('WorkflowHistoryContent', () => {
 		pinia = createPinia();
 		setActivePinia(pinia);
 		projectsStore = useProjectsStore();
-		injected.enabledFeatures = undefined;
 
 		// Mock currentProjectId for all tests
 		vi.spyOn(projectsStore, 'currentProjectId', 'get').mockReturnValue('test-project-id');
@@ -128,22 +113,5 @@ describe('WorkflowHistoryContent', () => {
 		expect(previewDocumentStore.allNodes.map((node) => node.name)).toEqual(
 			workflowVersion.nodes.map((node) => node.name),
 		);
-	});
-
-	it('should keep node issue indicators on the version preview', async () => {
-		const workflowVersion = workflowVersionDataFactory();
-		const workflow = { id: 'history-workflow' } as unknown as IWorkflowDb;
-		const { getByTestId } = renderComponent({
-			pinia,
-			props: {
-				workflow,
-				workflowVersion,
-				actions,
-			},
-		});
-
-		await waitFor(() => expect(getByTestId('node-view-stub')).toBeInTheDocument());
-
-		expect(injected.enabledFeatures?.value.showNodeIssues).toBe(true);
 	});
 });

@@ -140,6 +140,7 @@ export interface FrontendSettings {
 		enabled: boolean;
 		apiHost: string;
 		apiKey: string;
+		autocapture: boolean;
 		disableSessionRecording: boolean;
 		debug: boolean;
 		proxy: string;

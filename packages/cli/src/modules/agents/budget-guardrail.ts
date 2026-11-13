@@ -2,7 +2,6 @@ import {
 	createBudgetGuardrail,
 	type ExecutionOptions,
 	type GuardrailsOptions,
-	type ModelGuardrail,
 	type RunOptions,
 	type SpendEntry,
 	type SpendLedger,
@@ -17,7 +16,6 @@ import { Logger } from '@n8n/backend-common';
 import { Container, Service } from '@n8n/di';
 
 import { AgentBudgetAlertService } from './agent-budget-alert.service';
-import { classifyGatewayError } from './utils/gateway-error-classifier';
 import {
 	AgentBudgetSpendRepository,
 	previousTotalUsd,
@@ -123,13 +121,6 @@ export interface BudgetAttachInput {
 	budget?: BudgetGuardrailConfig;
 	sessionId?: string;
 	agentId?: string;
-	/**
-	 * Set when the run's model credential is the Gateway credits marker: the
-	 * gateway 402 classifier attaches, so a depleted wallet ends the run with
-	 * `budget.credits`. Own-key runs never attach it — a provider's own 402
-	 * must keep its provider error, not the n8n Gateway wallet stop.
-	 */
-	modelCredentialGatewayManaged?: boolean;
 	/**
 	 * Saved agent to email when the month total crosses the alert.
 	 * A workflow run sets this to the agent the node targets. Inline workflow
@@ -280,11 +271,7 @@ function attachGuardrails<T extends RunOptions & ExecutionOptions>(
 }
 
 /**
- * Appends the budget hook when a bucket is on. For a Gateway credits model it
- * also attaches the 402 classifier: a depleted wallet ends the run with
- * `budget.credits` from the gateway's own rejection, so no wallet read runs
- * before a model call. Own-key runs get no classifier — a provider's own 402
- * keeps its provider error.
+ * Appends the budget hook when a bucket is on.
  */
 export function withBudgetGuardrail<T extends RunOptions & ExecutionOptions>(
 	options: T,
@@ -292,25 +279,14 @@ export function withBudgetGuardrail<T extends RunOptions & ExecutionOptions>(
 ): T {
 	const limits = resolveBudgetLimits(input);
 	const sink = toGuardrailNoticeSink(input);
+	if (!limits) return sink ? attachGuardrails(options, [], sink) : options;
 
-	const hooks: ModelGuardrail[] = [];
-	if (limits) {
-		const ledger = input.ledger ?? Container.get(AgentSpendLedger);
-		const onNotice = monthlyAlertNotice(input, limits.alertThresholdPercent);
-		hooks.push(
-			createBudgetGuardrail({
-				ledger,
-				...limits,
-				...(onNotice ? { onNotice } : {}),
-			}),
-		);
-	}
-	const withHooks =
-		hooks.length === 0
-			? sink
-				? attachGuardrails(options, [], sink)
-				: options
-			: attachGuardrails(options, hooks, sink);
-	if (!input.modelCredentialGatewayManaged || withHooks.classifyModelError) return withHooks;
-	return { ...withHooks, classifyModelError: classifyGatewayError };
+	const ledger = input.ledger ?? Container.get(AgentSpendLedger);
+	const onNotice = monthlyAlertNotice(input, limits.alertThresholdPercent);
+	const hook = createBudgetGuardrail({
+		ledger,
+		...limits,
+		...(onNotice ? { onNotice } : {}),
+	});
+	return attachGuardrails(options, [hook], sink);
 }

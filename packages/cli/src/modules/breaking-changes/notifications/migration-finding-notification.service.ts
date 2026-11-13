@@ -1,7 +1,7 @@
 import type { MigrationNotifyResult, MigrationNotifySkipReason } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import { UrlService } from '@n8n/backend-services';
-import { accountSummary, isPerson, UserRepository, type Person, type User } from '@n8n/db';
+import { UserRepository, type User } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { BadRequestError, NotFoundError } from '@n8n/errors';
 
@@ -18,10 +18,9 @@ import { isWorkflowLevelRule } from '../types';
 /** The minimum wait before a notified finding can be emailed again. */
 export const REMINDER_COOLDOWN_MS = 60_000;
 
-/** The user as the email names them. A service account has its name and no email. */
-function displayName(user: User): string {
-	const { firstName, lastName, email } = accountSummary(user);
-	return [firstName, lastName].filter(Boolean).join(' ') || email || 'An admin';
+/** The user as the email names them. */
+function displayName(user: Pick<User, 'firstName' | 'lastName' | 'email'>): string {
+	return [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email || 'An admin';
 }
 
 /**
@@ -159,7 +158,7 @@ export class MigrationFindingNotificationService {
 	 * their findings. A workflow whose owner is gone or has no email is left out.
 	 */
 	private async groupByOwner(findings: TriageableMigrationFinding[]) {
-		type Owner = Pick<Person, 'id' | 'firstName' | 'lastName' | 'email'>;
+		type Owner = Pick<User, 'id' | 'firstName' | 'lastName'> & { email: string };
 		type Group = { owner: Owner; findings: TriageableMigrationFinding[] };
 
 		const ownerRows = await this.ownerRepository.findByWorkflowIds(
@@ -176,8 +175,7 @@ export class MigrationFindingNotificationService {
 		for (const finding of findings) {
 			const userId = ownerIdByWorkflow.get(finding.workflowId);
 			const user = userId ? usersById.get(userId) : undefined;
-			// Only a person has an email.
-			if (!user || !isPerson(user) || !user.email) continue;
+			if (!user?.email) continue;
 			const group = groupsByOwner.get(user.id) ?? {
 				owner: {
 					id: user.id,

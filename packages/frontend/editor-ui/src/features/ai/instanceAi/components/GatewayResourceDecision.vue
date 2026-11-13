@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { N8nButton, N8nCard, N8nText } from '@n8n/design-system';
+import { N8nButton, N8nText } from '@n8n/design-system';
 import type { ActionDropdownItem } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
 import { computed } from 'vue';
@@ -96,7 +96,7 @@ function confirm(decision: InstanceGatewayResourceDecision) {
 </script>
 
 <template>
-	<N8nCard :class="$style.root">
+	<div :class="$style.root">
 		<div :class="$style.body">
 			<N8nText tag="div" size="medium" bold>
 				{{
@@ -132,13 +132,11 @@ function confirm(decision: InstanceGatewayResourceDecision) {
 				/>
 			</template>
 		</ConfirmationFooter>
-	</N8nCard>
+	</div>
 </template>
 
 <style lang="scss" module>
 .root {
-	padding: 0;
-	border: 0;
 	border-radius: var(--radius--lg);
 	background-color: var(--color--background--light-3);
 	box-shadow: var(--shadow--sm), var(--shadow--outline);

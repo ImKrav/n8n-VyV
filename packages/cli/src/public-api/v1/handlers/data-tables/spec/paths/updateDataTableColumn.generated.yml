@@ -2,10 +2,7 @@ operationId: updateDataTableColumn
 tags:
   - DataTable
 summary: Update a column
-description: |-
-  Rename and/or reorder a column in a data table.
-
-  Requires the `dataTableColumn:update` API key scope.
+description: Rename and/or reorder a column in a data table.
 x-required-scope: dataTableColumn:update
 parameters:
   - schema:

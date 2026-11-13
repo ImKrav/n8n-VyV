@@ -2,10 +2,7 @@ operationId: getExecutionTags
 tags:
   - Executions
 summary: Get execution tags
-description: |-
-  Get annotation tags for an execution.
-
-  Requires the `executionTags:list` API key scope.
+description: Get annotation tags for an execution.
 x-required-scope: executionTags:list
 parameters:
   - schema:

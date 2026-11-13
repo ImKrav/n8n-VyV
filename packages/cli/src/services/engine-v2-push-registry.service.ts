@@ -19,13 +19,6 @@ const MAX_SESSIONS = 1000;
 export class EngineV2PushRegistry {
 	private readonly sessions = new Map<string, EngineV2PushSession>();
 
-	private readonly sessionEndListeners = new Set<(executionId: string) => void>();
-
-	/** Calls the listener when a session is released or evicted. */
-	onSessionEnd(listener: (executionId: string) => void): void {
-		this.sessionEndListeners.add(listener);
-	}
-
 	register(
 		executionId: string,
 		init: Pick<EngineV2PushSession, 'pushRef' | 'workflowId' | 'trigger'>,
@@ -45,7 +38,7 @@ export class EngineV2PushRegistry {
 	}
 
 	release(executionId: string): void {
-		this.end(executionId);
+		this.sessions.delete(executionId);
 	}
 
 	/**
@@ -56,7 +49,7 @@ export class EngineV2PushRegistry {
 	private evict(): void {
 		const cutoff = Date.now() - SESSION_TTL_MS;
 		for (const [executionId, session] of this.sessions) {
-			if (session.lastSeenAt < cutoff) this.end(executionId);
+			if (session.lastSeenAt < cutoff) this.sessions.delete(executionId);
 		}
 
 		// Leave room for the caller's session, so the cap holds after the insert.
@@ -65,13 +58,7 @@ export class EngineV2PushRegistry {
 
 		const oldestFirst = [...this.sessions].sort((a, b) => a[1].lastSeenAt - b[1].lastSeenAt);
 		for (const [executionId] of oldestFirst.slice(0, excess)) {
-			this.end(executionId);
+			this.sessions.delete(executionId);
 		}
-	}
-
-	private end(executionId: string): void {
-		if (!this.sessions.delete(executionId)) return;
-
-		for (const listener of this.sessionEndListeners) listener(executionId);
 	}
 }

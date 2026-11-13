@@ -1,4 +1,4 @@
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 
 export class TaskCancelledError extends OperationalError {
 	constructor(reason: string) {

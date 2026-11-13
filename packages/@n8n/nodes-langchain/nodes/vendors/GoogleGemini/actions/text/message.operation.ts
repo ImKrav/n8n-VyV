@@ -530,7 +530,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		...(toolConfig && { toolConfig }),
 	};
 
-	const captureUsage = (response: GenerateContentResponse) => {
+	let response = (await apiRequest.call(this, 'POST', `/v1beta/${model}:generateContent`, {
+		body,
+	})) as GenerateContentResponse;
+
+	const captureUsage = () => {
 		const usageMetadata = (response as unknown as Record<string, unknown>).usageMetadata as
 			| { promptTokenCount: number; candidatesTokenCount: number }
 			| undefined;
@@ -543,26 +547,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		}
 	};
 
-	const requestedModel = model.replace(/^models\//, '');
-	const generateContent = async () => {
-		const response = (await apiRequest.call(this, 'POST', `/v1beta/${model}:generateContent`, {
-			body,
-		})) as GenerateContentResponse;
-		captureUsage(response);
-		if (
-			requestedModel.startsWith('gemma-') &&
-			response.modelVersion &&
-			response.modelVersion.replace(/^models\//, '') !== requestedModel
-		) {
-			throw new NodeOperationError(this.getNode(), 'Google returned a different model', {
-				itemIndex: i,
-				description: `Requested "${model}", but Google returned "${response.modelVersion}". Check that the selected model is available for your API key.`,
-			});
-		}
-		return response;
-	};
-
-	let response = await generateContent();
+	captureUsage();
 
 	const maxToolsIterations = this.getNodeParameter('options.maxToolsIterations', i, 15) as number;
 	const abortSignal = this.getExecutionCancelSignal();
@@ -601,11 +586,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 						},
 					},
 				],
-				role: 'user',
+				role: 'tool',
 			});
 		}
 
-		response = await generateContent();
+		response = (await apiRequest.call(this, 'POST', `/v1beta/${model}:generateContent`, {
+			body,
+		})) as GenerateContentResponse;
+		captureUsage();
 		toolCalls = getToolCalls(response);
 		currentIteration++;
 	}

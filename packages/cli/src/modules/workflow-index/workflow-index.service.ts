@@ -63,11 +63,8 @@ export class WorkflowIndexService {
 				);
 				return;
 			}
-			await this.updateIndexForPublished(
-				workflow,
-				workflow.activeVersionId,
-				workflow.activeVersion?.nodes ?? workflow.nodes,
-			);
+			// At activation time, the draft nodes are the published nodes.
+			await this.updateIndexForPublished(workflow, workflow.activeVersionId, workflow.nodes);
 		});
 		this.eventService.on('workflow-deactivated', async ({ workflow, workflowId }) => {
 			if (workflow.activeVersionId !== null) return;

@@ -2,7 +2,7 @@
 import { useCssModule } from 'vue';
 
 import { useI18n } from '../../composables/useI18n';
-import N8nIcon from '../N8nIcon';
+import AssistantIcon from '../AskAssistantIcon/AssistantIcon.vue';
 import N8nCanvasPill from '../CanvasPill';
 import N8nButton from '../N8nButton';
 
@@ -26,7 +26,7 @@ const $style = useCssModule();
 	<N8nCanvasPill>
 		<template #icon>
 			<div :class="$style.iconWrapper">
-				<N8nIcon icon="n8n-assistant" :size="12" color="--color--neutral-white" />
+				<AssistantIcon theme="blank" />
 			</div>
 		</template>
 		<div :class="$style.wrapper">

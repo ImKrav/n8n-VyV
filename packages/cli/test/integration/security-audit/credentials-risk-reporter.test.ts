@@ -3,12 +3,11 @@ import type { SecurityConfig } from '@n8n/config';
 import {
 	generateNanoId,
 	CredentialsRepository,
-	ExecutionData,
+	ExecutionDataRepository,
 	ExecutionRepository,
 	WorkflowRepository,
 } from '@n8n/db';
 import { Container } from '@n8n/di';
-import { DataSource } from '@n8n/typeorm';
 import { v4 as uuid } from 'uuid';
 import { mock } from 'vitest-mock-extended';
 
@@ -178,7 +177,7 @@ test('should report credential in not recently executed workflow', async () => {
 		waitTill: null,
 		status: 'success',
 	});
-	await Container.get(DataSource).getRepository(ExecutionData).save({
+	await Container.get(ExecutionDataRepository).save({
 		execution: savedExecution,
 		data: '[]',
 		workflowData: workflow,
@@ -247,7 +246,7 @@ test('should not report credentials in recently executed workflow', async () => 
 		status: 'success',
 	});
 
-	await Container.get(DataSource).getRepository(ExecutionData).save({
+	await Container.get(ExecutionDataRepository).save({
 		execution: savedExecution,
 		data: '[]',
 		workflowData: workflow,

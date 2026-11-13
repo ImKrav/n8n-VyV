@@ -396,6 +396,7 @@ export async function addCustomFieldsPreSendAction(
 		// Define the structure of fieldId
 		interface FieldIdType {
 			value: unknown;
+			cachedResultName?: string;
 		}
 
 		// Ensure rawCustomFields.values is an array of objects with fieldId and fieldValue
@@ -409,7 +410,8 @@ export async function addCustomFieldsPreSendAction(
 				if (typeof fieldId === 'object' && fieldId !== null && 'value' in fieldId) {
 					return {
 						id: fieldId.value,
-						fieldValue: typedField.fieldValue,
+						key: fieldId.cachedResultName ?? 'default_key',
+						field_value: typedField.fieldValue,
 					};
 				} else {
 					throw new NodeOperationError(this.getNode(), 'Error processing custom fields.');

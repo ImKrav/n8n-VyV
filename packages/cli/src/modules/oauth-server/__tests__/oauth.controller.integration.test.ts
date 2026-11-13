@@ -1,9 +1,8 @@
 import { testDb } from '@n8n/backend-test-utils';
 import { GlobalConfig } from '@n8n/config';
-import type { Person } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { ControllerRegistryMetadata, type Controller } from '@n8n/decorators';
 import { Container } from '@n8n/di';
-import { DataSource } from '@n8n/typeorm';
 import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 
@@ -16,7 +15,7 @@ import { ProtectedResourceRegistry } from '@n8n/backend-services/auth';
 import { createOwner } from '@test-integration/db/users';
 import { setupTestServer } from '@test-integration/utils';
 
-import { OAuthClient } from '../database/entities/oauth-client.entity';
+import { OAuthClientRepository } from '../database/repositories/oauth-client.repository';
 import { OAuthServerConfig } from '../oauth-server.config';
 import type { OAuthController as OAuthControllerClass } from '../oauth.controller';
 import { pendingFlowFrom } from './oauth-flow-test-utils';
@@ -29,7 +28,7 @@ const testServer = setupTestServer({
 	endpointGroups: ['mcp'],
 });
 
-let owner: Person;
+let owner: User;
 let mcpSettingsService: McpSettingsService;
 /** Every resource's scopes: the authorization server advertises the union. */
 let supportedScopes: string[];
@@ -524,8 +523,7 @@ describe.each(['/mcp-oauth', '/oauth'])('%s/authorize request validation', (base
 		// Inserted directly: registering through the endpoint for every test
 		// would exhaust its per-IP rate limit.
 		clientId = randomUUID();
-		const clients = Container.get(DataSource).getRepository(OAuthClient);
-		await clients.insert({
+		await Container.get(OAuthClientRepository).insert({
 			id: clientId,
 			name: 'Validation Client',
 			redirectUris: [redirectUri],
@@ -986,8 +984,7 @@ describe('Full authorization-code flow (PKCE)', () => {
 		// Written straight to the table: the DCR endpoint is IP rate limited, and
 		// this test is about pending flows rather than registration.
 		const clientId = `pending-flow-cap-${randomUUID()}`;
-		const clients = Container.get(DataSource).getRepository(OAuthClient);
-		await clients.save({
+		await Container.get(OAuthClientRepository).save({
 			id: clientId,
 			name: 'Pending Flow Cap Client',
 			redirectUris: ['https://example.com/callback'],

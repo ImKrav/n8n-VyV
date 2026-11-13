@@ -5,8 +5,7 @@ import type {
 	INodeType,
 	INodeTypes,
 } from 'n8n-workflow';
-import { NodeHelpers, Workflow } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { NodeHelpers, UserError, Workflow } from 'n8n-workflow';
 
 import { HeaderConstants } from '../../nodes/Microsoft/Storage/GenericFunctions';
 import { AzureStorageSharedKeyApi } from '../AzureStorageSharedKeyApi.credentials';

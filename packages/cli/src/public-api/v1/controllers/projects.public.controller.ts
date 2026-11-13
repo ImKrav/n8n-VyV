@@ -15,8 +15,7 @@ import {
 	userIdParamSchema,
 } from '@n8n/api-types';
 import { LICENSE_FEATURES } from '@n8n/constants';
-import type { AuthenticatedRequest, Project, ProjectRelation, User } from '@n8n/db';
-import { accountSummary } from '@n8n/db';
+import type { AuthenticatedRequest, Project, ProjectRelation } from '@n8n/db';
 import {
 	ApiDescription,
 	ApiErrorResponse,
@@ -60,14 +59,11 @@ const toProjectPublicDto = (project: Project): ProjectPublicDto => ({
 	updatedAt: project.updatedAt.toISOString(),
 });
 
-function memberFields(user: User) {
-	// The public schema needs a string email.
-	const { id, email, firstName, lastName } = accountSummary(user);
-	return { id, email: email ?? '', firstName, lastName };
-}
-
 const toProjectMemberPublicDto = (relation: ProjectRelation): ProjectMemberPublicDto => ({
-	...memberFields(relation.user),
+	id: relation.user.id,
+	email: relation.user.email,
+	firstName: relation.user.firstName,
+	lastName: relation.user.lastName,
 	createdAt: relation.user.createdAt.toISOString(),
 	updatedAt: relation.user.updatedAt.toISOString(),
 	role: relation.role?.slug ?? null,
@@ -171,7 +167,9 @@ export class ProjectsPublicController {
 	@Licensed(LICENSE_FEATURES.PROJECT_ROLE_ADMIN)
 	@ApiKeyScope('user:list')
 	@ApiSummary('List project members')
-	@ApiDescription('Returns a list of all members of a project including their role.')
+	@ApiDescription(
+		'Returns a list of all members of a project including their role. Requires user:list scope.',
+	)
 	@ApiTags(tags)
 	@ApiResponse(200, ProjectMemberListPublicDto)
 	@ApiErrorResponse(404)

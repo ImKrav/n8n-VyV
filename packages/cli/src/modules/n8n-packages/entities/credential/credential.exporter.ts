@@ -1,4 +1,3 @@
-import type { SerializedCredentialData } from '@n8n/api-types';
 import type { CredentialsEntity, User } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { Credentials } from 'n8n-core';
@@ -7,13 +6,6 @@ import isEqual from 'lodash/isEqual';
 
 import { CredentialsFinderService } from '@n8n/backend-services';
 
-import { CredentialTypes } from '@/credential-types';
-
-import {
-	findDisplayControllers,
-	isConfirmedControllerValue,
-	resolveCredentialProperties,
-} from './credential-display-controllers';
 import { selectCredentialDataForExport } from './credential-export-policy';
 import { CredentialSerializer } from './credential.serializer';
 import type { CredentialRequirement } from './credential.types';
@@ -48,7 +40,6 @@ export class CredentialExporter {
 	constructor(
 		private readonly credentialsFinder: CredentialsFinderService,
 		private readonly credentialSerializer: CredentialSerializer,
-		private readonly credentialTypes: CredentialTypes,
 	) {}
 
 	async export(request: CredentialExportRequest): Promise<CredentialExportResult> {
@@ -73,7 +64,7 @@ export class CredentialExporter {
 
 			if (credential) {
 				let decryptedData: ICredentialDataDecryptedObject | undefined;
-				const expressionData = await selectCredentialDataForExport(
+				const data = await selectCredentialDataForExport(
 					request.credentialExportPolicy,
 					async () => {
 						decryptedData = await new Credentials(
@@ -84,7 +75,6 @@ export class CredentialExporter {
 						return decryptedData;
 					},
 				);
-				const data = this.withDisplayControllers(credential.type, expressionData, decryptedData);
 				entries.push(
 					await writeManifestEntry(
 						request.writer,
@@ -112,30 +102,6 @@ export class CredentialExporter {
 		}
 
 		return { entries, requirements };
-	}
-
-	/**
-	 * An imported expression in a hidden field is lost when the destination shows another field set.
-	 * Add the plain values that decide which fields show, so the destination shows the same ones.
-	 * A secret never qualifies, and an unknown credential type adds nothing.
-	 */
-	private withDisplayControllers(
-		type: string,
-		expressionData: SerializedCredentialData | undefined,
-		decryptedData: ICredentialDataDecryptedObject | undefined,
-	): SerializedCredentialData | undefined {
-		if (expressionData === undefined || decryptedData === undefined) return expressionData;
-
-		const properties = resolveCredentialProperties(this.credentialTypes, type);
-		if (properties === undefined) return expressionData;
-
-		const exported: SerializedCredentialData = { ...expressionData };
-		for (const name of findDisplayControllers(properties, Object.keys(expressionData))) {
-			const value = decryptedData[name];
-			if (name in exported || !isConfirmedControllerValue(properties, name, value)) continue;
-			exported[name] = value;
-		}
-		return exported;
 	}
 
 	/** A credential has no owner column: its owner is the project on the `credential:owner` sharing. */

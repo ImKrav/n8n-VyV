@@ -13,8 +13,6 @@ import {
 	getConnectionHintNoticeField,
 } from '@n8n/ai-utilities';
 
-import { getRequiredApiKey } from '@utils/helpers';
-
 export class LmCohere implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Cohere Model',
@@ -100,7 +98,7 @@ export class LmCohere implements INodeType {
 		const options = this.getNodeParameter('options', itemIndex, {}) as object;
 
 		const model = new Cohere({
-			apiKey: getRequiredApiKey(this.getNode(), credentials.apiKey),
+			apiKey: credentials.apiKey as string,
 			...options,
 			callbacks: [new N8nLlmTracing(this)],
 			onFailedAttempt: makeN8nLlmFailedAttemptHandler(this),

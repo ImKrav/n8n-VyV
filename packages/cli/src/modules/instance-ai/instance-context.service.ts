@@ -1090,14 +1090,11 @@ function liveRecordHint(
 		InstanceContextScope['surface'],
 		Record<ActivityResourceType, string | undefined>
 	> = {
-		// The chat agent reaches these tools through the tool catalog.
 		conversation: {
-			workflow: row.resourceId
-				? `call_tool({ tool: "get_workflow", arguments: { workflowId: "${row.resourceId}" } })`
-				: undefined,
+			workflow: row.resourceId ? `get_workflow(workflowId="${row.resourceId}")` : undefined,
 			credential: row.resourceId
-				? `call_tool({ tool: "list_credentials", arguments: { ids: ["${row.resourceId}"] } })`
-				: 'call_tool({ tool: "list_credentials", arguments: {} })',
+				? `list_credentials(ids=["${row.resourceId}"])`
+				: 'list_credentials()',
 		},
 		mcp: {
 			workflow: row.resourceId ? `get_workflow_details(workflowId="${row.resourceId}")` : undefined,

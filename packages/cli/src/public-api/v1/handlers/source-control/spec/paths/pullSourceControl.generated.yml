@@ -2,10 +2,7 @@ operationId: pullSourceControl
 tags:
   - SourceControl
 summary: Pull changes from the remote repository
-description: |-
-  Fetches changes from the connected Git branch into the instance.
-
-  Requires the `sourceControl:pull` API key scope.
+description: Fetches changes from the connected Git branch into the instance.
 x-required-scope: sourceControl:pull
 parameters:
   - $ref: ../../../../shared/spec/parameters/idempotencyKey.yml

@@ -1,9 +1,7 @@
 import { ChatOpenAI, type ChatOpenAIFields, type ClientOptions } from '@langchain/openai';
-import { isOpenAiCustomEndpoint } from '@n8n/ai-utilities/model-discovery';
 import pick from 'lodash/pick';
 import {
 	NodeConnectionTypes,
-	type DisplayCondition,
 	type INodeProperties,
 	type IDataObject,
 	type INodeType,
@@ -13,7 +11,7 @@ import {
 } from 'n8n-workflow';
 
 import { wrapChatModelMessageInput } from '@utils/chatModelMessageWrapper';
-import { getCustomCredentialHeader, mergeCustomHeaders, getRequiredApiKey } from '@utils/helpers';
+import { getCustomCredentialHeader, mergeCustomHeaders } from '@utils/helpers';
 import { MODEL_SELECTION_HINT } from '@utils/model-builder-hints';
 
 import { parseExtraBody } from '../shared/extra-body';
@@ -27,7 +25,6 @@ import {
 	getConnectionHintNoticeField,
 } from '@n8n/ai-utilities';
 import { formatBuiltInTools, prepareAdditionalResponsesParams } from './common';
-import { registerCustomEndpointChatModel } from './custom-endpoint-chat-openai';
 import { searchModels } from './methods/loadModels';
 import type { ModelOptions } from './types';
 import { Container } from '@n8n/di';
@@ -39,38 +36,6 @@ const INCLUDE_JSON_WARNING: INodeProperties = {
 	name: 'notice',
 	type: 'notice',
 	default: '',
-};
-
-// The official API accepts reasoning_effort only on o1 (and its dated versions), o3-mini and later, and gpt-5 models.
-const OPENAI_REASONING_MODEL: DisplayCondition = {
-	_cnd: { regex: '(^o1([-\\d]+)?$)|(^o[3-9].*)|(^gpt-5.*)' },
-};
-
-const reasoningEffort: INodeProperties = {
-	displayName: 'Reasoning Effort',
-	name: 'reasoningEffort',
-	default: 'medium',
-	description:
-		'Controls the amount of reasoning tokens to use. A value of "low" will favor speed and economical token usage, "high" will favor more complete reasoning at the cost of more tokens generated and slower responses.',
-	type: 'options',
-	options: [
-		{
-			name: 'Low',
-			value: 'low',
-			description: 'Favors speed and economical token usage',
-		},
-		{
-			name: 'Medium',
-			value: 'medium',
-			description: 'Balance between speed and reasoning accuracy',
-		},
-		{
-			name: 'High',
-			value: 'high',
-			description:
-				'Favors more complete reasoning at the cost of more tokens generated and slower responses',
-		},
-	],
 };
 
 const OPENAI_MODEL_BUILDER_HINT = {
@@ -583,23 +548,35 @@ export class LmChatOpenAi implements INodeType {
 						type: 'number',
 					},
 					{
-						...reasoningEffort,
-						displayOptions: { show: { '/model': [OPENAI_REASONING_MODEL] } },
-					},
-					{
-						displayName: 'Model Supports Reasoning',
-						name: 'modelSupportsReasoning',
-						type: 'boolean',
-						default: false,
+						displayName: 'Reasoning Effort',
+						name: 'reasoningEffort',
+						default: 'medium',
 						description:
-							'Whether the model accepts a reasoning effort. Turn on for a reasoning model on an OpenAI-compatible endpoint that n8n does not recognize by name.',
-						displayOptions: { hide: { '/model': [OPENAI_REASONING_MODEL] } },
-					},
-					{
-						...reasoningEffort,
+							'Controls the amount of reasoning tokens to use. A value of "low" will favor speed and economical token usage, "high" will favor more complete reasoning at the cost of more tokens generated and slower responses.',
+						type: 'options',
+						options: [
+							{
+								name: 'Low',
+								value: 'low',
+								description: 'Favors speed and economical token usage',
+							},
+							{
+								name: 'Medium',
+								value: 'medium',
+								description: 'Balance between speed and reasoning accuracy',
+							},
+							{
+								name: 'High',
+								value: 'high',
+								description:
+									'Favors more complete reasoning at the cost of more tokens generated and slower responses',
+							},
+						],
 						displayOptions: {
-							show: { modelSupportsReasoning: [true] },
-							hide: { '/model': [OPENAI_REASONING_MODEL] },
+							show: {
+								// reasoning_effort is only available on o1, o1-versioned, or on o3-mini and beyond, and gpt-5 models. Not on o1-mini or other GPT-models.
+								'/model': [{ _cnd: { regex: '(^o1([-\\d]+)?$)|(^o[3-9].*)|(^gpt-5.*)' } }],
+							},
 						},
 					},
 					{
@@ -731,7 +708,7 @@ export class LmChatOpenAi implements INodeType {
 						name: 'promptConfig',
 						type: 'fixedCollection',
 						description:
-							'Configure the reusable prompt template configured via OpenAI Dashboard. <a href="https://developers.openai.com/api/docs/guides/prompting/migrate-from-prompt-object">Learn more</a>.',
+							'Configure the reusable prompt template configured via OpenAI Dashboard. <a href="https://platform.openai.com/docs/guides/prompt-engineering#reusable-prompts">Learn more</a>.',
 						default: { promptOptions: [{ promptId: '' }] },
 						options: [
 							{
@@ -844,7 +821,7 @@ export class LmChatOpenAi implements INodeType {
 		]);
 
 		const fields: ChatOpenAIFields = {
-			apiKey: getRequiredApiKey(this.getNode(), credentials.apiKey),
+			apiKey: credentials.apiKey as string,
 			model: modelName,
 			...includedOptions,
 			timeout,
@@ -866,9 +843,6 @@ export class LmChatOpenAi implements INodeType {
 		}
 
 		const model = new ChatOpenAI(fields);
-		if (isOpenAiCustomEndpoint(configuration.baseURL ?? undefined)) {
-			registerCustomEndpointChatModel(model, fields);
-		}
 
 		if (responsesApiEnabled) {
 			const tools = formatBuiltInTools(

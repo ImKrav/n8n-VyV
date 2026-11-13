@@ -36,8 +36,7 @@ export class AgentExporter {
 				extra: { agentId: agent.id },
 			});
 		}
-		// An archived agent has no published version. It always exports its draft.
-		if (agent.activeVersionId === null && !agent.isArchived) {
+		if (agent.activeVersionId === null) {
 			if (policy === ExportVersionPolicy.IgnoreUnpublished) return undefined;
 			if (policy === ExportVersionPolicy.PublishedStrict) {
 				throw new PackageExportBlockedError(

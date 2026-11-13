@@ -56,11 +56,7 @@ export class SubAgentCleanupService {
 			markAgentDraftDirty(parent);
 			const candidate = parent;
 			const saved = await this.transactionRunner.run({}, async (ctx) => {
-				// An archived parent must also lose the reference to the deleted sub-agent.
-				const won = await this.agentRepository.saveDraftFenced(candidate, ctx, undefined, {
-					allowArchivedUpdate: true,
-				});
-				if (!won) return false;
+				if (!(await this.agentRepository.saveDraftFenced(candidate, ctx))) return false;
 				await this.definitionService.captureVersion(candidate, 'System', ctx);
 				return true;
 			});

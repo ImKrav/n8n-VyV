@@ -9,11 +9,7 @@ import type {
 	INodeParameters,
 	NodeParameterValueType,
 } from 'n8n-workflow';
-import {
-	isMcpAiGatewayAuthentication,
-	NodeHelpers,
-	resolveSupportedCredentialActivation,
-} from 'n8n-workflow';
+import { isMcpAiGatewayAuthentication, resolveSupportedCredentialActivation } from 'n8n-workflow';
 import {
 	computed,
 	inject,
@@ -74,18 +70,11 @@ import { getCredentialOwnerShortName } from '../composables/useUnusableWorkflowC
 import {
 	AI_GATEWAY_MANAGED_TAG,
 	SYSTEM_RESOLVER_ID,
-	type CredentialTypeAvailability,
 	type InstanceAiCredentialSetupHint,
 } from '@n8n/api-types';
 import CredentialIcon from './CredentialIcon.vue';
 import CredentialPrivateConnectionRow from './CredentialPrivateConnectionRow.vue';
-import CredentialTypeRestrictedMarker from './CredentialTypeRestrictedMarker.vue';
-import {
-	ContactAdminModal,
-	getCredentialTypeRestriction,
-} from '@n8n/frontend-module-type-availability-policies';
 import { useAiGateway } from '@/app/composables/useAiGateway';
-import { useContactAdminDialog } from '../composables/useContactAdminDialog';
 import { useAiGatewayTopUp } from '@/app/composables/useAiGatewayTopUp';
 
 import {
@@ -125,8 +114,6 @@ type Props = {
 	projectId?: string;
 	/** Limit the picker to credentials that agents support. */
 	forAgent?: boolean;
-	/** n8n Assistant surfaces never offer another user's personal credential, so the fetch omits them. */
-	forAssistant?: boolean;
 	/** Pre-fill the credential name when creating a new credential. */
 	suggestedCredentialName?: string;
 	/** Hide the "Ask n8n AI" assistant button inside the credential editor.
@@ -255,50 +242,6 @@ const canCreateCredentials = computed(
 			projectsStore.currentProject?.scopes ?? projectsStore.personalProject?.scopes,
 		).credential.create,
 );
-
-const typeRestrictions = computed(() => {
-	const restrictions: Record<string, CredentialTypeAvailability> = {};
-	for (const { type } of credentialTypesNodeDescriptionDisplayed.value) {
-		const restriction = getCredentialTypeRestriction(type.name);
-		if (restriction) restrictions[type.name] = restriction;
-	}
-	return restrictions;
-});
-
-function canCreateCredentialType(credentialType: string): boolean {
-	return !!canCreateCredentials.value && !typeRestrictions.value[credentialType];
-}
-
-const {
-	isOpen: isContactAdminOpen,
-	state: contactAdmin,
-	request: requestContactAdmin,
-} = useContactAdminDialog(() => {
-	for (const select of selectRefs.value) select?.blur();
-});
-// The select mounts every option while closed, so the row popovers mount on the first open only.
-// They stay mounted: the select closes on the release in a popover, before its click arrives.
-const openedCredentialSelectTypes = ref(new Set<string>());
-
-/** By slot, the restriction of the selected credential's type, which can differ from the slot's in a mixed list. */
-const selectedTypeRestrictions = computed(() => {
-	const restrictions: Record<
-		string,
-		{ displayName: string; restriction: CredentialTypeAvailability }
-	> = {};
-	for (const [slotType, credential] of Object.entries(selected.value)) {
-		if (!credential?.id) continue;
-
-		const selectedType = credentialsStore.getCredentialById(credential.id)?.type ?? slotType;
-		const restriction = getCredentialTypeRestriction(selectedType);
-		if (!restriction) continue;
-
-		const displayName =
-			credentialsStore.getCredentialTypeByName(selectedType)?.displayName ?? selectedType;
-		restrictions[slotType] = { displayName, restriction };
-	}
-	return restrictions;
-});
 
 const nodeHelpers = useNodeHelpers();
 const toast = useToast();
@@ -513,22 +456,11 @@ const isDefaultResolver = computed(() => {
 	return !resolverId || resolverId === SYSTEM_RESOLVER_ID;
 });
 
-// Whether the node's current resource/operation is runnable by the AI gateway,
-// with node defaults applied as the engine does. Nodes without an operation are
-// treated as supported so gateway auto-selection still works for
-// operation-agnostic nodes.
+// Whether the node's current resource/operation is runnable by the AI gateway.
+// Nodes without an operation selected are treated as supported so gateway
+// auto-selection still works for operation-agnostic nodes.
 const isCurrentActionSupported = computed(() => {
-	const params =
-		(nodeType.value &&
-			NodeHelpers.getNodeParameters(
-				nodeType.value.properties,
-				props.node.parameters,
-				true,
-				false,
-				props.node,
-				nodeType.value,
-			)) ??
-		props.node.parameters;
+	const params = props.node.parameters;
 	const operation = params.operation as string | undefined;
 	if (!operation) return true;
 	const resource = params.resource as string | undefined;
@@ -638,20 +570,17 @@ watch(
 );
 
 function getCredentialFetchScope(): CredentialFetchScope | undefined {
-	const flags = {
-		...(props.forAgent ? { forAgent: true } : {}),
-		...(props.forAssistant ? { forAssistant: true } : {}),
-	};
-	if (props.workflowId) return { workflowId: props.workflowId, ...flags };
+	const forAgent = props.forAgent ? { forAgent: true } : {};
+	if (props.workflowId) return { workflowId: props.workflowId, ...forAgent };
 	const workflowId = workflowDocumentStore?.value.workflowId;
 	if (workflowId && !workflowsStore.isNewWorkflow) {
-		return { workflowId, ...flags };
+		return { workflowId, ...forAgent };
 	}
 
 	const projectId =
 		props.projectId ?? projectsStore.currentProject?.id ?? projectsStore.personalProject?.id;
 
-	return projectId ? { projectId, ...flags } : undefined;
+	return projectId ? { projectId, ...forAgent } : undefined;
 }
 
 onMounted(() => {
@@ -732,14 +661,10 @@ onMounted(() => {
 						const id = args[0].id;
 						// credential was deleted, select last one added to replace with
 						if (current.id === id) {
-							const replacement = credentialsOfType
-								.filter((credential) => !getCredentialTypeRestriction(credential.type))
-								.at(-1);
-							if (replacement) {
-								onCredentialSelected(credentialType, replacement.id);
-							} else {
-								clearSelectedCredential(credentialType);
-							}
+							onCredentialSelected(
+								credentialType,
+								credentialsOfType[credentialsOfType.length - 1].id,
+							);
 						}
 					}
 					break;
@@ -1072,8 +997,6 @@ function showAiGatewaySelector(credentialType: string): boolean {
 	if (AI_GATEWAY_UNSUPPORTED_NODE_TYPES.includes(node.value.type)) return false;
 	if (!aiGateway.isNodeTypeVersionSupported(node.value.type, node.value.typeVersion)) return false;
 	if (isAiGatewayManagedCredentials(credentialType)) return true;
-	// The gateway rejects this resource/operation when the workflow runs.
-	if (!isCurrentActionSupported.value) return false;
 	// Shown type supported → toggle directly; otherwise fall back to a sibling.
 	if (aiGateway.isCredentialTypeSupported(credentialType)) return true;
 	return resolveGatewayActivation(credentialType) !== undefined;
@@ -1238,7 +1161,6 @@ function setFilter(newFilter = '') {
 
 function onSelectVisibleChange(credentialType: string, isVisible: boolean) {
 	openCredentialSelectType.value = isVisible ? credentialType : null;
-	if (isVisible) openedCredentialSelectTypes.value.add(credentialType);
 	if (!isVisible) {
 		setFilter();
 		return;
@@ -1266,12 +1188,7 @@ function matches(needle: string, haystack: string | undefined) {
  */
 type CredentialRow =
 	| { kind: 'header'; key: string; label: string }
-	| {
-			kind: 'option';
-			key: string;
-			option: CredentialDropdownOption;
-			restriction: CredentialTypeAvailability | null;
-	  }
+	| { kind: 'option'; key: string; option: CredentialDropdownOption }
 	| {
 			kind: 'current';
 			key: string;
@@ -1283,8 +1200,6 @@ type CredentialRow =
 			selectable: boolean;
 			credential: UsedCredential;
 	  };
-
-type OptionRow = Extract<CredentialRow, { kind: 'option' }>;
 
 const YOURS_GROUP_KEY = '__credential-group-yours';
 const SHARED_GROUP_KEY = '__credential-group-shared';
@@ -1418,24 +1333,20 @@ function buildUsableRows(
 	credentialType: string,
 	options: CredentialDropdownOption[],
 ): CredentialRow[] {
-	const visible: OptionRow[] = options
-		.filter((option) => matches(filter.value, option.name))
-		.map((option) => ({
-			kind: 'option',
-			key: option.id,
-			option,
-			restriction: getCredentialTypeRestriction(option.type),
-		}));
+	const visible = options.filter((option) => matches(filter.value, option.name));
+	const toRow = (option: CredentialDropdownOption): CredentialRow => ({
+		kind: 'option',
+		key: option.id,
+		option,
+	});
 
 	// Yours either because it travels with you into this project, or because
 	// this is your own space and the credential is not published instance-wide.
-	const isYours = ({ option }: OptionRow) =>
+	const isYours = (option: CredentialDropdownOption) =>
 		option.sharedRoute === 'personal' || (isPersonalSpace.value && !option.isGlobal);
 
-	// Restricted types sink to the end of their group, so the group headings stay true.
-	const sorted = visible.toSorted((a, b) => Number(!!a.restriction) - Number(!!b.restriction));
-	const yours: CredentialRow[] = sorted.filter(isYours);
-	const shared = sorted.filter((row) => !isYours(row));
+	const yours: CredentialRow[] = visible.filter(isYours).map(toRow);
+	const shared = visible.filter((option) => !isYours(option));
 	const rows: CredentialRow[] = [];
 
 	// An owner or admin can use the current credential through an instance-wide
@@ -1454,7 +1365,7 @@ function buildUsableRows(
 
 	if (shared.length > 0) {
 		rows.push({ kind: 'header', key: SHARED_GROUP_KEY, label: sharedGroupLabel.value });
-		rows.push(...shared);
+		rows.push(...shared.map(toRow));
 	}
 
 	return rows;
@@ -1486,9 +1397,6 @@ function onCredentialOptionSelected(
 		onAiGatewaySelector(type.name, true);
 		return;
 	}
-	// Enter still selects a highlighted row that a policy blocked after the list opened.
-	const credentialType = findDisplayedCredential(type.name, credentialIdOrTag)?.type;
-	if (credentialType && getCredentialTypeRestriction(credentialType)) return;
 	onCredentialSelected(type.name, credentialIdOrTag, showMixedCredentials(type));
 }
 
@@ -1523,11 +1431,8 @@ function canQuickConnect(credentialType: INodeCredentialDescription): boolean {
 	);
 }
 
-// A policy-blocked type offers no quick connect, so the standard picker explains the block.
 function getQuickConnectCredentialType(type: INodeCredentialDescription): string | undefined {
-	return getRelatedCredentialTypes(type).find(
-		(related) => canQuickConnect(related) && !getCredentialTypeRestriction(related.name),
-	)?.name;
+	return getRelatedCredentialTypes(type).find(canQuickConnect)?.name;
 }
 
 function showQuickConnectEmptyState(type: INodeCredentialDescription): boolean {
@@ -1699,10 +1604,7 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 						:service-name="getServiceName(getQuickConnectCredentialType(type) ?? type.name)"
 						@click="onQuickConnectSignIn(getQuickConnectCredentialType(type) ?? type.name)"
 					/>
-					<span
-						v-if="canManuallySetUpCredential(type.name) && canCreateCredentialType(type.name)"
-						:class="$style.setupManuallyContainer"
-					>
+					<span v-if="canManuallySetUpCredential(type.name)" :class="$style.setupManuallyContainer">
 						<N8nText size="small" :class="$style.setupManuallyOr">
 							{{ i18n.baseText('nodeCredentials.quickConnect.or') }}
 						</N8nText>
@@ -1728,7 +1630,7 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 						v-if="!showN8nCreditsOption(type.name)"
 						type="button"
 						:class="$style.emptySelectButton"
-						:disabled="!canCreateCredentialType(type.name)"
+						:disabled="!canCreateCredentials"
 						@click="onClickCreateCredential(type)"
 					>
 						<CredentialIcon :credential-type-name="type.name" :size="16" />
@@ -1780,7 +1682,7 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 								type="button"
 								data-test-id="node-credentials-select-item-new"
 								:class="[$style.newCredential, $style.entryCreate]"
-								:disabled="!canCreateCredentialType(type.name)"
+								:disabled="!canCreateCredentials"
 								@click="onClickCreateCredential(type)"
 							>
 								<N8nIcon size="large" icon="key-round" :class="$style.optionIcon" />
@@ -1804,16 +1706,6 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 					>
 						{{ entryPlaceholder(type.name) }}
 					</span>
-					<CredentialTypeRestrictedMarker
-						v-if="typeRestrictions[type.name]"
-						placement="field"
-						:name="credentialTypeNames[type.name]"
-						:restriction="typeRestrictions[type.name]"
-						data-test-id="node-credentials-type-restricted"
-						@contact-admin="
-							(audience) => requestContactAdmin(credentialTypeNames[type.name], audience)
-						"
-					/>
 				</div>
 				<div
 					v-else
@@ -1938,15 +1830,11 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 										</div>
 									</N8nTooltip>
 								</N8nOption>
-								<!-- A press on a disabled row would move the focus out of the search input, so typing would stop filtering. -->
 								<N8nOption
 									v-else
 									:data-test-id="`node-credentials-select-item-${row.option.id}`"
-									:class="{ [$style.restrictedOption]: row.restriction }"
 									:label="row.option.name"
 									:value="row.option.id"
-									:disabled="row.restriction !== null"
-									@mousedown="(event: MouseEvent) => row.restriction && event.preventDefault()"
 								>
 									<div :class="$style.credentialOption">
 										<N8nIcon
@@ -1979,14 +1867,6 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 													: row.option.typeDisplayName
 											}}
 										</N8nText>
-										<CredentialTypeRestrictedMarker
-											v-if="openedCredentialSelectTypes.has(type.name) && row.restriction"
-											:name="row.option.typeDisplayName"
-											:restriction="row.restriction"
-											@contact-admin="
-												(audience) => requestContactAdmin(row.option.typeDisplayName, audience)
-											"
-										/>
 										<N8nIcon
 											v-if="getSelectedId(type) === row.option.id"
 											icon="check"
@@ -2002,18 +1882,11 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 									type="button"
 									data-test-id="node-credentials-select-item-new"
 									:class="[$style.newCredential]"
-									:disabled="!canCreateCredentialType(type.name)"
+									:disabled="!canCreateCredentials"
 									@click="onClickCreateCredential(type)"
 								>
 									<N8nIcon size="large" icon="plus" :class="$style.optionIcon" />
 									{{ NEW_CREDENTIALS_TEXT }}
-									<N8nIcon
-										v-if="typeRestrictions[type.name]"
-										icon="lock"
-										size="xsmall"
-										:class="$style.newCredentialLock"
-										data-test-id="node-credentials-select-item-new-restricted"
-									/>
 								</button>
 							</template>
 						</N8nSelect>
@@ -2050,17 +1923,6 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 						</div>
 					</div>
 
-					<CredentialTypeRestrictedMarker
-						v-if="selectedTypeRestrictions[type.name]"
-						placement="field"
-						:name="selectedTypeRestrictions[type.name].displayName"
-						:restriction="selectedTypeRestrictions[type.name].restriction"
-						data-test-id="node-credentials-selected-restricted"
-						@contact-admin="
-							(audience) =>
-								requestContactAdmin(selectedTypeRestrictions[type.name].displayName, audience)
-						"
-					/>
 					<div
 						v-if="getUnusableSelected(type.name)"
 						:class="[$style.warning, $style.unusableWarning]"
@@ -2131,12 +1993,6 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 				/>
 			</N8nInputLabel>
 		</div>
-		<ContactAdminModal
-			v-model:open="isContactAdminOpen"
-			kind="credential"
-			:type-name="contactAdmin.subject"
-			:audience="contactAdmin.audience"
-		/>
 	</div>
 </template>
 
@@ -2208,15 +2064,6 @@ async function onQuickConnectSignIn(credentialTypeName: string) {
 .unusableOption:global(.is-disabled) {
 	cursor: default;
 	color: var(--color--text--shade-1);
-}
-
-// The disabled row keeps the editor's readable disabled color, as in the predefined type list.
-.restrictedOption:global(.is-disabled) .optionName {
-	color: var(--text-color--disabled);
-}
-
-.newCredentialLock {
-	margin-left: auto;
 }
 
 .edit {

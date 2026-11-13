@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 import { isOpenAiCustomEndpoint, listModelsForProvider, MODEL_DISCOVERY_PROVIDERS } from '../index';
 

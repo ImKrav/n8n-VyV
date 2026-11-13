@@ -6,7 +6,11 @@ export function customToolsSkill(): RuntimeSkill {
 		name: 'Agent Builder Custom Tools',
 		description:
 			'Use when building, updating, or registering a pure computation, validation, formatting, or planning tool with agent_builder_build_custom_tool. Not for HTTP, API, crawling, filesystem, or other live integrations — use node or workflow tools for those.',
-		recommendedToolGroups: ['agents'],
+		recommendedTools: [
+			'agent_builder_build_custom_tool',
+			'agent-context',
+			'agent_builder_patch_config',
+		],
 		allowedTools: [
 			'agent_builder_build_custom_tool',
 			'ask_user',

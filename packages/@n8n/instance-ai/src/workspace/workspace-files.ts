@@ -1,5 +1,5 @@
 import { isAbortError } from '@n8n/agents';
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 
 import { formatErrorForLog } from '../error-formatting';
 import type { Logger } from '../logger';

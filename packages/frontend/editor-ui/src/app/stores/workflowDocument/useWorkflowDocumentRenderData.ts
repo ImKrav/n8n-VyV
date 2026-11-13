@@ -31,6 +31,7 @@ import {
 import { checkOverlap } from '@/features/workflows/canvas/canvas.utils';
 import type {
 	BoundingBox,
+	CanvasNode,
 	CanvasNodeAddNodesRender,
 	CanvasNodeAgentRender,
 	CanvasNodeChoicePromptRender,
@@ -511,7 +512,7 @@ export function useWorkflowDocumentRenderData(workflowDocumentId: WorkflowDocume
 			}
 		}
 
-		const result: Record<string, { style: { zIndex: number } }> = {};
+		const result: Record<string, Partial<CanvasNode>> = {};
 		for (const box of stickyBoxes) {
 			result[box.id] = { style: { zIndex: box.zIndex } };
 		}

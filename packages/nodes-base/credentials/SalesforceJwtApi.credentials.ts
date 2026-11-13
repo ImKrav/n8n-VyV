@@ -9,7 +9,7 @@ import type {
 	IHttpRequestOptions,
 	INodeProperties,
 } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 
 import { getTokenRequestClient, TOKEN_REQUEST_TIMEOUT } from './common/token-request';
 

@@ -133,7 +133,8 @@ export class EvaluationsPublicController {
 	@ApiSummary('Trigger a test run')
 	@ApiDescription(
 		'Start a new evaluation test run for a workflow. The workflow must contain a configured ' +
-			'evaluation trigger. The user must also have the `workflow:execute` project scope.',
+			'evaluation trigger. Requires the `workflow:execute` project scope in addition to the ' +
+			'`testRun:create` API key scope.',
 	)
 	@ApiTags(tags)
 	@ApiResponse(201, CreatedTestRunPublicDto)
@@ -240,8 +241,8 @@ export class EvaluationsPublicController {
 	@ProjectScope('workflow:execute')
 	@ApiSummary('Cancel a test run')
 	@ApiDescription(
-		'Cancel a running evaluation test run of a workflow. The user must also have the ' +
-			'`workflow:execute` project scope.',
+		'Cancel a running evaluation test run of a workflow. Requires the `workflow:execute` project ' +
+			'scope in addition to the `testRun:cancel` API key scope.',
 	)
 	@ApiTags(tags)
 	@ApiResponse(202, CancelledTestRunPublicDto)

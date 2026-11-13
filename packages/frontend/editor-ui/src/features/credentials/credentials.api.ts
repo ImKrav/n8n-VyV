@@ -1,4 +1,9 @@
-import type { CredentialOptionsRequestDto } from '@n8n/api-types';
+import type {
+	CreateCredentialPublicDto,
+	CredentialPublicDto,
+	CredentialOptionsRequestDto,
+} from '@n8n/api-types';
+import { makePublicApiRequest, type PublicApiContext } from '@n8n/rest-api-client';
 import type {
 	CredentialFetchScope,
 	CredentialPayload,
@@ -210,4 +215,11 @@ export async function probeCredential(
 	credentialId: string,
 ): Promise<INodeCredentialTestResult> {
 	return await makeRestApiRequest(context, 'POST', `/credentials/${credentialId}/probe`);
+}
+
+export async function createPublicCredential(
+	context: PublicApiContext,
+	data: CreateCredentialPublicDto,
+): Promise<CredentialPublicDto> {
+	return await makePublicApiRequest(context, 'POST', '/credentials', data);
 }

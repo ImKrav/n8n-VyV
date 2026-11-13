@@ -5,6 +5,7 @@ import multer from 'multer';
 import { BadRequestError } from '@n8n/errors';
 
 import { CsvParserService } from './csv-parser.service';
+import { FileUploadError } from './errors/data-table-file-upload.error';
 import { MulterUploadMiddleware } from './multer-upload-middleware';
 import { AuthenticatedRequestWithFile, hasStringProperty } from './types';
 
@@ -37,7 +38,14 @@ export class DataTableUploadsController {
 		const hasHeaders =
 			hasStringProperty(req.body, 'hasHeaders') && req.body.hasHeaders === 'false' ? false : true;
 
-		const metadata = await this.csvParserService.parseFile(req.file.filename, hasHeaders);
+		let metadata;
+		try {
+			metadata = await this.csvParserService.parseFile(req.file.filename, hasHeaders);
+		} catch (error) {
+			// Malformed CSV or invalid file id → 400 Bad Request (previously surfaced as 500)
+			if (error instanceof FileUploadError) throw new BadRequestError(error.message);
+			throw error;
+		}
 
 		return {
 			originalName: req.file.originalname,

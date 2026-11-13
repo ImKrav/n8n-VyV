@@ -1,7 +1,4 @@
-import type {
-	WorkflowSuggestionAppliedVersion,
-	WorkflowSuggestionProposalDetail,
-} from '@n8n/api-types';
+import type { WorkflowSuggestionAction } from '@n8n/api-types';
 import { Logger } from '@n8n/backend-common';
 import {
 	createTeamProject,
@@ -45,7 +42,6 @@ import {
 import { createAdmin, createUser } from '@test-integration/db/users';
 import { initNodeTypes, setupTestServer } from '@test-integration/utils';
 
-import { createResult } from '../../self-healing/__tests__/support/result';
 import { WorkflowSuggestionActivity } from '../database/workflow-suggestion-activity.entity';
 import { WorkflowSuggestion } from '../database/workflow-suggestion.entity';
 import { WorkflowSuggestionRepository } from '../database/workflow-suggestion.repository';
@@ -124,26 +120,16 @@ async function prepareFixture(resultKind: 'fix_ready' | 'needs_you' = 'fix_ready
 
 async function fixture(resultKind: 'fix_ready' | 'needs_you' = 'fix_ready') {
 	const { user, workflow, original, project, graph, prepared } = await prepareFixture(resultKind);
-	const { id: resultId } = await createResult(prepared.baseline, resultKind);
-	const suggestion = await suggestionService.createSuggestion(prepared, resultId);
-	const act = async (
-		action: WorkflowSuggestionAppliedVersion['action'] | 'discard',
-		actor = user,
-	): Promise<
-		WorkflowSuggestionProposalDetail &
-			Awaited<ReturnType<WorkflowSuggestionActionsService['apply']>>
-	> => {
-		const publication =
-			action === 'discard'
-				? await actions.discardPending(actor, project.id, [suggestion]).then(() => ({}))
-				: await actions.apply(actor, project.id, [suggestion], action);
-		const proposal = await suggestionService.getProposal(
-			actor,
-			project.id,
-			workflow.id,
-			suggestion.id,
-		);
-		return { ...proposal, ...publication };
+	const suggestion = await suggestionService.createSuggestion(prepared);
+	const act = async (action: WorkflowSuggestionAction, actor = user) => {
+		switch (action) {
+			case 'apply':
+				return await actions.apply(actor, project.id, workflow.id, suggestion.id);
+			case 'approve-and-publish':
+				return await actions.approveAndPublish(actor, project.id, workflow.id, suggestion.id);
+			case 'discard':
+				return await actions.discard(actor, project.id, workflow.id, suggestion.id);
+		}
 	};
 	return { user, workflow, original, project, graph, suggestion, act };
 }
@@ -355,14 +341,14 @@ it('rolls back discard when its activity cannot be saved', async () => {
 });
 
 it('keeps a moved proposal outdated when discard rejects the old project', async () => {
-	const { user, original, project, suggestion } = await fixture();
+	const { user, original, project, suggestion, act } = await fixture();
 	const destination = await createTeamProject(undefined, user);
 	await Container.get(SharedWorkflowRepository).update(
 		{ workflowId: original.id, projectId: project.id },
 		{ projectId: destination.id },
 	);
 
-	expect(await actions.discardPending(user, project.id, [suggestion])).toBe('unavailable');
+	await expect(act('discard')).rejects.toThrow('Suggestion not found.');
 
 	expect(await suggestions.findOneByOrFail({ id: suggestion.id })).toMatchObject({
 		state: 'closed',
@@ -758,7 +744,6 @@ it('keeps the fix applied when the normal publication guard rejects it', async (
 		closedReason: 'applied',
 		publishError: 'An open review blocks publication.',
 	});
-	expect(detail).not.toHaveProperty('restorationError');
 	expect(saved.versionId).toBe(detail.appliedVersion?.versionId);
 	expect(saved.activeVersionId).toBe(original.activeVersionId);
 	expect(notify).toHaveBeenCalledExactlyOnceWith(original.id, user.id);

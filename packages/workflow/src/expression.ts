@@ -2,7 +2,6 @@ import type { IExpressionEvaluator, ObservabilityProvider } from '@n8n/expressio
 import {
 	classifyExpressionError,
 	EXPRESSION_METRICS,
-	HostCallError,
 	MemoryLimitError,
 	SecurityViolationError,
 	TimeoutError,
@@ -91,7 +90,7 @@ export interface ShadowEvaluator {
 const KNOWN_ERROR_CLASSES = new Set(
 	[
 		'Error AggregateError EvalError InternalError RangeError ReferenceError SyntaxError',
-		'TypeError URIError ExpressionError ExpressionExtensionError UserError RuntimeError',
+		'TypeError URIError ExpressionError ExpressionExtensionError UserError',
 	]
 		.join(' ')
 		.split(' '),
@@ -100,11 +99,9 @@ const KNOWN_ERROR_CLASSES = new Set(
 function errorClassOf(error: unknown): string {
 	// Timeout and memory errors share the name `ExpressionError`, so classify them first.
 	// `mapVmError` wraps them in an ExpressionError and keeps them as `cause`.
-	const vmError = error instanceof ExpressionError && error.cause ? error.cause : error;
-	if (vmError instanceof HostCallError) {
-		return `host_error:${hostErrorClass(vmError.hostErrorName)}`;
-	}
-	const runtimeClass = classifyExpressionError(vmError);
+	const runtimeClass = classifyExpressionError(
+		error instanceof ExpressionError && error.cause ? error.cause : error,
+	);
 	if (runtimeClass !== 'unknown') return runtimeClass;
 	// A minified build renames classes, and n8n errors take their `name` from the
 	// constructor, so check the class before the name. The subclass comes first.
@@ -112,21 +109,7 @@ function errorClassOf(error: unknown): string {
 	if (error instanceof ExpressionError) return 'ExpressionError';
 	if (error instanceof UserError) return 'UserError';
 	if (!(error instanceof Error)) return typeof error;
-	return knownErrorClass(error.name);
-}
-
-/** Keeps the error classes in telemetry to a fixed set. Any other name becomes `other`. */
-function knownErrorClass(name: string): string {
-	return KNOWN_ERROR_CLASSES.has(name) ? name : 'other';
-}
-
-const TYPEOF_NAMES = new Set(
-	'bigint boolean function number object string symbol undefined'.split(' '),
-);
-
-/** Like `knownErrorClass`, but keeps the `typeof` name that the bridge gives a thrown non-Error. */
-function hostErrorClass(name: string): string {
-	return TYPEOF_NAMES.has(name) ? name : knownErrorClass(name);
+	return KNOWN_ERROR_CLASSES.has(error.name) ? error.name : 'other';
 }
 
 /**

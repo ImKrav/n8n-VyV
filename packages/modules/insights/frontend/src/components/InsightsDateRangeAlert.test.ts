@@ -1,7 +1,6 @@
 import { CalendarDate } from '@internationalized/date';
 import { createComponentRenderer, defaultSettings } from '@n8n/frontend-test-utils';
 import { createTestingPinia } from '@pinia/testing';
-import { nextTick } from 'vue';
 
 import InsightsDateRangeAlert from './InsightsDateRangeAlert.vue';
 
@@ -127,8 +126,7 @@ describe('InsightsDateRangeAlert', () => {
 
 		expect(getByTestId('insights-date-range-alert')).toBeInTheDocument();
 
-		getByTestId('insights-date-range-alert-dismiss').click();
-		await nextTick();
+		await getByTestId('insights-date-range-alert-dismiss').click();
 
 		expect(queryByTestId('insights-date-range-alert')).not.toBeInTheDocument();
 		expect(emitted('dismiss')).toHaveLength(1);

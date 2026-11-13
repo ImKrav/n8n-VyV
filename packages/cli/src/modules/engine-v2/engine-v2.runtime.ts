@@ -1,15 +1,12 @@
-import type { HttpRequestClient } from '@n8n/backend-network';
 import { Logger } from '@n8n/backend-common';
 import { EngineConfig } from '@n8n/config';
 import { Service } from '@n8n/di';
-import type { EngineRuntime, ExecutionResponseSender, LifecycleEventCallback } from '@n8n/engine';
+import type { EngineRuntime, ExecutionResponseSender } from '@n8n/engine';
 import {
 	AllowAllAdmittance,
 	createDataSource,
 	createEngineRuntime,
-	mintApprovalCallback,
 	mintResumeToken,
-	mintStepBoundResumeToken,
 	noopExecutionResponseSender,
 	SharedSecretIdentityVerifier,
 } from '@n8n/engine';
@@ -23,22 +20,13 @@ import type { Server } from 'node:http';
 
 import { CredentialTypes } from '@/credential-types';
 import { CredentialsHelper } from '@/credentials-helper';
-import { NodeTypesProxy } from '@n8n/backend-services';
+import { NodeTypes } from '@/node-types';
 
 import { EngineAdditionalDataBuilder } from './engine-additional-data';
-import { EngineControlPlaneTransport } from './engine-control-plane-transport';
+import { EngineControlPlaneClient } from './engine-control-plane-client';
 import { EngineCredentialsClient } from './engine-credentials-client';
 import { EngineSubWorkflowClient } from './engine-sub-workflow-client';
-import { EngineMtls } from './engine-mtls';
 import { RemoteCredentialsHelper } from './remote-credentials-helper';
-import { RemoteDataTableProxyProvider } from './remote-data-table-proxy-provider';
-
-/** The data plane ends of the execution channel. */
-export interface EngineV2ChannelSenders {
-	responseSender: ExecutionResponseSender;
-	/** Without it, the engine publishes no lifecycle events. */
-	lifecycleEventSender?: { send: LifecycleEventCallback };
-}
 
 /**
  * Runs the engine v2 data plane inside the n8n process.
@@ -63,16 +51,12 @@ export class EngineV2Runtime {
 	 */
 	private stopping?: AbortController;
 
-	/** Sends the data table operations of every step to the control plane. */
-	private readonly dataTablesHttp: HttpRequestClient;
-
 	constructor(
 		private readonly engineConfig: EngineConfig,
-		private readonly mtls: EngineMtls,
-		private readonly nodeTypes: NodeTypesProxy,
+		private readonly nodeTypes: NodeTypes,
 		private readonly logger: Logger,
+		private readonly controlPlaneClient: EngineControlPlaneClient,
 		private readonly credentialsClient: EngineCredentialsClient,
-		transport: EngineControlPlaneTransport,
 		private readonly subWorkflowClient: EngineSubWorkflowClient,
 		private readonly credentialsHelper: CredentialsHelper,
 		private readonly credentialTypes: CredentialTypes,
@@ -80,16 +64,13 @@ export class EngineV2Runtime {
 		private readonly binaryDataService: BinaryDataService,
 	) {
 		this.logger = this.logger.scoped('engine-v2');
-		this.dataTablesHttp = transport.forScope('data-tables:use');
 	}
 
-	async init(
-		senders: EngineV2ChannelSenders = { responseSender: noopExecutionResponseSender },
-	): Promise<void> {
+	async init(responseSender: ExecutionResponseSender = noopExecutionResponseSender): Promise<void> {
 		try {
 			await this.initDb();
 
-			this.initEngine(senders);
+			this.initEngine(responseSender);
 
 			await this.initServer();
 		} catch (error) {
@@ -118,7 +99,7 @@ export class EngineV2Runtime {
 		await this.dataSource.runMigrations();
 	}
 
-	private initEngine({ responseSender, lifecycleEventSender }: EngineV2ChannelSenders): void {
+	private initEngine(responseSender: ExecutionResponseSender): void {
 		assert(this.dataSource, 'Engine v2 cannot start without a data source');
 
 		const stopping = new AbortController();
@@ -134,9 +115,8 @@ export class EngineV2Runtime {
 			responseSender,
 			resumeSecret: this.engineConfig.resumeSecret,
 			externalDependencies: ({ executionStore, stepStore }) => ({
-				lifecycleEventCallback: lifecycleEventSender
-					? async (events, signal) => await lifecycleEventSender.send(events, signal)
-					: undefined,
+				lifecycleEventCallback: async (events, signal) =>
+					await this.controlPlaneClient.sendLifecycleEvents(events, signal),
 				// The same call the v1 hard delete makes: one prefix per run, safe to repeat.
 				deleteExecutionFiles: async ({ workflowId, executionId }) =>
 					await this.binaryDataService.deleteMany([
@@ -146,7 +126,7 @@ export class EngineV2Runtime {
 					nodeTypes: this.nodeTypes,
 					additionalDataFactory: async (context) => this.buildAdditionalData(context, stopping),
 					loadStepData: createEngineStepDataLoader(executionStore, stepStore),
-					...this.resumeMinters(),
+					resumeToken: this.resumeTokenMinter(),
 					resolveSubWorkflow: async (request) =>
 						await this.subWorkflowClient.resolve(request, stopping.signal),
 				}),
@@ -157,20 +137,11 @@ export class EngineV2Runtime {
 		this.engine = engine;
 	}
 
-	private resumeMinters(): Pick<
-		V1StepExecutorDeps,
-		'resumeToken' | 'stepBoundResumeToken' | 'approvalCallback'
-	> {
+	private resumeTokenMinter(): V1StepExecutorDeps['resumeToken'] {
 		const { resumeSecret } = this.engineConfig;
-		if (!resumeSecret) return {};
+		if (!resumeSecret) return undefined;
 
-		return {
-			resumeToken: ({ executionId }) => mintResumeToken(resumeSecret, executionId),
-			stepBoundResumeToken: ({ stepId, binding }) =>
-				mintStepBoundResumeToken(resumeSecret, stepId, binding),
-			approvalCallback: ({ stepId, decision }) =>
-				mintApprovalCallback(resumeSecret, stepId, decision),
-		};
+		return ({ executionId }) => mintResumeToken(resumeSecret, executionId);
 	}
 
 	private buildAdditionalData(
@@ -184,13 +155,8 @@ export class EngineV2Runtime {
 			context,
 			stopping.signal,
 		);
-		const dataTableProxyProvider = new RemoteDataTableProxyProvider(
-			this.dataTablesHttp,
-			context,
-			stopping.signal,
-		);
 
-		return this.additionalDataBuilder.build(context, credentialsHelper, dataTableProxyProvider);
+		return this.additionalDataBuilder.build(context, credentialsHelper);
 	}
 
 	private async initServer(): Promise<void> {
@@ -199,20 +165,14 @@ export class EngineV2Runtime {
 		this.server = await new Promise<Server>((resolve, reject) => {
 			assert(this.engine, 'Engine v2 cannot start without an engine runtime');
 
-			const listener = this.mtls.createServer(this.engine.app).listen(port, host);
+			const listener = this.engine.app.listen(port, host);
 			listener.once('listening', () => resolve(listener));
-			listener.once('error', (error) => {
-				// A failed bind: closing also ends its subscription to TLS reloads.
-				if (!listener.listening) listener.close();
-				reject(error);
-			});
+			listener.once('error', reject);
 		});
 
 		// An IPv6 literal needs brackets to read as a URL.
 		const shownHost = host.includes(':') ? `[${host}]` : host;
-		this.logger.info(
-			`Engine v2 listening on ${this.mtls.enabled ? 'https' : 'http'}://${shownHost}:${port}`,
-		);
+		this.logger.info(`Engine v2 listening on http://${shownHost}:${port}`);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import {
 	N8nButton,
 	N8nDropdownMenu,
@@ -30,9 +30,6 @@ const selection = defineModel<AgentMemorySourceSelection>({ default: () => ({}) 
 
 const i18n = useI18n();
 const { kindIcon, kindLabel } = useAgentMemorySourceLabels();
-
-/** Search term of each searchable sub-menu, by the id of its group item. */
-const searchTerms = ref<Record<string, string>>({});
 
 type MenuItem = DropdownMenuItemProps<string>;
 
@@ -121,21 +118,7 @@ function allLabel(group: AgentMemorySourceFacetGroupDto): string {
 	});
 }
 
-/** N8nDropdownMenu only emits `search`, so the sub-menu items are filtered here. */
-function filterBySearch(items: MenuItem[], searchTerm = ''): MenuItem[] {
-	const term = searchTerm.trim().toLowerCase();
-	if (!term) return items;
-
-	const matches = items.filter((item) => item.header || item.label.toLowerCase().includes(term));
-	// Drop the header of a section that has no match left.
-	return matches.filter((item, index) => {
-		const next = matches[index + 1];
-		return !item.header || (next !== undefined && !next.header);
-	});
-}
-
 function toGroupItem(group: AgentMemorySourceFacetGroupDto): MenuItem {
-	const id = `${group.kind}-group`;
 	const allId = selectionId({ source: group.kind });
 	const sections = facetSections(group);
 	// A header only helps to tell sections apart.
@@ -148,13 +131,12 @@ function toGroupItem(group: AgentMemorySourceFacetGroupDto): MenuItem {
 		checked: allId === currentId.value,
 	};
 	return {
-		id,
+		id: `${group.kind}-group`,
 		label: groupLabel(group),
 		icon: { type: 'icon', value: kindIcon(group.kind) },
 		checked: selection.value.source === group.kind,
-		// Count the unfiltered items, so that a search does not remove its own field.
 		searchable: facetItems.length > SEARCHABLE_MIN_ITEMS,
-		children: filterBySearch([allItem, ...facetItems], searchTerms.value[id]),
+		children: [allItem, ...facetItems],
 		testId: `agent-memory-source-group-${group.kind}`,
 	};
 }
@@ -185,10 +167,6 @@ function onSelect(id: string) {
 	const option = options.value.get(id);
 	if (option) selection.value = option.selection;
 }
-
-function onSearch(term: string, itemId?: string) {
-	if (itemId) searchTerms.value[itemId] = term;
-}
 </script>
 
 <template>
@@ -197,7 +175,6 @@ function onSearch(term: string, itemId?: string) {
 		:disabled="props.disabled"
 		placement="bottom-end"
 		@select="onSelect"
-		@search="onSearch"
 	>
 		<template #trigger>
 			<N8nButton

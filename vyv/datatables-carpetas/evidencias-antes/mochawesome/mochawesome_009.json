@@ -1,0 +1,181 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 5,
+    "passes": 5,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-11-11T02:28:23.822Z",
+    "end": "2026-11-11T02:28:43.926Z",
+    "duration": 20104,
+    "testsRegistered": 5,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "93322d36-f4db-457a-b8c6-fe98d17e8a65",
+      "title": "",
+      "fullFile": "cypress\\e2e\\ui\\co04-co05-carpetas.ui.cy.js",
+      "file": "cypress\\e2e\\ui\\co04-co05-carpetas.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "94444d07-f185-4d21-bdcc-0caf6f52ca00",
+          "title": "CO-04 / CO-05 · Carpetas (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-019-01 · crea una carpeta desde el botón de añadir recurso",
+              "fullTitle": "CO-04 / CO-05 · Carpetas (UI) CP-019-01 · crea una carpeta desde el botón de añadir recurso",
+              "timedOut": null,
+              "duration": 5171,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV UI\").then((nombre) => {\n  cy.visitarN8n(`/projects/${p}/workflows`);\n  cy.tid(\"add-resource\").first().click();\n  cy.contains('[role=\"menuitem\"], li', /folder/i).click();\n  cy.get('.el-message-box input, [role=\"dialog\"] input').first().type(nombre);\n  cy.get('.el-message-box, [role=\"dialog\"]').contains(\"button\", /create/i).click();\n  tarjeta(nombre).should(\"have.length\", 1);\n  cy.screenshot(\"CP-019-01_tarjeta\");\n});",
+              "err": {},
+              "uuid": "397953c3-6b59-46f0-b39c-dbe1b15c8e79",
+              "parentUUID": "94444d07-f185-4d21-bdcc-0caf6f52ca00",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-019-03/05 · renombra desde los breadcrumbs y navega con las migas de pan",
+              "fullTitle": "CO-04 / CO-05 · Carpetas (UI) CP-019-03/05 · renombra desde los breadcrumbs y navega con las migas de pan",
+              "timedOut": null,
+              "duration": 4267,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV Nav\").then((a) => {\n  n8nApi.crearCarpetaOk(p, a).then((A) => {\n    n8nApi.crearCarpetaOk(p, \"B\", A.id).then((B) => {\n      n8nApi.crearCarpetaOk(p, \"C\", B.id).then((C) => {\n        abrirCarpeta(C.id);\n        cy.tid(\"breadcrumbs-item\").should(\"contain.text\", \"B\");\n        cy.tid(\"breadcrumbs-item-current\").should(\"contain.text\", \"C\");\n        cy.screenshot(\"CP-019-05_breadcrumbs\");\n        cy.tid(\"breadcrumbs-item-current\").find('[data-test-id=\"inline-edit-preview\"]').click();\n        cy.tid(\"inline-edit-input\").clear().type(\"C renombrada{enter}\");\n        cy.tid(\"breadcrumbs-item-current\").should(\"contain.text\", \"C renombrada\");\n        cy.tid(\"breadcrumbs-item\").contains(\"B\").click();\n        tarjeta(\"C renombrada\").should(\"be.visible\");\n        cy.screenshot(\"CP-019-03_06_navegacion\");\n      });\n    });\n  });\n});",
+              "err": {},
+              "uuid": "9e94f80c-de82-405e-907e-dd8cd87bf102",
+              "parentUUID": "94444d07-f185-4d21-bdcc-0caf6f52ca00",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-019-06 · la tarjeta de carpeta muestra los conteos",
+              "fullTitle": "CO-04 / CO-05 · Carpetas (UI) CP-019-06 · la tarjeta de carpeta muestra los conteos",
+              "timedOut": null,
+              "duration": 2741,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV Cards\").then((n) => {\n  n8nApi.crearCarpetaOk(p, n).then((f) => {\n    n8nApi.crearWorkflow(\"WF card 1\", f.id);\n    n8nApi.crearWorkflow(\"WF card 2\", f.id);\n    n8nApi.crearCarpetaOk(p, \"Sub\", f.id);\n    cy.visitarN8n(`/projects/${p}/workflows`);\n    tarjeta(n).should(\"contain.text\", \"2\").and(\"contain.text\", \"1\");\n    cy.screenshot(\"CP-019-06_conteos\");\n  });\n});",
+              "err": {},
+              "uuid": "19ed4538-4cf9-4e7d-bfaa-a12d82b730b3",
+              "parentUUID": "94444d07-f185-4d21-bdcc-0caf6f52ca00",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-020-04 · elimina una carpeta transfiriendo su contenido",
+              "fullTitle": "CO-04 / CO-05 · Carpetas (UI) CP-020-04 · elimina una carpeta transfiriendo su contenido",
+              "timedOut": null,
+              "duration": 3703,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV Borrar\").then((n) => {\n  n8nApi.crearCarpetaOk(p, n).then((A) => {\n    cy.nombreUnico(\"VyV Destino\").then((d) => {\n      n8nApi.crearCarpetaOk(p, d).then((D) => {\n        n8nApi.crearWorkflow(\"WF trasladado\", A.id);\n        abrirCarpeta(A.id);\n        cy.tid(\"folder-breadcrumbs-actions\").first().click();\n        cy.contains('[role=\"menuitem\"], li', /delete/i).click();\n        cy.tid(\"deleteFolder-modal\").should(\"be.visible\");\n        cy.tid(\"transfer-content-radio\").first().click();\n        cy.tid(\"deleteFolder-modal\").find('[role=\"combobox\"]').click().type(d);\n        cy.contains('.el-select-dropdown__item, [role=\"option\"]', d).click();\n        cy.screenshot(\"CP-020-04_modal\");\n        cy.tid(\"confirm-delete-folder-button\").first().click();\n        n8nApi.contenido(p, D.id).its(\"totalWorkflows\").should(\"eq\", 1);\n      });\n    });\n  });\n});",
+              "err": {},
+              "uuid": "34abbd0e-cf1f-4e05-8f4b-ff0acb4cb365",
+              "parentUUID": "94444d07-f185-4d21-bdcc-0caf6f52ca00",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-020-02 · mueve una carpeta a otra con el modal de mover",
+              "fullTitle": "CO-04 / CO-05 · Carpetas (UI) CP-020-02 · mueve una carpeta a otra con el modal de mover",
+              "timedOut": null,
+              "duration": 3718,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV Mover\").then((n) => {\n  n8nApi.crearCarpetaOk(p, n).then((A) => {\n    cy.nombreUnico(\"VyV Padre\").then((d) => {\n      n8nApi.crearCarpetaOk(p, d).then((D) => {\n        abrirCarpeta(A.id);\n        cy.tid(\"folder-breadcrumbs-actions\").first().click();\n        cy.contains('[role=\"menuitem\"], li', /move/i).click();\n        cy.tid(\"moveFolder-modal\").should(\"be.visible\");\n        cy.tid(\"move-to-folder-dropdown\").find('[role=\"combobox\"]').click().type(d);\n        cy.contains('.el-select-dropdown__item, [role=\"option\"]', d).click();\n        cy.tid(\"confirm-move-folder-button\").first().click();\n        n8nApi.arbol(p, A.id).then((arbol) => expect(arbol[0].id).to.eq(D.id));\n        cy.screenshot(\"CP-020-02_movida\");\n      });\n    });\n  });\n});",
+              "err": {},
+              "uuid": "9f79bf90-4e3c-4c73-acab-c7ac3ae1520d",
+              "parentUUID": "94444d07-f185-4d21-bdcc-0caf6f52ca00",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "397953c3-6b59-46f0-b39c-dbe1b15c8e79",
+            "9e94f80c-de82-405e-907e-dd8cd87bf102",
+            "19ed4538-4cf9-4e7d-bfaa-a12d82b730b3",
+            "34abbd0e-cf1f-4e05-8f4b-ff0acb4cb365",
+            "9f79bf90-4e3c-4c73-acab-c7ac3ae1520d"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 19600,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

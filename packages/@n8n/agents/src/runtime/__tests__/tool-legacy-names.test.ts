@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 import { Tool } from '../../sdk/tool';
-import type { BuiltTool } from '../../types';
+import type { AgentDbMessage, BuiltTool } from '../../types';
+import { DeferredToolManager, LOAD_TOOL_TOOL_NAME } from '../tools/deferred-tool-manager';
 import { fixToolCall } from '../tools/fix-tool-call';
 import { buildToolMap, resolveToolForCall, toAiSdkTools } from '../tools/tool-adapter';
-import { ToolCatalog } from '../tools/tool-catalog';
 
 function makeTool(name: string, legacyNames?: string[]): BuiltTool {
 	const builder = new Tool(name)
@@ -22,6 +22,23 @@ function makeActionTool(name: string, legacyName: string, ...actions: string[]):
 		.legacyActions(legacyName, ...actions)
 		.handler(async () => await Promise.resolve({ ok: true }))
 		.build();
+}
+
+function loadToolMessage(toolName: string): AgentDbMessage {
+	return {
+		id: 'm-1',
+		role: 'assistant',
+		content: [
+			{
+				type: 'tool-call',
+				toolCallId: 'tc-1',
+				toolName: LOAD_TOOL_TOOL_NAME,
+				input: { toolName },
+				state: 'resolved',
+				output: { status: 'loaded', toolName },
+			},
+		],
+	} as unknown as AgentDbMessage;
 }
 
 describe('tool legacy names', () => {
@@ -52,28 +69,38 @@ describe('tool legacy names', () => {
 		expect(Object.keys(aiTools)).toEqual(['new_name']);
 	});
 
-	it('resolves a legacy name in the tool catalog', () => {
-		const tool = makeTool('new_name', ['old-name']);
-		const catalog = new ToolCatalog([tool]);
+	it('loads a deferred tool requested by its legacy name', () => {
+		const manager = new DeferredToolManager([makeTool('new_name', ['old-name'])]);
 
-		expect(catalog.getTool('old-name')).toBe(tool);
+		const result = manager.load('old-name');
+
+		expect(result.status).toBe('loaded');
+		expect(result.toolName).toBe('new_name');
+		expect(manager.getLoadedTools().map((t) => t.name)).toEqual(['new_name']);
+	});
+
+	it('resolves a legacy name in getTool', () => {
+		const tool = makeTool('new_name', ['old-name']);
+		const manager = new DeferredToolManager([tool]);
+
+		expect(manager.getTool('old-name')).toBe(tool);
 	});
 
 	it('gives a shared legacy name to the first tool, as the tool map does', () => {
 		const first = makeTool('first', ['shared-old']);
 		const second = makeTool('second', ['shared-old']);
-		const catalog = new ToolCatalog([first, second]);
+		const manager = new DeferredToolManager([first, second]);
 
-		expect(catalog.getTool('shared-old')).toBe(first);
+		expect(manager.load('shared-old').toolName).toBe('first');
 		expect(buildToolMap([first, second]).get('shared-old')).toBe(first);
 	});
 
-	it('routes call_tool with a legacy name to the current tool', () => {
-		const tool = makeTool('new_name', ['old-name']);
-		const catalog = new ToolCatalog([tool]);
-		const map = buildToolMap(catalog.getControllerTools());
+	it('hydrates a deferred tool loaded under its legacy name', () => {
+		const manager = new DeferredToolManager([makeTool('new_name', ['old-name'])]);
 
-		expect(resolveToolForCall(map, 'call_tool', { tool: 'old-name', arguments: {} })).toBe(tool);
+		manager.hydrateLoadedToolsFromMessages([loadToolMessage('old-name')]);
+
+		expect(manager.getLoadedTools().map((t) => t.name)).toEqual(['new_name']);
 	});
 
 	describe('legacy actions', () => {
@@ -107,7 +134,7 @@ describe('tool legacy names', () => {
 		});
 
 		it('resolves a deferred tool by the call action in getTool', () => {
-			const manager = new ToolCatalog([publish, remove]);
+			const manager = new DeferredToolManager([publish, remove]);
 
 			expect(manager.getTool('items', { action: 'delete' })).toBe(remove);
 			expect(manager.getTool('items', '{"action":"publish","id":"1"}')).toBe(publish);
@@ -116,7 +143,7 @@ describe('tool legacy names', () => {
 
 		it('lets a registered deferred tool with the former name win over legacy actions', () => {
 			const items = makeTool('items');
-			const manager = new ToolCatalog([publish, items]);
+			const manager = new DeferredToolManager([publish, items]);
 
 			expect(manager.getTool('items', { action: 'publish' })).toBe(items);
 		});

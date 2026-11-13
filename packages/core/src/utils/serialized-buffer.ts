@@ -1,5 +1,5 @@
 import { isObjectLiteral } from '@n8n/backend-common';
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 
 /** A nodejs Buffer gone through JSON.stringify */
 type ByteArrayBuffer = {

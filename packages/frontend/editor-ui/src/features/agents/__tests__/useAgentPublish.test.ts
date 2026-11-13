@@ -88,7 +88,7 @@ describe('useAgentPublish', () => {
 	beforeEach(() => {
 		localStorage.removeItem(LOCAL_STORAGE_HIDE_AGENT_PUBLISHED_CONFIRMATION);
 		publishAgentMock.mockReset();
-		getAgentMock.mockReset().mockResolvedValue({ versionId: 'v2', skillVersions: {} });
+		getAgentMock.mockReset().mockResolvedValue({ versionId: 'v2' });
 		getAgentVersionMock
 			.mockReset()
 			.mockResolvedValue({ versionId: 'v2', name: 'Release', description: 'Changes' });
@@ -128,7 +128,7 @@ describe('useAgentPublish', () => {
 			n8nChatFlag.value = flag;
 			publishAgentMock.mockResolvedValueOnce({
 				...agentResource,
-				activeVersion: { versionId: 'v2', integrations },
+				activeVersion: { versionId: 'v2', schema: { integrations }, skills: null, author: '' },
 			});
 			const { publish } = useAgentPublish();
 
@@ -163,18 +163,12 @@ describe('useAgentPublish', () => {
 		expect(showErrorMock).toHaveBeenCalled();
 		expect(openModalWithDataMock).not.toHaveBeenCalled();
 	});
-	it('sends the draft and skill versions selected before the dialog opens', async () => {
-		const current = {
-			versionId: 'v2',
-			skillVersions: {
-				tone: { draft: 2, published: 1, latest: 2, pinned: false },
-			},
-		};
+	it('selects the list agent version once before the dialog opens', async () => {
+		const current = { versionId: 'v2' };
 		getAgentMock.mockResolvedValue(current);
 		openVersionMetadataMock.mockImplementationOnce(
 			async (options: AgentVersionMetadataModalData) => {
 				current.versionId = 'v3';
-				current.skillVersions.tone.draft = 3;
 				return await options.onSubmit({ name: 'Release', description: 'Line one\nLine two' });
 			},
 		);
@@ -184,17 +178,10 @@ describe('useAgentPublish', () => {
 			activeVersionId: 'v2',
 		});
 		const result = await useAgentPublish().publish('p1', 'a1');
-		expect(publishAgentMock).toHaveBeenCalledWith(
-			{},
-			'p1',
-			'a1',
-			undefined,
-			{
-				name: 'Release',
-				description: 'Line one\nLine two',
-			},
-			{ versionId: 'v2', skillVersions: { tone: 2 } },
-		);
+		expect(publishAgentMock).toHaveBeenCalledWith({}, 'p1', 'a1', 'v2', {
+			name: 'Release',
+			description: 'Line one\nLine two',
+		});
 		expect(result?.versionId).toBe('v3');
 	});
 
@@ -203,16 +190,12 @@ describe('useAgentPublish', () => {
 		await useAgentPublish().publish('p1', 'a1', 'older-version');
 		expect(getAgentMock).not.toHaveBeenCalled();
 		expect(getAgentVersionMock).toHaveBeenCalledWith({}, 'p1', 'a1', 'older-version');
-		expect(openVersionMetadataMock).toHaveBeenCalledWith(
-			expect.objectContaining({ mode: 'publish', versionId: 'older-version' }),
-		);
 		expect(publishAgentMock).toHaveBeenCalledWith(
 			{},
 			'p1',
 			'a1',
 			'older-version',
 			expect.anything(),
-			undefined,
 		);
 	});
 

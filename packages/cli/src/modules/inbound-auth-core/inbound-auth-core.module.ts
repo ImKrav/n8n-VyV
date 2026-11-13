@@ -42,13 +42,6 @@ export class InboundAuthCoreModule implements ModuleInterface {
 		}
 
 		if (Container.get(InstanceSettings).instanceType === 'main') {
-			// Reads migrate on demand, so a failed upgrade only leaves rows at their old version.
-			try {
-				await Container.get(TrustedSourceDbStore).upgradeStoredConfigs();
-			} catch (error) {
-				Container.get(Logger).warn('Could not upgrade stored trusted source configs', { error });
-			}
-
 			const { SystemTrustedSourceSeeder } = await import('./system-trusted-source.seeder.js');
 			await Container.get(SystemTrustedSourceSeeder).seed();
 

@@ -279,10 +279,9 @@ export function getValidProviderToolNames(): string[] {
 export type ResolvedPromptCachingConfig = z.infer<typeof PromptCachingConfigSchema>;
 
 /**
- * Shared decision for prompt caching. Enables caching for supporting
- * providers by default and keeps an explicit `enabled: false`, so a user can
- * turn it off (e.g. for a proxy that rejects the cache fields). Strips the
- * field (`undefined`) for providers that don't support it. For Anthropic
+ * Shared, mandatory decision for prompt caching. Always enables caching for
+ * supporting providers (the user cannot disable it) and strips the field
+ * (`undefined`) for providers that don't support it. For Anthropic
  * (`capability === 'ttl'`), preserves an explicit TTL from the current
  * config. Callers own the surrounding config plumbing — the editor model
  * picker and the backend write-path normalizer share this rule.
@@ -292,9 +291,8 @@ export function resolvePromptCaching(
 	capability: ProviderCapabilities['promptCaching'],
 ): ResolvedPromptCachingConfig | undefined {
 	if (!capability) return undefined;
-	const enabled = current?.enabled !== false;
 	if (capability === 'ttl' && current?.anthropic?.ttl) {
-		return { enabled, anthropic: { ttl: current.anthropic.ttl } };
+		return { enabled: true, anthropic: { ttl: current.anthropic.ttl } };
 	}
-	return { enabled };
+	return { enabled: true };
 }

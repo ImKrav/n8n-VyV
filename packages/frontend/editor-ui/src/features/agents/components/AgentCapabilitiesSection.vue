@@ -6,7 +6,6 @@ import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { useUIStore } from '@/app/stores/ui.store';
 import type { AgentConfigValidationIssue, AgentJsonTaskConfig } from '@n8n/api-types';
 import {
-	N8nBadge,
 	N8nDropdownMenu,
 	N8nDropdownMenuItem,
 	N8nIcon,
@@ -15,12 +14,9 @@ import {
 } from '@n8n/design-system';
 import type { IconName } from '@n8n/design-system';
 import { useI18n } from '@n8n/i18n';
-import { useRootStore } from '@n8n/stores/useRootStore';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { AgentJsonConfig, AgentJsonMcpServerConfig, AgentJsonToolRef } from '../types';
 import type { AgentSkill, CustomToolEntry } from '../types';
-import type { AgentListItem } from '../agent.types';
-import { listAgentsPage } from '../composables/useAgentApi';
 import { useProjectAgentsList } from '../composables/useProjectAgentsList';
 import { useAgentPermissions } from '../composables/useAgentPermissions';
 import { useCreateAgent } from '../composables/useCreateAgent';
@@ -105,7 +101,6 @@ const emit = defineEmits<{
 
 const i18n = useI18n();
 const toast = useToast();
-const rootStore = useRootStore();
 const nodeTypesStore = useNodeTypesStore();
 const uiStore = useUIStore();
 const { createAgent } = useCreateAgent();
@@ -128,12 +123,9 @@ const selectedSubAgentIdSet = computed(() => new Set(selectedSubAgentIds.value))
 const availableSubAgents = computed(() =>
 	(projectAgents.value ?? []).filter((agent) => agent.id !== props.agentId),
 );
-const archivedSubAgents = ref<AgentListItem[]>([]);
 const selectedSubAgents = computed(() =>
 	selectedSubAgentRefs.value.map(({ agentId, useWhen, enabled }) => {
-		const agent =
-			projectAgents.value?.find((candidate) => candidate.id === agentId) ??
-			archivedSubAgents.value.find((candidate) => candidate.id === agentId);
+		const agent = projectAgents.value?.find((candidate) => candidate.id === agentId);
 		const validationReasons =
 			enabled === false ? [] : (subAgentIssueMessages.value.get(agentId) ?? []);
 		const reasons =
@@ -144,7 +136,6 @@ const selectedSubAgents = computed(() =>
 			id: agentId,
 			enabled: enabled !== false,
 			name: agent?.name ?? i18n.baseText('agents.builder.subAgents.unavailable'),
-			isArchived: agent?.isArchived === true,
 			useWhen: useWhen ?? '',
 			invalid: reasons.length > 0,
 			invalidReasons: reasons,
@@ -218,36 +209,12 @@ function toolRestriction(
 	};
 }
 
-// An older lookup can finish last. Only the latest lookup sets the archived sub-agents.
-let subAgentNamesRequest = 0;
-
 async function ensureSubAgentNamesLoaded() {
-	const request = ++subAgentNamesRequest;
 	const agents = await ensureProjectAgentsLoaded();
-	const known = knownArchivedSubAgents();
-	const knownIds = new Set([...agents, ...known].map((agent) => agent.id));
-	const isResolved = selectedSubAgentIds.value.every((agentId) => knownIds.has(agentId));
-	let archived = known;
-	if (!isResolved) archived = await fetchArchivedSubAgents(await refreshProjectAgents());
-	if (request === subAgentNamesRequest) archivedSubAgents.value = archived;
-}
-
-// A resolved archived sub-agent needs no new lookup while it stays selected in this project.
-function knownArchivedSubAgents() {
-	return archivedSubAgents.value.filter(
-		(agent) => agent.projectId === props.projectId && selectedSubAgentIdSet.value.has(agent.id),
-	);
-}
-
-// The project list hides archived agents. Load the selected sub-agents that it does not contain.
-async function fetchArchivedSubAgents(listedAgents: AgentListItem[]) {
-	const listedIds = new Set(listedAgents.map((agent) => agent.id));
-	const ids = selectedSubAgentIds.value.filter((agentId) => !listedIds.has(agentId));
-	if (ids.length === 0) return [];
-	const { data } = await listAgentsPage(rootStore.restApiContext, props.projectId, {
-		filter: { ids, includeArchived: true },
-	});
-	return data.filter((agent) => agent.isArchived);
+	const loadedIds = new Set(agents.map((agent) => agent.id));
+	if (selectedSubAgentIds.value.some((agentId) => !loadedIds.has(agentId))) {
+		await refreshProjectAgents();
+	}
 }
 
 onMounted(() => {
@@ -541,12 +508,12 @@ async function openSubAgentsModal() {
 	uiStore.openModalWithData({
 		name: AGENT_SUB_AGENTS_MODAL_KEY,
 		data: {
-			agents: availableSubAgents.value.map(({ id, name, personalisation }) => {
+			agents: availableSubAgents.value.map(({ id, name, schema }) => {
 				const selectedRef = selectedSubAgentRefs.value.find((ref) => ref.agentId === id);
 				return {
 					id,
 					name,
-					personalisation: personalisation ?? undefined,
+					personalisation: schema?.personalisation,
 					added: Boolean(selectedRef),
 					useWhen: selectedRef?.useWhen,
 					invalidReasons: subAgentIssueMessages.value.get(id) ?? [],
@@ -827,14 +794,6 @@ function openExistingSubAgentModal(subAgent: {
 								@click="openExistingSubAgentModal(subAgent)"
 							>
 								{{ subAgent.name }}
-								<N8nBadge
-									v-if="subAgent.isArchived"
-									class="ml-3xs"
-									variant="outline"
-									data-testid="agent-capabilities-sub-agent-archived"
-								>
-									{{ i18n.baseText('workflows.item.archived') }}
-								</N8nBadge>
 							</AgentChipButton>
 						</AgentItemContextMenu>
 					</div>

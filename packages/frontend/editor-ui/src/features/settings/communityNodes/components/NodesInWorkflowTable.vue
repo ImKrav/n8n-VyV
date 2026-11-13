@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import type { TableHeader } from '@n8n/design-system';
 import type { RouteLocationRaw } from 'vue-router';
 import { VIEWS } from '@/app/constants';
@@ -25,19 +25,19 @@ const sortBy = defineModel<Array<{ id: WorkflowDataKeys; desc: boolean }>>('sort
 const i18n = useI18n();
 const projectsStore = useProjectsStore();
 
-const headers = computed<Array<TableHeader<WorkflowDataItem>>>(() => [
+const headers = ref<Array<TableHeader<WorkflowDataItem>>>([
 	{
-		title: i18n.baseText('settings.communityNodes.confirmModal.workflowsTable.workflow'),
+		title: 'Workflow',
 		key: 'name',
 		width: 250,
 	},
 	{
-		title: i18n.baseText('settings.communityNodes.confirmModal.workflowsTable.owner'),
+		title: 'Owner',
 		key: 'homeProject.name',
 		width: 100,
 	},
 	{
-		title: i18n.baseText('settings.communityNodes.confirmModal.workflowsTable.status'),
+		title: 'Status',
 		key: 'active',
 		width: 30,
 	},
@@ -92,12 +92,8 @@ const getWorkflowLink = (workflowId: string): RouteLocationRaw => ({
 				</div>
 			</template>
 			<template #[`item.active`]="{ item }">
-				<span v-if="item.active" class="status active">{{
-					i18n.baseText('settings.communityNodes.confirmModal.workflowsTable.active')
-				}}</span>
-				<span v-else class="status inactive">{{
-					i18n.baseText('settings.communityNodes.confirmModal.workflowsTable.inactive')
-				}}</span>
+				<span v-if="item.active" class="status active">Active</span>
+				<span v-else class="status inactive">Inactive</span>
 			</template>
 		</N8nDataTableServer>
 	</div>

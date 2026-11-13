@@ -49,7 +49,7 @@ function assertIsError(error: unknown): asserts error is Error {
 test.describe(
 	'Sub-workflow Version Resolution',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('manual execution should use draft version of sub-workflow @engine:v2', async ({

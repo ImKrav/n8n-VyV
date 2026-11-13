@@ -7,8 +7,9 @@ description: >-
   credentialHints for a service without a dedicated credential type (the
   post-build-flow setup step), or when asked to fix a recipe whose template,
   key page or test endpoint is wrong.
-recommended_tool_groups:
-  - workflows
+recommended_tools:
+  - research
+  - setup_workflow
 ---
 
 # Credential Recipe Research

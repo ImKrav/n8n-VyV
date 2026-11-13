@@ -36,11 +36,7 @@ import { composeJsonConfig } from './json-config/agent-config-composition';
 import type { AgentSkillRefs } from './json-config/agent-document';
 import { AgentRepository } from './repositories/agent.repository';
 import { getAgentConfigHash, getAgentSkillHash } from './utils/agent-config-hash';
-import {
-	assertAgentNotArchived,
-	markAgentDraftDirty,
-	saveAgentDraftFenced,
-} from './utils/agent-draft.utils';
+import { markAgentDraftDirty, saveAgentDraftFenced } from './utils/agent-draft.utils';
 import { getAgentOrThrow } from './utils/get-agent-or-throw';
 import {
 	applySkillInstructionEdits,
@@ -230,8 +226,6 @@ export class AgentSkillsService {
 			projectId,
 			'Agent not found',
 		);
-		// An unpinned skill update does not save the draft, so the draft fence does not see it.
-		assertAgentNotArchived(entity);
 
 		const skillRefs = await this.agentSkillRefs.refsForDraft(entity, {});
 		const ref = skillRefs.find((candidate) => candidate.id === skillId);
@@ -312,7 +306,7 @@ export class AgentSkillsService {
 				await saveAgentDraftFenced(this.agentRepository, entity, ctx);
 				await this.agentSkillRefs.unpinDraftRef(entity, skillId, ctx);
 			}
-			const result = await this.skillService.saveTrusted(
+			return await this.skillService.saveTrusted(
 				skillId,
 				{
 					name: updated.name,
@@ -324,10 +318,6 @@ export class AgentSkillsService {
 				context.user.id,
 				ctx,
 			);
-			if (pinned) {
-				await this.definitionService.captureVersion(entity, context.user, ctx, context.modifiedBy);
-			}
-			return result;
 		});
 
 		await this.skillService.refreshFollowingAgents(

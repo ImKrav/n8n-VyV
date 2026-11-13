@@ -10,7 +10,7 @@ import { test, expect } from '../../../../../fixtures/base';
 test.describe(
 	'Binary data download from the NDV',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('downloads a file that the run stored @engine:v2', async ({ n8n }) => {

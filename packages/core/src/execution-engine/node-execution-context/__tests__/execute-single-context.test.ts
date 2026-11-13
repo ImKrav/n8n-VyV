@@ -13,8 +13,7 @@ import type {
 	ICredentialDataDecryptedObject,
 	WorkflowExpression,
 } from 'n8n-workflow';
-import { NodeConnectionTypes } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError, NodeConnectionTypes } from 'n8n-workflow';
 import { mock } from 'vitest-mock-extended';
 
 import { describeCommonTests } from './shared-tests';

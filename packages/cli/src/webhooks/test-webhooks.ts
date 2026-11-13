@@ -30,7 +30,7 @@ import { SingleWebhookTriggerError } from '@/errors/single-webhook-trigger.error
 import { WorkflowMissingIdError } from '@/errors/workflow-missing-id.error';
 import { NodeTypes } from '@/node-types';
 import { Push } from '@/push';
-import { Publisher } from '@n8n/backend-services';
+import { Publisher } from '@/scaling/pubsub/publisher.service';
 import { removeTrailingSlash } from '@/utils';
 import type { TestWebhookRegistration } from '@/webhooks/test-webhook-registrations.service';
 import { TestWebhookRegistrationsService } from '@/webhooks/test-webhook-registrations.service';

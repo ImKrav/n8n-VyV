@@ -33,7 +33,7 @@ test.describe(
 	{
 		tag: '@bench:webhook',
 		annotation: [
-			{ type: 'owner', description: 'Core Execution' },
+			{ type: 'owner', description: 'Catalysts' },
 			{ type: 'question', description: 'webhook-sync-latency-floor' },
 		],
 	},

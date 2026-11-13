@@ -3,7 +3,6 @@ import type {
 	PromotionResource,
 	PromotionResourceDependency,
 } from '@n8n/api-types';
-import { GlobalConfig } from '@n8n/config';
 import { ProjectRepository, SharedWorkflowRepository, type User } from '@n8n/db';
 import { Service } from '@n8n/di';
 
@@ -16,7 +15,6 @@ import {
 	type PackageDirectoryInventory,
 } from '@/modules/n8n-packages/io/directory/package-directory-inventory-reader';
 import { gitBlobSha } from '@/modules/n8n-packages/io/hashing-package-writer';
-import { entityFilePath } from '@/modules/n8n-packages/io/manifest-entry';
 import { N8nPackagesService } from '@/modules/n8n-packages/n8n-packages.service';
 import { FolderService } from '@/services/folder.service';
 import {
@@ -25,20 +23,13 @@ import {
 	DataTableSchemaConflictPolicy,
 	LayoutConflictPolicy,
 	OverwriteDeletionPolicy,
-	ProjectConflictPolicy,
 	TagConflictPolicy,
 	WorkflowPublishingPolicy,
 	type ImportSelection,
 	type ImportSelectionRequest,
 } from '@/modules/n8n-packages/n8n-packages.types';
 
-import {
-	plannedChanges,
-	previewRevision,
-	toPreviewCheck,
-	withoutTagIds,
-	withoutTags,
-} from './apply-preview';
+import { plannedChanges, previewRevision, toPreviewCheck } from './apply-preview';
 import { PACKAGE_SUBFOLDER } from './constants';
 import { crossProjectMoves, foldersInScope, type CrossProjectMoves } from './cross-project-moves';
 import { GitCommitPackageReader } from './git-commit-package-reader';
@@ -55,8 +46,8 @@ export type ApplyPreview = {
 };
 
 /**
- * The request of a selective Apply. The package is the source of truth, also for the project
- * details, and a destructive data table change waits for a confirmation.
+ * The request of a selective Apply. The package is the source of truth, and a destructive data
+ * table change waits for a confirmation.
  */
 export function applySelectionRequest(
 	user: User,
@@ -64,7 +55,6 @@ export function applySelectionRequest(
 ): ImportSelectionRequest {
 	return {
 		user,
-		projectConflictPolicy: ProjectConflictPolicy.Overwrite,
 		// Hard delete, so that the next preview has nothing left to show.
 		overwriteDeletionPolicy: OverwriteDeletionPolicy.HardDelete,
 		dataTableSchemaConflictPolicy: confirmDestructiveChanges
@@ -95,7 +85,6 @@ export class ApplyPreviewService {
 		private readonly projectRepository: ProjectRepository,
 		private readonly folderService: FolderService,
 		private readonly localEntities: LocalPackageEntities,
-		private readonly globalConfig: GlobalConfig,
 	) {}
 
 	/**
@@ -142,13 +131,6 @@ export class ApplyPreviewService {
 		const check = plan
 			? this.check(plan, inventory, selection, moves)
 			: projectNotOnBranch(projectId, instance);
-		const manifest = plan?.manifest ?? (await reader.readManifest());
-		const tagsDisabled = this.globalConfig.tags.disabled;
-		const workflowPaths = new Set(
-			tagsDisabled
-				? (manifest?.workflows ?? []).map(({ target }) => entityFilePath('workflows', target))
-				: [],
-		);
 		const { resources, dependencies } = buildPreview({
 			operation: { direction: 'apply', planned: plan && plannedChanges(plan) },
 			projectIds: [projectId],
@@ -157,13 +139,11 @@ export class ApplyPreviewService {
 				blobByPath: new Map(instance.files.map(({ path, blobSha }) => [path, blobSha])),
 			},
 			desired: {
-				manifest: manifest && tagsDisabled ? withoutTags(manifest) : manifest,
+				manifest: plan?.manifest ?? (await reader.readManifest()),
 				blobByPath: new Map(
 					[...files].map(([path, content]) => [
 						`${PACKAGE_SUBFOLDER}/${path}`,
-						gitBlobSha(
-							workflowPaths.has(path) ? this.workflowFileForApply(content.toString()) : content,
-						),
+						gitBlobSha(content),
 					]),
 				),
 			},
@@ -171,11 +151,6 @@ export class ApplyPreviewService {
 		await this.addLocalState(resources);
 
 		return { resources, dependencies, check, revision: previewRevision(resources, check) };
-	}
-
-	/** A branch workflow file as Apply writes it. With workflow tags disabled, Apply keeps the local tags. */
-	workflowFileForApply(content: string): string {
-		return this.globalConfig.tags.disabled ? withoutTagIds(content) : content;
 	}
 
 	/**
@@ -267,9 +242,8 @@ export class ApplyPreviewService {
 }
 
 /**
- * Every workflow and folder of the project that the branch holds is applied. A workflow that this
- * instance owns and the branch lacks is deleted, unless it moved to another project: that is
- * reported.
+ * Every workflow of the project that the branch holds is applied. A workflow that this instance
+ * owns and the branch lacks is deleted, unless it moved to another project: that is reported.
  */
 function classifyProjectWorkflows(
 	inventory: PackageDirectoryInventory,
@@ -284,9 +258,6 @@ function classifyProjectWorkflows(
 	return {
 		selectedProjectId: projectId,
 		selectedWorkflowIds,
-		selectedFolderIds: inventory.folders
-			.filter((folder) => folder.projectId === projectId)
-			.map(({ folder }) => folder.id),
 		deletedWorkflowIds: ownedWorkflowIds.filter(
 			(id) => !selected.has(id) && !movedWorkflowIds.has(id),
 		),

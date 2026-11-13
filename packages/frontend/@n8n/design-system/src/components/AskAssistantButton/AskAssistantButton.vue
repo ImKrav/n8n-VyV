@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 
 import { useI18n } from '../../composables/useI18n';
-import N8nIcon from '../N8nIcon';
+import AssistantIcon from '../AskAssistantIcon/AssistantIcon.vue';
 import AssistantText from '../AskAssistantText/AssistantText.vue';
 
 const { t } = useI18n();
@@ -36,12 +36,7 @@ function onMouseLeave() {
 		<div v-if="props.unreadCount" :class="$style.num">
 			{{ props.unreadCount }}
 		</div>
-		<N8nIcon
-			v-else
-			icon="n8n-assistant"
-			:size="18"
-			:color="hovering ? '--color--neutral-white' : undefined"
-		/>
+		<AssistantIcon v-else size="large" :theme="hovering ? 'blank' : 'default'" />
 		<div v-show="hovering" :class="$style.text">
 			<div>
 				<AssistantText

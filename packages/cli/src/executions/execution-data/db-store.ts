@@ -1,4 +1,4 @@
-import { ExecutionData, ExecutionDataRepository } from '@n8n/db';
+import { ExecutionData, ExecutionDataRepository, In } from '@n8n/db';
 import type { EntityManager } from '@n8n/db';
 import { Service } from '@n8n/di';
 import chunk from 'lodash/chunk';
@@ -59,9 +59,7 @@ export class DbStore {
 		{ executionId }: ExecutionRef,
 		tx?: EntityManager,
 	): Promise<ExecutionDataPayload | null> {
-		if (!tx) return await this.repository.findPayloadByExecutionId(executionId, {});
-
-		const repo = tx.getRepository(ExecutionData);
+		const repo = tx ? tx.getRepository(ExecutionData) : this.repository;
 		const result = await repo.findOne({
 			where: { executionId },
 			select: ['data', 'workflowData', 'workflowVersionId'],
@@ -79,12 +77,11 @@ export class DbStore {
 		{ executionId }: ExecutionRef,
 		tx?: EntityManager,
 	): Promise<BundleWorkflowSnapshot | null> {
-		const result = tx
-			? await tx.getRepository(ExecutionData).findOne({
-					where: { executionId },
-					select: ['workflowData', 'workflowVersionId'],
-				})
-			: await this.repository.findWorkflowSnapshotByExecutionId(executionId, {});
+		const repo = tx ? tx.getRepository(ExecutionData) : this.repository;
+		const result = await repo.findOne({
+			where: { executionId },
+			select: ['workflowData', 'workflowVersionId'],
+		});
 
 		if (!result) return null;
 
@@ -92,7 +89,17 @@ export class DbStore {
 	}
 
 	async getDataByteSize({ executionId }: ExecutionRef): Promise<number | null> {
-		return await this.repository.getDataByteSize(executionId, {});
+		// LENGTH() avoids loading the column into memory. It counts characters, not bytes, but the
+		// data is a near-ASCII flatted string, so it's close enough to guard on.
+		const row = await this.repository
+			.createQueryBuilder('d')
+			.select('LENGTH(d.data)', 'size')
+			.where('d.executionId = :executionId', { executionId })
+			.getRawOne<{ size: number | string | null }>();
+
+		if (!row || row.size === null) return null;
+
+		return Number(row.size);
 	}
 
 	async readMany(refs: ExecutionRef[]) {
@@ -104,7 +111,10 @@ export class DbStore {
 		// Batch the IN-clause so an unbounded set of ids cannot exceed the DB's
 		// limit on bound parameters (SQLite caps near 1000).
 		for (const batch of chunk(ids, MAX_READ_BATCH_SIZE)) {
-			const rows = await this.repository.findPayloadsByExecutionIds(batch, {});
+			const rows = await this.repository.find({
+				where: { executionId: In(batch) },
+				select: ['executionId', 'data', 'workflowData', 'workflowVersionId'],
+			});
 
 			for (const row of rows) {
 				payloads.set(row.executionId, {

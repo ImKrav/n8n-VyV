@@ -1,4 +1,4 @@
-import { OperationalError, UserError } from '@n8n/errors';
+import { OperationalError, UserError } from 'n8n-workflow';
 import type { FilterValue, GeoRangeFilter, TimeoutParams, WeaviateClient } from 'weaviate-client';
 import weaviate, { Filters } from 'weaviate-client';
 

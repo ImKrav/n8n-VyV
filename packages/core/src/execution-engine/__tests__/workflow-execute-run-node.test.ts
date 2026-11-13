@@ -78,8 +78,13 @@ import type {
 	IWorkflowExecuteAdditionalData,
 	Workflow,
 } from 'n8n-workflow';
-import { NodeApiError, NodeOperationError, Node, createRunExecutionData } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import {
+	NodeApiError,
+	NodeOperationError,
+	Node,
+	createRunExecutionData,
+	UnexpectedError,
+} from 'n8n-workflow';
 import type { Mock, Mocked, MockedClass } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 

@@ -38,10 +38,7 @@ export function toSubWorkflowOutput(
 	const slots: INodeExecutionData[][] = [];
 	for (const step of steps) {
 		fromStepInputs(step.outputs).forEach((items, slot) => {
-			// One push per item: a spread can exceed the argument limit, and a concat
-			// copies the slot on every pass.
-			const target = (slots[slot] ??= []);
-			for (const item of items) target.push(withoutPairedItem(item));
+			(slots[slot] ??= []).push(...items.map(withoutPairedItem));
 		});
 	}
 	return slots.length === 0 ? [[]] : slots.map((slot) => slot ?? []);

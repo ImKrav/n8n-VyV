@@ -6,7 +6,6 @@ import { Tool } from '@n8n/agents/tool';
 import type { SubAgentSource } from '@n8n/api-types';
 import { z } from 'zod';
 
-import { resolveSandboxFileRefs } from '../agent-sandbox-files.service';
 import { decodeAgentSandboxHostMetadata } from '../agent-sandbox-principal';
 import { readIntegrationMessageContext } from '../integrations/integration-message-context';
 import { isTaskRunMemoryResourceId } from '../utils/agent-memory-scope';
@@ -110,15 +109,7 @@ export function createBackgroundSubAgentHandler(
 					goal: input.goal,
 					context: input.context,
 					expectedOutput: input.expectedOutput,
-					...(input.fileIds?.length
-						? {
-								// The job can start after this turn ends, so resolve sandbox paths now.
-								fileIds: await resolveSandboxFileRefs(input.fileIds, {
-									projectId: options.projectId,
-									threadId: parentThreadId,
-								}),
-							}
-						: {}),
+					...(input.fileIds?.length ? { fileIds: input.fileIds } : {}),
 					...(isSelfDelegation && input.difficulty !== undefined
 						? { difficulty: input.difficulty }
 						: {}),

@@ -1,0 +1,15 @@
+{
+  "name": "vyv-stagehand-n8n",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node stagehand-datatables-carpetas.mjs",
+    "preparar": "playwright install chromium"
+  },
+  "dependencies": {
+    "@browserbasehq/stagehand": "^2.4.0",
+    "dotenv": "^16.4.7",
+    "zod": "^3.25.0",
+    "playwright": "^1.52.0"
+  }
+}

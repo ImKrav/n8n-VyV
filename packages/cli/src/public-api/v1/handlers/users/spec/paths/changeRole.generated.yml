@@ -2,10 +2,7 @@ operationId: changeRole
 tags:
   - User
 summary: Change a user's global role
-description: |-
-  Change a user's global role
-
-  Requires the `user:changeRole` API key scope.
+description: Change a user's global role
 x-required-scope: user:changeRole
 parameters:
   - schema:

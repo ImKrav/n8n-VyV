@@ -1,13 +1,12 @@
 import { mockInstance } from '@n8n/backend-test-utils';
-import type { ExecutionEntity } from '@n8n/db';
+import type { ExecutionEntity, ExecutionData } from '@n8n/db';
 import {
-	ExecutionData,
+	ExecutionDataRepository,
 	ExecutionMetadataRepository,
 	ExecutionRepository,
 	AnnotationTagRepository,
 } from '@n8n/db';
 import { Container } from '@n8n/di';
-import { DataSource } from '@n8n/typeorm';
 import type { AnnotationVote, ExecutionStatus, IWorkflowBase } from 'n8n-workflow';
 
 import { ExecutionService } from '@/executions/execution.service';
@@ -77,13 +76,11 @@ export async function createExecution(
 		await Container.get(ExecutionMetadataRepository).save(metadataToSave);
 	}
 
-	await Container.get(DataSource)
-		.getRepository(ExecutionData)
-		.save({
-			data: data ?? '[]',
-			workflowData: workflow ?? {},
-			executionId: execution.id,
-		});
+	await Container.get(ExecutionDataRepository).save({
+		data: data ?? '[]',
+		workflowData: workflow ?? {},
+		executionId: execution.id,
+	});
 
 	return execution;
 }

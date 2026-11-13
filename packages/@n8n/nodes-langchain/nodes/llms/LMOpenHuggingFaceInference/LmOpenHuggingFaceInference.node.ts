@@ -14,8 +14,6 @@ import {
 	getConnectionHintNoticeField,
 } from '@n8n/ai-utilities';
 
-import { getRequiredApiKey } from '@utils/helpers';
-
 export class LmOpenHuggingFaceInference implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Hugging Face Inference Model',
@@ -157,7 +155,7 @@ export class LmOpenHuggingFaceInference implements INodeType {
 		// Other models are returning "Model x/y is not supported for task text-generation and provider z. Supported task: conversational."
 		const model = new HuggingFaceInference({
 			model: modelName,
-			apiKey: getRequiredApiKey(this.getNode(), credentials.apiKey),
+			apiKey: credentials.apiKey as string,
 			...options,
 			callbacks: [new N8nLlmTracing(this)],
 			onFailedAttempt: makeN8nLlmFailedAttemptHandler(this),

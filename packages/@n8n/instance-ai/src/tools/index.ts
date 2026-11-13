@@ -6,9 +6,10 @@ import {
 	EXECUTION_TOOL_ACTIONS,
 	EXECUTION_TOOL_NAME_BY_ACTION,
 	WORKFLOW_TOOL_NAME_BY_ACTION,
-	INSTANCE_TOOL_NAME_BY_ACTION,
+	WORKSPACE_TOOL_NAME_BY_ACTION,
 } from '@n8n/api-types';
 
+import { isParseableAttachment } from '../parsers/structured-file-parser';
 import { createToolRegistry } from '../tool-registry';
 import type { InstanceAiContext, InstanceAiToolRegistry, OrchestrationContext } from '../types';
 import { resolveAgentBuilderTarget } from './orchestration/agent-target-binding';
@@ -148,7 +149,7 @@ function getOrchestratorDomainToolFactories(
 			() => loadDataTablesTool().createDataTableTool(context, action),
 		]),
 		...getSupportedWorkspaceActions(context).map((action): [string, DomainToolFactory] => [
-			INSTANCE_TOOL_NAME_BY_ACTION[action],
+			WORKSPACE_TOOL_NAME_BY_ACTION[action],
 			() => loadWorkspaceTool().createWorkspaceActionTool(context, action),
 		]),
 		[DOMAIN_TOOL_IDS.RESEARCH, () => loadResearchTool().createResearchTool(context)],
@@ -252,15 +253,12 @@ function getOrchestratorDomainToolFactories(
 		tools.push([DOMAIN_TOOL_IDS.APPS, () => loadAppsTool().createAppsTool(context)]);
 	}
 
-	// Registered on every turn, with or without files, so the tool list, which
-	// leads the cached prompt prefix, stays the same for the whole thread.
-	const { storedFiles } = context;
-	tools.push([
-		DOMAIN_TOOL_IDS.PARSE_FILE,
-		storedFiles
-			? () => loadParseFileTool().createParseStoredFileTool(storedFiles)
-			: () => loadParseFileTool().createParseFileTool(context),
-	]);
+	if (context.currentUserAttachments?.some(isParseableAttachment)) {
+		tools.push([
+			DOMAIN_TOOL_IDS.PARSE_FILE,
+			() => loadParseFileTool().createParseFileTool(context),
+		]);
+	}
 
 	return tools;
 }

@@ -34,12 +34,10 @@ export class SkillSyncedFromService {
 			(await this.skillSyncFlagGate.isEnabled(user)) &&
 			(await this.skillAccess.canOnSource(user, source, 'stopSyncing'));
 		try {
-			const description = client.describe(source.locator);
 			return {
 				sourceId: source.sourceId,
 				type: source.type,
-				label: description.label,
-				ref: description.ref,
+				label: client.describe(source.locator).label,
 				webUrl: client.webUrl(source.locator, source.remoteRef),
 				canStopSyncing,
 			};

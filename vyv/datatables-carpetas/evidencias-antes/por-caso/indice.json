@@ -1,0 +1,121 @@
+{
+  "CP-016-01": [
+    "evidencias/por-caso/CP-016-01/co01-co02-datatables.ui__CP-016-01_paso2_nombre.png",
+    "evidencias/por-caso/CP-016-01/co01-co02-datatables.ui__CP-016-01_paso3_detalle.png",
+    "evidencias/por-caso/CP-016-01/co01-co02-datatables.ui__CP-016-01_paso4_tarjeta.png",
+    "evidencias/por-caso/CP-016-01/co01-crear-tabla-columnas.api__CP-016-01_evidencia.png"
+  ],
+  "CP-016-02": [
+    "evidencias/por-caso/CP-016-02/co01-co02-datatables.ui__CO-01  CO-02 · Data tables (UI) -- CP-016-02 · el botón Create queda deshabilitado con nombre vacío (failed).png",
+    "evidencias/por-caso/CP-016-02/co01-co02-datatables.ui__CP-016-02_nombre_solo_espacios.png",
+    "evidencias/por-caso/CP-016-02/co01-crear-tabla-columnas.api__CP-016-02_evidencia.png"
+  ],
+  "CP-016-03": [
+    "evidencias/por-caso/CP-016-03/co01-crear-tabla-columnas.api__CP-016-03_evidencia.png"
+  ],
+  "CP-016-04": [
+    "evidencias/por-caso/CP-016-04/co01-co02-datatables.ui__CP-016-04_encabezados.png",
+    "evidencias/por-caso/CP-016-04/co01-crear-tabla-columnas.api__CP-016-04_evidencia.png"
+  ],
+  "CP-016-05": [
+    "evidencias/por-caso/CP-016-05/co01-co02-datatables.ui__CP-016-05_mensaje_formato.png",
+    "evidencias/por-caso/CP-016-05/co01-crear-tabla-columnas.api__CP-016-05_evidencia.png"
+  ],
+  "CP-016-06": [
+    "evidencias/por-caso/CP-016-06/co01-crear-tabla-columnas.api__CP-016-06_evidencia.png"
+  ],
+  "CP-016-07": [
+    "evidencias/por-caso/CP-016-07/co01-crear-tabla-columnas.api__CP-016-07_evidencia.png"
+  ],
+  "CP-017-01": [
+    "evidencias/por-caso/CP-017-01/co01-co02-datatables.ui__CP-017-01_persistencia.png",
+    "evidencias/por-caso/CP-017-01/co02-edicion-filas.api__CP-017-01_evidencia.png"
+  ],
+  "CP-017-02": [
+    "evidencias/por-caso/CP-017-02/co02-edicion-filas.api__CP-017-02_evidencia.png"
+  ],
+  "CP-017-03": [
+    "evidencias/por-caso/CP-017-03/co02-edicion-filas.api__CP-017-03_evidencia.png"
+  ],
+  "CP-017-04": [
+    "evidencias/por-caso/CP-017-04/co02-edicion-filas.api__CP-017-04_evidencia.png"
+  ],
+  "CP-017-05": [
+    "evidencias/por-caso/CP-017-05/co02-edicion-filas.api__CP-017-05_evidencia.png"
+  ],
+  "CP-017-06": [
+    "evidencias/por-caso/CP-017-06/co01-co02-datatables.ui__CP-017-06_orden_ascendente.png",
+    "evidencias/por-caso/CP-017-06/co02-edicion-filas.api__CP-017-06_evidencia.png"
+  ],
+  "CP-017-07": [
+    "evidencias/por-caso/CP-017-07/co01-co02-datatables.ui__CP-017-07_busqueda.png",
+    "evidencias/por-caso/CP-017-07/co02-edicion-filas.api__CP-017-07_evidencia.png"
+  ],
+  "CP-018-01": [
+    "evidencias/por-caso/CP-018-01/co03-csv.ui__CP-018-01_tabla_importada.png",
+    "evidencias/por-caso/CP-018-01/co03-csv.ui__CP-018-01_vista_previa.png",
+    "evidencias/por-caso/CP-018-01/co03-importar-exportar-csv.api__CP-018-01_evidencia.png"
+  ],
+  "CP-018-02": [
+    "evidencias/por-caso/CP-018-02/co03-importar-exportar-csv.api__CP-018-02_evidencia.png"
+  ],
+  "CP-018-03": [
+    "evidencias/por-caso/CP-018-03/co03-importar-exportar-csv.api__CP-018-03_evidencia.png"
+  ],
+  "CP-018-04": [
+    "evidencias/por-caso/CP-018-04/co03-importar-exportar-csv.api__CP-018-04_evidencia.png"
+  ],
+  "CP-018-05": [
+    "evidencias/por-caso/CP-018-05/co03-importar-exportar-csv.api__CP-018-05_evidencia.png"
+  ],
+  "CP-018-06": [
+    "evidencias/por-caso/CP-018-06/co03-csv.ui__CP-018-06_descarga.png",
+    "evidencias/por-caso/CP-018-06/co03-importar-exportar-csv.api__CP-018-06_evidencia.png"
+  ],
+  "CP-018-07": [
+    "evidencias/por-caso/CP-018-07/co03-importar-exportar-csv.api__CO-03 · Importar y exportar CSV (API) -- Hallazgo CP-018-07 · inferencia de fechas imposibles (documenta el defecto) (failed).png",
+    "evidencias/por-caso/CP-018-07/co03-importar-exportar-csv.api__CP-018-07_evidencia.png"
+  ],
+  "CP-018-08": [
+    "evidencias/por-caso/CP-018-08/owasp-datatables-carpetas__CP-018-08_evidencia.png",
+    "evidencias/por-caso/CP-018-08/owasp-datatables-carpetas__Seguridad · Data tables y carpetas (OWASP Top 10) -- CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236) (failed).png"
+  ],
+  "CP-019-01": [
+    "evidencias/por-caso/CP-019-01/co04-co05-carpetas.ui__CP-019-01_tarjeta.png",
+    "evidencias/por-caso/CP-019-01/co04-crear-navegar-carpetas.api__CP-019-01_evidencia.png"
+  ],
+  "CP-019-02": [
+    "evidencias/por-caso/CP-019-02/co04-crear-navegar-carpetas.api__CP-019-02_evidencia.png"
+  ],
+  "CP-019-03": [
+    "evidencias/por-caso/CP-019-03/co04-co05-carpetas.ui__CP-019-03_06_navegacion.png",
+    "evidencias/por-caso/CP-019-03/co04-crear-navegar-carpetas.api__CP-019-03_evidencia.png"
+  ],
+  "CP-019-04": [
+    "evidencias/por-caso/CP-019-04/co04-crear-navegar-carpetas.api__CP-019-04_evidencia.png"
+  ],
+  "CP-019-05": [
+    "evidencias/por-caso/CP-019-05/co04-co05-carpetas.ui__CP-019-05_breadcrumbs.png"
+  ],
+  "CP-019-06": [
+    "evidencias/por-caso/CP-019-06/co04-co05-carpetas.ui__CP-019-06_conteos.png",
+    "evidencias/por-caso/CP-019-06/co04-crear-navegar-carpetas.api__CP-019-06_evidencia.png"
+  ],
+  "CP-020-01": [
+    "evidencias/por-caso/CP-020-01/co05-mover-eliminar-carpetas.api__CP-020-01_evidencia.png"
+  ],
+  "CP-020-02": [
+    "evidencias/por-caso/CP-020-02/co04-co05-carpetas.ui__CP-020-02_movida.png",
+    "evidencias/por-caso/CP-020-02/co05-mover-eliminar-carpetas.api__CP-020-02_evidencia.png"
+  ],
+  "CP-020-03": [
+    "evidencias/por-caso/CP-020-03/co05-mover-eliminar-carpetas.api__CP-020-03_evidencia.png"
+  ],
+  "CP-020-04": [
+    "evidencias/por-caso/CP-020-04/co04-co05-carpetas.ui__CP-020-04_modal.png",
+    "evidencias/por-caso/CP-020-04/co05-mover-eliminar-carpetas.api__CP-020-04_evidencia.png"
+  ],
+  "CP-020-05": [
+    "evidencias/por-caso/CP-020-05/co05-mover-eliminar-carpetas.api__CP-020-05_evidencia.png"
+  ]
+}

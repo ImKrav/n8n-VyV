@@ -2,10 +2,7 @@ operationId: getTag
 tags:
   - Tags
 summary: Retrieves a tag
-description: |-
-  Retrieves a tag.
-
-  Requires the `tag:read` API key scope.
+description: Retrieves a tag.
 x-required-scope: tag:read
 parameters:
   - schema:

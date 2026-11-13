@@ -11,11 +11,11 @@ import {
 	N8nText,
 	type DropdownMenuItemProps,
 } from '@n8n/design-system';
+import { componentRegistry } from '@n8n/frontend-module-sdk';
 import { useI18n } from '@n8n/i18n';
 import { computed } from 'vue';
 
 import SelfHealingResultActivity from './SelfHealingResultActivity.vue';
-import SelfHealingResultChanges from './SelfHealingResultChanges.vue';
 import SelfHealingResultMetadata from './SelfHealingResultMetadata.vue';
 import type { SelfHealingPublishAccess, SelfHealingResultAction } from './selfHealingResults.api';
 
@@ -24,8 +24,7 @@ type MenuAction = Exclude<SelfHealingResultAction, 'dismiss'>;
 
 const props = defineProps<{
 	detail: SelfHealingResultDetail;
-	workflowNames: Map<string, string>;
-	projectName?: string;
+	workflowName: string;
 	tab: DetailTab;
 	pendingAction: SelfHealingResultAction | null;
 	publishAccess: SelfHealingPublishAccess;
@@ -43,17 +42,10 @@ const reportOptions = {
 	tasklists: { enabled: false },
 	youtube: {},
 };
+const WorkflowDiffView = computed(() => componentRegistry.get('workflow-diff'));
 const isOpen = computed(() => props.detail.reviewState === 'open');
 const isFixReady = computed(() => props.detail.outcome === 'fix_ready');
-const hasSuggestion = computed(() => props.detail.suggestions.length > 0);
-const isMultiWorkflow = computed(() => props.detail.suggestions.length > 1);
-const outdatedBody = computed(() =>
-	i18n.baseText(
-		isMultiWorkflow.value
-			? 'inbox.selfHealing.state.outdated.bodyMultiple'
-			: 'inbox.selfHealing.state.outdated.body',
-	),
-);
+const hasSuggestion = computed(() => props.detail.suggestion !== null);
 const activeTab = computed(() =>
 	props.tab === 'changes' && hasSuggestion.value ? 'changes' : 'activity',
 );
@@ -85,13 +77,7 @@ const statusClass = computed(() => {
 const tabOptions = computed(() => [
 	{ label: i18n.baseText('inbox.selfHealing.tabs.activity'), value: 'activity' },
 	...(hasSuggestion.value
-		? [
-				{
-					label: i18n.baseText('inbox.selfHealing.tabs.changes'),
-					value: 'changes',
-					...(isMultiWorkflow.value ? { tag: String(props.detail.suggestions.length) } : {}),
-				},
-			]
+		? [{ label: i18n.baseText('inbox.selfHealing.tabs.changes'), value: 'changes' }]
 		: []),
 ]);
 
@@ -197,7 +183,7 @@ function onTabChange(tab: string) {
 					</N8nDropdownMenu>
 				</div>
 			</div>
-			<div :class="[$style.detailBody, { [$style.flush]: activeTab === 'changes' }]">
+			<div :class="$style.detailBody">
 				<div
 					v-if="activeTab === 'activity'"
 					:class="$style.activityPanel"
@@ -231,7 +217,7 @@ function onTabChange(tab: string) {
 						<strong :class="$style.noticeTitle">
 							{{ i18n.baseText('inbox.selfHealing.state.outdated') }}
 						</strong>
-						{{ outdatedBody }}
+						{{ i18n.baseText('inbox.selfHealing.state.outdated.body') }}
 					</N8nCallout>
 					<N8nCallout
 						v-if="isOpen && detail.outcome === 'needs_you'"
@@ -245,25 +231,25 @@ function onTabChange(tab: string) {
 					</N8nCallout>
 				</div>
 				<div v-else :class="$style.changesPanel" data-test-id="self-healing-changes-panel">
-					<N8nCallout
-						v-if="detail.reviewState === 'outdated'"
-						theme="warning"
-						slim
-						:class="$style.changesNotice"
-						data-test-id="self-healing-changes-outdated-notice"
-					>
-						{{ outdatedBody }}
+					<div v-if="WorkflowDiffView && detail.suggestion" :class="$style.diff">
+						<component
+							:is="WorkflowDiffView"
+							:source-snapshot="detail.suggestion.payload.original"
+							:target-snapshot="detail.suggestion.payload.proposed"
+							:workflow-id="detail.workflowId"
+							:workflow-name="workflowName"
+							:source-label="i18n.baseText('inbox.selfHealing.changes.original')"
+							:target-label="i18n.baseText('inbox.selfHealing.changes.proposed')"
+							show-fullscreen-button
+						/>
+					</div>
+					<N8nCallout v-else theme="warning">
+						{{ i18n.baseText('inbox.selfHealing.changes.unavailable') }}
 					</N8nCallout>
-					<SelfHealingResultChanges
-						:detail="detail"
-						:workflow-names="workflowNames"
-						:project-name="projectName"
-					/>
 				</div>
 				<SelfHealingResultMetadata
-					v-if="activeTab === 'activity'"
 					:detail="detail"
-					:workflow-names="workflowNames"
+					:workflow-name="workflowName"
 					:status-label="statusLabel"
 				/>
 			</div>
@@ -352,16 +338,6 @@ function onTabChange(tab: string) {
 	padding-top: var(--spacing--sm);
 }
 
-.flush {
-	padding-top: 0;
-	/* The workflow tree takes back its inset to the left of the column. */
-	overflow: visible;
-
-	.changesNotice {
-		margin-top: var(--spacing--sm);
-	}
-}
-
 .activityPanel {
 	display: flex;
 	flex: 1;
@@ -388,7 +364,7 @@ function onTabChange(tab: string) {
 /* The global Markdown rules size paragraphs from this root. */
 .report:global(.n8n-markdown) {
 	--markdown--spacing: var(--spacing--4xs);
-	--n8n-markdown--font-size--base: var(--font-size--sm);
+	--n8n-markdown--base-font-size: var(--font-size--sm);
 
 	overflow-wrap: anywhere;
 	min-width: 0;
@@ -410,9 +386,16 @@ function onTabChange(tab: string) {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
-	gap: var(--spacing--xs);
 	min-width: 0;
 	min-height: 0;
+}
+
+.diff {
+	flex: 1;
+	min-height: 0;
+	border: var(--border);
+	border-radius: var(--radius--2xs);
+	overflow: hidden;
 }
 
 /* Match the detail breakpoint of workflow reviews. Container queries cannot use CSS variables. */
@@ -436,6 +419,12 @@ function onTabChange(tab: string) {
 		flex: 0 0 auto;
 		max-width: none;
 		margin-inline-end: 0;
+	}
+
+	.changesPanel {
+		flex: 1 0 auto;
+		/* Keep the canvas usable above the metadata when the detail columns stack. */
+		min-height: calc(var(--spacing--5xl) + var(--spacing--4xl));
 	}
 }
 </style>

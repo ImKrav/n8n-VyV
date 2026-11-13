@@ -1,18 +1,21 @@
 import type { BreakingChangeWorkflowOwner, MigrationOwnerSource } from '@n8n/api-types';
-import { accountSummary, isPerson, type User } from '@n8n/db';
+import type { User } from '@n8n/db';
 
-/** The owner as the report shows it. A service account has its name and no email. */
+/** The owner as the report shows it. */
 export function toWorkflowOwner(
-	user: User,
+	user: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>,
 	source: MigrationOwnerSource,
 ): BreakingChangeWorkflowOwner {
-	return { ...accountSummary(user), source };
+	return {
+		id: user.id,
+		firstName: user.firstName,
+		lastName: user.lastName,
+		email: user.email,
+		source,
+	};
 }
 
-/**
- * An account that can sign in, so it can open the workflow and fix it. A person
- * who has not accepted the invite cannot. Needs the role and the auth identities loaded.
- */
-export function canOwnFindings(user: User): boolean {
-	return !user.disabled && !(isPerson(user) && user.isPending);
+/** A user who can sign in, so they can open the workflow and fix it. Needs the role and the auth identities loaded. */
+export function canOwnFindings(user: Pick<User, 'disabled' | 'isPending'>): boolean {
+	return !user.disabled && !user.isPending;
 }

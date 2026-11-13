@@ -6,7 +6,7 @@ import type { TrustedSourceConfigInput } from '@n8n/inbound-auth';
 export { SYSTEM_TRUSTED_SOURCE_ID } from '@n8n/inbound-auth';
 export const SYSTEM_TRUSTED_SOURCE_NAME = 'n8n';
 export const SYSTEM_TRUSTED_SOURCE_CONFIG = {
-	version: 2,
+	version: 1,
 	authentication: {
 		type: 'oauth2',
 		discovery: { mode: 'auto' },
@@ -19,7 +19,7 @@ export const SYSTEM_TRUSTED_SOURCE_CONFIG = {
 		subject: 'n8n-user-id',
 		claimMapping: { subject: 'sub', clientId: 'client_id', scopes: 'scope' },
 		linkByEmail: 'off',
-		provision: { person: 'off' },
+		provision: { human: 'off' },
 		roleMapping: { mode: 'off', instanceRoleRules: [], projectRoleRules: [] },
 	},
 } satisfies TrustedSourceConfigInput;

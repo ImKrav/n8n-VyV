@@ -14,7 +14,14 @@ exports[`N8nDropdownMenu > disabled state > should render trigger with disabled 
   id="reka-dropdown-menu-trigger-v-1"
   type="button"
 >
-  <!--v-if-->
+  <transition-stub
+    appear="false"
+    css="true"
+    name="n8n-button-fade"
+    persisted="false"
+  >
+    <!--v-if-->
+  </transition-stub>
   <div
     class="button-inner"
   >
@@ -53,7 +60,14 @@ exports[`N8nDropdownMenu > rendering > should render default trigger button 1`] 
   id="reka-dropdown-menu-trigger-v-1"
   type="button"
 >
-  <!--v-if-->
+  <transition-stub
+    appear="false"
+    css="true"
+    name="n8n-button-fade"
+    persisted="false"
+  >
+    <!--v-if-->
+  </transition-stub>
   <div
     class="button-inner"
   >
@@ -92,7 +106,14 @@ exports[`N8nDropdownMenu > rendering > should render with emoji activator 1`] = 
   id="reka-dropdown-menu-trigger-v-1"
   type="button"
 >
-  <!--v-if-->
+  <transition-stub
+    appear="false"
+    css="true"
+    name="n8n-button-fade"
+    persisted="false"
+  >
+    <!--v-if-->
+  </transition-stub>
   <div
     class="button-inner"
   >

@@ -2,12 +2,11 @@ import { isSensitiveKey } from '@n8n/utils/redaction/sensitive-key';
 
 import { renderObservationLog } from './observation-log-renderer';
 import { reportSideCallUsage } from './forward-usage';
-import { messageToText } from './message-text';
 import { redactText } from '../../sdk/guardrails';
 import type { AgentExecutionCounter, TokenUsage } from '../../types/sdk/agent';
 import type { BuiltMemory } from '../../types/sdk/memory';
 import type { AgentDbMessage, ContentToolCall, Message } from '../../types/sdk/message';
-import type { BuiltObservationResumeStore, ObservationCursor } from '../../types/sdk/observation';
+import type { ObservationCursor } from '../../types/sdk/observation';
 import type {
 	BuiltObservationLogStore,
 	ObservationLogBatchEntry,
@@ -60,10 +59,7 @@ export interface RenderObserverTranscriptOptions {
 	maxObjectKeys?: number;
 }
 
-export interface ObservationLogObserverMemory
-	extends BuiltMemory,
-		BuiltObservationLogStore,
-		BuiltObservationResumeStore {
+export interface ObservationLogObserverMemory extends BuiltMemory, BuiltObservationLogStore {
 	getMessagesForObservationScope(
 		observationScopeId: string,
 		opts?: { since?: { sinceCreatedAt: Date; sinceMessageId: string } },
@@ -86,9 +82,9 @@ export async function readObservationState(
 		order: 'desc',
 	});
 	const hasActiveObservations = observations.length > 0;
-	// An empty valid batch also moves the cursor, so trust it without notes.
+	// Missing memory is not proof that the processed history was empty.
 	return {
-		cursor: storedCursor,
+		cursor: hasActiveObservations ? storedCursor : null,
 		storedCursor,
 		hasActiveObservations,
 	};
@@ -107,11 +103,6 @@ export interface RunObservationLogObserverOpts {
 	modelFetch?: typeof globalThis.fetch;
 	functionId?: string;
 	/**
-	 * Largest batch of messages, in estimated tokens, that one call reads. Later
-	 * messages wait for the next call. The first message is always read.
-	 */
-	maxBatchTokens?: number;
-	/**
 	 * Receives the observer model call's usage the moment it resolves, before
 	 * any parsing or persistence. Forwarding it here (rather than only on the
 	 * success return) keeps a billed observer call priced even when later
@@ -126,8 +117,6 @@ export type RunObservationLogObserverResult =
 			status: 'ran';
 			observationsWritten: number;
 			cursorAdvanced: boolean;
-			/** Messages after this batch wait for another call. */
-			moreToObserve: boolean;
 			tokenCount: number;
 			skippedLines: string[];
 			/** Normalized token usage from the observer LLM call, when the provider reports it. */
@@ -234,7 +223,10 @@ export async function runObservationLogObserver(
 	opts: RunObservationLogObserverOpts,
 ): Promise<RunObservationLogObserverResult> {
 	const { memory, observationScopeId } = opts;
-	const { cursor, storedCursor } = await readObservationState(memory, observationScopeId);
+	const { cursor, storedCursor, hasActiveObservations } = await readObservationState(
+		memory,
+		observationScopeId,
+	);
 	const deltaMessages = await memory.getMessagesForObservationScope(
 		observationScopeId,
 		cursor
@@ -254,13 +246,11 @@ export async function runObservationLogObserver(
 	// LLM window and never part of a future observer delta. Observe only the
 	// messages before the host; the rest is picked up once the call settles.
 	const firstPendingIndex = deltaMessages.findIndex(hasPendingToolCall);
-	const settled =
+	const observable =
 		firstPendingIndex === -1 ? deltaMessages : deltaMessages.slice(0, firstPendingIndex);
-	if (settled.length === 0) return { status: 'skipped', reason: 'pending-tool-call' };
+	if (observable.length === 0) return { status: 'skipped', reason: 'pending-tool-call' };
 
 	const tokenCounter = opts.tokenCounter ?? estimateObservationTokens;
-	const observable = await takeBatch(settled, opts.maxBatchTokens, tokenCounter);
-	const moreToObserve = observable.length < settled.length;
 	const input = await prepareObserverInput(opts, observable, tokenCounter);
 	const observeResult = await opts.observe(input);
 	const markdown = typeof observeResult === 'string' ? observeResult : observeResult.text;
@@ -273,14 +263,12 @@ export async function runObservationLogObserver(
 		status: 'ran' as const,
 		observationsWritten: 0,
 		cursorAdvanced: false,
-		moreToObserve,
 		tokenCount: input.transcriptTokenCount,
 		skippedLines: prepared.skippedLines,
 		usage,
 		model,
 	};
-	// A valid `NO_OBSERVATIONS` batch still moves the cursor, so later batches are read.
-	if (!prepared.entries) {
+	if (!prepared.entries || (prepared.entries.length === 0 && !hasActiveObservations)) {
 		return result;
 	}
 
@@ -302,21 +290,6 @@ export async function runObservationLogObserver(
 		observationsWritten: committed ? prepared.entries.length : 0,
 		cursorAdvanced: committed,
 	};
-}
-
-/** The longest prefix of `messages` that fits `maxTokens`, and at least one message. */
-async function takeBatch(
-	messages: AgentDbMessage[],
-	maxTokens: number | undefined,
-	tokenCounter: TokenCounter,
-): Promise<AgentDbMessage[]> {
-	if (maxTokens === undefined) return messages;
-	let total = 0;
-	for (let index = 0; index < messages.length; index++) {
-		total += await tokenCounter(messageToText(messages[index]));
-		if (total > maxTokens) return messages.slice(0, Math.max(1, index));
-	}
-	return messages;
 }
 
 async function prepareObserverInput(

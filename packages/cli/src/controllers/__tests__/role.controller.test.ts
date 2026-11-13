@@ -167,7 +167,6 @@ describe('RoleController', () => {
 						lastName: 'Lovelace',
 						email: 'ada@example.com',
 						role: 'project:admin',
-						kind: 'person',
 					},
 				],
 			});

@@ -358,7 +358,7 @@ function onCreateFallbackCredential() {
 					}}</N8nText>
 				</div>
 
-				<div :class="$style.methodControl">
+				<div :class="shared.settingControlShort">
 					<N8nDropdownMenu
 						:class="$style.methodMenu"
 						:items="webSearchMenuItems"
@@ -513,20 +513,13 @@ function onCreateFallbackCredential() {
 	border-radius: var(--radius);
 }
 
-.methodControl {
-	flex: 0 0 auto;
-	width: fit-content;
-	max-width: 100%;
-	min-width: 0;
-}
-
 .methodMenu {
-	width: fit-content;
+	width: 100%;
 	max-width: 100%;
 }
 
 .methodTrigger {
-	width: fit-content;
+	width: 100%;
 	max-width: 100%;
 }
 

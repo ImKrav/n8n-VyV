@@ -26,7 +26,6 @@ import {
 	N8nIconButton,
 	N8nOption,
 	N8nSelect,
-	N8nSwitch,
 	N8nText,
 	N8nTooltip,
 } from '@n8n/design-system';
@@ -70,7 +69,7 @@ import type { RedactionFloor } from '@n8n/api-types';
 import { hasPermission } from '@/app/utils/rbac/permissions';
 import WorkflowCustomTelemetryTags from '@/features/workflows/components/WorkflowSettings/WorkflowCustomTelemetryTags.vue';
 
-import { ElCol, ElRow } from 'element-plus';
+import { ElCol, ElRow, ElSwitch } from 'element-plus';
 
 const i18n = useI18n();
 const externalHooks = useExternalHooks();
@@ -1681,15 +1680,13 @@ onBeforeUnmount(() => {
 										}}</span
 									>
 								</template>
-								<N8nSwitch
-									:class="$style['setting-switch']"
-									size="large"
+								<ElSwitch
 									:disabled="!isDataRedactionLicensed || readOnlyEnv || isCallerRedactionLocked"
-									:aria-label="i18n.baseText('workflowSettings.redactCallerExecutions')"
+									:label="i18n.baseText('workflowSettings.redactCallerExecutions')"
 									:model-value="workflowSettings.redactCallerExecutions !== false"
 									data-test-id="workflow-settings-redact-caller-executions"
 									@update:model-value="toggleRedactCallerExecutions"
-								/>
+								></ElSwitch>
 							</N8nTooltip>
 						</ElCol>
 					</ElRow>
@@ -1706,15 +1703,13 @@ onBeforeUnmount(() => {
 					</ElCol>
 					<ElCol :span="14">
 						<div>
-							<N8nSwitch
-								:class="$style['setting-switch']"
-								size="large"
+							<ElSwitch
+								ref="inputField"
 								:disabled="readOnlyEnv || !workflowPermissions.update"
-								:aria-label="i18n.baseText('workflowSettings.timeoutWorkflow')"
 								:model-value="(workflowSettings.executionTimeout ?? -1) > -1"
 								data-test-id="workflow-settings-timeout-workflow"
 								@update:model-value="toggleTimeout"
-							/>
+							></ElSwitch>
 						</div>
 					</ElCol>
 				</ElRow>
@@ -1784,15 +1779,13 @@ onBeforeUnmount(() => {
 								<template #content>
 									{{ mcpToggleTooltip }}
 								</template>
-								<N8nSwitch
-									id="availableInMCP"
-									:class="$style['setting-switch']"
-									size="large"
+								<ElSwitch
+									ref="inputField"
 									:disabled="mcpToggleDisabled"
 									:model-value="workflowSettings.availableInMCP ?? false"
 									data-test-id="workflow-settings-available-in-mcp"
 									@update:model-value="toggleAvailableInMCP"
-								/>
+								></ElSwitch>
 							</N8nTooltip>
 						</div>
 					</ElCol>
@@ -1957,7 +1950,7 @@ onBeforeUnmount(() => {
 		align-items: center;
 	}
 
-	.setting-switch {
+	:global(.el-switch) {
 		padding: var(--spacing--md) 0;
 	}
 }

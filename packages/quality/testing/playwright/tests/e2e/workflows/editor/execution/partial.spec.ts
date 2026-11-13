@@ -3,7 +3,7 @@ import { test, expect } from '../../../../../fixtures/base';
 test.describe(
 	'Manual partial execution',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('should not execute parent nodes with no run data @engine:v2', async ({ n8n }) => {

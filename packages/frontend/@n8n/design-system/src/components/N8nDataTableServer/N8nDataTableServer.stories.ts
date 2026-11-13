@@ -178,7 +178,6 @@ HorizontalScroll.parameters = {
 
 export const PinnedColumn = wideTableStory();
 PinnedColumn.args = { pinColumns: 1, showSelect: true };
-
 PinnedColumn.argTypes = {
 	pinColumns: {
 		control: { type: 'number', min: 0, max: wideHeaders.length, step: 1 },
@@ -192,6 +191,3 @@ PinnedColumn.parameters = {
 		},
 	},
 };
-
-export const PinnedEnds = wideTableStory();
-PinnedEnds.args = { pinColumns: 1, pinEndColumns: 2 };

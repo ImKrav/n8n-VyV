@@ -1,6 +1,5 @@
 import type { IExecuteFunctions, IDataObject, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { NodeOperationError, UserError } from 'n8n-workflow';
 
 import {
 	cellFormat,
@@ -438,7 +437,7 @@ export async function execute(
 					}
 
 					// null and undefined values are mapped to undefined
-					if (key === columnsToMatchOn[0] && mappingValues[key] === undefined) {
+					if (mappingValues[key] === undefined) {
 						this.addExecutionHints({
 							message: 'Warning: The value of column to match is null or undefined',
 							location: 'outputPane',

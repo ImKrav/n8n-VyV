@@ -9,7 +9,7 @@ test.describe(
 	{
 		tag: '@bench:kafka',
 		annotation: [
-			{ type: 'owner', description: 'Core Execution' },
+			{ type: 'owner', description: 'Catalysts' },
 			{ type: 'question', description: 'queue-mode-sustained-rate' },
 		],
 	},

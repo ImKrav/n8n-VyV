@@ -1,6 +1,6 @@
 import type { EntitySubscriberInterface, InsertEvent, UpdateEvent } from '@n8n/typeorm';
 import { EventSubscriber } from '@n8n/typeorm';
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 
 import { WorkflowEntity } from '../entities';
 import { consumeWorkflowContentWrite } from '../repositories/workflow-content-write-context';

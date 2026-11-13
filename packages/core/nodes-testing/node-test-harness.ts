@@ -11,8 +11,7 @@ import type {
 	IWorkflowExecuteAdditionalData,
 	WorkflowTestData,
 } from 'n8n-workflow';
-import { createRunExecutionData, Workflow } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import { createRunExecutionData, UnexpectedError, Workflow } from 'n8n-workflow';
 import nock from 'nock';
 import { readFileSync, mkdtempSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';

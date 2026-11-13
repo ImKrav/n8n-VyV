@@ -4,10 +4,11 @@ import type {
 	WorkflowRepository,
 	CredentialsRepository,
 	SettingsRepository,
+	Person,
 	PersonRepository,
+	User,
 	Role,
 } from '@n8n/db';
-import { Person, ServiceAccount, ServiceAccountDetails } from '@n8n/db';
 import type { Repository } from '@n8n/typeorm';
 import type { ErrorReporter } from 'n8n-core';
 import type { IWorkflowBase } from 'n8n-workflow';
@@ -150,7 +151,7 @@ describe('ExternalHooks', () => {
 		});
 
 		it('should project a fully populated user', () => {
-			const person = Object.assign(new Person(), {
+			const user = mock<User>({
 				id: 'user-1',
 				email: 'actor@example.com',
 				firstName: 'Ada',
@@ -158,7 +159,7 @@ describe('ExternalHooks', () => {
 				role: mock<Role>({ slug: 'global:admin' }),
 			});
 
-			expect(toWorkflowLifecycleHookActor(person)).toEqual({
+			expect(toWorkflowLifecycleHookActor(user)).toEqual({
 				id: 'user-1',
 				email: 'actor@example.com',
 				firstName: 'Ada',
@@ -168,7 +169,7 @@ describe('ExternalHooks', () => {
 		});
 
 		it('should preserve null email and names for a user without them', () => {
-			const person = Object.assign(new Person(), {
+			const user = mock<User>({
 				id: 'user-1',
 				email: null as unknown as string,
 				firstName: null as unknown as string,
@@ -176,24 +177,8 @@ describe('ExternalHooks', () => {
 				role: mock<Role>({ slug: 'global:member' }),
 			});
 
-			expect(toWorkflowLifecycleHookActor(person)).toEqual({
+			expect(toWorkflowLifecycleHookActor(user)).toEqual({
 				id: 'user-1',
-				email: null,
-				firstName: null,
-				lastName: null,
-				role: 'global:member',
-			});
-		});
-
-		it('should project a service account without email or names', () => {
-			const serviceAccount = Object.assign(new ServiceAccount(), {
-				id: 'sa-1',
-				details: Object.assign(new ServiceAccountDetails(), { name: 'Deploy bot' }),
-				role: mock<Role>({ slug: 'global:member' }),
-			});
-
-			expect(toWorkflowLifecycleHookActor(serviceAccount)).toEqual({
-				id: 'sa-1',
 				email: null,
 				firstName: null,
 				lastName: null,
@@ -202,7 +187,7 @@ describe('ExternalHooks', () => {
 		});
 
 		it('should leave role undefined when the user has no role', () => {
-			const person = Object.assign(new Person(), {
+			const user = mock<User>({
 				id: 'user-1',
 				email: 'actor@example.com',
 				firstName: 'Ada',
@@ -210,7 +195,7 @@ describe('ExternalHooks', () => {
 				role: undefined,
 			});
 
-			expect(toWorkflowLifecycleHookActor(person)?.role).toBeUndefined();
+			expect(toWorkflowLifecycleHookActor(user)?.role).toBeUndefined();
 		});
 	});
 });

@@ -130,7 +130,7 @@ export class InMemorySystemTaskRunner {
 	}
 
 	private startTimer(entry: Entry, from: Date): void {
-		entry.timer.start(from, entry.task.initialDelaySeconds);
+		entry.timer.start(from);
 		if (entry.runOnStart) {
 			void this.run(entry);
 		}

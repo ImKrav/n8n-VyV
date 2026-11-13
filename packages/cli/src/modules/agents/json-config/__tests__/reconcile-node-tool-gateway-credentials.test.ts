@@ -1,10 +1,8 @@
 import type { AgentJsonToolConfig, AiGatewayConfigDto } from '@n8n/api-types';
-import { UserError } from '@n8n/errors';
-import { UnrecognizedNodeTypeError } from 'n8n-core';
 import type { INodeType, INodeTypeDescription } from 'n8n-workflow';
 import { mock } from 'vitest-mock-extended';
 
-import { NodeTypesProviderMissingError, type NodeTypesProxy } from '@n8n/backend-services';
+import type { NodeTypes } from '@/node-types';
 
 import {
 	assignCredentialToNodeTools,
@@ -28,13 +26,13 @@ const SENTINEL = { id: null, name: 'Gateway credits', __aiGatewayManaged: true }
 
 const NO_OWNED = new Set<string>();
 
-function nodeTypesWithDescription(description: INodeTypeDescription): NodeTypesProxy {
-	const nodeTypes = mock<NodeTypesProxy>();
+function nodeTypesWithDescription(description: INodeTypeDescription): NodeTypes {
+	const nodeTypes = mock<NodeTypes>();
 	nodeTypes.getByNameAndVersion.mockReturnValue({ description } as INodeType);
 	return nodeTypes;
 }
 
-function nodeTypesWithCredentials(credentialNames: string[]): NodeTypesProxy {
+function nodeTypesWithCredentials(credentialNames: string[]): NodeTypes {
 	return nodeTypesWithDescription({
 		displayName: 'x',
 		name: 'x',
@@ -361,47 +359,13 @@ describe('reconcileNodeToolGatewayCredentials', () => {
 	});
 
 	it('drops managed markers when the node type cannot be resolved', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
+		const nodeTypes = mock<NodeTypes>();
 		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new UnrecognizedNodeTypeError('n8n-nodes-base', 'slackTool');
+			throw new Error('unknown node type');
 		});
 		const tools = [nodeTool('n8n-nodes-base.slackTool', { slackApi: { ...SENTINEL } })];
 		reconcileNodeToolGatewayCredentials(tools, nodeTypes, GATEWAY_CONFIG, NO_OWNED);
 		expect(tools[0].node.credentials).toEqual({});
-	});
-
-	it('drops managed markers when the node type cannot be used as a tool', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new UserError('Node cannot be used as a tool');
-		});
-		const tools = [nodeTool('n8n-nodes-base.slackTool', { slackApi: { ...SENTINEL } })];
-		reconcileNodeToolGatewayCredentials(tools, nodeTypes, GATEWAY_CONFIG, NO_OWNED);
-		expect(tools[0].node.credentials).toEqual({});
-	});
-
-	it('keeps managed markers and rethrows an unexpected lookup error', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new Error('loader crashed');
-		});
-		const tools = [nodeTool('n8n-nodes-base.slackTool', { slackApi: { ...SENTINEL } })];
-		expect(() =>
-			reconcileNodeToolGatewayCredentials(tools, nodeTypes, GATEWAY_CONFIG, NO_OWNED),
-		).toThrow('loader crashed');
-		expect(tools[0].node.credentials).toEqual({ slackApi: SENTINEL });
-	});
-
-	it('keeps managed markers and rethrows when no node types provider is registered', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new NodeTypesProviderMissingError();
-		});
-		const tools = [nodeTool('n8n-nodes-base.slackTool', { slackApi: { ...SENTINEL } })];
-		expect(() =>
-			reconcileNodeToolGatewayCredentials(tools, nodeTypes, GATEWAY_CONFIG, NO_OWNED),
-		).toThrow(NodeTypesProviderMissingError);
-		expect(tools[0].node.credentials).toEqual({ slackApi: SENTINEL });
 	});
 });
 
@@ -437,69 +401,17 @@ describe('listAiGatewayManagedCredentialTypes', () => {
 	});
 
 	it('ignores non-node tools and unresolvable node types', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
+		const nodeTypes = mock<NodeTypes>();
 		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new UnrecognizedNodeTypeError('n8n-nodes-base', 'slackTool');
+			throw new Error('unknown node type');
 		});
 		const tools = [nodeTool('n8n-nodes-base.slackTool', { slackApi: { ...SENTINEL } })];
 		expect(listAiGatewayManagedCredentialTypes(tools, nodeTypes)).toEqual([]);
-	});
-
-	it('rethrows when no node types provider is registered', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new NodeTypesProviderMissingError();
-		});
-		const tools = [nodeTool('n8n-nodes-base.slackTool', { slackApi: { ...SENTINEL } })];
-		expect(() => listAiGatewayManagedCredentialTypes(tools, nodeTypes)).toThrow(
-			NodeTypesProviderMissingError,
-		);
-	});
-
-	it('rethrows an unexpected lookup error', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new Error('loader crashed');
-		});
-		const tools = [nodeTool('n8n-nodes-base.slackTool', { slackApi: { ...SENTINEL } })];
-		expect(() => listAiGatewayManagedCredentialTypes(tools, nodeTypes)).toThrow('loader crashed');
 	});
 });
 
 describe('assignCredentialToNodeTools', () => {
 	const credential = { id: 'g1', name: 'Gmail account' };
-
-	it('rethrows when no node types provider is registered', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new NodeTypesProviderMissingError();
-		});
-		const tools = [nodeTool('n8n-nodes-base.gmailTool')];
-		expect(() => assignCredentialToNodeTools(tools, nodeTypes, 'gmailOAuth2', credential)).toThrow(
-			NodeTypesProviderMissingError,
-		);
-	});
-
-	it('skips a tool whose node type is unknown', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new UnrecognizedNodeTypeError('n8n-nodes-base', 'gmailTool');
-		});
-		const tools = [nodeTool('n8n-nodes-base.gmailTool')];
-		expect(assignCredentialToNodeTools(tools, nodeTypes, 'gmailOAuth2', credential)).toBe(0);
-		expect(tools[0].node.credentials).toBeUndefined();
-	});
-
-	it('rethrows an unexpected lookup error', () => {
-		const nodeTypes = mock<NodeTypesProxy>();
-		nodeTypes.getByNameAndVersion.mockImplementation(() => {
-			throw new Error('loader crashed');
-		});
-		const tools = [nodeTool('n8n-nodes-base.gmailTool')];
-		expect(() => assignCredentialToNodeTools(tools, nodeTypes, 'gmailOAuth2', credential)).toThrow(
-			'loader crashed',
-		);
-	});
 
 	it('fills every empty slot of the type and counts them', () => {
 		const tools = [nodeTool('n8n-nodes-base.gmailTool'), nodeTool('n8n-nodes-base.gmailTool')];

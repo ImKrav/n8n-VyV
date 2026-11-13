@@ -1,8 +1,7 @@
 import { TypedEmitter } from '@n8n/backend-common';
 import { Service } from '@n8n/di';
 import type { IDeferredPromise } from '@n8n/utils/promise/deferred-promise';
-import { NodeApiError } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import { NodeApiError, UnexpectedError } from 'n8n-workflow';
 import type {
 	Workflow,
 	INode,

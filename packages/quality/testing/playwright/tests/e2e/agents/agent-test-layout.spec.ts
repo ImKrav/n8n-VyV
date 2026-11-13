@@ -13,7 +13,7 @@ test.use({
 
 test.describe(
 	'Agent preview layout',
-	{ annotation: [{ type: 'owner', description: 'Agent' }] },
+	{ annotation: [{ type: 'owner', description: 'AI' }] },
 	() => {
 		test('fills the builder when full width is selected', async ({ n8n, api }) => {
 			const project = await api.projects.getMyPersonalProject();

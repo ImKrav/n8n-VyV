@@ -1,0 +1,48 @@
+{
+  "reglasEvaluadas": 36,
+  "aprobadas": 31,
+  "violaciones": 5,
+  "criticasOSerias": 5,
+  "hallazgos": [
+    {
+      "id": "aria-allowed-attr",
+      "impacto": "critical",
+      "wcag": "wcag2a wcag412",
+      "descripcion": "Elements must only use supported ARIA attributes",
+      "nodos": 2,
+      "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+    },
+    {
+      "id": "aria-required-children",
+      "impacto": "critical",
+      "wcag": "wcag2a wcag131",
+      "descripcion": "Certain ARIA roles must contain particular children",
+      "nodos": 1,
+      "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+    },
+    {
+      "id": "aria-required-parent",
+      "impacto": "critical",
+      "wcag": "wcag2a wcag131",
+      "descripcion": "Certain ARIA roles must be contained by particular parents",
+      "nodos": 7,
+      "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+    },
+    {
+      "id": "button-name",
+      "impacto": "critical",
+      "wcag": "wcag2a wcag412",
+      "descripcion": "Buttons must have discernible text",
+      "nodos": 1,
+      "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+    },
+    {
+      "id": "link-name",
+      "impacto": "serious",
+      "wcag": "wcag2a wcag244 wcag412",
+      "descripcion": "Links must have discernible text",
+      "nodos": 1,
+      "ayuda": "https://dequeuniversity.com/rules/axe/4.14/link-name?application=axeAPI"
+    }
+  ]
+}

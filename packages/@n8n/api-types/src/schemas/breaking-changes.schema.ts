@@ -23,10 +23,6 @@ export const breakingChangeRuleImpactSchema = z.enum([
 ]);
 export type BreakingChangeRuleImpact = z.infer<typeof breakingChangeRuleImpactSchema>;
 
-/** What n8n Assistant can do with a workflow rule's findings. See the breaking-changes module README. */
-export const breakingChangeAssistantActionSchema = z.enum(['fix', 'review', 'none']);
-export type BreakingChangeAssistantAction = z.infer<typeof breakingChangeAssistantActionSchema>;
-
 export const breakingChangeIssueLevelSchema = z.enum(['info', 'warning', 'error']);
 
 export const breakingChangeVersionSchema = z.enum(['v2', 'v3']);
@@ -89,18 +85,18 @@ const recommendationSchema = z.object({
 });
 export type BreakingChangeRecommendation = z.infer<typeof recommendationSchema>;
 
-export const breakingChangeInstanceIssueSchema = z.object({
+const instanceIssueSchema = z.object({
 	title: z.string(),
 	description: z.string(),
 	level: breakingChangeIssueLevelSchema,
 });
-export type BreakingChangeInstanceIssue = z.infer<typeof breakingChangeInstanceIssueSchema>;
+export type BreakingChangeInstanceIssue = z.infer<typeof instanceIssueSchema>;
 
-export const breakingChangeWorkflowIssueSchema = breakingChangeInstanceIssueSchema.extend({
+const workflowIssueSchema = instanceIssueSchema.extend({
 	nodeId: z.string().optional(),
 	nodeName: z.string().optional(),
 });
-export type BreakingChangeWorkflowIssue = z.infer<typeof breakingChangeWorkflowIssueSchema>;
+export type BreakingChangeWorkflowIssue = z.infer<typeof workflowIssueSchema>;
 
 /** `suggested` by the owner heuristic, or `assigned` by a person. */
 export const migrationOwnerSourceSchema = z.enum(['suggested', 'assigned']);
@@ -129,7 +125,7 @@ const affectedWorkflowSchema = z.object({
 	numberOfExecutions: z.number(),
 	lastUpdatedAt: z.date(),
 	lastExecutedAt: z.date().optional(),
-	issues: z.array(breakingChangeWorkflowIssueSchema),
+	issues: z.array(workflowIssueSchema),
 	// Absent when no owner is known for the workflow.
 	owner: workflowOwnerSchema.optional(),
 	// The project that owns the workflow, so an owner picker can list its members.
@@ -152,7 +148,7 @@ const ruleResultBaseSchema = z.object({
 });
 
 const instanceRuleResultsSchema = ruleResultBaseSchema.extend({
-	instanceIssues: z.array(breakingChangeInstanceIssueSchema),
+	instanceIssues: z.array(instanceIssueSchema),
 });
 export type BreakingChangeInstanceRuleResult = z.infer<typeof instanceRuleResultsSchema>;
 
@@ -173,7 +169,6 @@ export type BreakingChangeRuleDetailWorkflow = z.infer<typeof ruleDetailWorkflow
 
 const ruleDetailResultSchema = workflowRuleResultsSchema.extend({
 	affectedWorkflows: z.array(ruleDetailWorkflowSchema),
-	assistantAction: breakingChangeAssistantActionSchema,
 });
 export type BreakingChangeRuleDetailResult = z.infer<typeof ruleDetailResultSchema>;
 

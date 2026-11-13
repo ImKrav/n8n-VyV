@@ -4,8 +4,7 @@ import { Time } from '@n8n/constants';
 import { Container, Service } from '@n8n/di';
 import { isRecord } from '@n8n/utils/is-record';
 import { caching } from 'cache-manager';
-import { jsonStringify } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { jsonStringify, UserError } from 'n8n-workflow';
 
 import { UncacheableValueError } from '../../errors/cache-errors/uncacheable-value.error';
 

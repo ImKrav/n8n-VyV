@@ -19,7 +19,6 @@ import {
 	type INodeProperties,
 } from 'n8n-workflow';
 
-import { getRequiredApiKey } from '@utils/helpers';
 import { MODEL_SELECTION_HINT } from '@utils/model-builder-hints';
 
 import { COMPATIBLE_MODE_SUFFIX } from './alibaba-cloud-base-url';
@@ -336,7 +335,7 @@ export class LmChatAlibabaCloud implements INodeType {
 		};
 
 		const model = new ChatOpenAI({
-			apiKey: getRequiredApiKey(this.getNode(), credentials.apiKey),
+			apiKey: credentials.apiKey,
 			model: modelName,
 			...options,
 			timeout,

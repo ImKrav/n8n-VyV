@@ -11,8 +11,9 @@ import { INSTANCE_MCP_RESOURCE_ID } from '@n8n/constants';
 import { Container, Service } from '@n8n/di';
 
 import type { ProtectedResource, ResourcePrincipal, ResourceUser } from '@n8n/inbound-auth';
-import { UrlService, PostHogClient } from '@n8n/backend-services';
+import { UrlService } from '@n8n/backend-services';
 import { SkillsGate } from '@/modules/skills';
+import { PostHogClient } from '@/posthog';
 
 import {
 	ACTIVITY_LOG_TOOLS,
@@ -23,9 +24,8 @@ import {
 } from './mcp-scopes';
 import {
 	areAgentToolsAvailable,
-	canReadMigrationReport,
+	arePreferenceToolsEnabled,
 	isCommunityNodeInstallAvailable,
-	isMigrationReportAvailable,
 } from './mcp-tool-availability';
 import { McpConfig } from './mcp.config';
 import { McpSettingsService } from './mcp.settings.service';
@@ -37,10 +37,7 @@ import { McpSettingsService } from './mcp.settings.service';
 export const SUPPORTED_SCOPES: string[] = [...MCP_INSTANCE_SCOPES];
 const AGENT_SCOPES = new Set<string>(MCP_AGENT_SCOPES);
 const SKILL_SCOPES = new Set<string>(MCP_SKILL_SCOPES);
-const MIGRATION_REPORT_SCOPES = new Set<string>([
-	'breakingChanges:list',
-	'breakingChanges:migrate',
-]);
+const PREFERENCE_SCOPES = new Set<string>(['aiPreference:read', 'aiPreference:write']);
 
 const MCP_RESOURCE_PATH = '/mcp-server/http';
 
@@ -83,12 +80,10 @@ export class McpProtectedResource implements ProtectedResource {
 	get scopes(): string[] {
 		const agentsAvailable = areAgentToolsAvailable(this.globalConfig, this.moduleRegistry);
 		const skillsAvailable = Container.get(SkillsGate).isEnabled;
-		const migrationReportAvailable = isMigrationReportAvailable(this.moduleRegistry);
 		return SUPPORTED_SCOPES.filter(
 			(scope) =>
 				(agentsAvailable || !AGENT_SCOPES.has(scope)) &&
-				(skillsAvailable || !SKILL_SCOPES.has(scope)) &&
-				(migrationReportAvailable || !MIGRATION_REPORT_SCOPES.has(scope)),
+				(skillsAvailable || !SKILL_SCOPES.has(scope)),
 		);
 	}
 
@@ -186,9 +181,9 @@ export class McpProtectedResource implements ProtectedResource {
 	 * re-checking one of its conditions: the screen pre-checks every offered
 	 * scope on first consent, so a scope offered here is a scope granted.
 	 *
-	 * `breakingChanges:list` and `breakingChanges:migrate` are dropped for a user
-	 * whose role cannot read the migration report, for the first reason:
-	 * registration checks the same permission, so the grant could do nothing.
+	 * `aiPreference:*` is dropped for a user outside the preferences experiment
+	 * arm for the same reason, and one more: showing the scopes to the control
+	 * arm exposes the feature to the users the experiment keeps unaware of it.
 	 */
 	async getGrantableScopes(user: ResourceUser): Promise<string[]> {
 		const { CommunityPackagesConfig } = await import(
@@ -201,13 +196,22 @@ export class McpProtectedResource implements ProtectedResource {
 			this.mcpConfig,
 			user,
 		);
-		const migrationReportReadable = canReadMigrationReport(this.moduleRegistry, user);
+		const preferencesEnabled = await this.arePreferencesEnabledFor(user);
 
 		return this.scopes.filter(
 			(scope) =>
 				(installAvailable || scope !== 'communityPackage:install') &&
-				(migrationReportReadable || !MIGRATION_REPORT_SCOPES.has(scope)),
+				(preferencesEnabled || !PREFERENCE_SCOPES.has(scope)),
 		);
+	}
+
+	private async arePreferencesEnabledFor(user: ResourceUser): Promise<boolean> {
+		try {
+			return arePreferenceToolsEnabled(await this.postHogClient.getFeatureFlags(user));
+		} catch {
+			// Registration treats an unreadable flag as off; consent must agree.
+			return false;
+		}
 	}
 
 	async isAvailable(): Promise<boolean> {

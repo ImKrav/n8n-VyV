@@ -9,8 +9,6 @@ import {
 
 import { logWrapper } from '@n8n/ai-utilities';
 
-import { getRequiredApiKey } from '@utils/helpers';
-
 export class RerankerCohere implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Reranker Cohere',
@@ -89,7 +87,7 @@ export class RerankerCohere implements INodeType {
 		const credentials = await this.getCredentials<{ apiKey: string }>('cohereApi');
 
 		const reranker = new CohereRerank({
-			apiKey: getRequiredApiKey(this.getNode(), credentials.apiKey),
+			apiKey: credentials.apiKey,
 			model: modelName,
 			topN,
 		});

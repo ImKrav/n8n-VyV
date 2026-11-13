@@ -1,11 +1,5 @@
 import type { StoredAgentConfig, UpdateAgentVersionDto } from '@n8n/api-types';
-import {
-	accountSummary,
-	BaseRepository,
-	TransactionRunner,
-	User,
-	type OperationContext,
-} from '@n8n/db';
+import { BaseRepository, TransactionRunner, User, type OperationContext } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { DataSource } from '@n8n/typeorm';
 import type { QueryDeepPartialEntity } from '@n8n/typeorm/query-builder/QueryPartialEntity';
@@ -21,8 +15,7 @@ import type { Agent } from '../entities/agent.entity';
  * backfill mirrors this logic in SQL with COALESCE + TRIM + NULLIF.
  */
 export function renderAuthor(user: User): string {
-	const { firstName, lastName } = accountSummary(user);
-	const name = [firstName, lastName].filter(Boolean).join(' ').trim();
+	const name = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
 	return name || 'Unknown';
 }
 

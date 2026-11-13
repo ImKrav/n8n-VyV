@@ -1,20 +1,13 @@
 /* eslint-disable import-x/no-extraneous-dependencies, @typescript-eslint/no-unsafe-assignment -- test-only patterns: @vue/test-utils is a transitive devDep, mock reads */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { flushPromises, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
-import type { AgentListItem } from '../agent.types';
+import type { AgentResource } from '../types';
+import type { AgentVersion } from '../agent.types';
 
-const { deleteAgentMock, openAgentConfirmationModalMock, archiveMock, unarchiveMock } = vi.hoisted(
-	() => ({
-		deleteAgentMock: vi.fn().mockResolvedValue(undefined),
-		openAgentConfirmationModalMock: vi.fn(),
-		archiveMock: vi.fn(),
-		unarchiveMock: vi.fn(),
-	}),
-);
-
-vi.mock('../composables/useAgentArchive', () => ({
-	useAgentArchive: () => ({ archive: archiveMock, unarchive: unarchiveMock }),
+const { deleteAgentMock, openAgentConfirmationModalMock } = vi.hoisted(() => ({
+	deleteAgentMock: vi.fn().mockResolvedValue(undefined),
+	openAgentConfirmationModalMock: vi.fn(),
 }));
 
 vi.mock('../composables/useAgentApi', () => ({
@@ -123,25 +116,32 @@ const STUBS = {
 	TimeAgo: { template: '<span />' },
 };
 
-function createAgent(overrides: Partial<AgentListItem> = {}): AgentListItem {
+const activeVersion: AgentVersion = {
+	versionId: 'v1',
+	schema: null,
+	skills: null,
+	author: 'Test User',
+};
+
+function createAgent(overrides: Partial<AgentResource> = {}): AgentResource {
 	return {
+		resourceType: 'agent',
 		id: 'agent-1',
 		name: 'My Agent',
 		projectId: 'project-1',
-		project: null,
-		availableInMCP: false,
-		isArchived: false,
+		isCompiled: false,
 		createdAt: '2026-01-01T00:00:00Z',
 		updatedAt: '2026-01-01T00:00:00Z',
 		versionId: 'v1',
 		activeVersionId: null,
-		personalisation: null,
-		hasConfig: false,
+		tools: {},
+		skills: {},
+		activeVersion: null,
 		...overrides,
 	};
 }
 
-async function renderComponent(agent: AgentListItem = createAgent()) {
+async function renderComponent(agent: AgentResource = createAgent()) {
 	const { default: AgentCard } = await import('../components/AgentCard.vue');
 	return mount(AgentCard, {
 		props: { agent, projectId: 'project-1' },
@@ -217,72 +217,31 @@ describe('AgentCard', () => {
 		expect(wrapper.find('[data-action="toggleFavorite"]').exists()).toBe(true);
 		expect(wrapper.find('[data-action="publish"]').exists()).toBe(false);
 		expect(wrapper.find('[data-action="unpublish"]').exists()).toBe(false);
-		expect(wrapper.find('[data-action="archive"]').exists()).toBe(false);
+		expect(wrapper.find('[data-action="delete"]').exists()).toBe(false);
 	});
 
-	it('shows Publish + Archive on an unpublished agent with full scopes', async () => {
+	it('shows Publish + Delete on an unpublished agent with full scopes', async () => {
 		const wrapper = await renderComponent(createAgent({ activeVersionId: null }));
 
 		expect(wrapper.find('[data-action="publish"]').exists()).toBe(true);
-		expect(wrapper.find('[data-action="archive"]').exists()).toBe(true);
-		expect(wrapper.find('[data-action="delete"]').exists()).toBe(false);
+		expect(wrapper.find('[data-action="delete"]').exists()).toBe(true);
 		expect(wrapper.find('[data-action="unpublish"]').exists()).toBe(false);
 	});
 
-	it('shows Unpublish + Archive on a published agent with full scopes', async () => {
-		const wrapper = await renderComponent(createAgent({ activeVersionId: 'v1' }));
+	it('shows Unpublish + Delete on a published agent with full scopes', async () => {
+		const wrapper = await renderComponent(createAgent({ activeVersionId: 'v1', activeVersion }));
 
 		expect(wrapper.find('[data-action="unpublish"]').exists()).toBe(true);
-		expect(wrapper.find('[data-action="archive"]').exists()).toBe(true);
+		expect(wrapper.find('[data-action="delete"]').exists()).toBe(true);
 		expect(wrapper.find('[data-action="publish"]').exists()).toBe(false);
 	});
 
-	it('shows only favorite, Delete and Unarchive on an archived agent', async () => {
-		enableMcp();
-		const wrapper = await renderComponent(createAgent({ isArchived: true }));
-
-		const actions = wrapper.findAll('[data-action]').map((a) => a.attributes('data-action'));
-		expect(actions).toEqual(['toggleFavorite', 'delete', 'unarchive']);
-		expect(wrapper.find('[data-test-id="agent-card-archived"]').exists()).toBe(true);
-		expect(wrapper.find('[data-test-id="agent-card-new-chat"]').exists()).toBe(false);
-	});
-
-	it('hides Delete and Unarchive on an archived agent without the delete scope', async () => {
-		agentPermissionsMock.canDelete.value = false;
-		const wrapper = await renderComponent(createAgent({ isArchived: true }));
-
-		const actions = wrapper.findAll('[data-action]').map((a) => a.attributes('data-action'));
-		expect(actions).toEqual(['toggleFavorite']);
-	});
-
-	it('emits archived with the updated agent after a successful archive', async () => {
-		const updated = createAgent({ isArchived: true });
-		archiveMock.mockResolvedValueOnce(updated);
-		const wrapper = await renderComponent();
-
-		await wrapper.find('[data-action="archive"]').trigger('click');
-		await flushPromises();
-
-		expect(wrapper.emitted('archived')).toEqual([[updated]]);
-	});
-
-	it('emits unarchived with the updated agent after a successful unarchive', async () => {
-		const updated = createAgent();
-		unarchiveMock.mockResolvedValueOnce(updated);
-		const wrapper = await renderComponent(createAgent({ isArchived: true }));
-
-		await wrapper.find('[data-action="unarchive"]').trigger('click');
-		await flushPromises();
-
-		expect(wrapper.emitted('unarchived')).toEqual([[updated]]);
-	});
-
-	it('shows only Archive (no leading divider) when only canDelete is granted', async () => {
+	it('shows only Delete (no leading divider) when only canDelete is granted', async () => {
 		agentPermissionsMock.canPublish.value = false;
 		agentPermissionsMock.canUnpublish.value = false;
 		const wrapper = await renderComponent();
 
-		expect(wrapper.find('[data-action="archive"]').exists()).toBe(true);
+		expect(wrapper.find('[data-action="delete"]').exists()).toBe(true);
 		expect(wrapper.find('[data-action="publish"]').exists()).toBe(false);
 		expect(wrapper.find('[data-action="unpublish"]').exists()).toBe(false);
 	});
@@ -292,7 +251,7 @@ describe('AgentCard', () => {
 		const wrapper = await renderComponent(createAgent({ activeVersionId: null }));
 
 		expect(wrapper.find('[data-action="publish"]').exists()).toBe(false);
-		expect(wrapper.find('[data-action="archive"]').exists()).toBe(true);
+		expect(wrapper.find('[data-action="delete"]').exists()).toBe(true);
 	});
 
 	it('shows the favorite toggle action labeled "add" when the agent is not favorited', async () => {
@@ -325,7 +284,7 @@ describe('AgentCard', () => {
 
 	it('removes the agent from local favorites after a successful delete', async () => {
 		openAgentConfirmationModalMock.mockResolvedValue('confirm');
-		const wrapper = await renderComponent(createAgent({ isArchived: true }));
+		const wrapper = await renderComponent();
 
 		await wrapper.find('[data-action="delete"]').trigger('click');
 
@@ -356,15 +315,6 @@ describe('AgentCard', () => {
 		expect(wrapper.find('[data-action="toggleMCPAccess"]').text()).toBe(
 			'agents.list.actions.disableMCPAccess',
 		);
-	});
-
-	it('shows the MCP indicator only when the agent is not archived', async () => {
-		enableMcp();
-		const available = await renderComponent(createAgent({ availableInMCP: true }));
-		expect(available.find('[data-test-id="agent-card-mcp"]').exists()).toBe(true);
-
-		const archived = await renderComponent(createAgent({ availableInMCP: true, isArchived: true }));
-		expect(archived.find('[data-test-id="agent-card-mcp"]').exists()).toBe(false);
 	});
 
 	it('hides the MCP action without agent update permission', async () => {
@@ -413,7 +363,7 @@ describe('AgentCard', () => {
 
 		it('shows Published with a success dot when the draft matches the published version', async () => {
 			const wrapper = await renderComponent(
-				createAgent({ versionId: 'v1', activeVersionId: 'v1' }),
+				createAgent({ versionId: 'v1', activeVersionId: 'v1', activeVersion }),
 			);
 
 			const indicator = findIndicator(wrapper);
@@ -424,7 +374,7 @@ describe('AgentCard', () => {
 
 		it('shows Changes to publish with a warning dot when the draft differs from the published version', async () => {
 			const wrapper = await renderComponent(
-				createAgent({ versionId: 'v2', activeVersionId: 'v1' }),
+				createAgent({ versionId: 'v2', activeVersionId: 'v1', activeVersion }),
 			);
 
 			const indicator = findIndicator(wrapper);
@@ -435,27 +385,16 @@ describe('AgentCard', () => {
 
 		it('returns to Published after the agent is republished', async () => {
 			const wrapper = await renderComponent(
-				createAgent({ versionId: 'v2', activeVersionId: 'v1' }),
+				createAgent({ versionId: 'v2', activeVersionId: 'v1', activeVersion }),
 			);
 
 			await wrapper.setProps({
-				agent: createAgent({ versionId: 'v2', activeVersionId: 'v2' }),
+				agent: createAgent({ versionId: 'v2', activeVersionId: 'v2', activeVersion }),
 			});
 
 			const indicator = findIndicator(wrapper);
 			expect(indicator.text()).toBe('agents.list.published');
 			expect(indicator.attributes('data-variant')).toBe('success');
-		});
-
-		it('shows skill-only changes without a new agent version', async () => {
-			const wrapper = await renderComponent(
-				createAgent({
-					versionId: 'v1',
-					activeVersionId: 'v1',
-					skillVersions: { tone: { draft: 2, published: 1, latest: 2, pinned: false } },
-				}),
-			);
-			expect(findIndicator(wrapper).attributes('data-state')).toBe('changes-to-publish');
 		});
 	});
 });

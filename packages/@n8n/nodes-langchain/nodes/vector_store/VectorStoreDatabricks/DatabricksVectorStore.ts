@@ -4,8 +4,7 @@ import { Document, type DocumentInterface } from '@langchain/core/documents';
 import type { EmbeddingsInterface } from '@langchain/core/embeddings';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { isRecord } from '@n8n/utils/is-record';
-import { toPathSegment } from 'n8n-workflow';
-import { OperationalError, UserError } from '@n8n/errors';
+import { OperationalError, UserError, toPathSegment } from 'n8n-workflow';
 
 type Fetch = typeof fetch;
 

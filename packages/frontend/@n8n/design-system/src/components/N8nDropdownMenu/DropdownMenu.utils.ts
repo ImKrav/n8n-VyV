@@ -29,9 +29,7 @@ export function getNextValidIndex<T, D>(
 		return next;
 	}
 
-	// Stay on the current row at either end. Clearing the highlight lets the
-	// next key move the caret in an external text field and close the menu.
-	return current;
+	return direction === -1 ? -1 : current;
 }
 
 export function getItemDomId(instanceId: string, index: number) {

@@ -2,11 +2,15 @@ import { type FrontendModuleDescription } from '@n8n/frontend-module-sdk';
 
 import { VIEWS } from '@/app/constants';
 
-import { isContextSkillsEnabled } from './context.utils';
+import {
+	isContextEnabledOnceEvaluated,
+	isContextPreferencesEnabledOnceEvaluated,
+	isContextSkillsEnabled,
+} from './context.utils';
 
 /**
  * No `custom` middleware: the initializer would gate the routes on a backend module,
- * which preferences do not have. The skills check runs in `beforeEnter`. The sidebar
+ * which preferences do not have. The flag checks run in `beforeEnter`. The sidebar
  * entry stays with the shell, which hides module pages without a backend module.
  */
 export const ContextModule: FrontendModuleDescription = {
@@ -26,6 +30,7 @@ export const ContextModule: FrontendModuleDescription = {
 					pageCategory: 'settings',
 				},
 			},
+			beforeEnter: async () => (await isContextEnabledOnceEvaluated()) || { name: VIEWS.HOMEPAGE },
 		},
 		{
 			path: 'context/preferences',
@@ -37,6 +42,8 @@ export const ContextModule: FrontendModuleDescription = {
 					pageCategory: 'settings',
 				},
 			},
+			beforeEnter: async () =>
+				(await isContextPreferencesEnabledOnceEvaluated()) || { name: VIEWS.HOMEPAGE },
 		},
 		{
 			path: 'context/skills',

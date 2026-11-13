@@ -1,0 +1,32 @@
+{
+  "visitados": [
+    "Settings > Migration Report",
+    "A",
+    "universal-add",
+    "Open command palette",
+    "Toggle sidebar",
+    "Assistant\nOverview\nPersonal",
+    "menu-item",
+    "menu-item",
+    "menu-item",
+    "menu-item",
+    "menu-item",
+    "main-sidebar-settings",
+    "add-resource-dataTable",
+    "BUTTON",
+    "Prod. executions\n0",
+    "Failed prod. executions\n0",
+    "Failure rate\n0\n%",
+    "Time saved\n--",
+    "Run time (avg.)\n0\ns",
+    "Workflows",
+    "Agents\nPreview",
+    "Credentials",
+    "Executions",
+    "Variables",
+    "Data tables"
+  ],
+  "sinFocoVisible": [
+    "Assistant\nOverview\nPersonal"
+  ]
+}

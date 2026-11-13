@@ -5,7 +5,7 @@ import { test, expect } from '../../../fixtures/base';
 test.describe(
 	'Credentials',
 	{
-		annotation: [{ type: 'owner', description: 'Identity & Access' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('composer: createFromList creates credential', async ({ n8n }) => {

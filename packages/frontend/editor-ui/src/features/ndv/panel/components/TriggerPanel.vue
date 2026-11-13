@@ -462,7 +462,7 @@ const onNodeExecute = () => {
 				:data-ndv-pane-min="isWebhookNode ? undefined : ''"
 			>
 				<div v-if="isActivelyPolling" class="mb-xl">
-					<N8nSpinner type="brand" size="xxlarge" />
+					<N8nSpinner type="ring" />
 				</div>
 
 				<div :class="$style.action">

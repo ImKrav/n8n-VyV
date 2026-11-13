@@ -46,7 +46,6 @@ import { canUseSystemAgent } from './system-agent-access';
 import { SystemAgentHostEventChannel } from './system-agent-host-events';
 import { SystemAgentRegistry } from './system-agent-registry';
 import type {
-	SystemAgentFile,
 	SystemAgentProvider,
 	SystemAgentStartTurn,
 	SystemAgentTurnHandle,
@@ -631,7 +630,6 @@ export class SystemAgentExecutionService {
 						...(workspace ? { workspace: workspace.lease } : {}),
 						...this.turnStateOf(thread),
 						emitHostEvent: hostEvents.emit,
-						readFile: async (fileId) => await this.readThreadFile(thread, resourceId, fileId),
 						executionId: admission.executionId,
 						message: payload.message,
 						attachments,
@@ -726,7 +724,6 @@ export class SystemAgentExecutionService {
 					...(workspace ? { workspace: workspace.lease } : {}),
 					...this.turnStateOf(thread),
 					emitHostEvent: hostEvents.emit,
-					readFile: async (fileId) => await this.readThreadFile(thread, resourceId, fileId),
 					runId,
 					toolCallId: pending.toolCallId,
 					checkpointHostMetadata,
@@ -898,35 +895,19 @@ export class SystemAgentExecutionService {
 		ref: StoredAttachmentRef,
 	): Promise<Buffer | undefined> {
 		if (!attachments.some((attachment) => attachment.id === ref.id)) return undefined;
-		return await (await this.readThreadFile(thread, resourceId, ref.id))?.readContent();
-	}
-
-	private async readThreadFile(
-		thread: AgentExecutionThread,
-		resourceId: string,
-		fileId: string,
-	): Promise<SystemAgentFile | undefined> {
-		const attachment = await this.attachmentService.getForSystemAgent(fileId, {
+		const attachment = await this.attachmentService.getForSystemAgent(ref.id, {
 			agentId: thread.agentId,
 			resourceId,
 			source: SYSTEM_CHAT_SOURCE,
 		});
 		if (attachment?.threadId !== thread.id) return undefined;
-		// The bytes load only on request, so a caller can check the size first.
-		return {
-			fileName: attachment.fileName,
-			mimeType: attachment.mimeType,
-			sizeBytes: attachment.fileSizeBytes,
-			readContent: async () => {
-				try {
-					return await streamToBuffer(await this.attachmentService.getStream(attachment));
-				} catch (error) {
-					// Storage can prune the bytes while the attachment row stays.
-					if (error instanceof FileNotFoundError) return undefined;
-					throw error;
-				}
-			},
-		};
+		try {
+			return await streamToBuffer(await this.attachmentService.getStream(attachment));
+		} catch (error) {
+			// Storage can prune the bytes while the attachment row stays.
+			if (error instanceof FileNotFoundError) return undefined;
+			throw error;
+		}
 	}
 
 	/**

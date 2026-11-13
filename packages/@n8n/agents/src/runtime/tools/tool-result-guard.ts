@@ -13,7 +13,7 @@ import { isContentToolResultOutput, type ContentToolResultOutput } from '../mode
 import { estimateObservationTokens, type TokenCounter } from '../model/model-token-counter';
 
 export {
-	RUN_SCOPED_OFFLOADED_TOOL_RESULT,
+	EXPIRED_OFFLOADED_TOOL_RESULT,
 	sanitizeOffloadedToolResultsForMemory,
 } from '../memory/tool-result-memory';
 
@@ -100,8 +100,7 @@ async function guardSerialized(
 	storage: ToolResultGuardStorage | undefined,
 	kind: ToolResultKind,
 ): Promise<GuardedToolResult> {
-	const byteLength = Buffer.byteLength(serialized, 'utf8');
-	if (byteLength + SMALL_PAYLOAD_OVERHEAD_BYTES <= MAX_MODEL_TOOL_RESULT_TOKENS) return unchanged;
+	if (isClearlyWithinTokenLimit(serialized)) return unchanged;
 
 	const tokenCount = await tokenCounter(serialized);
 	if (tokenCount <= MAX_MODEL_TOOL_RESULT_TOKENS) return unchanged;
@@ -222,6 +221,13 @@ async function tryOffloadResult(
 	}
 }
 
+function isClearlyWithinTokenLimit(serialized: string): boolean {
+	return (
+		Buffer.byteLength(serialized, 'utf8') + SMALL_PAYLOAD_OVERHEAD_BYTES <=
+		MAX_MODEL_TOOL_RESULT_TOKENS
+	);
+}
+
 async function buildTruncationEnvelope(
 	serialized: string,
 	originalTokenCount: number,
@@ -254,9 +260,8 @@ async function buildTruncationEnvelope(
 function splitHeadAndTail(value: string, excerptLength: number): { head: string; tail: string } {
 	const headLength = Math.ceil(excerptLength / 2);
 	const tailLength = Math.floor(excerptLength / 2);
-	// Drop a partial surrogate pair at either excerpt boundary.
 	return {
-		head: value.slice(0, headLength).replace(/[\uD800-\uDBFF]$/u, ''),
-		tail: tailLength === 0 ? '' : value.slice(-tailLength).replace(/^[\uDC00-\uDFFF]/u, ''),
+		head: value.slice(0, headLength),
+		tail: tailLength === 0 ? '' : value.slice(-tailLength),
 	};
 }

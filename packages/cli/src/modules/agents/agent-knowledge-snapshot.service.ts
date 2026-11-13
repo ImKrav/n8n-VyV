@@ -1,11 +1,11 @@
 import { Service } from '@n8n/di';
 
 import { KnowledgeAvailabilityService } from '@/modules/knowledge/knowledge-availability.service';
-import {
-	KnowledgeFileRepository,
-	type AgentKnowledgeTotals,
-} from '@/modules/knowledge/repositories/knowledge-file.repository';
 
+import {
+	AgentFileRepository,
+	type AgentKnowledgeTotals,
+} from './repositories/agent-file.repository';
 import { AgentRepository, type PublishedAgentVectorStores } from './repositories/agent.repository';
 
 const PAGE_SIZE = 500;
@@ -26,7 +26,7 @@ export interface AgentKnowledgeSnapshot {
 export class AgentKnowledgeSnapshotService {
 	constructor(
 		private readonly agentRepository: AgentRepository,
-		private readonly agentFileRepository: KnowledgeFileRepository,
+		private readonly agentFileRepository: AgentFileRepository,
 		private readonly knowledgeAvailabilityService: KnowledgeAvailabilityService,
 	) {}
 

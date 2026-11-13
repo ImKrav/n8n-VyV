@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 import { WorkflowEntity } from '../../entities';
 import type { IrreversibleMigration, MigrationContext } from '../migration-types';

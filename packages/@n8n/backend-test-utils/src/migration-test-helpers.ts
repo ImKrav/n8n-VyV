@@ -2,7 +2,7 @@ import { GlobalConfig } from '@n8n/config';
 import { type DatabaseType, DbConnection, type Migration } from '@n8n/db';
 import { Container } from '@n8n/di';
 import { DataSource, type ObjectLiteral, type QueryRunner } from '@n8n/typeorm';
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 
 async function reinitializeDataConnection(): Promise<void> {
 	const dbConnection = Container.get(DbConnection);

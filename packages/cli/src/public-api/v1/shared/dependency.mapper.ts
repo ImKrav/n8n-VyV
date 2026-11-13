@@ -1,7 +1,21 @@
-import { DEPENDENCY_PUBLIC_TYPES } from '@n8n/api-types';
-import type { DependencyListPublicDto, ResolvedDependenciesResult } from '@n8n/api-types';
+import type {
+	DependencyListPublicDto,
+	DependencyPublicType,
+	DependencyType,
+	ResolvedDependenciesResult,
+} from '@n8n/api-types';
 
 import { paginateArray } from './services/pagination.service';
+
+const PUBLIC_DEPENDENCY_TYPES: Record<DependencyType, DependencyPublicType> = {
+	agentUsage: 'agent',
+	credentialId: 'credential',
+	dataTableId: 'dataTable',
+	errorWorkflow: 'errorWorkflow',
+	errorWorkflowParent: 'errorWorkflowParent',
+	workflowCall: 'subWorkflow',
+	workflowParent: 'parentWorkflow',
+};
 
 /**
  * The service resolves and access-filters the full list in memory, so pages are cut from it.
@@ -13,7 +27,7 @@ export function toDependencyListPublicDto(
 ): DependencyListPublicDto {
 	const dependencies = (result?.dependencies ?? [])
 		.map(({ type, id, name, projectId }) => ({
-			type: DEPENDENCY_PUBLIC_TYPES[type],
+			type: PUBLIC_DEPENDENCY_TYPES[type],
 			id,
 			name,
 			...(projectId ? { projectId } : {}),

@@ -54,10 +54,10 @@
 	--canvas-node--border-color: transparent;
 }
 
-@mixin status-animated-after($inset: 3px) {
+@mixin status-animated-after {
 	content: '';
 	position: absolute;
-	inset: -$inset;
+	inset: -3px;
 	border-radius: 10px;
 	z-index: -1;
 	background: conic-gradient(

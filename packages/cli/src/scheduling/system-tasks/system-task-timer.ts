@@ -42,9 +42,9 @@ export class SystemTaskTimer {
 		private readonly now: () => number = Date.now,
 	) {}
 
-	start(from: Date, initialDelaySeconds?: number): void {
+	start(from: Date): void {
 		this.stop();
-		this.arm(from, true, initialDelaySeconds);
+		this.arm(from, true);
 	}
 
 	stop(): void {
@@ -52,13 +52,10 @@ export class SystemTaskTimer {
 		this.timer = undefined;
 	}
 
-	private arm(after: Date, isFirst: boolean, initialDelaySeconds?: number): number {
+	private arm(after: Date, isFirst: boolean): number {
 		let next: Date | null;
 		try {
-			next =
-				initialDelaySeconds === undefined
-					? this.nextOccurrence(after, isFirst)
-					: new Date(after.getTime() + initialDelaySeconds * Time.seconds.toMilliseconds);
+			next = this.nextOccurrence(after, isFirst);
 		} catch (error) {
 			this.timer = undefined;
 			this.onPlanError(ensureError(error));

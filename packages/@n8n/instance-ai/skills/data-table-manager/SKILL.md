@@ -8,8 +8,19 @@ description: >-
   delete data tables and rows, especially from CSV/XLSX/JSON attachments. Also
   load before building or planning workflows that create or write to Data
   Tables (then load workflow-builder before workflow_builder_build_workflow).
-recommended_tool_groups:
-  - data_tables
+recommended_tools:
+  - list_data_tables
+  - get_data_table_schema
+  - query_data_table
+  - create_data_table
+  - delete_data_table
+  - add_data_table_column
+  - delete_data_table_column
+  - rename_data_table_column
+  - insert_data_table_rows
+  - update_data_table_rows
+  - delete_data_table_rows
+  - parse-file
 platforms:
   - daytona
 ---
@@ -39,7 +50,7 @@ can target rows with narrow filters.
 
 1. Classify the job: inspect, design/create, import, seed, query, schema
    change, row mutation, row delete, table delete, or cleanup.
-2. Resolve the target first. Run `list_data_tables` through `call_tool` before creating
+2. Resolve the target first. Call `list_data_tables` before creating
    a table, acting on a table name, or choosing a project. If there is more
    than one plausible match, ask one concise clarification.
 3. Use table IDs after discovery. Include `projectId` whenever list results or
