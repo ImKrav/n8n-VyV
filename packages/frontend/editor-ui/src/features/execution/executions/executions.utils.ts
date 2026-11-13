@@ -89,12 +89,18 @@ export const executionFilterToQueryFilter = (
 		queryFilter.metadata = filter.metadata;
 	}
 
-	if (filter.startDate) {
-		queryFilter.startedAfter = filter.startDate;
+	// The date pickers do not stop an end date before the start date, so swap an inverted range
+	const [startedAfter, startedBefore] =
+		filter.startDate && filter.endDate && new Date(filter.startDate) > new Date(filter.endDate)
+			? [filter.endDate, filter.startDate]
+			: [filter.startDate, filter.endDate];
+
+	if (startedAfter) {
+		queryFilter.startedAfter = startedAfter;
 	}
 
-	if (filter.endDate) {
-		queryFilter.startedBefore = filter.endDate;
+	if (startedBefore) {
+		queryFilter.startedBefore = startedBefore;
 	}
 
 	switch (filter.status as ExecutionStatus) {

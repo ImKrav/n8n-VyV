@@ -1,0 +1,414 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.mts:28:29). Use `import.meta.dirname` instead
+  - import "../@n8n/design-system/src/icons/lucide/vite" without a file extension (vite.config.mts:12:35). Add the file extension
+  - import "./vite/i18n-locales-hmr-helpers" without a file extension (vite.config.mts:15:48). Add the file extension
+  - import "../../@n8n/constants/src/csp" without a file extension (vite.config.mts:20:40). Add the file extension
+  - ESM syntax in a file loaded as CommonJS (../../@n8n/constants/src/csp.ts:6:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - import "./bucket" without a file extension (../@n8n/design-system/src/icons/lucide/vite.ts:5:46). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/frontend/editor-ui
+      Coverage enabled with v8
+
+ ✓ src/features/credentials/components/CredentialEdit/CredentialEdit.test.ts (83 tests) 25169ms
+   ✓ CredentialEdit (78)
+     ✓ should show Sign in with Google for valid credential data 367ms
+     ✓ managed credential scope hiding (7)
+       ✓ shows Custom Scopes and dependent fields when credential is not managed 933ms
+       ✓ hides scope fields when managed OAuth is available and user has not opted into custom OAuth 513ms
+       ✓ shows scope fields when enabled for the managed OAuth credential type 631ms
+       ✓ shows scope fields when managed OAuth is available but user has provided their own clientId/clientSecret 692ms
+       ✓ hides scope fields for a managed-capable credential edited from the list (no active node context) 579ms
+     ✓ switching auth type on an existing credential (5)
+       ✓ enables Save and clears the stale connection banner after switching auth method 427ms
+       ✓ from a custom OAuth app to the managed app (4)
+         ✓ removes the custom client fields from the save when opened from a node 461ms
+         ✓ removes the custom client fields from the save when opened from the Credentials list 429ms
+         ✓ restores the custom client fields when the user selects the custom app again 581ms
+         ✓ keeps a sharing change made between two mode switches 812ms
+     ✓ automatic OAuth mode (3)
+       ✓ starts a new credential in Automatic mode 564ms
+       ✓ opens a credential without a stored choice in Custom mode 650ms
+       ✓ opens a credential saved in Automatic mode in Automatic mode 529ms
+     ✓ saving credentials (41)
+       ✓ retries loading a saved credential without creating it again 301ms
+       ✓ descriptions (11)
+         ✓ keeps the previous Details layout and omits descriptions from saves when disabled 338ms
+         ✓ saves the description in one request and shows it after reopening 594ms
+         ✓ clears the description when saved as "" 305ms
+         ✓ clears the description when saved as "   " 313ms
+         ✓ saves a description before the first save from the assistant modal for testApi 388ms
+         ✓ saves a description before the first save from the assistant modal for httpTemplatedCustomAuth 404ms
+       ✓ saves a custom project without a credential test 519ms
+       ✓ saves a listed project without a credential test 700ms
+       ✓ does not call onCredentialCreated when updating a credential 668ms
+       ✓ closes the modal only after a successful OAuth callback when closeOnSave is enabled 688ms
+       ✓ keeps the modal open after a successful OAuth callback by default 634ms
+       ✓ does not prompt to save again on a second connect click when nothing changed 700ms
+       ✓ reveals the connect banner without saving once missing required fields are filled 703ms
+     ✓ per-user OAuth banner (9)
+       ✓ switching a connected end-user credential to Fixed (2)
+         ✓ shows the type-to-confirm dialog with a pluralized person count when the current user just connected, even if the server count is stale 340ms
+         ✓ does not show the confirmation dialog when no users are connected 349ms
+       ✓ switching a static credential to private (1)
+         ✓ resets the connected state so no Disconnect button is shown 477ms
+   ✓ CredentialEdit - restricted credential types (5)
+     ✓ shows no callout for an unrestricted type 641ms
+ ✓ src/features/credentials/components/NodeCredentials.test.ts (138 tests) 15493ms
+   ✓ NodeCredentials (138)
+     ✓ should display available credentials in the dropdown 306ms
+     ✓ should filter available credentials in the dropdown 451ms
+ ✓ src/features/workflows/canvas/components/Canvas.test.ts (94 tests) 14589ms
+ ✓ src/features/execution/executions/components/ExecutionsFilter.test.ts (27 tests) 12688ms
+   ✓ ExecutionsFilter (27)
+     ✓ telemetry sent only once after component is mounted 835ms
+     ✓ renders in development environment on default deployment with advancedExecutionFilters false 610ms
+     ✓ renders in development environment on default deployment with advancedExecutionFilters true 551ms
+     ✓ renders in development environment on cloud deployment with advancedExecutionFilters false 410ms
+     ✓ renders in development environment on cloud deployment with advancedExecutionFilters true 417ms
+     ✓ renders in production environment on cloud deployment with advancedExecutionFilters false 400ms
+     ✓ renders in production environment on cloud deployment with advancedExecutionFilters true 401ms
+     ✓ renders in production environment on default deployment with advancedExecutionFilters false 312ms
+     ✓ renders in production environment on default deployment with advancedExecutionFilters true 449ms
+     ✓ state change 575ms
+     ✓ starts from the initial filters without emitting a change 451ms
+     ✓ shows annotation filters when advanced filters are enabled 356ms
+     ✓ tracks telemetry for custom data filter usage 418ms
+     ✓ handles metadata value input changes 401ms
+     ✓ handles exact match checkbox changes 397ms
+     ✓ shows upgrade link when advanced filters disabled 304ms
+     ✓ version filter (10)
+       ✓ should not show version select when no workflowId is provided 350ms
+       ✓ should show version select when workflowId is provided and versions exist 457ms
+       ✓ should show disabled version select when version fetch returns empty 476ms
+       ✓ should emit filter with workflowVersionId when a version is selected 648ms
+       ✓ should show loading spinner while versions are being fetched 479ms
+       ✓ should fetch versions only once across multiple popover opens after success 930ms
+       ✓ should show enabled select when versions are loaded 451ms
+       ✓ should show disabled version select when version fetch fails 443ms
+       ✓ should retry fetching versions after a failed attempt 869ms
+ ✓ src/features/workflows/components/WorkflowSettings/WorkflowSettings.test.ts (109 tests) 103895ms
+   ✓ WorkflowSettingsVue (109)
+     ✓ should render correctly 1243ms
+     ✓ should localize the placeholder of workflow-settings-execution-order 1107ms
+     ✓ should localize the placeholder of workflow-settings-error-workflow 936ms
+     ✓ should localize the placeholder of workflow-settings-timezone 934ms
+     ✓ should not render workflow caller policy when sharing is not enabled 900ms
+     ✓ should render workflow caller policy when sharing is enabled 932ms
+     ✓ spaces selected-workflow IDs like the other settings (LIGO-866) 825ms
+     ✓ should lock caller policy to none when executeWorkflow is excluded 808ms
+     ✓ Custom span attributes (7)
+       ✓ should show custom span attribute settings when OTel custom span attributes are enabled 852ms
+       ✓ should hide custom telemetry tag settings when OTel is disabled 850ms
+       ✓ should hide custom span attribute settings when OTel custom span attributes are not licensed 790ms
+       ✓ should save workflow settings with custom span attributes emitted by the child 838ms
+       ✓ should persist custom span attributes immediately with a partial settings payload 906ms
+       ✓ should show an error when immediate custom span attribute persistence fails 905ms
+       ✓ should disable workflow settings save when custom span attributes are invalid 875ms
+     ✓ should render list of workflows field when policy is set to workflowsFromAList 890ms
+     ✓ Error Workflow (4)
+       ✓ should fetch all workflows and render them in the error workflows dropdown 832ms
+       ✓ should initialize undefined errorWorkflow to DEFAULT 879ms
+       ✓ should send DEFAULT value for errorWorkflow to backend when set to "No Workflow" 936ms
+       ✓ should save workflow with errorWorkflow when a specific workflow is selected 928ms
+     ✓ should not remove valid workflow ID characters including hyphens and underscores 1227ms
+     ✓ should remove invalid workflow ID characters 1002ms
+     ✓ should show workflow-settings-save-failed-executions dropdown correct default value as Default - Save 880ms
+     ✓ should show workflow-settings-save-failed-executions dropdown correct default value as Default - Do not save 840ms
+     ✓ should show workflow-settings-save-success-executions dropdown correct default value as Default - Save 830ms
+     ✓ should show workflow-settings-save-success-executions dropdown correct default value as Default - Do not save 1016ms
+     ✓ should show workflow-settings-save-manual-executions dropdown correct default value as Default - Save 885ms
+     ✓ should show workflow-settings-save-manual-executions dropdown correct default value as Default - Do not save 903ms
+     ✓ should show workflow-settings-save-execution-progress dropdown correct default value as Default - Save 891ms
+     ✓ should show workflow-settings-save-execution-progress dropdown correct default value as Default - Do not save 894ms
+     ✓ should save time saved per execution correctly 1055ms
+     ✓ should remove time saved per execution setting 1090ms
+     ✓ should disable save time saved per execution if env is read-only 1036ms
+     ✓ should disable save time saved per execution if user has no permission to update workflow 824ms
+     ✓ Engine type (16)
+       ✓ should render the engine type row as the first row, directly above Execution Logic 1253ms
+       ✓ should not render the engine type row when the engine-v2 module is inactive 903ms
+       ✓ should offer v1 and v2 (Beta) as engine type options 915ms
+       ✓ should select the option for engineType v2 883ms
+       ✓ should select the option for engineType v1 932ms
+       ✓ should select the option for engineType undefined 908ms
+       ✓ should save engineType undefined as v2 after the option is selected 902ms
+       ✓ should save engineType v1 as v2 after the option is selected 1001ms
+       ✓ should save engineType v2 as v1 after the option is selected 997ms
+       ✓ should hold the new engineType in the document after a change from undefined to v2 976ms
+       ✓ should hold the new engineType in the document after a change from v1 to v2 949ms
+       ✓ should hold the new engineType in the document after a change from v2 to v1 906ms
+       ✓ should not add engineType to the saved settings when the select is untouched 894ms
+       ✓ should keep a stored engineType v2 on save when the engine-v2 module is inactive 826ms
+       ✓ should disable the select if env is read-only 817ms
+       ✓ should disable the select if user has no permission to update workflow 889ms
+     ✓ Execution Order & Binary Mode (8)
+       ✓ should render execution order dropdown with correct options 1104ms
+       ✓ should set binaryMode to separate when selecting v0 1038ms
+       ✓ should set binaryMode to separate when selecting v1 929ms
+       ✓ should show binary mode warning toast when binary mode changes 951ms
+       ✓ should not show warning when binary mode does not change 1014ms
+       ✓ should default to v1 execution order when not set 890ms
+       ✓ should disable execution order dropdown when environment is read-only 938ms
+       ✓ should disable execution order dropdown when user has no update permission 913ms
+     ✓ Credential Resolver (14)
+       ✓ should render credential resolver dropdown 1035ms
+       ✓ should load credential resolvers on mount 931ms
+       ✓ should show "New" button for creating a new resolver 922ms
+       ✓ should not show "Edit" button when the default n8n system resolver is selected 1114ms
+       ✓ should show "Edit" button when an editable resolver is selected 889ms
+       ✓ should not show "Edit" button when a non-editable resolver is selected 891ms
+       ✓ should select a resolver from dropdown 1048ms
+       ✓ should save workflow with selected resolver 971ms
+       ✓ should save with empty credentialResolverId when resolver is cleared 984ms
+       ✓ should save with empty credentialResolverId when switching back to the system resolver 999ms
+       ✓ should disable credential resolver dropdown when environment is read-only 839ms
+       ✓ should disable credential resolver dropdown when user has no update permission 977ms
+       ✓ should clear stale credentialResolverId when resolver no longer exists 888ms
+       ✓ should default to the n8n system resolver when no resolver is selected 830ms
+     ✓ Credential Resolver RBAC (5)
+       ✓ should not show "Create new" button when user lacks credentialResolver:create scope 822ms
+       ✓ should show "Create new" button when user has credentialResolver:create scope 817ms
+       ✓ should not show "Edit" button when user lacks credentialResolver:update scope 864ms
+       ✓ should show "Edit" button when user has credentialResolver:update scope and editable resolver is selected 873ms
+       ✓ should not fetch resolvers and should disable dropdown when user lacks credentialResolver:list scope 919ms
+     ✓ Redaction Policy (32)
+       ✓ should show redaction policy section when licensed but user lacks redaction scopes 821ms
+       ✓ should not render redaction policy when redaction module is inactive 806ms
+       ✓ should disable redaction dropdowns when user lacks enableRedaction scope 1850ms
+       ✓ should render redaction policy when module is active and user has scope 1356ms
+       ✓ should render two redaction dropdowns with correct options 1052ms
+       ✓ should save redaction policy as non-manual when only production is set to redact 996ms
+       ✓ should save redaction policy as all when both are set to redact 1260ms
+       ✓ should enable production dropdown when policy is "none" and user has only enableRedaction scope 868ms
+       ✓ should disable dropdowns when policy is active and user has only enableRedaction scope 1016ms
+       ✓ should disable production redaction select and force "Redact" when dynamic credentials are configured 965ms
+       ✓ manual requires production (4)
+         ✓ disables manual select when production is not redacted 884ms
+         ✓ keeps manual select enabled when production is set to redact 947ms
+         ✓ coerces manual back to default when production drops to default and persists redactionPolicy: none on save 1083ms
+         ✓ disables manual select independently of license, permission, and enforcement gates 875ms
+       ✓ redact caller executions (6)
+         ✓ is hidden when the workflow redacts no channel 835ms
+         ✓ is on by default when the workflow redacts a channel 929ms
+         ✓ saves redactCallerExecutions as false when the user turns it off 898ms
+         ✓ is disabled when it is on and the user lacks the disableRedaction scope 873ms
+         ✓ is disabled when it is off and the user lacks the enableRedaction scope 963ms
+         ✓ is disabled without the data redaction license 1074ms
+       ✓ instance floor (12)
+         ✓ locks production select with floor copy under floor "production"; manual stays editable 932ms
+         ✓ locks both selects with floor copy under floor "all" 894ms
+         ✓ leaves both selects editable under floor "off" 948ms
+         ✓ does not fetch the instance floor when DataRedaction is not licensed 992ms
+         ✓ keeps manual select enabled under floor "production" (production coerced to redact) 953ms
+         ✓ shows the floor lock on manual (not the IAM-697 hint) when floor "all" and policy "none" 939ms
+         ✓ does not persist the floor-coerced production value when the user made no redaction change under floor "production" 984ms
+         ✓ does not persist the floor-coerced values when the user made no redaction change under floor "all" 1067ms
+         ✓ persists "all" when the user genuinely enables manual redaction under floor "production" 1105ms
+         ✓ preserves an existing stricter stored policy on save under floor "production" 1016ms
+         ✓ fails open when getSecuritySettings rejects (no floor lock, selects editable) 927ms
+         ✓ keeps the permission lock active under floor "off" (no floor lock applies) 901ms
+ ✓ src/features/core/folders/components/MoveToFolderModal.test.ts (35 tests) 11617ms
+   ✓ MoveToFolderModal (35)
+     ✓ should select a project with the picker 381ms
+     ✓ should not render credentials sharing checkbox for folder without shareable resources 390ms
+     ✓ should render credentials sharing checkbox for folder with shareable resources 425ms
+     ✓ should reset to project root when switching projects 447ms
+     ✓ should transfer selected folder on submit 522ms
+     ✓ should transfer selected folder and used credentials on submit 599ms
+     ✓ should transfer selected folder and not pass used credentials if unchecked on submit 541ms
+     ✓ data table dependency warning (6)
+       ✓ should warn when transferring a workflow that uses data tables, without blocking the move 368ms
+       ✓ should warn when transferring a folder whose workflows use data tables 359ms
+       ✓ should not warn about data tables the destination project already owns 333ms
+       ✓ should not warn when the resource stays in its own project on the overview page 365ms
+       ✓ should not warn when the workflow has no data table dependencies 375ms
+     ✓ should transfer selected workflow on submit 530ms
+     ✓ should transfer selected workflow to personal project on submit 362ms
+     ✓ transfer policy warning (11)
+       ✓ should build a workflow target once another project is selected 346ms
+       ✓ should build a folder target with the source project once another project is selected 338ms
+       ✓ should name the destination project in the warning 347ms
+       ✓ unpublished-by-move toast (5)
+         ✓ should pass the workflow result, name and project name to the toast 341ms
+         ✓ should pass the folder result and project name to the toast 340ms
+         ✓ should name the project chosen at submit when the user picks another one mid-move 562ms
+         ✓ should not show the toast when the transfer fails 386ms
+         ✓ should not show the toast for a move inside the same project 338ms
+ ✓ src/features/execution/logs/components/LogsPanel.test.ts (30 tests) 7357ms
+   ✓ LogsPanel (30)
+     ✓ should render only output panel of selected node by default 308ms
+     ✓ should render both input and output panel of selected node by default if it is sub node 356ms
+     ✓ should open log details panel when a log entry is clicked in the logs overview panel 391ms
+     ✓ should show the button to toggle panel in the header of log details panel when it's opened 570ms
+     ✓ should toggle subtree when chevron icon button is pressed 393ms
+     ✓ should toggle input and output panel when the button is clicked 462ms
+     ✓ should show new name when a node is renamed 316ms
+     ✓ selection (6)
+       ✓ should allow to select previous and next row via keyboard shortcut 316ms
+       ✓ should handle arrow navigation without bubbling to canvas shortcuts 331ms
+       ✓ should automatically select a log for the selected node on canvas if sync is enabled 345ms
+       ✓ should automatically expand and select a log for the selected node on canvas if the log entry is collapsed 322ms
+ ✓ src/features/credentials/components/CredentialEdit/CredentialInputs.test.ts (10 tests) 5391ms
+   ✓ credential project options (8)
+     ✓ loads pages on demand and keeps manual entry available for credential undefined 1283ms
+     ✓ loads pages on demand and keeps manual entry available for credential saved-credential 1067ms
+     ✓ loads projects when both service account fields are filled without opening the list 300ms
+     ✓ discards old results and keeps the project and cached options when Region changes 394ms
+     ✓ ignores an old page success after the search changes 725ms
+     ✓ ignores an old page failure after the search changes 729ms
+     ✓ shows lookup errors with the Custom fallback and clears them after credentials change 378ms
+     ✓ keeps Custom without an error when no projects are found 343ms
+ ✓ src/features/core/dataTable/components/dataGrid/AddColumnButton.test.ts (19 tests) 5216ms
+   ✓ AddColumnButton (19)
+     ✓ should call addColumn with correct payload 354ms
+     ✓ should allow valid column names 510ms
+     ✓ should clear error when correcting invalid name 334ms
+     ✓ should allow selecting different column types 478ms
+     ✓ should reset form after successful submission 367ms
+     ✓ should close popover after successful submission 320ms
+     ✓ should set value to "date" when selecting "datetime" option 343ms
+     ✓ should clear error state when reopening popover after failed submission 503ms
+ ✓ src/features/credentials/components/CredentialEdit/CredentialSharing.ee.test.ts (31 tests) 4837ms
+   ✓ CredentialSharing.ee (31)
+     ✓ should render ProjectSharing component when sharing is enabled 352ms
+ ✓ src/features/credentials/views/CredentialsView.test.ts (20 tests) 3877ms
+   ✓ CredentialsView (20)
+     ✓ should render credentials 485ms
+     ✓ filters (4)
+       ✓ should filter by setupNeeded 367ms
+       ✓ should filter by setupNeeded when object keys are empty 358ms
+       ✓ should filter by setupNeeded when object keys are "CREDENTIAL_EMPTY_VALUE" 400ms
+ ✓ src/features/credentials/components/CredentialEdit/CredentialConfig.test.ts (52 tests) 3741ms
+ ✓ src/features/credentials/components/CredentialCard.test.ts (36 tests) 2782ms
+ ✓ src/features/execution/logs/components/LogDetailsPanel.test.ts (19 tests) 3434ms
+   ✓ LogDetailsPanel (19)
+     ✓ shows the credential cause without a sharing action in the two-pane node view 327ms
+     ✓ should show name, run status, input, and output of the node 320ms
+     ✓ canvas group details (6)
+       ✓ shows a boundary selector when multiple nodes cross the group edge 336ms
+ ✓ src/features/execution/executions/components/global/GlobalExecutionsList.test.ts (5 tests) 2211ms
+   ✓ GlobalExecutionsList (5)
+     ✓ should handle selection flow when loading more items 1069ms
+     ✓ should stop offering "load more" once all executions are shown, even on a large instance 370ms
+     ✓ should show "retry" data when appropriate 301ms
+ ✓ src/features/execution/executions/components/workflow/WorkflowExecutionsPreview.test.ts (30 tests) 1952ms
+ ✓ src/features/execution/executions/components/workflow/WorkflowExecutionsSidebar.test.ts (7 tests) 1427ms
+   ✓ WorkflowExecutionsSidebar (7)
+     ✓ infinite scroll sentinel (5)
+       ✓ should re-observe the sentinel after a new batch of executions arrives 443ms
+ ✓ src/features/core/dataTable/components/dataGrid/DataTableTable.test.ts (11 tests) 1121ms
+   ✓ DataTableTable (11)
+     ✓ Search behavior (1)
+       ✓ resets to first page when search changes 320ms
+ ✓ ../../../qa/unit/core/CO-05.DeleteFolderModal.test.ts (7 tests) 815ms
+ ✓ src/features/core/dataTable/components/ImportCsvModal.test.ts (15 tests) 853ms
+ ✓ src/features/core/folders/components/FolderCard.test.ts (10 tests) 821ms
+ ✓ src/features/workflows/components/ImportWorkflowUrlModal.test.ts (6 tests) 773ms
+ ✓ src/features/workflows/canvas/components/elements/nodes/CanvasNode.test.ts (8 tests) 619ms
+ ✓ src/features/credentials/components/CredentialPicker/CredentialPicker.test.ts (5 tests) 747ms
+   ✓ CredentialPicker (5)
+     ✓ should render 325ms
+ ✓ src/features/credentials/components/CredentialEdit/CredentialTypeSelector.test.ts (5 tests) 659ms
+ ✓ src/features/core/dataTable/components/dataGrid/ColumnHeader.test.ts (9 tests) 573ms
+ ✓ src/features/workflows/components/WorkflowPublishModal.test.ts (11 tests) 614ms
+ ✓ ../../../qa/unit/credentials/CR-02.TypeToConfirmDialog.test.ts (6 tests) 473ms
+ ✓ ../../../qa/unit/core/CO-01.AddDataTableModal.test.ts (5 tests) 484ms
+ ✓ src/features/credentials/components/CredentialsSelect.test.ts (21 tests) 438ms
+ ✓ ../../../qa/unit/workflows/WF-05.DuplicateWorkflowDialog.test.ts (5 tests) 464ms
+ ✓ src/features/workflows/canvas/components/elements/edges/CanvasEdgeToolbar.test.ts (9 tests) 429ms
+ ✓ src/features/credentials/quickConnect/composables/useQuickConnect.test.ts (53 tests) 298ms
+ ✓ src/features/execution/executions/components/StopManyExecutionsModal.test.ts (2 tests) 267ms
+ ✓ src/features/credentials/components/ScopesNotice.test.ts (4 tests) 279ms
+ ✓ src/features/core/folders/components/FolderBreadcrumbs.test.ts (6 tests) 274ms
+ ✓ src/features/execution/executions/components/ConcurrentExecutionsHeader.test.ts (8 tests) 236ms
+ ✓ src/features/core/dataTable/components/DownloadDataTableModal.test.ts (4 tests) 188ms
+ ✓ src/features/core/dataTable/components/dataGrid/AddRowButton.test.ts (1 test) 171ms
+ ✓ src/features/workflows/canvas/components/elements/nodes/render-types/CanvasNodeStickyNote.test.ts (5 tests) 152ms
+ ✓ ../../../qa/unit/executions/EX-04.ExecutionStopAllText.test.ts (5 tests) 121ms
+ ✓ src/features/workflows/components/WorkflowActivationConflictingWebhookModal.test.ts (4 tests) 102ms
+ ✓ src/features/workflows/workflowDiff/useWorkflowDiff.test.ts (20 tests) 41ms
+ ✓ src/features/execution/executions/executions.utils.test.ts (63 tests) 58ms
+ ✓ src/features/workflows/templates/utils/templateActions.test.ts (2 tests) 65ms
+ ✓ ../../../qa/unit/workflows/WF-03.WorkflowActivationErrorMessage.test.ts (2 tests) 37ms
+ ✓ src/features/workflows/workflowHistory/utils.test.ts (18 tests) 45ms
+ ✓ src/features/workflows/templates/utils/templateTransforms.test.ts (8 tests) 14ms
+ ✓ ../../../qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts (5 tests) 14ms
+ ✓ src/features/workflows/workflowHistory/useWorkflowHistoryVersionOptions.test.ts (2 tests) 10ms
+
+ Test Files  50 passed (50)
+      Tests  1090 passed (1090)
+   Start at  03:27:43
+   Duration  248.67s (tests 51%, import 26%, transform 14%, setup 5%, environment 4%)
+
+     Import  3261 modules were evaluated 95273 times · 121.25s total, 26% of tracked time
+             ~56.71s faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+             learn more: https://vitest.dev/guide/improving-performance#test-isolation
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   76.24 |    68.93 |   71.19 |   76.89 |
+ ...ble/components |   61.12 |    35.32 |   48.27 |   64.36 |
+  ...ableModal.vue |   42.78 |    15.87 |   24.52 |   46.78 | ...89-407,448-477
+  ...tCsvModal.vue |   90.29 |    75.92 |   82.75 |   92.47 | ...02,145,232-264
+ ...nents/dataGrid |   76.87 |    68.35 |   64.15 |   76.97 |
+  ...umnButton.vue |   88.46 |    77.19 |   92.59 |   89.18 | ...14-117,138,182
+  ...ableTable.vue |   63.76 |    45.45 |   34.61 |   63.07 | ...92,196,237-267
+ ...ers/components |   83.81 |    69.07 |   79.72 |   84.03 |
+  ...lderModal.vue |    92.3 |    71.92 |   91.66 |   93.33 | 63,83,113,164,180
+  ...eadcrumbs.vue |   62.02 |    48.33 |      50 |   61.84 | ...30-239,285-307
+  FolderCard.vue   |   72.28 |    50.98 |   77.14 |   72.15 | ...19,315,352-353
+  ...lderModal.vue |    95.4 |    83.82 |   91.07 |   95.32 | ...96,625,655-658
+ ...als/components |   86.09 |    78.97 |   87.12 |   86.91 |
+  ...ntialCard.vue |   86.74 |    81.13 |   92.59 |   87.17 | ...69,177-190,224
+  ...alsSelect.vue |    86.2 |       78 |   78.57 |   85.71 | ...25,146-147,211
+  ...edentials.vue |   85.69 |    79.05 |   87.35 |   86.66 | ...2084,2129-2135
+  ScopesNotice.vue |     100 |       50 |     100 |     100 | 20-42
+ ...CredentialEdit |   77.92 |    72.92 |   84.96 |   79.11 |
+  ...ntialEdit.vue |   77.28 |    72.62 |   85.84 |    78.6 | ...1647,1888-1889
+  ...eSelector.vue |    87.5 |    85.71 |      80 |   85.71 | 78-80,88
+  ...irmDialog.vue |   86.36 |       80 |   83.33 |   88.88 | 43,64
+ credentials/views |   81.61 |    60.46 |   69.76 |    81.6 |
+  ...tialsView.vue |   81.61 |    60.46 |   69.76 |    81.6 | ...00,331,363,406
+ ...ion/executions |   79.61 |    73.48 |   91.66 |   78.37 |
+  ...ions.utils.ts |   79.61 |    73.48 |   91.66 |   78.37 | ...90,386-398,471
+ ...ons/components |    81.5 |    78.04 |    78.2 |   80.83 |
+  ...onsFilter.vue |   86.72 |     92.3 |   77.19 |   86.11 | ...39-441,461-463
+  ...ionsModal.vue |      66 |    51.72 |   77.77 |      66 | ...,58-91,107-108
+ ...ponents/global |   53.54 |    50.68 |    64.1 |   54.03 |
+  ...tionsList.vue |   53.54 |    50.68 |    64.1 |   54.03 | ...33,339,346,450
+ ...nents/workflow |   66.66 |    60.52 |   65.78 |   67.21 |
+  ...nsPreview.vue |   69.62 |    62.38 |      70 |   71.54 | ...57-370,401-412
+  ...nsSidebar.vue |   60.31 |    55.81 |   57.69 |   58.33 | ...59,168,192,224
+ ...ogs/components |    85.6 |       76 |   73.84 |   84.16 |
+  ...ailsPanel.vue |   87.14 |    90.47 |   78.04 |   85.48 | ...59-295,326,361
+  LogsPanel.vue    |   83.87 |    54.28 |   66.66 |   82.75 | ...30,136,152-159
+ ...vas/components |   60.22 |    57.04 |   50.56 |   61.25 |
+  Canvas.vue       |   60.22 |    57.04 |   50.56 |   61.25 | ...2195-2196,2228
+ ...elements/edges |   93.33 |      100 |   83.33 |   92.85 |
+  ...geToolbar.vue |   93.33 |      100 |   83.33 |   92.85 | 42
+ ...elements/nodes |   76.59 |     61.7 |   54.76 |      75 |
+  CanvasNode.vue   |   76.59 |     61.7 |   54.76 |      75 | ...56-357,362-363
+ ...s/render-types |   78.26 |     37.5 |   66.66 |      80 |
+  ...tickyNote.vue |   78.26 |     37.5 |   66.66 |      80 | 40-45,58,84
+ ...ows/components |   85.38 |    73.63 |   77.61 |   85.51 |
+  ...lowDialog.vue |   89.39 |    52.94 |   61.53 |   89.39 | ...46,156-157,189
+  ...wUrlModal.vue |      90 |    83.33 |   88.88 |      90 | 30-31
+  ...hookModal.vue |   96.66 |      100 |   91.66 |   96.66 | 66
+  ...lishModal.vue |   78.21 |    72.46 |   75.75 |   78.12 | ...53,308,331-343
+ ...rkflowSettings |   80.86 |    76.29 |   72.68 |   80.83 |
+  ...wSettings.vue |   80.86 |    76.29 |   72.68 |   80.83 | ...1866-1914,1939
+ ...s/workflowDiff |   97.91 |    90.62 |     100 |   98.92 |
+  ...rkflowDiff.ts |   97.91 |    90.62 |     100 |   98.92 | 296
+ ...orkflowHistory |      80 |    46.15 |   66.66 |   78.57 |
+  utils.ts         |      80 |    46.15 |   66.66 |   78.57 | 20-26,99-103
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 76.24% ( 3857/5059 )
+Branches     : 68.93% ( 2434/3531 )
+Functions    : 71.19% ( 1152/1618 )
+Lines        : 76.89% ( 3625/4714 )
+================================================================================
