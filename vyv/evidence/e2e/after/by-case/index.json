@@ -78,7 +78,6 @@
     "results/by-case/CP-018-07/csv-import-export.api__CP-018-07_evidencia.png"
   ],
   "CP-018-08": [
-    "results/by-case/CP-018-08/owasp__CP-018-08_evidencia.png",
     "results/by-case/CP-018-08/owasp__CP-018-08_evidencia.png"
   ],
   "CP-019-01": [
@@ -128,5 +127,47 @@
   ],
   "CP-CO-03-05": [
     "results/by-case/CP-CO-03-05/csv-encoding-size.api__CP-CO-03-05_evidencia.png"
+  ],
+  "CP-CR-01-07": [
+    "results/by-case/CP-CR-01-07/encryption-at-rest.api__CP-CR-01-07_evidencia.png"
+  ],
+  "CP-CR-02-03": [
+    "results/by-case/CP-CR-02-03/secret-exposure.api__CP-CR-02-03_evidencia.png"
+  ],
+  "CP-CR-02-04": [
+    "results/by-case/CP-CR-02-04/secret-exposure.api__CP-CR-02-04_evidencia.png"
+  ],
+  "CP-CR-04-08": [
+    "results/by-case/CP-CR-04-08/credential-switch.api__CP-CR-04-08_evidencia.png",
+    "results/by-case/CP-CR-04-08/credential-switch.api__CP-CR-04-08_evidencia.png",
+    "results/by-case/CP-CR-04-08/credential-switch.api__CR-04 · Cambiar la credencial de un nodo (API) -- CP-CR-04-08 · la ejecuc.png"
+  ],
+  "CP-CR-05-02": [
+    "results/by-case/CP-CR-05-02/sort.ui__CP-CR-05-02_nombre_az.png",
+    "results/by-case/CP-CR-05-02/sort.ui__CP-CR-05-02_ultima_actualizacion.png"
+  ],
+  "CP-CR-05-05": [
+    "results/by-case/CP-CR-05-05/isolation.api__CP-CR-05-05_evidencia.png"
+  ],
+  "CP-EX-01-08": [
+    "results/by-case/CP-EX-01-08/many-executions.api__CP-EX-01-08_evidencia.png",
+    "results/by-case/CP-EX-01-08/many-executions.api__CP-EX-01-08_lista.png"
+  ],
+  "CP-EX-04-08": [
+    "results/by-case/CP-EX-04-08/concurrency-queue.api__CP-EX-04-08_evidencia.png",
+    "results/by-case/CP-EX-04-08/concurrency-queue.api__CP-EX-04-08_evidencia.png"
+  ],
+  "CP-WF-01-08": [
+    "results/by-case/CP-WF-01-08/large-workflow.ui__CP-WF-01-08_lienzo.png",
+    "results/by-case/CP-WF-01-08/large-workflow.ui__WF-01 · Workflow de 100 nodos (UI) -- CP-WF-01-08 · el lienzo con 100 nodos c.png"
+  ],
+  "CP-WF-03-02": [
+    "results/by-case/CP-WF-03-02/webhook-publish.api__CP-WF-03-02_evidencia.png"
+  ],
+  "CP-WF-03-04": [
+    "results/by-case/CP-WF-03-04/webhook-publish.api__CP-WF-03-04_evidencia.png"
+  ],
+  "CP-WF-03-08": [
+    "results/by-case/CP-WF-03-08/webhook-publish.api__CP-WF-03-08_evidencia.png"
   ]
 }

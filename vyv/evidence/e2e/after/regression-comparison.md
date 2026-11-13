@@ -13,7 +13,7 @@ Regresiones: 0 · Corregidos: 3
 | CO-02 · Edición de filas (API) Con datos de ejemplo CP-017-06 · ordena por edad ascendente y descendente | passed | passed | igual |
 | CO-02 · Edición de filas (API) Con datos de ejemplo CP-017-07 · filtra con gt (valor límite excluido), eq y like | passed | passed | igual |
 | CO-02 · Edición de filas (API) Con datos de ejemplo Complementaria · elimina filas seleccionadas | passed | passed | igual |
-| CO-02 · Límite de almacenamiento (API) CP-017-08 · rechaza inserciones al superar el límite configurado | pending | pending | igual |
+| CO-02 · Límite de almacenamiento (API) CP-017-08 · rechaza inserciones al superar el límite configurado | pending | passed | cambió |
 | CO-03 · Importar y exportar CSV (API) CP-018-01 · importa un CSV válido e infiere los tipos | passed | passed | igual |
 | CO-03 · Importar y exportar CSV (API) CP-018-02 · rechaza archivos que no son .csv (RNF-018) | passed | passed | igual |
 | CO-03 · Importar y exportar CSV (API) CP-018-03 · rechaza un CSV malformado sin crear tablas | passed | passed | igual |
@@ -101,6 +101,7 @@ Regresiones: 0 · Corregidos: 3
 | CO-02 · Edición de filas (UI) CP-017-01 · añade una fila y los valores persisten tras recargar | — | passed | cambió |
 | CO-02 · Edición de filas (UI) CP-017-06/07 · ordena y busca filas en la vista | — | passed | cambió |
 | CO-02 · Edición de filas (UI) Complementaria · elimina filas seleccionadas | — | passed | cambió |
+| EX-04 · Cola de ejecuciones con límite de concurrencia (API) CP-EX-04-08 · las ejecuciones en cola pasan a ejecución y terminan con éxito en orden de llegada | — | passed | cambió |
 | CO-03 · CSV de Excel y archivo grande (API) CP-CO-03-05 · importa un CSV de 10 000 filas en menos de 30 s y carga todas las filas | — | passed | cambió |
 | CO-03 · CSV de Excel y archivo grande (API) CP-CO-03-04 · CSV exportado desde Excel en español (UTF-8 con BOM, «;», tildes) CP-CO-03-04 · el primer encabezado no incluye el BOM | — | passed | cambió |
 | CO-03 · CSV de Excel y archivo grande (API) CP-CO-03-04 · CSV exportado desde Excel en español (UTF-8 con BOM, «;», tildes) CP-CO-03-04 · las tildes y la ñ se conservan en los valores importados | — | passed | cambió |
@@ -116,3 +117,15 @@ Regresiones: 0 · Corregidos: 3
 | CO-05 Mover y eliminar carpetas Eliminar una carpeta transfiriendo su contenido | — | passed | cambió |
 | CO-05 · Carpetas: mover y eliminar (UI) CP-020-04 · elimina una carpeta transfiriendo su contenido | — | passed | cambió |
 | CO-05 · Carpetas: mover y eliminar (UI) CP-020-02 · mueve una carpeta a otra con el modal de mover | — | passed | cambió |
+| WF-01 · Workflow de 100 nodos (UI) CP-WF-01-08 · el lienzo con 100 nodos carga en menos de 3 s y el zoom y el desplazamiento responden | — | failed | cambió |
+| WF-03 · Webhook de producción (API) CP-WF-03-02 · el webhook de producción responde 200 y registra una ejecución exitosa | — | passed | cambió |
+| WF-03 · Webhook de producción (API) CP-WF-03-04 · dos workflows con la misma ruta y métodos distintos reciben cada uno su método | — | passed | cambió |
+| WF-03 · Webhook de producción (API) CP-WF-03-08 · después de reiniciar n8n el workflow sigue publicado y su webhook responde | — | passed | cambió |
+| EX-01 · Lista global con más de 1 000 ejecuciones CP-EX-01-08 · la API de la lista global responde en menos de 3 s con más de 1 000 ejecuciones | — | passed | cambió |
+| EX-01 · Lista global con más de 1 000 ejecuciones CP-EX-01-08 · la lista global se abre en menos de 3 s y se desplaza sin bloqueos | — | passed | cambió |
+| CR-01 · Cifrado de la credencial en la base de datos CP-CR-01-07 · la columna data de credentials_entity no contiene el secreto en texto plano | — | passed | cambió |
+| CR-02 · Secretos de una credencial (API) CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro | — | passed | cambió |
+| CR-02 · Secretos de una credencial (API) CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre | — | passed | cambió |
+| CR-04 · Cambiar la credencial de un nodo (API) CP-CR-04-08 · la ejecución envía la cabecera de la credencial nueva y no la de la anterior | — | passed | cambió |
+| CR-05 · Aislamiento de credenciales entre usuarios (API) CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió | — | passed | cambió |
+| CR-05 · Orden del listado de credenciales (UI) CP-CR-05-02 · el listado respeta el orden por nombre y por última actualización | — | passed | cambió |

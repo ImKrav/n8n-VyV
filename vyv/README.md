@@ -1,6 +1,6 @@
 # VyV · Plan de pruebas de n8n · Módulos 1–4
 
-Esta carpeta contiene todas las pruebas automatizadas del **plan de pruebas de n8n-VyV** (carpeta «Final VyV»: plan, casos y escenarios, matriz de trazabilidad). El plan cubre 4 módulos con 5 funcionalidades cada uno y **142 casos** (CP-WF-01-01 … CP-CO-05-08). El sistema bajo prueba es **n8n 2.47.0 (commit `01bd57cdd`)**.
+Esta carpeta contiene todas las pruebas automatizadas del **plan de pruebas de n8n-VyV** (carpeta «Final VyV»: plan, casos y escenarios, matriz de trazabilidad). El plan cubre 4 módulos con 5 funcionalidades cada uno y **142 casos** (CP-WF-01-01 … CP-CO-05-08). El sistema bajo prueba es **n8n 2.47.0 (commit `01bd57cdd`)**. **141 de los 142 casos tienen prueba automatizada**, entre `units/` y `e2e/`; CP-CR-03-05 necesita una cuenta real de un proveedor OAuth2 y se ejecuta de forma manual.
 
 ```
 vyv/
@@ -89,7 +89,7 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | --- | --- | --- |
 | `units` | 91 archivos, **264 pruebas en verde**, 21 `it.todo`; cobertura 52,6 % de líneas de los 74 módulos probados | 13/11/2026 · n8n 2.47.0 |
 | `backend` | **64 pruebas en verde** (data-table 40, `folderNameSchema` 19, `FolderService.deleteFolder` 5) | 13/11/2026 · n8n 2.47.0 |
-| `e2e` | **94 pruebas en Chromium: 92 aprobadas, 1 fallida (hallazgo CP-CO-03-04, separador «;»), 1 pendiente** (CP-017-08, que pasa aparte con el límite de 1 MB). Regresión frente a la línea base: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Seguridad sin modo E2E: BUG-018-06 se confirma (no hay `X-Frame-Options` ni `frame-ancestors`). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 13/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con Folders activada; Chromium 1243 |
+| `e2e` | **107 pruebas en Chromium: 105 aprobadas, 2 fallidas, 0 pendientes.** Las 2 fallidas son hallazgos: CP-CO-03-04 (separador «;») y CP-WF-01-08 (carga del lienzo de 100 nodos en 3,96 s). Las 29 specs corrieron juntas; después se repitieron aparte CP-EX-04-08 y CP-017-08 (cada uno con su configuración de n8n) y CP-CR-04-08 (tras corregir una espera de la prueba), y sus resultados reemplazan a los de la corrida conjunta. Regresión frente a la línea base: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Seguridad sin modo E2E: BUG-018-06 se confirma (no hay `X-Frame-Options` ni `frame-ancestors`). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 13/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con Folders activada; Chromium 1243 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
 
 ## Módulos 1–3: casos que necesitan el servidor
