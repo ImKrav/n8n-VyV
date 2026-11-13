@@ -1,8 +1,8 @@
 {
-  "name": "pruebas-n8n-datatables-carpetas",
+  "name": "vyv-e2e",
   "version": "1.0.0",
   "private": true,
-  "description": "Pruebas VyV de n8n – Data tables y carpetas (ESC-016 a ESC-020) · Mario Andrade",
+  "description": "Pruebas E2E del plan de pruebas de n8n-VyV (Cypress) · Core: data tables y carpetas (ESC-016 a ESC-020) · Mario Andrade",
   "type": "module",
   "scripts": {
     "n8n": "npx --yes n8n@2.46.6",
