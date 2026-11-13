@@ -16,7 +16,6 @@ import { VariableCountLimitReachedError } from '@/errors/variable-count-limit-re
 import { VariableValidationError } from '@/errors/variable-validation.error';
 import { CacheService, EventService } from '@n8n/backend-services';
 import { ProjectService } from '@/services/project.service.ee';
-import { toUserLike } from '@/utils/to-user-like';
 
 const projectVariableScopes: Partial<Record<Scope, Scope>> = {
 	'variable:list': 'projectVariable:list',
@@ -158,7 +157,13 @@ export class VariablesService {
 		await this.delete(id);
 
 		this.eventService.emit('variable-deleted', {
-			user: toUserLike(user),
+			user: {
+				id: user.id,
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				role: user.role,
+			},
 			variableId: id,
 			variableKey: existingVariable?.key ?? '',
 			...(existingVariable?.project?.id && { projectId: existingVariable.project.id }),
@@ -240,7 +245,13 @@ export class VariablesService {
 			{ transaction: false },
 		);
 		this.eventService.emit('variable-created', {
-			user: toUserLike(user),
+			user: {
+				id: user.id,
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				role: user.role,
+			},
 			variableId: saveResult.id,
 			variableKey: saveResult.key,
 			...(variable.projectId && { projectId: variable.projectId }),
@@ -311,7 +322,13 @@ export class VariablesService {
 				: {}),
 		});
 		this.eventService.emit('variable-updated', {
-			user: toUserLike(user),
+			user: {
+				id: user.id,
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				role: user.role,
+			},
 			variableId: id,
 			variableKey: variable.key ?? existingVariable.key,
 			...(newProjectId && { projectId: newProjectId }),

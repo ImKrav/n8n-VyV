@@ -1,0 +1,8 @@
+# Output of the plan suites (the committed evidence is in evidence/).
+e2e/results/
+ai/stagehand/screenshots/
+ai/stagehand/results.json
+ai/generator/output/
+ai/deepeval/.venv/
+.env
+cypress.env.json

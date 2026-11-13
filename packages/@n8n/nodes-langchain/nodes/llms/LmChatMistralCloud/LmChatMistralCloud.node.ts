@@ -15,7 +15,6 @@ import {
 	type SupplyData,
 } from 'n8n-workflow';
 
-import { getRequiredApiKey } from '@utils/helpers';
 import { MODEL_SELECTION_HINT } from '@utils/model-builder-hints';
 
 const deprecatedMagistralModelsWithTextOutput = ['magistral-small-2506', 'magistral-medium-2506'];
@@ -204,7 +203,7 @@ export class LmChatMistralCloud implements INodeType {
 		const httpClient = new HTTPClient({ fetcher: fetchWithTimeout });
 
 		const model = new ChatMistralAI({
-			apiKey: getRequiredApiKey(this.getNode(), credentials.apiKey),
+			apiKey: credentials.apiKey as string,
 			model: modelName,
 			...options,
 			httpClient,

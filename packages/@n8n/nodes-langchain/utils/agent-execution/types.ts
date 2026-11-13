@@ -73,14 +73,6 @@ export type RedactedThinkingContentBlock = {
 };
 
 /**
- * Text content block
- */
-export type TextContentBlock = {
-	type: 'text';
-	text: string;
-};
-
-/**
  * Anthropic tool use content block
  */
 export type ToolUseContentBlock = {
@@ -181,8 +173,6 @@ export type RequestResponseMetadata = {
 	hitl?: HitlMetadata;
 	/** LangChain tool name (preserves the LLM's chosen tool for reverse-lookup). */
 	toolName?: string;
-	/** Text the model wrote in the same turn before its tool calls */
-	modelText?: string;
 };
 
 /**

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { N8nIcon } from '@n8n/design-system';
 
 defineOptions({ name: 'AssistantMentionBreadcrumbs' });
 
@@ -26,9 +25,8 @@ const current = computed(() => props.segments[props.segments.length - 1] ?? '');
 	<span :class="[$style.breadcrumbs, { [$style.wrap]: wrap }]">
 		<span v-if="parents.length > 0" :class="$style.parents">
 			<AssistantMentionBreadcrumbs :segments="parents" ancestor />
-			<span :class="[$style.separator, $style.breadcrumbAncestor]" role="img" aria-label=" > ">
-				<N8nIcon icon="chevron-right" size="xsmall" />
-			</span>
+			<!-- Spaces are kept for the accessible name; the flex layout trims them. -->
+			<span :class="[$style.separator, $style.breadcrumbAncestor]"> &gt; </span>
 		</span>
 		<span :class="[$style.segment, { [$style.breadcrumbAncestor]: ancestor }]">{{ current }}</span>
 	</span>
@@ -44,8 +42,8 @@ const current = computed(() => props.segments[props.segments.length - 1] ?? '');
 }
 
 // Wrap mode: everything, including the recursive ancestor rows, becomes inline
-// text so the path breaks across lines instead of trimming. The chevron stays
-// inline with that text.
+// text so the path breaks across lines instead of trimming. The separator's
+// kept spaces provide the spacing here, so its flex-layout margin goes.
 .wrap,
 .wrap .breadcrumbs,
 .wrap .parents,
@@ -57,8 +55,7 @@ const current = computed(() => props.segments[props.segments.length - 1] ?? '');
 }
 
 .wrap .separator {
-	display: inline-flex;
-	vertical-align: middle;
+	margin: 0;
 }
 
 .parents {
@@ -79,9 +76,6 @@ const current = computed(() => props.segments[props.segments.length - 1] ?? '');
 }
 
 .separator {
-	display: inline-flex;
-	align-items: center;
-	align-self: center;
 	flex-shrink: 0;
 	margin: 0 var(--spacing--4xs);
 }
@@ -89,13 +83,6 @@ const current = computed(() => props.segments[props.segments.length - 1] ?? '');
 .breadcrumbAncestor {
 	// Hook for containers on a dark surface (the chip tooltip) to keep ancestors
 	// readable yet dimmer than the current segment.
-	color: var(--breadcrumbs--color--ancestor, var(--text-color--subtle));
-}
-
-.separator.breadcrumbAncestor {
-	color: var(
-		--breadcrumbs--color--separator,
-		var(--breadcrumbs--color--ancestor, var(--text-color--subtler))
-	);
+	color: var(--breadcrumbs--color--ancestor, var(--color--text--tint-1));
 }
 </style>

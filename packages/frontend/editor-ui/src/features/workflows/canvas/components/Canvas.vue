@@ -157,7 +157,6 @@ const emit = defineEmits<{
 	'delete:nodes': [ids: string[], deleteWholeGroupIds?: string[]];
 	'update:nodes:enabled': [ids: string[]];
 	'copy:nodes': [ids: string[]];
-	'paste:clipboard': [];
 	'duplicate:nodes': [ids: string[]];
 	'update:nodes:pin': [ids: string[], source: PinDataSource];
 	'cut:nodes': [ids: string[], deleteWholeGroupIds?: string[]];
@@ -1732,8 +1731,6 @@ async function onContextMenuAction(action: ContextMenuAction, nodeIds: string[],
 			return emit('create:sticky', paneContextMenuPosition);
 		case 'copy':
 			return emit('copy:nodes', nodeIds);
-		case 'paste':
-			return emit('paste:clipboard');
 		case 'delete': {
 			const deleteWholeGroupIds = new Set(getDeleteWholeGroupIds());
 			if (groupId) deleteWholeGroupIds.add(groupId);

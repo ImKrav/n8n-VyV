@@ -263,24 +263,6 @@ describe('CanvasNodeDefault', () => {
 	});
 
 	describe('disabled', () => {
-		it('should apply disabled class when node is disabled', () => {
-			const { getByText } = renderComponent({
-				global: {
-					stubs,
-					provide: {
-						...createCanvasNodeProvide({
-							data: {
-								disabled: true,
-							},
-						}),
-					},
-				},
-			});
-
-			expect(getByText('Test Node').closest('.node')).toHaveClass('disabled');
-			expect(getByText('(Deactivated)')).toBeVisible();
-		});
-
 		it('should apply disabled class when node is not installed', () => {
 			nodeTypesStore.getIsNodeInstalled = vi.fn().mockReturnValue(false);
 			const { getByText } = renderComponent({

@@ -167,9 +167,10 @@ export class StepReadyHandler {
 		// only thing that can take a step over, and it doesn't exist yet.
 		if (!recorded) return;
 
-		// A wait is no outcome: nothing settled, so no planning follows.
+		// A wait is no outcome: nothing settled, so nothing is announced and no
+		// planning follows.
+		// TODO(CAT-2928): publish `step:waiting` so the UI can show it.
 		if (run.kind === 'wait') {
-			lifecycleEventPublisher.publish({ type: 'step:waiting', ...stepEventFields(step, node) });
 			// Nudge first, so the sweeper's re-arm read runs beside the status
 			// write rather than after it. Either order is correct.
 			this.onStepSuspended();

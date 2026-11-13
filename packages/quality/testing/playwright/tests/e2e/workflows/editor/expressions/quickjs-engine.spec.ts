@@ -26,7 +26,7 @@ async function addEditFields(n8n: n8nPage): Promise<void> {
 test.describe(
 	'QuickJS expression engine',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test.beforeEach(async ({ n8n }) => {

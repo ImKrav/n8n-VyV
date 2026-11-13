@@ -105,14 +105,12 @@ export function repositoryUrl(input: PromotionOperationInput): string {
  */
 export function buildCacheDescriptor(source: {
 	environmentId: string;
-	providerId: string;
 	remote: PromotionEnvironmentRemote;
 	config: ResolvedPromotionConfig;
 }): PromotionCacheDescriptor {
 	return {
 		schemaVersion: 1,
 		environmentId: source.environmentId,
-		providerId: source.providerId,
 		remoteUrl: source.remote.remoteUrl,
 		checkoutBranchName: checkoutBranchName(source.config),
 	};

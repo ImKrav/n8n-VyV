@@ -14,7 +14,6 @@ import type {
 	InstanceAiEvalAgentToolCallRecord,
 	InstanceAiEvalInterceptedRequest,
 } from '@n8n/api-types';
-import { TOOL_CATALOG_CALL_TOOL_NAME } from '@n8n/api-types';
 import { Logger, ModuleRegistry } from '@n8n/backend-common';
 import { OutboundHttp } from '@n8n/backend-network';
 import { ExecutionsConfig } from '@n8n/config';
@@ -39,13 +38,6 @@ import {
 import { createLlmMockHandler } from './mock-handler';
 import { redactSecretValuePatterns, truncateForLlm } from './request-sanitizer';
 import { createWebSearchMock } from './web-search-mock';
-
-/** A deferred tool runs through the tool catalog's `call_tool`; resolve the real tool it ran. */
-function effectiveToolName(toolName: string, input: unknown): string {
-	if (toolName !== TOOL_CATALOG_CALL_TOOL_NAME) return toolName;
-	if (typeof input !== 'object' || input === null || !('tool' in input)) return toolName;
-	return typeof input.tool === 'string' ? input.tool : toolName;
-}
 
 // ---------------------------------------------------------------------------
 // Runs a built first-class Agent for ONE scenario turn:
@@ -485,7 +477,7 @@ export class EvalAgentExecutionService {
 		while (approvals < MAX_AUTO_APPROVALS) {
 			const pending = result.pendingSuspend?.[0];
 			if (!pending) break;
-			autoApprovedToolNames.add(effectiveToolName(pending.toolName, pending.input));
+			autoApprovedToolNames.add(pending.toolName);
 			approvals++;
 			result = await raceWithAbort(
 				async () =>
@@ -530,18 +522,16 @@ export class EvalAgentExecutionService {
 				? 'mcp'
 				: 'other');
 		const toolCalls = segmentToolCalls.map((entry): InstanceAiEvalAgentToolCallRecord => {
-			// The ledger and the tool summaries use the real tool name, not `call_tool`.
-			const tool = effectiveToolName(entry.tool, entry.input);
-			const interceptedRequests = toolLedger.get(tool) ?? [];
+			const interceptedRequests = toolLedger.get(entry.tool) ?? [];
 			return {
-				tool,
-				kind: kindForTool(tool),
+				tool: entry.tool,
+				kind: kindForTool(entry.tool),
 				input: truncateRecordedValue(entry.input),
 				output: truncateRecordedValue(entry.output),
 				...(entry.canceled ? { error: 'canceled' } : {}),
 				mocked: interceptedRequests.length > 0,
 				interceptedRequests,
-				...(autoApprovedToolNames.has(tool) ? { autoApproved: true } : {}),
+				...(autoApprovedToolNames.has(entry.tool) ? { autoApproved: true } : {}),
 			};
 		});
 		// Ledger entries with no matching toolCalls record are either errored

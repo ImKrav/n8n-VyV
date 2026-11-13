@@ -1,6 +1,8 @@
 import type { User } from '@n8n/db';
 import { mock } from 'vitest-mock-extended';
 
+import { userHasScopes } from '@/permissions.ee/check-access';
+
 import type { SkillFile } from '../database/entities/skill-file.entity';
 import {
 	createSkillServices,
@@ -16,6 +18,7 @@ import type {
 	ResolvedSkillRow,
 } from '../utils/skill-content';
 
+vi.mock('@/permissions.ee/check-access', () => ({ userHasScopes: vi.fn() }));
 vi.mock('@n8n/permissions', async (importOriginal) => ({
 	...(await importOriginal<typeof import('@n8n/permissions')>()),
 	hasGlobalScope: vi.fn(),
@@ -52,7 +55,7 @@ describe('SkillRuntimeService', () => {
 			skills.findAssistantSkill.mockImplementation(async (id) =>
 				id === row.skill.id ? row : null,
 			);
-			projectScope.hasScopes.mockResolvedValue(true);
+			vi.mocked(userHasScopes).mockResolvedValue(true);
 		});
 
 		it.each([
@@ -92,11 +95,11 @@ describe('SkillRuntimeService', () => {
 
 		it('uses the existing skill permission check for content reads', async () => {
 			row.skill.projectId = 'project-1';
-			projectScope.hasScopes.mockResolvedValue(false);
+			vi.mocked(userHasScopes).mockResolvedValue(false);
 			expect(await runtime.readForAssistant(context, 'skill-1')).toBeNull();
-			expect(projectScope.hasScopes).toHaveBeenCalledWith(context.user, 'project-1', [
-				'projectSkill:read',
-			]);
+			expect(userHasScopes).toHaveBeenCalledWith(context.user, ['projectSkill:read'], false, {
+				projectId: 'project-1',
+			});
 		});
 
 		it.each([
@@ -157,7 +160,7 @@ describe('SkillRuntimeService', () => {
 				row.skill.projectId = 'project-1';
 				if (reason === 'disabled') row.skill.availableToAssistant = false;
 				if (reason === 'other-project') row.skill.projectId = 'project-2';
-				if (reason === 'permission') projectScope.hasScopes.mockResolvedValue(false);
+				if (reason === 'permission') vi.mocked(userHasScopes).mockResolvedValue(false);
 				skills.findAssistantSkillFile.mockResolvedValue(
 					reason === 'missing'
 						? null

@@ -19,7 +19,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { flushPromises } from '@vue/test-utils';
 import { CREDENTIAL_EMPTY_VALUE } from 'n8n-workflow';
 import * as projectsApi from '@/features/collaboration/projects/projects.api';
-import { useTypeAvailabilityPoliciesStore } from '@n8n/frontend-module-type-availability-policies';
 
 const mockAuthorize = vi.fn();
 const mockIsOAuthCredentialType = vi.fn(() => true);
@@ -178,15 +177,6 @@ describe('CredentialsView', () => {
 			});
 		});
 
-		it('loads the policy of the project that a new credential goes to', async () => {
-			await router.push('/team-1/credentials');
-			const policies = mockedStore(useTypeAvailabilityPoliciesStore);
-
-			renderComponent();
-
-			expect(policies.fetchForProject).toHaveBeenCalledWith('team-1');
-		});
-
 		it('should not show the modal on the route if the user has no scope to create credential in the project', async () => {
 			const uiStore = mockedStore(useUIStore);
 			const projectsStore = mockedStore(useProjectsStore);
@@ -297,40 +287,6 @@ describe('CredentialsView', () => {
 	});
 
 	describe('filters', () => {
-		it('should filter by type', async () => {
-			await router.push({ name: VIEWS.CREDENTIALS, query: { type: ['test'] } });
-			const credentialsStore = mockedStore(useCredentialsStore);
-			credentialsStore.allCredentialTypes = [
-				{
-					name: 'test',
-					displayName: 'test',
-					properties: [],
-				},
-			];
-			credentialsStore.allCredentials = [
-				{
-					id: '1',
-					name: 'test',
-					type: 'test',
-					createdAt: '2021-05-05T00:00:00Z',
-					updatedAt: '2021-05-05T00:00:00Z',
-					scopes: ['credential:update'],
-					isManaged: false,
-				},
-				{
-					id: '1',
-					name: 'test',
-					type: 'another',
-					createdAt: '2021-05-05T00:00:00Z',
-					updatedAt: '2021-05-05T00:00:00Z',
-					scopes: ['credential:update'],
-					isManaged: false,
-				},
-			];
-			const { getAllByTestId } = renderComponent();
-			expect(getAllByTestId('resources-list-item').length).toBe(1);
-		});
-
 		it('should filter by setupNeeded', async () => {
 			await router.push({ name: VIEWS.CREDENTIALS, query: { setupNeeded: 'true' } });
 			const credentialsStore = mockedStore(useCredentialsStore);

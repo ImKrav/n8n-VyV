@@ -9,8 +9,7 @@ import type {
 	IWebhookFunctions,
 	INode,
 } from 'n8n-workflow';
-import { NodeApiError, NodeOperationError } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
+import { NodeApiError, NodeOperationError, UnexpectedError } from 'n8n-workflow';
 
 import { capitalize } from '../utilities';
 

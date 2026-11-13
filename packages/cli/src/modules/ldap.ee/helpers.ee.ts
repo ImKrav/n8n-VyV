@@ -3,8 +3,8 @@ import type { AuthProviderSyncHistory } from '@n8n/db';
 import {
 	AuthIdentity,
 	Person,
+	User,
 	AuthIdentityRepository,
-	isPerson,
 	AuthProviderSyncHistoryRepository,
 	PersonRepository,
 	UserRepository,
@@ -101,7 +101,7 @@ export const getUserByEmail = async (email: string): Promise<Person | null> => {
 export const mapLdapAttributesToUser = (
 	ldapUser: LdapUser,
 	ldapConfig: LdapConfig,
-): [AuthIdentity['providerId'], Pick<Person, 'email' | 'firstName' | 'lastName'>] => {
+): [AuthIdentity['providerId'], Pick<User, 'email' | 'firstName' | 'lastName'>] => {
 	return [
 		ldapUser[ldapConfig.ldapIdAttribute] as string,
 		{
@@ -125,15 +125,14 @@ export const getLdapIds = async (): Promise<string[]> => {
 	return identities.map((i) => i.providerId);
 };
 
-export const getLdapUsers = async (): Promise<Person[]> => {
+export const getLdapUsers = async (): Promise<User[]> => {
 	const identities = await Container.get(AuthIdentityRepository).find({
 		relations: { user: true },
 		where: {
 			providerType: 'ldap',
 		},
 	});
-	// Only a person signs in through LDAP.
-	return identities.map((i) => i.user).filter(isPerson);
+	return identities.map((i) => i.user);
 };
 
 /**
@@ -143,18 +142,18 @@ export const mapLdapUserToDbUser = (
 	ldapUser: LdapUser,
 	ldapConfig: LdapConfig,
 	toCreate = false,
-): [string, Person] => {
-	const person = new Person();
+): [string, User] => {
+	const user = new User();
 	const [ldapId, data] = mapLdapAttributesToUser(ldapUser, ldapConfig);
-	Object.assign(person, data);
+	Object.assign(user, data);
 	if (toCreate) {
-		person.role = GLOBAL_MEMBER_ROLE;
-		person.password = randomString(8);
-		person.disabled = false;
+		user.role = GLOBAL_MEMBER_ROLE;
+		user.password = randomString(8);
+		user.disabled = false;
 	} else {
-		person.disabled = true;
+		user.disabled = true;
 	}
-	return [ldapId, person];
+	return [ldapId, user];
 };
 
 /**
@@ -163,8 +162,8 @@ export const mapLdapUserToDbUser = (
  * Update "ToDisableUsers" in the database
  */
 export const processUsers = async (
-	toCreateUsers: Array<[string, Person]>,
-	toUpdateUsers: Array<[string, Person]>,
+	toCreateUsers: Array<[string, User]>,
+	toUpdateUsers: Array<[string, User]>,
 	toDisableUsers: string[],
 	linkExistingAccountsByEmail: boolean,
 ): Promise<void> => {
@@ -198,7 +197,7 @@ export const processUsers = async (
 					return await transactionManager.save(authIdentity);
 				}
 
-				const { user: savedUser } = await Container.get(PersonRepository).createPersonWithProject(
+				const { user: savedUser } = await userRepository.createUserWithProject(
 					user,
 					transactionManager,
 				);
@@ -314,14 +313,14 @@ export const getMappingAttributes = (ldapConfig: LdapConfig): string[] => {
 	];
 };
 
-export const createLdapAuthIdentity = async (person: Person, ldapId: string) => {
-	return await Container.get(AuthIdentityRepository).save(AuthIdentity.create(person, ldapId), {
+export const createLdapAuthIdentity = async (user: User, ldapId: string) => {
+	return await Container.get(AuthIdentityRepository).save(AuthIdentity.create(user, ldapId), {
 		transaction: false,
 	});
 };
 
-export const createLdapUserOnLocalDb = async (data: Partial<Person>, ldapId: string) => {
-	const { user } = await Container.get(PersonRepository).createPersonWithProject({
+export const createLdapUserOnLocalDb = async (data: Partial<User>, ldapId: string) => {
+	const { user } = await Container.get(UserRepository).createUserWithProject({
 		password: randomString(8),
 		role: GLOBAL_MEMBER_ROLE,
 		...data,
@@ -330,7 +329,7 @@ export const createLdapUserOnLocalDb = async (data: Partial<Person>, ldapId: str
 	return user;
 };
 
-export const updateLdapUserOnLocalDb = async (identity: AuthIdentity, data: Partial<Person>) => {
+export const updateLdapUserOnLocalDb = async (identity: AuthIdentity, data: Partial<User>) => {
 	const userId = identity?.user?.id;
 	if (userId) {
 		const personRepository = Container.get(PersonRepository);

@@ -5,7 +5,6 @@ import {
 	type FrontendModuleSettings,
 	type WorkflowReviewsPolicy,
 } from '@n8n/api-types';
-import { EMBEDDED_SETTINGS_GLOBAL } from '@n8n/constants';
 import { i18n } from '@n8n/i18n';
 import { makeRestApiRequest } from '@n8n/rest-api-client';
 import * as aiUsageApi from '@n8n/rest-api-client/api/ai-usage';
@@ -301,14 +300,7 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		if (settings.value.versionCli) {
 			useRootStore().setVersionCli(settings.value.versionCli);
 		}
-	};
 
-	/**
-	 * Replaces the page with a warning when the secure auth cookie cannot work on this origin.
-	 * Chrome ignores `document.write` while a module script evaluates, so never call this
-	 * from the code that runs while `main.ts` evaluates.
-	 */
-	const showInsecureConnectionWarningIfNeeded = () => {
 		if (settings.value.authCookie.secure) {
 			const { browser } = Bowser.parse(navigator.userAgent);
 			if (
@@ -316,6 +308,7 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 				(!['localhost', '127.0.0.1'].includes(location.hostname) || browser.name === 'Safari')
 			) {
 				document.write(buildInsecureConnectionWarning());
+				return;
 			}
 		}
 	};
@@ -359,87 +352,58 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		saveDataProgressExecution.value = newValue;
 	};
 
-	/** Applies a settings payload, from the REST API or embedded in the page. Writes nothing to the document. */
-	const applySettings = (newSettings: FrontendSettings) => {
+	const getSettings = async () => {
 		const rootStore = useRootStore();
+		const fetchedSettings = await settingsApi.getSettings(rootStore.restApiContext);
 
-		setSettings(newSettings);
-		rootStore.setDefaultLocale(newSettings.defaultLocale);
+		setSettings(fetchedSettings);
+		rootStore.setDefaultLocale(fetchedSettings.defaultLocale);
 
 		// Set MFA enforced state even for public settings mode
 		// as it is needed to determine if the MFA setup page should be shown
 		isMFAEnforced.value = settings.value.mfa?.enforced ?? false;
 
-		if (newSettings.settingsMode === 'public') {
+		if (fetchedSettings.settingsMode === 'public') {
 			// public settings mode is typically used for unauthenticated users
 			// when public settings are returned we can skip the rest of the setup
 			// that need the full set of authenticated settings
 			return;
 		}
 
-		settings.value.communityNodesEnabled = newSettings.communityNodesEnabled;
-		settings.value.unverifiedCommunityNodesEnabled = newSettings.unverifiedCommunityNodesEnabled;
-		setAllowedModules(newSettings.allowedModules);
-		setSaveDataErrorExecution(newSettings.saveDataErrorExecution);
-		setSaveDataSuccessExecution(newSettings.saveDataSuccessExecution);
-		setSaveDataProgressExecution(newSettings.saveExecutionProgress);
-		setSaveManualExecutions(newSettings.saveManualExecutions);
+		settings.value.communityNodesEnabled = fetchedSettings.communityNodesEnabled;
+		settings.value.unverifiedCommunityNodesEnabled =
+			fetchedSettings.unverifiedCommunityNodesEnabled;
+		setAllowedModules(fetchedSettings.allowedModules);
+		setSaveDataErrorExecution(fetchedSettings.saveDataErrorExecution);
+		setSaveDataSuccessExecution(fetchedSettings.saveDataSuccessExecution);
+		setSaveDataProgressExecution(fetchedSettings.saveExecutionProgress);
+		setSaveManualExecutions(fetchedSettings.saveManualExecutions);
 
-		rootStore.setUrlBaseWebhook(newSettings.urlBaseWebhook);
-		rootStore.setUrlBaseEditor(newSettings.urlBaseEditor);
-		rootStore.setUrlBaseWebhookTest(newSettings.urlBaseWebhookTest);
-		rootStore.setEndpointForm(newSettings.endpointForm);
-		rootStore.setEndpointFormTest(newSettings.endpointFormTest);
-		rootStore.setEndpointFormWaiting(newSettings.endpointFormWaiting);
-		rootStore.setEndpointWebhook(newSettings.endpointWebhook);
-		rootStore.setEndpointWebhookTest(newSettings.endpointWebhookTest);
-		rootStore.setEndpointWebhookWaiting(newSettings.endpointWebhookWaiting);
-		rootStore.setEndpointMcp(newSettings.endpointMcp);
-		rootStore.setEndpointMcpTest(newSettings.endpointMcpTest);
-		rootStore.setTimezone(newSettings.timezone);
-		rootStore.setExecutionTimeout(newSettings.executionTimeout);
-		rootStore.setMaxExecutionTimeout(newSettings.maxExecutionTimeout);
+		rootStore.setUrlBaseWebhook(fetchedSettings.urlBaseWebhook);
+		rootStore.setUrlBaseEditor(fetchedSettings.urlBaseEditor);
+		rootStore.setUrlBaseWebhookTest(fetchedSettings.urlBaseWebhookTest);
+		rootStore.setEndpointForm(fetchedSettings.endpointForm);
+		rootStore.setEndpointFormTest(fetchedSettings.endpointFormTest);
+		rootStore.setEndpointFormWaiting(fetchedSettings.endpointFormWaiting);
+		rootStore.setEndpointWebhook(fetchedSettings.endpointWebhook);
+		rootStore.setEndpointWebhookTest(fetchedSettings.endpointWebhookTest);
+		rootStore.setEndpointWebhookWaiting(fetchedSettings.endpointWebhookWaiting);
+		rootStore.setEndpointMcp(fetchedSettings.endpointMcp);
+		rootStore.setEndpointMcpTest(fetchedSettings.endpointMcpTest);
+		rootStore.setTimezone(fetchedSettings.timezone);
+		rootStore.setExecutionTimeout(fetchedSettings.executionTimeout);
+		rootStore.setMaxExecutionTimeout(fetchedSettings.maxExecutionTimeout);
 		rootStore.setPublicApiPath(
-			`${newSettings.publicApi.path}/v${newSettings.publicApi.latestVersion}`,
+			`${fetchedSettings.publicApi.path}/v${fetchedSettings.publicApi.latestVersion}`,
 		);
-		rootStore.setInstanceId(newSettings.instanceId);
-		rootStore.setOauthCallbackUrls(newSettings.oauthCallbackUrls);
-		rootStore.setN8nMetadata(newSettings.n8nMetadata ?? {});
-		rootStore.setBinaryDataMode(newSettings.binaryDataMode);
+		rootStore.setInstanceId(fetchedSettings.instanceId);
+		rootStore.setOauthCallbackUrls(fetchedSettings.oauthCallbackUrls);
+		rootStore.setN8nMetadata(fetchedSettings.n8nMetadata ?? {});
+		rootStore.setBinaryDataMode(fetchedSettings.binaryDataMode);
 
-		if (newSettings.telemetry.enabled) {
+		if (fetchedSettings.telemetry.enabled) {
 			void eventsApi.sessionStarted(rootStore.restApiContext);
 		}
-	};
-
-	const getSettings = async () => {
-		applySettings(await settingsApi.getSettings(useRootStore().restApiContext));
-		showInsecureConnectionWarningIfNeeded();
-	};
-
-	let embeddedSettingsApplied = false;
-
-	/**
-	 * Applies the public settings that the backend embeds in the page. Returns false when the
-	 * page has none or they cannot be applied, so `initialize()` fetches them instead. Writes
-	 * nothing to the document, so it can run while `main.ts` evaluates.
-	 */
-	const applyEmbeddedSettings = () => {
-		const embeddedSettings = window[EMBEDDED_SETTINGS_GLOBAL];
-		if (!embeddedSettings) {
-			return false;
-		}
-
-		// This runs before the app mounts, so an error here must not stop the editor from starting.
-		try {
-			applySettings(embeddedSettings);
-		} catch (error) {
-			console.warn('Failed to apply the embedded settings:', error);
-			return false;
-		}
-
-		embeddedSettingsApplied = true;
-		return true;
 	};
 
 	const initialize = async () => {
@@ -447,15 +411,7 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 			return;
 		}
 
-		// Preview mode skips the login hook, which loads the full settings, so fetch them here.
-		if (embeddedSettingsApplied && !isPreviewMode.value) {
-			// Chrome ignores `document.write` until the current task ends, and this can still
-			// run in the task that evaluates `main.ts`.
-			await new Promise((resolve) => setTimeout(resolve));
-			showInsecureConnectionWarningIfNeeded();
-		} else {
-			await getSettings();
-		}
+		await getSettings();
 
 		initialized.value = true;
 	};
@@ -583,7 +539,6 @@ export const useSettingsStore = defineStore(STORES.SETTINGS, () => {
 		disableTemplates,
 		stopShowingSetupPage,
 		getSettings,
-		applyEmbeddedSettings,
 		setSettings,
 		setWorkflowReviewsPolicy,
 		initialize,

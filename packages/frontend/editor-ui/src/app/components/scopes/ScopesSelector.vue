@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 
 import { capitalCase } from 'change-case';
-import { CollapsibleRoot, CollapsibleTrigger } from 'reka-ui';
+import { CollapsibleRoot, CollapsibleTrigger, VisuallyHidden } from 'reka-ui';
 import { useI18n } from '@n8n/i18n';
 import type { BaseTextKey } from '@n8n/i18n';
 
@@ -17,7 +17,6 @@ import {
 	N8nRadioGroup,
 	N8nRadioGroupItem,
 	N8nTooltip,
-	N8nVisuallyHidden,
 } from '@n8n/design-system';
 
 import {
@@ -384,13 +383,13 @@ function toggleScope(scope: S, checked: boolean) {
 												/>
 												<span :class="$style['tool-name']">{{ tool }}</span>
 												<!-- State icons are aria-hidden; expose enabled state as text. -->
-												<N8nVisuallyHidden>
+												<VisuallyHidden>
 													{{
 														groupEnabledTools(group).has(tool)
 															? baseText('tools.enabled')
 															: baseText('tools.notEnabled')
 													}}
-												</N8nVisuallyHidden>
+												</VisuallyHidden>
 											</div>
 										</div>
 									</template>

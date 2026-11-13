@@ -2,7 +2,7 @@
 import type { AgentConfigValidationIssue } from '@n8n/api-types';
 import { N8nCallout, N8nText } from '@n8n/design-system';
 import {
-	RestrictedTypeCallout,
+	RestrictedToolCallout,
 	useNodeTypeRestriction,
 } from '@n8n/frontend-module-type-availability-policies';
 import { useI18n, type BaseTextKey } from '@n8n/i18n';
@@ -353,10 +353,9 @@ defineExpose({ canSave, confirm, remove, changeTitle });
 
 <template>
 	<div :class="[$style.contentWrapper, isCustomTool && $style.codeContentWrapper]">
-		<RestrictedTypeCallout
+		<RestrictedToolCallout
 			v-if="isRestricted"
-			surface="tool"
-			:type-name="restrictedToolName"
+			:node-type-name="restrictedToolName"
 			:restriction="restriction"
 		/>
 		<N8nCallout

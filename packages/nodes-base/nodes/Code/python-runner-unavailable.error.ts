@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 type FailureReason = 'python' | 'venv';
 

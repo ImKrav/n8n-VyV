@@ -1,6 +1,5 @@
 import type { GetUserQueryDto, ListUsersQueryDto } from '@n8n/api-types';
 import type { EventService } from '@n8n/backend-services';
-import { GLOBAL_MEMBER_ROLE, Person, ServiceAccount, ServiceAccountDetails } from '@n8n/db';
 import type { AuthenticatedRequest, User } from '@n8n/db';
 import type { Response } from 'express';
 import { mock } from 'vitest-mock-extended';
@@ -18,8 +17,8 @@ describe('UsersPublicController', () => {
 
 	const caller = mock<AuthenticatedRequest>({ user: mock<User>({ id: 'caller-id' }) });
 
-	const buildPerson = (overrides: Partial<Person> = {}): Person =>
-		Object.assign(new Person(), {
+	const buildUser = (overrides: Partial<User> = {}): User =>
+		mock<User>({
 			id: 'user-id',
 			email: 'member@example.com',
 			firstName: 'Nathan',
@@ -42,7 +41,7 @@ describe('UsersPublicController', () => {
 
 	describe('getUsers', () => {
 		it('never leaks sensitive user fields', async () => {
-			const users = [buildPerson()];
+			const users = [buildUser()];
 			userService.getUsersAndCount.mockResolvedValue({ users, count: 1 });
 
 			const result = await controller.getUsers(
@@ -68,7 +67,7 @@ describe('UsersPublicController', () => {
 		});
 
 		it('emits user-retrieved-all-users telemetry', async () => {
-			userService.getUsersAndCount.mockResolvedValue({ users: [buildPerson()], count: 1 });
+			userService.getUsersAndCount.mockResolvedValue({ users: [buildUser()], count: 1 });
 
 			await controller.getUsers(
 				caller,
@@ -89,39 +88,8 @@ describe('UsersPublicController', () => {
 	});
 
 	describe('getUser', () => {
-		it('returns a service account with no email, no name and no MFA', async () => {
-			userService.getUser.mockResolvedValue(
-				Object.assign(new ServiceAccount(), {
-					id: 'sa-1',
-					role: GLOBAL_MEMBER_ROLE,
-					disabled: false,
-					createdAt: new Date('2024-01-01T00:00:00.000Z'),
-					updatedAt: new Date('2024-01-02T00:00:00.000Z'),
-					details: Object.assign(new ServiceAccountDetails(), { name: 'Deploy bot' }),
-				}),
-			);
-
-			const result = await controller.getUser(
-				caller,
-				mock<Response>(),
-				'sa-1',
-				mock<GetUserQueryDto>({ includeRole: false }),
-			);
-
-			expect(result).toEqual({
-				id: 'sa-1',
-				email: null,
-				firstName: null,
-				lastName: null,
-				isPending: false,
-				mfaEnabled: false,
-				createdAt: '2024-01-01T00:00:00.000Z',
-				updatedAt: '2024-01-02T00:00:00.000Z',
-			});
-		});
-
 		it('never leaks sensitive user fields', async () => {
-			userService.getUser.mockResolvedValue(buildPerson());
+			userService.getUser.mockResolvedValue(buildUser());
 
 			const result = await controller.getUser(
 				caller,
@@ -142,7 +110,7 @@ describe('UsersPublicController', () => {
 		});
 
 		it('emits user-retrieved-user telemetry', async () => {
-			userService.getUser.mockResolvedValue(buildPerson());
+			userService.getUser.mockResolvedValue(buildUser());
 
 			await controller.getUser(
 				caller,

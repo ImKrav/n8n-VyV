@@ -1,4 +1,4 @@
-import { PersonRepository } from '@n8n/db';
+import { UserRepository } from '@n8n/db';
 import { Command } from '@n8n/decorators';
 import { Container } from '@n8n/di';
 import { z } from 'zod';
@@ -24,27 +24,27 @@ export class DisableMFACommand extends BaseCommand<z.infer<typeof flagsSchema>> 
 			return;
 		}
 
-		const repository = Container.get(PersonRepository);
-		const person = await repository.findByEmail(flags.email);
+		const repository = Container.get(UserRepository);
+		const user = await repository.findOneBy({ email: flags.email });
 
-		if (!person) {
+		if (!user) {
 			this.reportUserDoesNotExistError(flags.email);
 			return;
 		}
 
 		if (
-			person.mfaSecret === null &&
-			Array.isArray(person.mfaRecoveryCodes) &&
-			person.mfaRecoveryCodes.length === 0 &&
-			!person.mfaEnabled
+			user.mfaSecret === null &&
+			Array.isArray(user.mfaRecoveryCodes) &&
+			user.mfaRecoveryCodes.length === 0 &&
+			!user.mfaEnabled
 		) {
 			this.reportUserDoesNotExistError(flags.email);
 			return;
 		}
 
-		Object.assign(person, { mfaSecret: null, mfaRecoveryCodes: [], mfaEnabled: false });
+		Object.assign(user, { mfaSecret: null, mfaRecoveryCodes: [], mfaEnabled: false });
 
-		await repository.save(person);
+		await repository.save(user);
 
 		this.reportSuccess(flags.email);
 	}

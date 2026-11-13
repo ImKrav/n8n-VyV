@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 /**
  * Error that indicates that a specific function is not available in the

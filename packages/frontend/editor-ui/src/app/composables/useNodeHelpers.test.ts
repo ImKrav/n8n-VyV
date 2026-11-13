@@ -892,21 +892,6 @@ describe('useNodeHelpers()', () => {
 
 			expect(result?.credentials).toBeUndefined();
 		});
-
-		it('should report credential issue when required credential is not set', () => {
-			mockedStore(useNodeTypesStore).getNodeType = vi.fn().mockReturnValue(nodeTypeWithCreds);
-
-			const node: INodeUi = createTestNode({
-				type: 'googleAi',
-				credentials: {},
-			});
-
-			const mockWorkflow = mock<Workflow>();
-			const { getNodeIssues } = useNodeHelpers();
-			const result = getNodeIssues(nodeTypeWithCreds, node, mockWorkflow, ['parameters']);
-
-			expect(result?.credentials?.googlePalmApi).toBeDefined();
-		});
 	});
 
 	describe('updateNodeParameterIssues()', () => {

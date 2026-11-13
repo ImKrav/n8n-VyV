@@ -1,43 +1,74 @@
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import path from 'node:path';
 
 import { describe, expect, it, vi } from 'vitest';
 
-type RunCommand = (file: string, args: string[], options: { cwd: string }) => unknown;
+type RunCommand = (
+	command: string,
+	args: string[],
+	options: { stdio: 'inherit'; shell: boolean },
+) => unknown;
+
+type RunPostBuild = (runCommand: RunCommand, platform?: NodeJS.Platform) => void;
 
 const require = createRequire(import.meta.url);
-const { runPostBuild } = require('../scripts/post-build.js') as {
-	runPostBuild: (runCommand: RunCommand) => void;
-};
+const packageJson = JSON.parse(
+	readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+) as { scripts: Record<string, string> };
 
-const packageDir = path.resolve(__dirname, '..');
+describe('package scripts', () => {
+	it('runs all successful-compilation tasks through the post-build script', () => {
+		expect(packageJson.scripts.watch).toContain('--onSuccess "node ./scripts/post-build.js"');
+	});
 
-describe('post-build script', () => {
 	it('rewrites path aliases before generating node metadata', () => {
+		const { runPostBuild } = require('../scripts/post-build.js') as {
+			runPostBuild: RunPostBuild;
+		};
 		const runCommand = vi.fn<RunCommand>();
 
 		runPostBuild(runCommand);
 
-		const calls = runCommand.mock.calls.map(([file, [script, ...args], options]) => {
-			expect(file).toBe(process.execPath);
-			expect(options.cwd).toBe(packageDir);
-			return [path.relative(packageDir, script), ...args];
+		expect(runCommand).toHaveBeenNthCalledWith(1, 'pnpm', ['copy-nodes-json'], {
+			stdio: 'inherit',
+			shell: false,
 		});
-		expect(calls).toEqual([
-			[path.join('scripts', 'copy-nodes-json.js'), '.'],
-			[expect.stringMatching(/tsc-alias/), '-p', 'tsconfig.build.cjs.json'],
-			[path.join('..', 'core', 'bin', 'generate-metadata')],
-		]);
+		expect(runCommand).toHaveBeenNthCalledWith(
+			2,
+			'pnpm',
+			['exec', 'tsc-alias', '-p', 'tsconfig.build.cjs.json'],
+			{ stdio: 'inherit', shell: false },
+		);
+		expect(runCommand).toHaveBeenNthCalledWith(3, 'pnpm', ['n8n-generate-metadata'], {
+			stdio: 'inherit',
+			shell: false,
+		});
+	});
+
+	it('uses the shell to launch the pnpm command shim on Windows', () => {
+		const { runPostBuild } = require('../scripts/post-build.js') as {
+			runPostBuild: RunPostBuild;
+		};
+		const runCommand = vi.fn<RunCommand>();
+
+		runPostBuild(runCommand, 'win32');
+
+		expect(runCommand).toHaveBeenCalledTimes(3);
+		expect(runCommand).toHaveBeenNthCalledWith(1, 'pnpm', ['copy-nodes-json'], {
+			stdio: 'inherit',
+			shell: true,
+		});
 	});
 
 	it('does not generate metadata when alias rewriting fails', () => {
+		const { runPostBuild } = require('../scripts/post-build.js') as {
+			runPostBuild: RunPostBuild;
+		};
 		const error = new Error('alias rewriting failed');
-		const runCommand = vi
-			.fn<RunCommand>()
-			.mockImplementationOnce(() => undefined)
-			.mockImplementationOnce(() => {
-				throw error;
-			});
+		const runCommand = vi.fn<RunCommand>().mockImplementationOnce(() => undefined);
+		runCommand.mockImplementationOnce(() => {
+			throw error;
+		});
 
 		expect(() => runPostBuild(runCommand)).toThrow(error);
 		expect(runCommand).toHaveBeenCalledTimes(2);

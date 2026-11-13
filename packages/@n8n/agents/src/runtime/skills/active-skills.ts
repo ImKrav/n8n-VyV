@@ -57,10 +57,6 @@ export class ActiveSkills {
 		private readonly store?: RuntimeSkillStateStore,
 	) {}
 
-	isLoaded(skillId: string): boolean {
-		return this.loaded.has(skillId);
-	}
-
 	/**
 	 * Restore the active skills for a run. A fresh run starts a new user turn, so
 	 * skills with a `turn` lifetime can expire: their recorded loads collapse to

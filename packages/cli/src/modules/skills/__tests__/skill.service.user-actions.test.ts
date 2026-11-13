@@ -1,9 +1,11 @@
 import type { CreateSkillDto, ListSkillsQueryDto, SaveSkillDto } from '@n8n/api-types';
-import { Person, type User } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { ForbiddenError, NotFoundError, UserError } from '@n8n/errors';
 import { hasGlobalScope } from '@n8n/permissions';
 import type { MockInstance } from 'vitest';
 import { mock } from 'vitest-mock-extended';
+
+import { userHasScopes } from '@/permissions.ee/check-access';
 
 import { createSkillServices, resetSkillMocks, TX_CTX } from './test-utils/skill-services';
 import type { SkillFile } from '../database/entities/skill-file.entity';
@@ -14,6 +16,7 @@ import type { SkillAccessService } from '../services/skill-access.service';
 import type { SkillService } from '../services/skill.service';
 import type { ResolvedSkillRow } from '../utils/skill-content';
 
+vi.mock('@/permissions.ee/check-access', () => ({ userHasScopes: vi.fn() }));
 vi.mock('@n8n/permissions', async (importOriginal) => ({
 	...(await importOriginal<typeof import('@n8n/permissions')>()),
 	hasGlobalScope: vi.fn(),
@@ -126,8 +129,7 @@ describe('SkillService user actions', () => {
 				new Map(visible.filter((s) => ids.includes(s.id)).map((s) => [s.id, row(s, 2)] as const)),
 		);
 		repository.findProjects.mockImplementation(
-			async (ids) =>
-				new Map(ids.map((id) => [id, { name: 'Team', type: 'team' as const, icon: null }])),
+			async (ids) => new Map(ids.map((id) => [id, { name: 'Team', type: 'team' as const }])),
 		);
 		canAccess = vi.spyOn(access, 'canAccess').mockResolvedValue(true);
 		accessCheck = vi.spyOn(access, 'accessCheck').mockResolvedValue(() => true);
@@ -149,7 +151,7 @@ describe('SkillService user actions', () => {
 				skill('skill_c', { createdById: 'user-gone' }),
 			];
 			userRepository.findManyByIds.mockResolvedValue([
-				Object.assign(new Person(), {
+				mock<User>({
 					id: 'user-2',
 					email: 'ada@example.com',
 					firstName: 'Ada',
@@ -363,7 +365,7 @@ describe('SkillService user actions', () => {
 				],
 			});
 			repository.findProjects.mockResolvedValue(
-				new Map([['project-1', { name: 'Team', type: 'team' as const, icon: null }]]),
+				new Map([['project-1', { name: 'Team', type: 'team' as const }]]),
 			);
 			accessCheck.mockImplementation(async (_user, op) => () => op === 'update');
 
@@ -377,7 +379,6 @@ describe('SkillService user actions', () => {
 				projectId: 'project-1',
 				projectName: 'Team',
 				projectType: 'team',
-				projectIcon: null,
 				source: 'ui',
 				createdBy: null,
 				latestVersion: 2,
@@ -388,7 +389,7 @@ describe('SkillService user actions', () => {
 				canDelete: false,
 				canStopSyncing: false,
 				syncState: null,
-				sourceId: null,
+				canCheckForUpdates: false,
 				createdAt: DATE.toISOString(),
 				updatedAt: DATE.toISOString(),
 			});
@@ -421,9 +422,7 @@ describe('SkillService user actions', () => {
 			visible = [skill('skill_a', { projectId: 'project-1' })];
 			skillSyncGate.isEnabled.mockResolvedValue(on);
 			links.findSyncStates.mockResolvedValue(
-				new Map(
-					linked ? [['skill_a', { state: 'up_to_date' as const, sourceId: 'source-1' }]] : [],
-				),
+				new Map(linked ? [['skill_a', 'up_to_date' as const]] : []),
 			);
 			accessCheck.mockImplementation(async (_user, op) => () => op === 'update' && update);
 
@@ -431,7 +430,7 @@ describe('SkillService user actions', () => {
 
 			expect(item).toMatchObject({
 				canStopSyncing: can,
-				sourceId: linked ? 'source-1' : null,
+				canCheckForUpdates: can,
 				syncState: linked ? 'up_to_date' : null,
 				canEdit: update && !linked,
 			});
@@ -478,7 +477,7 @@ describe('SkillService user actions', () => {
 		it('names the creators of the skills the user may see', async () => {
 			repository.findVisibleCreatorIds.mockResolvedValue(['user-2']);
 			userRepository.findManyByIds.mockResolvedValue([
-				Object.assign(new Person(), {
+				mock<User>({
 					id: 'user-2',
 					email: 'ada@example.com',
 					firstName: 'Ada',
@@ -591,7 +590,7 @@ describe('SkillService user actions', () => {
 
 		// A custom role can hold projectSkill:create without projectSkill:read.
 		it('returns the new skill to a creator who may not read it afterwards', async () => {
-			projectScopeService.hasScopes.mockResolvedValue(true);
+			vi.mocked(userHasScopes).mockResolvedValue(true);
 			canAccess.mockResolvedValue(false);
 			accessCheck.mockResolvedValue(() => false);
 
@@ -697,13 +696,13 @@ describe('SkillService user actions', () => {
 		});
 
 		it('creates a project skill with projectSkill:create, also in a personal project', async () => {
-			projectScopeService.hasScopes.mockResolvedValue(true);
+			vi.mocked(userHasScopes).mockResolvedValue(true);
 
 			await service.create(user, payload({ scope: 'project', projectId: 'personal-1' }));
 
-			expect(projectScopeService.hasScopes).toHaveBeenCalledWith(user, 'personal-1', [
-				'projectSkill:create',
-			]);
+			expect(userHasScopes).toHaveBeenCalledWith(user, ['projectSkill:create'], false, {
+				projectId: 'personal-1',
+			});
 			expect(createTrusted).toHaveBeenCalledWith(
 				expect.objectContaining({ target: { projectId: 'personal-1' } }),
 			);
@@ -726,7 +725,7 @@ describe('SkillService user actions', () => {
 			['instance', {}, ForbiddenError],
 			['project', { projectId: 'project-1' }, ForbiddenError],
 		] as const)('refuses scope %s with %o', async (scope, extra, errorClass) => {
-			projectScopeService.hasScopes.mockResolvedValue(false);
+			vi.mocked(userHasScopes).mockResolvedValue(false);
 
 			await expect(service.create(user, payload({ scope, ...extra }))).rejects.toThrow(errorClass);
 			expect(createTrusted).not.toHaveBeenCalled();
@@ -734,7 +733,7 @@ describe('SkillService user actions', () => {
 
 		// A global projectSkill:create passes the scope check for any project id.
 		it('refuses a project skill for a project that does not exist', async () => {
-			projectScopeService.hasScopes.mockResolvedValue(true);
+			vi.mocked(userHasScopes).mockResolvedValue(true);
 			repository.findProjects.mockResolvedValue(new Map());
 
 			await expect(
@@ -844,9 +843,9 @@ describe('SkillService user actions', () => {
 		});
 
 		it('moves the skill and saves it in one transaction, then refreshes after the commit', async () => {
-			projectScopeService.hasScopes.mockResolvedValue(true);
+			vi.mocked(userHasScopes).mockResolvedValue(true);
 			repository.findProjects.mockResolvedValue(
-				new Map([['project-1', { name: 'Team', type: 'team' as const, icon: null }]]),
+				new Map([['project-1', { name: 'Team', type: 'team' as const }]]),
 			);
 			saveTrusted.mockResolvedValue(saved);
 			assertCanMove.mockResolvedValue({ projectId: null });
@@ -929,7 +928,7 @@ describe('SkillService user actions', () => {
 		});
 
 		it('refuses a move to a place where the user may not create skills', async () => {
-			projectScopeService.hasScopes.mockResolvedValue(false);
+			vi.mocked(userHasScopes).mockResolvedValue(false);
 
 			await expect(
 				service.update(

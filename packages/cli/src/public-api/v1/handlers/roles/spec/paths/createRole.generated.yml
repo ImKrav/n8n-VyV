@@ -2,10 +2,7 @@ operationId: createRole
 tags:
   - Role
 summary: Create a custom role
-description: |-
-  Creates a custom role. Set `roleType` to `global` for an instance-wide role or `project` for a project role.
-
-  Requires one of these API key scopes: `role:manage`, `role:manageProject`.
+description: Creates a custom role. Set `roleType` to `global` for an instance-wide role or `project` for a project role.
 x-required-scope: role:manage,role:manageProject
 parameters:
   - $ref: ../../../../shared/spec/parameters/idempotencyKey.yml

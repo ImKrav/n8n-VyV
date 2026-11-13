@@ -4,8 +4,7 @@ import type {
 	IHttpRequestOptions,
 	INodeProperties,
 } from 'n8n-workflow';
-import { updateDisplayOptions } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import { OperationalError, updateDisplayOptions } from 'n8n-workflow';
 
 import { HeaderConstants } from '../../helpers/constants';
 import { processJsonInput } from '../../helpers/utils';

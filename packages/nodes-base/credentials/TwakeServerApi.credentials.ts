@@ -11,7 +11,7 @@ export class TwakeServerApi implements ICredentialType {
 
 	httpRequestNode = {
 		name: 'Twake Server',
-		docsUrl: 'https://docs.n8n.io/integrations/builtin/credentials/twake/',
+		docsUrl: 'https://doc.twake.app/developers-api/home',
 		apiBaseUrl: '',
 	};
 

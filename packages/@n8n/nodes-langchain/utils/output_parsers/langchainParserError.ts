@@ -1,8 +1,7 @@
 import { OutputParserException } from '@langchain/core/output_parsers';
 import { sanitizeErrorDetail } from '@n8n/utils/redaction/sanitize-error-detail';
 import type { INode } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { BaseError } from '@n8n/errors';
+import { BaseError, NodeOperationError } from 'n8n-workflow';
 
 export const MODEL_OUTPUT_PARSER_ERROR_MESSAGE = "Model output doesn't fit required format";
 export const MODEL_OUTPUT_PARSER_ERROR_DESCRIPTION =

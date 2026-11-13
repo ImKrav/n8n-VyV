@@ -102,7 +102,7 @@ describe('createSelfHealingAgent', () => {
 			report:
 				'**What happened**\n\nThe node used the wrong field.\n\n' +
 				'**What changed**\n\nThe proposed mapping passed verification. Nothing has been applied.',
-			candidateWorkflowIds: ['workflow'],
+			candidateFilePath: 'self-healing/candidate.workflow.ts',
 		};
 		const turns = [
 			modelTurn(
@@ -122,10 +122,7 @@ describe('createSelfHealingAgent', () => {
 						type: 'tool-call',
 						toolCallId: 'verify',
 						toolName: 'verify_candidate',
-						input: JSON.stringify({
-							workflowId: output.candidateWorkflowIds[0],
-							filePath: 'src/workflows/candidate.workflow.ts',
-						}),
+						input: JSON.stringify({ filePath: output.candidateFilePath }),
 					},
 				],
 				true,
@@ -229,7 +226,7 @@ describe('createSelfHealingAgent', () => {
 					outcome: 'could_not_fix',
 					summary: 'No fix found',
 					report: 'No changes were made.',
-					candidateWorkflowIds: [],
+					candidateFilePath: null,
 				}),
 		});
 		const agent = await createSelfHealingAgent({
@@ -244,9 +241,9 @@ describe('createSelfHealingAgent', () => {
 		expect(request.responseFormat).toMatchObject({
 			type: 'json',
 			schema: {
-				required: ['outcome', 'summary', 'report', 'candidateWorkflowIds'],
+				required: ['outcome', 'summary', 'report', 'candidateFilePath'],
 				properties: {
-					candidateWorkflowIds: { type: 'array', items: { type: 'string', minLength: 1 } },
+					candidateFilePath: { anyOf: [{ type: 'string', minLength: 1 }, { type: 'null' }] },
 				},
 			},
 		});
@@ -431,15 +428,13 @@ describe('createSelfHealingAgent', () => {
 			});
 			const tool = findTool(agent.declaredTools, 'verify_candidate');
 			const input = {
-				workflowId: 'workflow',
-				filePath: 'src/workflows/candidate.workflow.ts',
+				filePath: 'self-healing/candidate.workflow.ts',
 				validationOnly: true,
 				...options,
 			};
 			expect(parseToolInput(tool, input).success).toBe(true);
 			expect(parseToolInput(tool, { ...input, triggerNodeName: '' }).success).toBe(false);
-			expect(parseToolInput(tool, { ...input, workflowId: undefined }).success).toBe(false);
-			expect(parseToolInput(tool, { ...input, projectId: 'other' }).success).toBe(false);
+			expect(parseToolInput(tool, { ...input, workflowId: 'other' }).success).toBe(false);
 			await expect(executeTool(tool, input)).resolves.toEqual({ valid: true });
 			expect(verifyCandidate).toHaveBeenCalledWith(input, controller.signal);
 			controller.abort();

@@ -7,7 +7,7 @@ import { resolveFromRoot } from '../../../../../utils/path-helper';
 test.describe(
 	'Workflow Copy Paste',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test.fixme();

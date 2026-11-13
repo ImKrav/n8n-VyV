@@ -1,0 +1,219 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 7,
+    "passes": 7,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-11-11T02:26:27.402Z",
+    "end": "2026-11-11T02:26:29.955Z",
+    "duration": 2553,
+    "testsRegistered": 7,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "efd09bf8-d031-45f3-a779-dd70df5eabdb",
+      "title": "",
+      "fullFile": "cypress\\e2e\\api\\co04-crear-navegar-carpetas.api.cy.js",
+      "file": "cypress\\e2e\\api\\co04-crear-navegar-carpetas.api.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+          "title": "CO-04 · Carpetas: crear y navegar (API)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "Precondición · la función Folders está habilitada por licencia",
+              "fullTitle": "CO-04 · Carpetas: crear y navegar (API) Precondición · la función Folders está habilitada por licencia",
+              "timedOut": null,
+              "duration": 191,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV licencia\").then((n) => crear(n).then((r) => {\n  expect(r.status, \"Si es 403: registra la Community Edition (Settings \\u2192 Usage and plan)\").to.eq(200);\n}));",
+              "err": {},
+              "uuid": "260a6784-66e9-40d0-bfc8-e6fafd4b9611",
+              "parentUUID": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-019-01 · crea una carpeta en la raíz del proyecto",
+              "fullTitle": "CO-04 · Carpetas: crear y navegar (API) CP-019-01 · crea una carpeta en la raíz del proyecto",
+              "timedOut": null,
+              "duration": 78,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV Carpeta A\").then((n) => crear(n).then((r) => {\n  expect(r.status).to.eq(200);\n  expect(r.body.data).to.include({ name: n });\n  expect(r.body.data.parentFolder ?? null).to.eq(null);\n}));",
+              "err": {},
+              "uuid": "3d06bb30-fa8f-4b8e-adc0-bed4f194968e",
+              "parentUUID": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-019-02 · rechaza las 4 clases de nombres inválidos con su mensaje",
+              "fullTitle": "CO-04 · Carpetas: crear y navegar (API) CP-019-02 · rechaza las 4 clases de nombres inválidos con su mensaje",
+              "timedOut": null,
+              "duration": 137,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const casos = [\n  [\"   \", /cannot be empty/],\n  [\"a/b\", /invalid characters/],\n  [\"x*y\", /invalid characters/],\n  [\"...\", /dots only/],\n  [\".oculta\", /start with a dot/]\n];\ncasos.forEach(([nombre, msg]) => crear(nombre).then((r) => {\n  expect(r.status, `nombre \"${nombre}\"`).to.eq(400);\n  expect(mensaje(r)).to.match(msg);\n}));",
+              "err": {},
+              "uuid": "453dbd0c-558d-4e74-8437-46ef5803f5a3",
+              "parentUUID": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Complementaria · valores límite de longitud (128 acepta / 129 rechaza)",
+              "fullTitle": "CO-04 · Carpetas: crear y navegar (API) Complementaria · valores límite de longitud (128 acepta / 129 rechaza)",
+              "timedOut": null,
+              "duration": 127,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const s = Date.now().toString(36);\ncrear((s + \"f\".repeat(200)).slice(0, 128)).its(\"status\").should(\"eq\", 200);\ncrear((s + \"f\".repeat(200)).slice(0, 129)).then((r) => {\n  expect(r.status).to.eq(400);\n  expect(mensaje(r)).to.match(/longer than 128/);\n});",
+              "err": {},
+              "uuid": "8c211d8b-83a8-412c-80d1-a9ff7d130a1f",
+              "parentUUID": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-019-03 · renombra una carpeta",
+              "fullTitle": "CO-04 · Carpetas: crear y navegar (API) CP-019-03 · renombra una carpeta",
+              "timedOut": null,
+              "duration": 137,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV Renombrar\").then((n) => crear(n).then((r) => {\n  const id = r.body.data.id;\n  n8nApi.actualizarCarpeta(p, id, { name: `${n} 1` }).its(\"status\").should(\"eq\", 200);\n  n8nApi.listarCarpetas(p).then((l) => {\n    const lista = l.data ?? l;\n    expect(lista.find((c) => c.id === id)).to.have.property(\"name\", `${n} 1`);\n  });\n}));",
+              "err": {},
+              "uuid": "2046fb1d-347d-4d08-8472-cb252ec6bf4d",
+              "parentUUID": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-019-04 · anida 3 niveles y el árbol muestra la ruta A → B → C",
+              "fullTitle": "CO-04 · Carpetas: crear y navegar (API) CP-019-04 · anida 3 niveles y el árbol muestra la ruta A → B → C",
+              "timedOut": null,
+              "duration": 158,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV A\").then((a) => crear(a).then((ra) => {\n  crear(\"B\", ra.body.data.id).then((rb) => {\n    crear(\"C\", rb.body.data.id).then((rc) => {\n      n8nApi.arbol(p, rc.body.data.id).then((arbol) => {\n        const nombres = [];\n        let nodo = arbol[0];\n        while (nodo) {\n          nombres.push(nodo.name);\n          [nodo] = nodo.children ?? [];\n        }\n        expect(nombres).to.deep.equal([a, \"B\", \"C\"]);\n      });\n    });\n  });\n}));",
+              "err": {},
+              "uuid": "e31d16ad-432c-4390-9a8a-20c8f4578edd",
+              "parentUUID": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-019-06 · el contenido de la carpeta cuenta workflows y subcarpetas",
+              "fullTitle": "CO-04 · Carpetas: crear y navegar (API) CP-019-06 · el contenido de la carpeta cuenta workflows y subcarpetas",
+              "timedOut": null,
+              "duration": 232,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.nombreUnico(\"VyV Conteo\").then((n) => crear(n).then((r) => {\n  const id = r.body.data.id;\n  n8nApi.crearWorkflow(\"WF VyV 1\", id);\n  n8nApi.crearWorkflow(\"WF VyV 2\", id);\n  crear(\"Sub\", id);\n  n8nApi.contenido(p, id).should(\"deep.include\", { totalWorkflows: 2, totalSubFolders: 1 });\n}));",
+              "err": {},
+              "uuid": "d8e32413-c7b1-4f85-bbe1-eab12fa8667a",
+              "parentUUID": "6bb26454-84fe-4935-ac34-eb84ffcc68d5",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "260a6784-66e9-40d0-bfc8-e6fafd4b9611",
+            "3d06bb30-fa8f-4b8e-adc0-bed4f194968e",
+            "453dbd0c-558d-4e74-8437-46ef5803f5a3",
+            "8c211d8b-83a8-412c-80d1-a9ff7d130a1f",
+            "2046fb1d-347d-4d08-8472-cb252ec6bf4d",
+            "e31d16ad-432c-4390-9a8a-20c8f4578edd",
+            "d8e32413-c7b1-4f85-bbe1-eab12fa8667a"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1060,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

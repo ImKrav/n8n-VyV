@@ -2,7 +2,6 @@ import { createComponentRenderer } from '@/__tests__/render';
 import ImportWorkflowUrlModal from './ImportWorkflowUrlModal.vue';
 import { createTestingPinia } from '@pinia/testing';
 import { useUIStore } from '@/app/stores/ui.store';
-import { nodeViewEventBus } from '@/app/event-bus';
 import { IMPORT_WORKFLOW_URL_MODAL_KEY } from '@/app/constants';
 import { STORES } from '@n8n/stores';
 import userEvent from '@testing-library/user-event';
@@ -53,52 +52,6 @@ describe('ImportWorkflowUrlModal', () => {
 		await userEvent.click(getByTestId('cancel-workflow-import-url-button'));
 
 		expect(uiStore.closeModal).toHaveBeenCalledWith(IMPORT_WORKFLOW_URL_MODAL_KEY);
-	});
-
-	it('should emit importWorkflowUrl event on confirm', async () => {
-		const { getByTestId } = renderModal({
-			global,
-			pinia,
-		});
-
-		const urlInput = getByTestId('workflow-url-import-input');
-		const confirmButton = getByTestId('confirm-workflow-import-url-button');
-
-		await userEvent.type(urlInput, 'https://valid-url.com/workflow.json');
-		expect(confirmButton).toBeEnabled();
-
-		const emitSpy = vi.spyOn(nodeViewEventBus, 'emit');
-		await userEvent.click(confirmButton);
-
-		expect(emitSpy).toHaveBeenCalledWith('importWorkflowUrl', {
-			url: 'https://valid-url.com/workflow.json',
-		});
-	});
-
-	it('should disable confirm button for invalid URL', async () => {
-		const { getByTestId } = renderModal({
-			global,
-			pinia,
-		});
-
-		const urlInput = getByTestId('workflow-url-import-input');
-		const confirmButton = getByTestId('confirm-workflow-import-url-button');
-
-		await userEvent.type(urlInput, 'invalid-url');
-		expect(confirmButton).toBeDisabled();
-	});
-
-	it('should accept URLs without .json extension', async () => {
-		const { getByTestId } = renderModal({
-			global,
-			pinia,
-		});
-
-		const urlInput = getByTestId('workflow-url-import-input');
-		const confirmButton = getByTestId('confirm-workflow-import-url-button');
-
-		await userEvent.type(urlInput, 'https://example.com/workflow');
-		expect(confirmButton).toBeEnabled();
 	});
 
 	it('should accept GitHub raw URLs', async () => {

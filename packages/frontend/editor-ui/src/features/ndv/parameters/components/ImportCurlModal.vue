@@ -1,23 +1,15 @@
 <script lang="ts" setup>
+import Modal from '@/app/components/Modal.vue';
 import { IMPORT_CURL_MODAL_KEY } from '@/app/constants';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useUIStore } from '@/app/stores/ui.store';
+import { createEventBus } from '@n8n/utils/event-bus';
 import { useTelemetry } from '@n8n/composables/useTelemetry';
 import { useToast } from '@n8n/composables/useToast';
 import { useI18n } from '@n8n/i18n';
 import { injectNDVStore } from '@/features/ndv/shared/ndv.store';
 
-import {
-	N8nButton,
-	N8nDialog,
-	N8nDialogBody,
-	N8nDialogFooter,
-	N8nInput,
-	N8nInputLabel,
-	N8nNotice,
-} from '@n8n/design-system';
-
-defineOptions({ inheritAttrs: false });
+import { N8nButton, N8nInput, N8nInputLabel, N8nNotice } from '@n8n/design-system';
 const telemetry = useTelemetry();
 const toast = useToast();
 const i18n = useI18n();
@@ -26,7 +18,7 @@ const uiStore = useUIStore();
 const ndvStore = injectNDVStore();
 
 const curlCommand = ref('');
-const modalOpen = computed(() => uiStore.modalsById[IMPORT_CURL_MODAL_KEY]?.open === true);
+const modalBus = createEventBus();
 
 const inputRef = ref<{ focus: () => void; blur: () => void; select: () => void } | null>(null);
 
@@ -38,6 +30,9 @@ onMounted(() => {
 	const nodeId = ndvStore.value.activeNode?.id ?? '';
 	const command = curlCommands?.[nodeId];
 	curlCommand.value = command ?? '';
+	setTimeout(() => {
+		inputRef.value?.focus();
+	});
 });
 
 function onInput(value: string): void {
@@ -49,11 +44,7 @@ function onFocus(): void {
 }
 
 function closeDialog(): void {
-	uiStore.closeModal(IMPORT_CURL_MODAL_KEY);
-}
-
-function onDialogOpenUpdate(open: boolean) {
-	if (!open) closeDialog();
+	modalBus.emit('close');
 }
 
 function onImportSuccess() {
@@ -115,47 +106,63 @@ async function onImport() {
 </script>
 
 <template>
-	<N8nDialog
-		:open="modalOpen"
-		size="large"
-		:header="i18n.baseText('importCurlModal.title')"
-		@update:open="onDialogOpenUpdate"
+	<Modal
+		width="700px"
+		:title="i18n.baseText('importCurlModal.title')"
+		:event-bus="modalBus"
+		:name="IMPORT_CURL_MODAL_KEY"
+		:center="true"
 	>
-		<N8nDialogBody>
-			<N8nInputLabel :label="i18n.baseText('importCurlModal.input.label')" color="text-dark">
-				<N8nInput
-					ref="inputRef"
-					:model-value="curlCommand"
-					type="textarea"
-					:rows="5"
-					data-test-id="import-curl-modal-input"
-					:placeholder="i18n.baseText('importCurlModal.input.placeholder')"
-					@update:model-value="onInput"
-					@focus="onFocus"
+		<template #content>
+			<div :class="$style.container">
+				<N8nInputLabel :label="i18n.baseText('importCurlModal.input.label')" color="text-dark">
+					<N8nInput
+						ref="inputRef"
+						:model-value="curlCommand"
+						type="textarea"
+						:rows="5"
+						data-test-id="import-curl-modal-input"
+						:placeholder="i18n.baseText('importCurlModal.input.placeholder')"
+						@update:model-value="onInput"
+						@focus="onFocus"
+					/>
+				</N8nInputLabel>
+			</div>
+		</template>
+		<template #footer>
+			<div :class="$style.modalFooter">
+				<N8nNotice
+					:class="$style.notice"
+					:content="i18n.baseText('ImportCurlModal.notice.content')"
 				/>
-			</N8nInputLabel>
-		</N8nDialogBody>
-		<N8nDialogFooter :class="$style.footer">
-			<N8nNotice
-				:class="$style.notice"
-				:content="i18n.baseText('ImportCurlModal.notice.content')"
-			/>
-
-			<N8nButton
-				:label="i18n.baseText('importCurlModal.button.label')"
-				data-test-id="import-curl-modal-button"
-				@click="onImport"
-			/>
-		</N8nDialogFooter>
-	</N8nDialog>
+				<div>
+					<N8nButton
+						float="right"
+						:label="i18n.baseText('importCurlModal.button.label')"
+						data-test-id="import-curl-modal-button"
+						@click="onImport"
+					/>
+				</div>
+			</div>
+		</template>
+	</Modal>
 </template>
 
 <style module lang="scss">
-.footer {
+.modalFooter {
 	justify-content: space-between;
+	display: flex;
+	flex-direction: row;
 }
 
 .notice {
 	margin: 0;
+}
+
+.container > * {
+	margin-bottom: var(--spacing--sm);
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 </style>

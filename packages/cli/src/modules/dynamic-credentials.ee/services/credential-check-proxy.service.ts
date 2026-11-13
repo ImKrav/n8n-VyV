@@ -12,7 +12,8 @@ import type {
 
 import { CredentialTypes } from '@/credential-types';
 import { EnterpriseCredentialsService } from '@/credentials/credentials.service.ee';
-import { UrlService, NodeTypesProxy } from '@n8n/backend-services';
+import { NodeTypes } from '@/node-types';
+import { UrlService } from '@n8n/backend-services';
 
 import { ExecutionContextService } from 'n8n-core';
 import { AuthorizeIntentService } from './authorize-intent.service';
@@ -34,7 +35,7 @@ export class CredentialCheckProxyService implements DynamicCredentialCheckProxyP
 		private readonly urlService: UrlService,
 		private readonly globalConfig: GlobalConfig,
 		private readonly credentialTypes: CredentialTypes,
-		private readonly nodeTypes: NodeTypesProxy,
+		private readonly nodeTypes: NodeTypes,
 	) {}
 
 	async checkCredentialStatus(

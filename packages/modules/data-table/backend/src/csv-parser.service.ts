@@ -4,6 +4,8 @@ import { Service } from '@n8n/di';
 import { parse } from 'csv-parse';
 import { createReadStream } from 'fs';
 
+import { FileUploadError } from './errors/data-table-file-upload.error';
+
 export interface CsvColumnMetadata {
 	name: string;
 	type: 'string' | 'number' | 'boolean' | 'date';
@@ -96,7 +98,7 @@ export class CsvParserService {
 		onRow: (rowObject: Record<string, string>, columnNames: string[], rowNumber: number) => void,
 		onEnd: (columnNames: string[], totalRows: number) => T,
 	): Promise<T> {
-		const filePath = safeJoinPath(this.uploadDir, fileId);
+		const filePath = this.resolveUploadPath(fileId);
 		let columnNames: string[] = [];
 		let rowCount = 0;
 
@@ -120,10 +122,27 @@ export class CsvParserService {
 					onRow(rowObject, columnNames, rowCount);
 				})
 				.on('end', () => resolve(onEnd(columnNames, rowCount)))
-				.on('error', reject);
+				// A malformed file is a client error: report it as such instead of a 500
+				.on('error', (error: Error) => reject(new FileUploadError(`Invalid CSV file: ${error.message}`)));
 
-			createReadStream(filePath).on('error', reject).pipe(parser);
+			createReadStream(filePath)
+				.on('error', (error: NodeJS.ErrnoException) =>
+					reject(error.code === 'ENOENT' ? new FileUploadError('Uploaded file not found') : error),
+				)
+				.pipe(parser);
 		});
+	}
+
+	/**
+	 * Resolves an uploaded file id inside the upload directory. A file id that tries to escape
+	 * the directory (e.g. '../../etc/passwd') is a client error, so it is reported as FileUploadError.
+	 */
+	private resolveUploadPath(fileId: string): string {
+		try {
+			return safeJoinPath(this.uploadDir, fileId);
+		} catch (error) {
+			throw new FileUploadError(`Invalid file id: ${(error as Error).message}`);
+		}
 	}
 
 	/**
@@ -226,7 +245,7 @@ export class CsvParserService {
 			return 'boolean';
 		}
 
-		if (!Number.isNaN(Number(trimmedValue))) {
+		if (this.isDecimalNumber(trimmedValue)) {
 			return 'number';
 		}
 
@@ -251,14 +270,33 @@ export class CsvParserService {
 			const datePatterns = [
 				/^\d{4}-\d{2}-\d{2}/, // ISO date (YYYY-MM-DD)
 				/^\d{4}\/\d{2}\/\d{2}/, // YYYY/MM/DD
-				/^\d{2}\/\d{2}\/\d{4}/, // MM/DD/YYYY or DD/MM/YYYY
-				/^\d{2}-\d{2}-\d{4}/, // MM-DD-YYYY or DD-MM-YYYY
+				/^\d{2}\/\d{2}\/\d{4}/, // MM/DD/YYYY (DD/MM/YYYY is not supported: Date parses it as month-first)
+				/^\d{2}-\d{2}-\d{4}/, // MM-DD-YYYY (month-first, same as above)
 				/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/, // ISO datetime
 			];
 
-			return datePatterns.some((pattern) => pattern.test(value));
+			if (!datePatterns.some((pattern) => pattern.test(value))) return false;
+
+			// new Date() silently rolls impossible dates over (2024-02-30 -> 2024-03-01),
+			// so year-first dates are also checked against the calendar.
+			const yearFirst = /^(\d{4})[-/](\d{2})[-/](\d{2})/.exec(value);
+			return yearFirst ? this.isValidCalendarDate(+yearFirst[1], +yearFirst[2], +yearFirst[3]) : true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Accepts only finite, plain decimal notation (e.g. 12, -3.5, .5, 1e3).
+	 * Number() alone also accepts 'Infinity', hex ('0x1A') and binary ('0b101') literals.
+	 */
+	private isDecimalNumber(value: string): boolean {
+		return /^[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?$/.test(value) && Number.isFinite(Number(value));
+	}
+
+	private isValidCalendarDate(year: number, month: number, day: number): boolean {
+		if (month < 1 || month > 12 || day < 1) return false;
+		const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+		return day <= daysInMonth;
 	}
 }

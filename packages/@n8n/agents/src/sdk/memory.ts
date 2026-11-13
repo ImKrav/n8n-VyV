@@ -15,8 +15,7 @@ import {
 	DEFAULT_OBSERVATION_LOG_RENDER_TOKEN_BUDGET,
 	DEFAULT_OBSERVATION_LOG_TAIL_LIMIT,
 } from '../runtime/memory/observation-log-defaults';
-import { DEFAULT_MEMORY_POLICY } from '../runtime/memory/observation-policy';
-import { assertObservationalMemoryStore } from '../runtime/memory/observation-log-store';
+import { hasObservationLogStore } from '../runtime/memory/observation-log-store';
 import { createEmbeddingModel } from '../runtime/model/model-factory';
 import type {
 	BuiltMemory,
@@ -42,39 +41,17 @@ export function resolveObservationalMemoryConfig(
 	const observerModel = options.defaultModel;
 	const reflectorModel = options.defaultModel;
 
-	// A fixed threshold is an explicit choice, so it replaces the default shares.
-	const windowShares =
-		config.windowShares ??
-		(config.observerThresholdTokens === undefined
-			? { maxContextWindowTokens: DEFAULT_MEMORY_POLICY.maxContextWindowTokens }
-			: undefined);
-
 	return {
 		observerThresholdTokens:
 			config.observerThresholdTokens ?? DEFAULT_OBSERVATION_LOG_OBSERVER_THRESHOLD_TOKENS,
-		// With shares, only a set reflector threshold replaces the reflect share.
-		...(config.reflectorThresholdTokens !== undefined || windowShares === undefined
-			? {
-					reflectorThresholdTokens:
-						config.reflectorThresholdTokens ?? DEFAULT_OBSERVATION_LOG_REFLECTOR_THRESHOLD_TOKENS,
-				}
-			: {}),
+		reflectorThresholdTokens:
+			config.reflectorThresholdTokens ?? DEFAULT_OBSERVATION_LOG_REFLECTOR_THRESHOLD_TOKENS,
 		renderTokenBudget: config.renderTokenBudget ?? DEFAULT_OBSERVATION_LOG_RENDER_TOKEN_BUDGET,
 		observationLogTailLimit: config.observationLogTailLimit ?? DEFAULT_OBSERVATION_LOG_TAIL_LIMIT,
 		lockTtlMs: config.lockTtlMs ?? DEFAULT_OBSERVATION_LOG_LOCK_TTL_MS,
 		...(config.midRunObservation !== undefined
 			? { midRunObservation: config.midRunObservation }
 			: {}),
-		...(windowShares !== undefined ? { windowShares } : {}),
-		...(config.cacheTtlMs !== undefined ? { cacheTtlMs: config.cacheTtlMs } : {}),
-		logPlacement: config.logPlacement ?? DEFAULT_MEMORY_POLICY.logPlacement,
-		failurePolicy: config.failurePolicy ?? DEFAULT_MEMORY_POLICY.failurePolicy,
-		maxConsecutiveObserverFailures:
-			config.maxConsecutiveObserverFailures ?? DEFAULT_MEMORY_POLICY.maxConsecutiveObserverFailures,
-		maxObserverBatchesAfterTurn:
-			config.maxObserverBatchesAfterTurn ?? DEFAULT_MEMORY_POLICY.maxObserverBatchesAfterTurn,
-		...(config.reflectionMode !== undefined ? { reflectionMode: config.reflectionMode } : {}),
-		historyRecall: config.historyRecall ?? DEFAULT_MEMORY_POLICY.historyRecall,
 		observe: config.observe ?? createObservationLogObserveFn(observerModel),
 		reflect: config.reflect ?? createObservationLogReflectFn(reflectorModel),
 	};
@@ -118,7 +95,11 @@ export function resolveMemoryConfigDefaults(
 		});
 	}
 
-	assertObservationalMemoryStore(config.memory);
+	if (!hasObservationLogStore(config.memory)) {
+		throw new Error(
+			'Observational memory requires a storage backend that implements BuiltObservationLogStore.',
+		);
+	}
 
 	const observationalMemoryConfig =
 		config.observationLog?.renderTokenBudget !== undefined &&
@@ -149,7 +130,11 @@ export function normalizeMemoryConfig(config: MemoryConfig): MemoryConfig {
 		return config;
 	}
 
-	assertObservationalMemoryStore(config.memory);
+	if (!hasObservationLogStore(config.memory)) {
+		throw new Error(
+			'Observational memory requires a storage backend that implements BuiltObservationLogStore.',
+		);
+	}
 
 	return {
 		...config,
@@ -257,7 +242,11 @@ export class Memory {
 			return normalizeMemoryConfig(baseConfig);
 		}
 
-		assertObservationalMemoryStore(memory);
+		if (!hasObservationLogStore(memory)) {
+			throw new Error(
+				'Observational memory requires a storage backend that implements BuiltObservationLogStore.',
+			);
+		}
 
 		return normalizeMemoryConfig({
 			...baseConfig,

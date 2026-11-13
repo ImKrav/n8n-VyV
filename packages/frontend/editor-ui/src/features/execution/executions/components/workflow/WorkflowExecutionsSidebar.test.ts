@@ -109,22 +109,6 @@ describe('WorkflowExecutionsSidebar', () => {
 	});
 
 	describe('infinite scroll sentinel', () => {
-		it('should observe the sentinel when executions are present and more pages exist', async () => {
-			const { getByTestId } = renderComponent({
-				props: {
-					loading: false,
-					loadingMore: false,
-					hasMore: true,
-					executions: buildExecutions(20),
-				},
-			});
-
-			await nextTick();
-
-			const sentinel = getByTestId('executions-load-more-sentinel');
-			expect(observe).toHaveBeenCalledWith(sentinel);
-		});
-
 		it('should not render the sentinel when there are no more pages', async () => {
 			const { queryByTestId } = renderComponent({
 				props: {

@@ -4,7 +4,7 @@ import type { TestRequirements } from '../../../../../Types';
 test.describe(
 	'Focus panel',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test.describe('With experimental NDV in focus panel enabled', () => {

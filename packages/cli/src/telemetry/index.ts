@@ -1,6 +1,6 @@
 import { Logger } from '@n8n/backend-common';
 import { OutboundHttp } from '@n8n/backend-network';
-import { InstanceRegistryProxyService, PostHogClient } from '@n8n/backend-services';
+import { InstanceRegistryProxyService } from '@n8n/backend-services';
 import { GlobalConfig } from '@n8n/config';
 import {
 	ProjectRelationRepository,
@@ -8,7 +8,7 @@ import {
 	WorkflowRepository,
 	UserRepository,
 } from '@n8n/db';
-import { LOWEST_SHUTDOWN_PRIORITY, OnShutdown } from '@n8n/decorators';
+import { OnShutdown } from '@n8n/decorators';
 import { Container, Service } from '@n8n/di';
 import type { InferTelemetryProps, TelemetryEventDef } from '@n8n/telemetry';
 import { redactTelemetryProperties, TELEMETRY_EVENT } from '@n8n/telemetry';
@@ -17,7 +17,7 @@ import type { AxiosRequestConfig } from 'axios';
 import { ErrorReporter, InstanceSettings } from 'n8n-core';
 import type { ITelemetryTrackProperties } from 'n8n-workflow';
 
-import { N8N_VERSION } from '@/constants';
+import { LOWEST_SHUTDOWN_PRIORITY, N8N_VERSION } from '@/constants';
 import type {
 	AgentRunTelemetryType,
 	IAgentConfigurationTelemetryProperties,
@@ -26,14 +26,12 @@ import type {
 	IExecutionTrackProperties,
 } from '@/interfaces';
 import { License } from '@/license';
+import { PostHogClient } from '@/posthog';
 import type { PublicApiClient } from '@/public-api/public-api-client';
 
 import { SourceControlPreferencesService } from '../modules/source-control.ee/source-control-preferences.service.ee';
 import { USER_CALLED_MCP_TOOL_EVENT } from '../modules/mcp/mcp.constants';
 import { summarizeFootprint } from './cluster-footprint';
-
-/** A full queue of 500 events takes under 2 s on a healthy server. */
-const SHUTDOWN_FLUSH_TIMEOUT_MS = 10_000;
 
 type ExecutionTrackDataKey =
 	| 'manual_error'
@@ -42,8 +40,7 @@ type ExecutionTrackDataKey =
 	| 'prod_success'
 	| 'manual_crashed'
 	| 'prod_crashed'
-	| `${'instance_ai'}_${'mock' | 'real'}_${'manual' | 'prod'}_${'error' | 'success' | 'crashed'}`
-	| `personal_credentials_${'manual' | 'prod'}`;
+	| `${'instance_ai'}_${'mock' | 'real'}_${'manual' | 'prod'}_${'error' | 'success' | 'crashed'}`;
 
 interface IExecutionTrackData {
 	count: number;
@@ -265,7 +262,7 @@ export class Telemetry {
 			plan_name_current: this.license.getPlanName(),
 			quota: this.license.getTriggerLimit(),
 			usage: await this.workflowRepository.getActiveTriggerCount(),
-			role_count: await Container.get(UserRepository).countUsersByRole('person'),
+			role_count: await Container.get(UserRepository).countUsersByRole(),
 			source_control_set_up: Container.get(SourceControlPreferencesService).isSourceControlSetup(),
 			branchName: sourceControlPreferences.branchName,
 			read_only_instance: sourceControlPreferences.branchReadOnly,
@@ -439,11 +436,6 @@ export class Telemetry {
 				this.addExecutionTrackData(workflowId, sourceKey, execTime);
 			}
 
-			// Counted in the per-workflow aggregate, not as an event for each run.
-			if (properties.personal_credentials_count) {
-				this.addExecutionTrackData(workflowId, `personal_credentials_${executionMode}`, execTime);
-			}
-
 			if (properties.used_end_user_credentials) {
 				this.track('Workflow execution with end-user credentials', properties);
 			}
@@ -594,27 +586,7 @@ export class Telemetry {
 
 	@OnShutdown(LOWEST_SHUTDOWN_PRIORITY)
 	async stopTracking(): Promise<void> {
-		this.flushBuffers();
-		await Promise.all([this.postHog.stop(), this.flushQueueBeforeExit()]);
-	}
-
-	/**
-	 * flush() sends every queued batch and retries each one, so a telemetry server
-	 * that does not answer can hold it past the graceful shutdown timeout. Give up
-	 * after a fixed time; the events are lost either way.
-	 */
-	private async flushQueueBeforeExit(): Promise<void> {
-		if (!this.rudderStack) return;
-
-		let timer: NodeJS.Timeout | undefined;
-		const deadline = new Promise<void>((resolve) => {
-			timer = setTimeout(resolve, SHUTDOWN_FLUSH_TIMEOUT_MS);
-		});
-		try {
-			await Promise.race([this.rudderStack.flush(), deadline]);
-		} finally {
-			clearTimeout(timer);
-		}
+		await Promise.all([this.postHog.stop(), this.rudderStack?.flush()]);
 	}
 
 	// Sets instance group properties and attaches user to instance group.

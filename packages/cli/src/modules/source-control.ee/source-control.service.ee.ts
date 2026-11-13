@@ -15,6 +15,8 @@ import { IWorkflowToImport } from '@/interfaces';
 
 import {
 	SOURCE_CONTROL_DEFAULT_BRANCH_COLOR,
+	SOURCE_CONTROL_DEFAULT_EMAIL,
+	SOURCE_CONTROL_DEFAULT_NAME,
 	SOURCE_CONTROL_README,
 	SOURCE_CONTROL_WORKFLOW_EXPORT_FOLDER,
 } from './constants';
@@ -25,7 +27,6 @@ import {
 	getTagsPath,
 	getTrackingInformationFromPostPushResult,
 	getTrackingInformationFromPullResult,
-	gitAuthor,
 	normalizeAndValidateSourceControlledFilePath,
 	sourceControlFoldersExistCheck,
 } from './source-control-helper.ee';
@@ -477,8 +478,12 @@ export class SourceControlService {
 			// repo-wide git config between staging and this commit. Fall back to defaults when the
 			// user has no full profile, matching repo initialization, so the commit can't fail on an
 			// empty git identity.
-			const author = gitAuthor(user);
-			await this.gitService.setGitUserDetails(author.name, author.email);
+			await this.gitService.setGitUserDetails(
+				user.firstName && user.lastName
+					? `${user.firstName} ${user.lastName}`
+					: SOURCE_CONTROL_DEFAULT_NAME,
+				user.email || SOURCE_CONTROL_DEFAULT_EMAIL,
+			);
 
 			await this.gitService.commit(options.commitMessage ?? 'Updated Workfolder');
 		} catch (error) {

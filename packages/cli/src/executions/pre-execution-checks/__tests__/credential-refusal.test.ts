@@ -14,7 +14,7 @@ describe('findCredentialRefusal', () => {
 	});
 
 	it('returns nothing when the check passes', async () => {
-		checker.check.mockResolvedValue({ personalCredentialsCount: 0 });
+		checker.check.mockResolvedValue(undefined);
 
 		await expect(findCredentialRefusal('wf-1', [node], 'user-1')).resolves.toBeUndefined();
 		expect(checker.check).toHaveBeenCalledWith('wf-1', [node], 'user-1');

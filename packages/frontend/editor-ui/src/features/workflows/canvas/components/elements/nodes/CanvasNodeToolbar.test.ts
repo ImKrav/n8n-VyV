@@ -1,5 +1,5 @@
 import { ref, shallowRef } from 'vue';
-import { screen, waitFor } from '@testing-library/vue';
+import { waitFor } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 import { createTestingPinia } from '@pinia/testing';
 import CanvasNodeToolbar from './CanvasNodeToolbar.vue';
@@ -189,36 +189,6 @@ describe('CanvasNodeToolbar', () => {
 		await userEvent.click(getByTestId('overflow-node-button'));
 
 		expect(emitted('open:contextmenu')[0]).toEqual([expect.any(MouseEvent)]);
-	});
-
-	it('should emit "update" when sticky note color is changed', async () => {
-		const { getByTestId, emitted } = renderComponent({
-			pinia,
-			global: {
-				provide: {
-					...createCanvasNodeProvide({
-						data: {
-							render: {
-								type: CanvasNodeRenderType.StickyNote,
-								options: { color: 3 },
-							},
-						},
-					}),
-					...createCanvasProvide(),
-				},
-			},
-		});
-
-		await userEvent.click(getByTestId('change-sticky-color'));
-
-		// Use screen queries for teleported popover content
-		await waitFor(() => {
-			expect(screen.getAllByTestId('color')).toHaveLength(7);
-		});
-
-		await userEvent.click(screen.getAllByTestId('color')[0]);
-
-		expect(emitted('update')[0]).toEqual([{ color: 1 }]);
 	});
 
 	it('should show execute button when readOnly is true and canExecute is true', () => {

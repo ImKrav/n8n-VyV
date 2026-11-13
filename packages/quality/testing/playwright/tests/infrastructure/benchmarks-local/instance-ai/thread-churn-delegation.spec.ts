@@ -18,7 +18,7 @@ const DELEGATION_PROMPT =
 test.describe(
 	'Instance-AI Memory: Lightweight Delegation',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('heap returns to baseline after delegation rounds', async ({

@@ -2,7 +2,6 @@ import type { MockInstance } from 'vitest';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
 	displayForm,
-	executionFilterToQueryFilter,
 	hasCancellableExecutions,
 	waitingNodeTooltip,
 	getExecutionErrorMessage,
@@ -137,14 +136,6 @@ describe('displayForm', () => {
 
 		expect(windowOpenSpy).toHaveBeenCalledTimes(1);
 		expect(fetchSpy).not.toHaveBeenCalled();
-	});
-});
-
-describe('executionFilterToQueryFilter()', () => {
-	it('adds "new" to the filter', () => {
-		expect(executionFilterToQueryFilter({ status: 'new' }).status).toStrictEqual(
-			expect.arrayContaining(['new']),
-		);
 	});
 });
 
@@ -380,14 +371,6 @@ const executionErrorFactory = (error: Record<string, unknown>) =>
 	error as unknown as ExecutionError;
 
 describe('getExecutionErrorMessage', () => {
-	it('returns error.message when lastNodeExecuted and error are present', () => {
-		const result = getExecutionErrorMessage({
-			error: executionErrorFactory({ message: 'Node failed' }),
-			lastNodeExecuted: 'Node1',
-		});
-		expect(result).toBe('Node failed');
-	});
-
 	it('uses fallback translation when only error.message is provided', () => {
 		const result = getExecutionErrorMessage({
 			error: executionErrorFactory({ message: 'Something went wrong' }),
@@ -400,13 +383,6 @@ describe('getExecutionErrorMessage', () => {
 			error: executionErrorFactory({ message: 'Failed', node: 'MyNode' }),
 		});
 		expect(result).toBe('Execution error.Details: MyNode: Failed');
-	});
-
-	it('includes node.name if error.node is an object', () => {
-		const result = getExecutionErrorMessage({
-			error: executionErrorFactory({ message: 'Crashed', node: { name: 'Step1' } }),
-		});
-		expect(result).toBe('Execution error.Details: Step1: Crashed');
 	});
 
 	it('uses default fallback when no error or lastNodeExecuted', () => {

@@ -31,13 +31,6 @@ const managedRef = ref<{
 	keepOpenAfterConnect?: boolean;
 	canFinish?: boolean;
 } | null>(null);
-// The modal types the settings as any channel's. Only the webhook settings share no field
-// with the Teams settings, so they are the ones to drop.
-const teamsSavedSettings = computed((): AgentTeamsIntegrationSettings | undefined =>
-	props.savedSettings && !('authentication' in props.savedSettings)
-		? props.savedSettings
-		: undefined,
-);
 const showManaged = computed(
 	() =>
 		props.runtime.managedSetup.value.managedSetupAvailable &&
@@ -146,7 +139,7 @@ defineExpose({
 			:setup="runtime.managedSetup.value"
 			:loading="loading"
 			:credential-permissions="credentialPermissions"
-			:saved-settings="teamsSavedSettings"
+			:saved-settings="savedSettings"
 			:channel-connected="connected"
 			:project-id="projectId"
 			:agent-id="agentId"
@@ -173,7 +166,7 @@ defineExpose({
 			:error-is-conflict="errorIsConflict"
 			:force-new-credential="forceNewCredential"
 			:saved-credential-id="savedCredentialId"
-			:saved-settings="teamsSavedSettings"
+			:saved-settings="savedSettings"
 			@create="emit('create')"
 			@edit="emit('edit')"
 			@connect="emit('connect')"

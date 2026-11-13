@@ -1,0 +1,173 @@
+{
+  "CP-016-01": [
+    "results/by-case/CP-016-01/data-table-columns.api__CP-016-01_evidencia.png",
+    "results/by-case/CP-016-01/data-tables.ui__CP-016-01_paso2_nombre.png",
+    "results/by-case/CP-016-01/data-tables.ui__CP-016-01_paso3_detalle.png",
+    "results/by-case/CP-016-01/data-tables.ui__CP-016-01_paso4_tarjeta.png"
+  ],
+  "CP-016-02": [
+    "results/by-case/CP-016-02/data-table-columns.api__CP-016-02_evidencia.png",
+    "results/by-case/CP-016-02/data-tables.ui__CP-016-02_nombre_solo_espacios.png"
+  ],
+  "CP-016-03": [
+    "results/by-case/CP-016-03/data-table-columns.api__CP-016-03_evidencia.png"
+  ],
+  "CP-016-04": [
+    "results/by-case/CP-016-04/data-table-columns.api__CP-016-04_evidencia.png",
+    "results/by-case/CP-016-04/data-tables.ui__CP-016-04_encabezados.png"
+  ],
+  "CP-016-05": [
+    "results/by-case/CP-016-05/data-table-columns.api__CP-016-05_evidencia.png",
+    "results/by-case/CP-016-05/data-tables.ui__CP-016-05_mensaje_formato.png"
+  ],
+  "CP-016-06": [
+    "results/by-case/CP-016-06/data-table-columns.api__CP-016-06_evidencia.png"
+  ],
+  "CP-016-07": [
+    "results/by-case/CP-016-07/data-table-columns.api__CP-016-07_evidencia.png"
+  ],
+  "CP-017-01": [
+    "results/by-case/CP-017-01/data-table-rows.ui__CP-017-01_persistencia.png",
+    "results/by-case/CP-017-01/row-editing.api__CP-017-01_evidencia.png"
+  ],
+  "CP-017-02": [
+    "results/by-case/CP-017-02/row-editing.api__CP-017-02_evidencia.png"
+  ],
+  "CP-017-03": [
+    "results/by-case/CP-017-03/row-editing.api__CP-017-03_evidencia.png"
+  ],
+  "CP-017-04": [
+    "results/by-case/CP-017-04/row-editing.api__CP-017-04_evidencia.png"
+  ],
+  "CP-017-05": [
+    "results/by-case/CP-017-05/row-editing.api__CP-017-05_evidencia.png"
+  ],
+  "CP-017-06": [
+    "results/by-case/CP-017-06/data-table-rows.ui__CP-017-06_orden_ascendente.png",
+    "results/by-case/CP-017-06/row-editing.api__CP-017-06_evidencia.png"
+  ],
+  "CP-017-07": [
+    "results/by-case/CP-017-07/data-table-rows.ui__CP-017-07_busqueda.png",
+    "results/by-case/CP-017-07/row-editing.api__CP-017-07_evidencia.png"
+  ],
+  "CP-017-08": [
+    "results/by-case/CP-017-08/storage-limit.api__CP-017-08_evidencia.png"
+  ],
+  "CP-018-01": [
+    "results/by-case/CP-018-01/csv-import-export.api__CP-018-01_evidencia.png",
+    "results/by-case/CP-018-01/csv.ui__CP-018-01_tabla_importada.png",
+    "results/by-case/CP-018-01/csv.ui__CP-018-01_vista_previa.png"
+  ],
+  "CP-018-02": [
+    "results/by-case/CP-018-02/csv-import-export.api__CP-018-02_evidencia.png"
+  ],
+  "CP-018-03": [
+    "results/by-case/CP-018-03/csv-import-export.api__CP-018-03_evidencia.png"
+  ],
+  "CP-018-04": [
+    "results/by-case/CP-018-04/csv-import-export.api__CP-018-04_evidencia.png"
+  ],
+  "CP-018-05": [
+    "results/by-case/CP-018-05/csv-import-export.api__CP-018-05_evidencia.png"
+  ],
+  "CP-018-06": [
+    "results/by-case/CP-018-06/csv-import-export.api__CP-018-06_evidencia.png",
+    "results/by-case/CP-018-06/csv.ui__CP-018-06_descarga.png"
+  ],
+  "CP-018-07": [
+    "results/by-case/CP-018-07/csv-import-export.api__CP-018-07_evidencia.png"
+  ],
+  "CP-018-08": [
+    "results/by-case/CP-018-08/owasp__CP-018-08_evidencia.png"
+  ],
+  "CP-019-01": [
+    "results/by-case/CP-019-01/folders-create-navigate.api__CP-019-01_evidencia.png",
+    "results/by-case/CP-019-01/folders.ui__CP-019-01_tarjeta.png"
+  ],
+  "CP-019-02": [
+    "results/by-case/CP-019-02/folders-create-navigate.api__CP-019-02_evidencia.png"
+  ],
+  "CP-019-03": [
+    "results/by-case/CP-019-03/folders-create-navigate.api__CP-019-03_evidencia.png",
+    "results/by-case/CP-019-03/folders.ui__CP-019-03_06_navegacion.png"
+  ],
+  "CP-019-04": [
+    "results/by-case/CP-019-04/folders-create-navigate.api__CP-019-04_evidencia.png"
+  ],
+  "CP-019-05": [
+    "results/by-case/CP-019-05/folders.ui__CP-019-05_breadcrumbs.png"
+  ],
+  "CP-019-06": [
+    "results/by-case/CP-019-06/folders-create-navigate.api__CP-019-06_evidencia.png",
+    "results/by-case/CP-019-06/folders.ui__CP-019-06_conteos.png"
+  ],
+  "CP-020-01": [
+    "results/by-case/CP-020-01/folders-move-delete.api__CP-020-01_evidencia.png"
+  ],
+  "CP-020-02": [
+    "results/by-case/CP-020-02/folders-move-delete.api__CP-020-02_evidencia.png",
+    "results/by-case/CP-020-02/folders.ui__CP-020-02_movida.png"
+  ],
+  "CP-020-03": [
+    "results/by-case/CP-020-03/folders-move-delete.api__CP-020-03_evidencia.png"
+  ],
+  "CP-020-04": [
+    "results/by-case/CP-020-04/folders-move-delete.api__CP-020-04_evidencia.png",
+    "results/by-case/CP-020-04/folders.ui__CP-020-04_modal.png"
+  ],
+  "CP-020-05": [
+    "results/by-case/CP-020-05/folders-move-delete.api__CP-020-05_evidencia.png"
+  ],
+  "CP-CO-02-08": [
+    "results/by-case/CP-CO-02-08/data-table-node.api__CP-CO-02-08_evidencia.png"
+  ],
+  "CP-CO-03-04": [
+    "results/by-case/CP-CO-03-04/csv-encoding-size.api__CO-03 · CSV de Excel y archivo grande (API) -- CP-CO-03-04 · CSV exportad.png",
+    "results/by-case/CP-CO-03-04/csv-encoding-size.api__CP-CO-03-04_evidencia.png"
+  ],
+  "CP-CO-03-05": [
+    "results/by-case/CP-CO-03-05/csv-encoding-size.api__CP-CO-03-05_evidencia.png"
+  ],
+  "CP-CR-01-07": [
+    "results/by-case/CP-CR-01-07/encryption-at-rest.api__CP-CR-01-07_evidencia.png"
+  ],
+  "CP-CR-02-03": [
+    "results/by-case/CP-CR-02-03/secret-exposure.api__CP-CR-02-03_evidencia.png"
+  ],
+  "CP-CR-02-04": [
+    "results/by-case/CP-CR-02-04/secret-exposure.api__CP-CR-02-04_evidencia.png"
+  ],
+  "CP-CR-04-08": [
+    "results/by-case/CP-CR-04-08/credential-switch.api__CP-CR-04-08_evidencia.png",
+    "results/by-case/CP-CR-04-08/credential-switch.api__CP-CR-04-08_evidencia.png",
+    "results/by-case/CP-CR-04-08/credential-switch.api__CR-04 · Cambiar la credencial de un nodo (API) -- CP-CR-04-08 · la ejecuc.png"
+  ],
+  "CP-CR-05-02": [
+    "results/by-case/CP-CR-05-02/sort.ui__CP-CR-05-02_nombre_az.png",
+    "results/by-case/CP-CR-05-02/sort.ui__CP-CR-05-02_ultima_actualizacion.png"
+  ],
+  "CP-CR-05-05": [
+    "results/by-case/CP-CR-05-05/isolation.api__CP-CR-05-05_evidencia.png"
+  ],
+  "CP-EX-01-08": [
+    "results/by-case/CP-EX-01-08/many-executions.api__CP-EX-01-08_evidencia.png",
+    "results/by-case/CP-EX-01-08/many-executions.api__CP-EX-01-08_lista.png"
+  ],
+  "CP-EX-04-08": [
+    "results/by-case/CP-EX-04-08/concurrency-queue.api__CP-EX-04-08_evidencia.png",
+    "results/by-case/CP-EX-04-08/concurrency-queue.api__CP-EX-04-08_evidencia.png"
+  ],
+  "CP-WF-01-08": [
+    "results/by-case/CP-WF-01-08/large-workflow.ui__CP-WF-01-08_lienzo.png",
+    "results/by-case/CP-WF-01-08/large-workflow.ui__WF-01 · Workflow de 100 nodos (UI) -- CP-WF-01-08 · el lienzo con 100 nodos c.png"
+  ],
+  "CP-WF-03-02": [
+    "results/by-case/CP-WF-03-02/webhook-publish.api__CP-WF-03-02_evidencia.png"
+  ],
+  "CP-WF-03-04": [
+    "results/by-case/CP-WF-03-04/webhook-publish.api__CP-WF-03-04_evidencia.png"
+  ],
+  "CP-WF-03-08": [
+    "results/by-case/CP-WF-03-08/webhook-publish.api__CP-WF-03-08_evidencia.png"
+  ]
+}

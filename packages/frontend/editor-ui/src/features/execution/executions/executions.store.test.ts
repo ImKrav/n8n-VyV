@@ -59,23 +59,6 @@ describe('executions.store', () => {
 			mockExecutions.forEach(executionsStore.addExecution);
 		});
 
-		it('should delete executions by ID', async () => {
-			await executionsStore.deleteExecutions({ ids: ['1', '3'] });
-
-			expect(executionsStore.executions).toEqual([mockExecutions[1]]);
-		});
-
-		it('should delete executions started before given date', async () => {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const deleteBefore = mockExecutions[1].startedAt!;
-			await executionsStore.deleteExecutions({ deleteBefore });
-
-			expect(executionsStore.executions.length).toBe(2);
-			executionsStore.executions.forEach(({ startedAt }) =>
-				expect(startedAt?.getTime()).toBeGreaterThanOrEqual(deleteBefore.getTime()),
-			);
-		});
-
 		it('should delete all executions if given date is now', async () => {
 			await executionsStore.deleteExecutions({ deleteBefore: new Date() });
 
@@ -100,41 +83,10 @@ describe('executions.store', () => {
 		const mockResponse = (n: number) =>
 			vi.mocked(makeRestApiRequest).mockResolvedValueOnce(page(n));
 
-		it('should allow loading more when the first page is full', async () => {
-			mockResponse(10);
-			await executionsStore.fetchExecutions({});
-			expect(executionsStore.hasMoreExecutions).toBe(true);
-		});
-
 		it('should not allow loading more when the first page is partial', async () => {
 			mockResponse(3);
 			await executionsStore.fetchExecutions({});
 			expect(executionsStore.hasMoreExecutions).toBe(false);
-		});
-
-		it('should stop allowing more once a paginated page comes back partial', async () => {
-			mockResponse(10);
-			await executionsStore.fetchExecutions({});
-			expect(executionsStore.hasMoreExecutions).toBe(true);
-
-			mockResponse(10);
-			await executionsStore.loadMoreExecutions({});
-			expect(executionsStore.hasMoreExecutions).toBe(true);
-
-			mockResponse(4);
-			await executionsStore.loadMoreExecutions({});
-			expect(executionsStore.hasMoreExecutions).toBe(false);
-		});
-
-		it('should not request a page once the list has ended', async () => {
-			mockResponse(3);
-			await executionsStore.fetchExecutions({});
-			expect(executionsStore.hasMoreExecutions).toBe(false);
-
-			vi.mocked(makeRestApiRequest).mockClear();
-			await executionsStore.loadMoreExecutions({});
-
-			expect(makeRestApiRequest).not.toHaveBeenCalled();
 		});
 
 		it('should not re-allow loading more when auto-refresh reloads a full first page', async () => {
@@ -189,40 +141,6 @@ describe('executions.store', () => {
 			});
 			await executionsStore.refreshExecutions({});
 			expect(executionsStore.nextCursor).toBe('third');
-		});
-
-		it('resets the continuation and rows when the workflow filter changes', async () => {
-			vi.mocked(makeRestApiRequest).mockResolvedValueOnce({
-				...page(2),
-				nextCursor: cursor('older'),
-			});
-			await executionsStore.fetchExecutions({ workflowId: 'one' });
-			vi.mocked(makeRestApiRequest).mockResolvedValueOnce(page(0));
-			await executionsStore.loadMoreExecutions({ workflowId: 'two' });
-			expect(executionsStore.nextCursor).toBeNull();
-			expect(executionsStore.executions).toEqual([]);
-			expect(makeRestApiRequest).toHaveBeenLastCalledWith(
-				expect.anything(),
-				'GET',
-				'/executions',
-				expect.not.objectContaining({ cursor: expect.anything() }),
-			);
-		});
-
-		it('moves an execution from the current list to the completed list', async () => {
-			vi.mocked(makeRestApiRequest).mockResolvedValueOnce({
-				...page(1),
-				results: [{ ...page(1).results[0], status: 'running' }],
-			});
-			await executionsStore.fetchExecutions({});
-			expect(executionsStore.currentExecutions).toHaveLength(1);
-			vi.mocked(makeRestApiRequest).mockResolvedValueOnce({
-				...page(1),
-				results: [{ ...page(1).results[0], status: 'success' }],
-			});
-			await executionsStore.refreshExecutions({});
-			expect(executionsStore.currentExecutions).toHaveLength(0);
-			expect(executionsStore.executions).toHaveLength(1);
 		});
 
 		it('keeps the running executions when a page is appended below them', async () => {

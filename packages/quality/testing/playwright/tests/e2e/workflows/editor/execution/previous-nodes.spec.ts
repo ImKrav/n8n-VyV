@@ -4,7 +4,7 @@ import { test, expect } from '../../../../../fixtures/base';
 test.describe(
 	'Execute previous nodes',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test.fixme();

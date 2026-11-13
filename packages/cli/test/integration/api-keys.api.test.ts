@@ -1,7 +1,7 @@
 import type { ApiKeyWithRawValue } from '@n8n/api-types';
 import { testDb, randomValidPassword, mockInstance } from '@n8n/backend-test-utils';
 import { GlobalConfig } from '@n8n/config';
-import type { Person, User } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { ApiKeyRepository, GLOBAL_MEMBER_ROLE, GLOBAL_OWNER_ROLE } from '@n8n/db';
 import { Container } from '@n8n/di';
 import {
@@ -17,7 +17,6 @@ import {
 	createAdmin,
 	createMemberWithApiKey,
 	createOwnerWithApiKey,
-	createServiceAccountWithProject,
 	createUser,
 	createUserShell,
 } from './shared/db/users';
@@ -62,7 +61,7 @@ describe('When public API is disabled', () => {
 });
 
 describe('Owner shell', () => {
-	let ownerShell: Person;
+	let ownerShell: User;
 
 	beforeEach(async () => {
 		ownerShell = await createUserShell(GLOBAL_OWNER_ROLE);
@@ -325,8 +324,7 @@ describe('Owner shell', () => {
 			id: ownerShell.id,
 			firstName: ownerShell.firstName ?? null,
 			lastName: ownerShell.lastName ?? null,
-			// The owner shell has no email yet. The response type needs a string.
-			email: ownerShell.email ?? '',
+			email: ownerShell.email,
 		};
 
 		expect(retrieveAllApiKeysResponse.body.data.counts.all).toBe(2);
@@ -391,7 +389,7 @@ describe('Owner shell', () => {
 
 describe('Member', () => {
 	const memberPassword = randomValidPassword();
-	let member: Person;
+	let member: User;
 
 	beforeEach(async () => {
 		member = await createUser({
@@ -834,23 +832,6 @@ describe('Cross-user behavior (admin scope)', () => {
 			expect.arrayContaining([
 				expect.objectContaining({ id: ownerWithKey.id, keyCount: 1 }),
 				expect.objectContaining({ id: memberWithKey.id, keyCount: 1 }),
-			]),
-		);
-	});
-
-	test('GET /api-keys names a service account owner in the owner list', async () => {
-		const ownerWithKey = await createOwnerWithApiKey();
-		const serviceAccount = await createServiceAccountWithProject(GLOBAL_MEMBER_ROLE, 'Deploy bot');
-		await addApiKey(serviceAccount);
-
-		const response = await testServer
-			.authAgentFor(ownerWithKey)
-			.get('/api-keys?ownership=all')
-			.expect(200);
-
-		expect(response.body.data.owners).toEqual(
-			expect.arrayContaining([
-				{ id: serviceAccount.id, firstName: 'Deploy bot', lastName: null, email: '', keyCount: 1 },
 			]),
 		);
 	});

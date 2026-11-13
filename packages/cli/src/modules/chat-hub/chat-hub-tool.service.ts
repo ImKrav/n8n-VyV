@@ -6,11 +6,11 @@ import type {
 import { Logger } from '@n8n/backend-common';
 import { EntityManager, withTransaction, type User } from '@n8n/db';
 import { Service } from '@n8n/di';
-import type { ExpressionViolation, INode } from 'n8n-workflow';
+import type { INode } from 'n8n-workflow';
 import { collectExpressionDefaults, findDisallowedChatToolExpressions } from 'n8n-workflow';
 
 import { BadRequestError, NotFoundError } from '@n8n/errors';
-import { NodeTypesProviderMissingError, NodeTypesProxy } from '@n8n/backend-services';
+import { NodeTypes } from '@/node-types';
 import { DeprecatedNodesValidationService } from '@/workflows/deprecated-nodes-validation.service';
 
 import type { ChatHubTool } from './chat-hub-tool.entity';
@@ -21,7 +21,7 @@ export class ChatHubToolService {
 	constructor(
 		private readonly logger: Logger,
 		private readonly chatToolRepository: ChatHubToolRepository,
-		private readonly nodeTypes: NodeTypesProxy,
+		private readonly nodeTypes: NodeTypes,
 		private readonly deprecatedNodesValidationService: DeprecatedNodesValidationService,
 	) {
 		this.logger = this.logger.scoped('chat-hub');
@@ -35,39 +35,14 @@ export class ChatHubToolService {
 		return await this.chatToolRepository.getEnabledByUserId(userId, trx);
 	}
 
-	async getEnabledToolDefinitions(userId: string, trx?: EntityManager): Promise<INode[]> {
-		const tools = await this.chatToolRepository.getEnabledByUserId(userId, trx);
-		return this.toRunnableDefinitions(tools);
-	}
-
 	async getToolDefinitionsForSession(sessionId: string, trx?: EntityManager): Promise<INode[]> {
 		const tools = await this.chatToolRepository.getToolsForSession(sessionId, trx);
-		return this.toRunnableDefinitions(tools);
+		return tools.map((t) => t.definition);
 	}
 
 	async getToolDefinitionsForAgent(agentId: string, trx?: EntityManager): Promise<INode[]> {
 		const tools = await this.chatToolRepository.getToolsForAgent(agentId, trx);
-		return this.toRunnableDefinitions(tools);
-	}
-
-	/**
-	 * Skips stored tools that do not pass the current expression rules. Tools saved
-	 * before a rule change are otherwise run as stored. Editing or enabling a skipped
-	 * tool validates it again.
-	 */
-	private toRunnableDefinitions(tools: ChatHubTool[]): INode[] {
-		return tools
-			.filter((tool) => {
-				const violations = this.findExpressionViolations(tool.definition);
-				if (violations.length === 0) return true;
-
-				this.logger.warn('Skipping chat hub tool with unsupported expressions', {
-					toolId: tool.id,
-					paths: violations.map((v) => v.path),
-				});
-				return false;
-			})
-			.map((tool) => tool.definition);
+		return tools.map((t) => t.definition);
 	}
 
 	async getToolIdsForSession(sessionId: string, trx?: EntityManager): Promise<string[]> {
@@ -115,22 +90,21 @@ export class ChatHubToolService {
 		}
 	}
 
-	private findExpressionViolations(definition: INode): ExpressionViolation[] {
+	private validateToolExpressions(definition: INode) {
 		let allowedExpressions: Set<string> | undefined;
 
 		try {
 			const nodeType = this.nodeTypes.getByNameAndVersion(definition.type, definition.typeVersion);
 			allowedExpressions = collectExpressionDefaults(nodeType.description.properties);
-		} catch (error) {
-			if (error instanceof NodeTypesProviderMissingError) throw error;
+		} catch {
 			// If node type lookup fails assume no allowed expressions
 		}
 
-		return findDisallowedChatToolExpressions(definition.parameters, '', allowedExpressions);
-	}
-
-	private validateToolExpressions(definition: INode) {
-		const violations = this.findExpressionViolations(definition);
+		const violations = findDisallowedChatToolExpressions(
+			definition.parameters,
+			'',
+			allowedExpressions,
+		);
 		if (violations.length > 0) {
 			const paths = violations.map((v) => v.path).join(', ');
 			throw new BadRequestError(
@@ -186,9 +160,9 @@ export class ChatHubToolService {
 			}
 			if (updates.enabled !== undefined) {
 				if (updates.enabled) {
-					const definition = updates.definition ?? existingTool.definition;
-					this.validateToolExpressions(definition);
-					this.deprecatedNodesValidationService.validateOnCreate([definition]);
+					this.deprecatedNodesValidationService.validateOnCreate([
+						updates.definition ?? existingTool.definition,
+					]);
 				}
 				updateData.enabled = updates.enabled;
 			}

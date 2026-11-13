@@ -14,7 +14,6 @@ import {
 	type SupplyData,
 } from 'n8n-workflow';
 
-import { getRequiredApiKey } from '@utils/helpers';
 import { MODEL_SELECTION_HINT } from '@utils/model-builder-hints';
 
 import type { OpenAICompatibleCredential } from '../../../types/types';
@@ -295,7 +294,7 @@ export class LmChatXAiGrok implements INodeType {
 		const { reasoning, priority, ...restOptions } = options;
 
 		const model = new ChatOpenAI({
-			apiKey: getRequiredApiKey(this.getNode(), credentials.apiKey),
+			apiKey: credentials.apiKey,
 			model: modelName,
 			...restOptions,
 			timeout,

@@ -681,6 +681,14 @@ export class InstanceAiController {
 		return await this.preferenceCardService.edit(req.user, threadId, preferenceId, payload);
 	}
 
+	// ── User preferences (per-user, self-service) ──────────────────────────
+
+	@Get('/preferences')
+	@GlobalScope('instanceAi:message')
+	async getUserPreferences(req: AuthenticatedRequest) {
+		return await this.settingsService.getUserPreferences(req.user);
+	}
+
 	@Get('/threads')
 	@GlobalScope('instanceAi:message')
 	async listThreads(req: AuthenticatedRequest) {
@@ -881,7 +889,7 @@ export class InstanceAiController {
 
 		const result = await this.memoryService.getRichMessages(req.user.id, threadId, {
 			limit: query.limit,
-			cursor: query.cursor,
+			page: query.page,
 			excludeRunIds: excludeRunIds.length > 0 ? excludeRunIds : undefined,
 			excludeMessageGroupIds:
 				excludeMessageGroupIds.length > 0 ? excludeMessageGroupIds : undefined,

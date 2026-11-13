@@ -20,11 +20,13 @@ import { OwnershipService } from '@/services/ownership.service';
 
 import {
 	SOURCE_CONTROL_DEFAULT_BRANCH,
+	SOURCE_CONTROL_DEFAULT_EMAIL,
+	SOURCE_CONTROL_DEFAULT_NAME,
 	SOURCE_CONTROL_MANAGED_DIRECTORIES,
 	SOURCE_CONTROL_MANAGED_PATHS,
 	SOURCE_CONTROL_ORIGIN,
 } from './constants';
-import { gitAuthor, sourceControlFoldersExistCheck } from './source-control-helper.ee';
+import { sourceControlFoldersExistCheck } from './source-control-helper.ee';
 import { SourceControlPreferencesService } from './source-control-preferences.service.ee';
 import type { SourceControlPreferences } from './types/source-control-preferences';
 
@@ -237,8 +239,12 @@ export class SourceControlGitService {
 				throw error;
 			}
 		}
-		const author = gitAuthor(user);
-		await this.setGitUserDetails(author.name, author.email);
+		await this.setGitUserDetails(
+			user.firstName && user.lastName
+				? `${user.firstName} ${user.lastName}`
+				: SOURCE_CONTROL_DEFAULT_NAME,
+			user.email ?? SOURCE_CONTROL_DEFAULT_EMAIL,
+		);
 
 		await this.trackRemoteIfReady(branchName, options?.tolerateTrackingFetchFailure);
 

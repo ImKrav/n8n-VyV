@@ -50,10 +50,10 @@ export class ExportPackageRequestDto extends Z.class(
 			.optional()
 			.default('expression-values-only')
 			.openapi(exportPackageRequestFieldDocs.credentialExportPolicy),
-		includeArchived: z
+		includeArchivedWorkflows: z
 			.boolean()
 			.default(false)
-			.openapi(exportPackageRequestFieldDocs.includeArchived),
+			.openapi(exportPackageRequestFieldDocs.includeArchivedWorkflows),
 	},
 	{ strict: true },
 ) {}

@@ -3,12 +3,7 @@ import { EventService } from '@n8n/backend-services';
 import { GlobalConfig } from '@n8n/config';
 import { Time } from '@n8n/constants';
 import { ExecutionRepository } from '@n8n/db';
-import {
-	HIGHEST_SHUTDOWN_PRIORITY,
-	OnLeaderStepdown,
-	OnLeaderTakeover,
-	OnShutdown,
-} from '@n8n/decorators';
+import { OnLeaderStepdown, OnLeaderTakeover, OnShutdown } from '@n8n/decorators';
 import { Container, Service } from '@n8n/di';
 import { decodeBufferBody, ErrorReporter, InstanceSettings } from 'n8n-core';
 import { ensureError } from '@n8n/utils/errors/ensure-error';
@@ -19,6 +14,7 @@ import type { IRun } from 'n8n-workflow';
 import assert, { strict } from 'node:assert';
 
 import { ActiveExecutions } from '@/active-executions';
+import { HIGHEST_SHUTDOWN_PRIORITY } from '@/constants';
 import { ExecutionCrashService } from '@/executions/execution-crash.service';
 import { ExecutionPersistence } from '@/executions/execution-persistence';
 import { assertNever } from '@/utils';
@@ -39,7 +35,6 @@ import type {
 	QueueRecoveryContext,
 	JobMessage,
 	JobFailedMessage,
-	JobFinishedMessage,
 } from './scaling.types';
 import { WebhookResponseRelay } from './webhook-response-relay';
 
@@ -150,7 +145,7 @@ export class ScalingService {
 		const { McpServer, QueuedExecutionStrategy, RedisSessionStore } = await import(
 			'@n8n/n8n-nodes-langchain/mcp/core'
 		);
-		const { Publisher } = await import('@n8n/backend-services');
+		const { Publisher } = await import('@/scaling/pubsub/publisher.service.js');
 
 		const publisher = Container.get(Publisher);
 
@@ -557,12 +552,7 @@ export class ScalingService {
 			if (!this.isJobMessage(msg)) return;
 
 			if (msg.kind === 'abort-job') this.jobProcessor.stopJob(jobId);
-			// A worker can also wait for a job it enqueued
-			else if (msg.kind === 'job-finished') this.recordJobFinished(queue.name, jobId, msg);
-			else if (msg.kind === 'job-failed') this.recordJobFailed(queue.name, jobId, msg);
 		});
-
-		this.registerBullOutcomeListeners(queue);
 
 		queue.on('error', (error: Error) => {
 			if ('code' in error && error.code === 'ECONNREFUSED') return; // handled by RedisClientService.retryStrategy
@@ -622,7 +612,37 @@ export class ScalingService {
 						});
 					}
 
-					this.recordJobFinished(queue.name, jobId, msg);
+					/**
+					 * We track the result received via `job-finished` message,
+					 * because `removeOnComplete: true` prevents `job.finished()`
+					 * from returning a value that is no longer in Redis.
+					 *
+					 * A v1 message from an older worker carries no result, but it
+					 * still ends the wait for the job.
+					 */
+					this.jobOutcomeTracker.recordFinished(
+						queue.name,
+						jobId,
+						msg.executionId,
+						msg.version === 2
+							? {
+									success: msg.success,
+									error: msg.error,
+									status: msg.status,
+									lastNodeExecuted: msg.lastNodeExecuted,
+									usedDynamicCredentials: msg.usedDynamicCredentials,
+									metadata: msg.metadata,
+									...(msg.failedBeforeStart && { failedBeforeStart: true }),
+									startedAt: new Date(msg.startedAt),
+									stoppedAt: new Date(msg.stoppedAt),
+									// Dropping `waitTill` here makes main mistake a waiting execution
+									// for a finished one and delete it when the workflow does not
+									// save successful executions
+									waitTill: msg.waitTill ? new Date(msg.waitTill) : null,
+									nodeTimeSavedMinutes: msg.nodeTimeSavedMinutes,
+								}
+							: undefined,
+					);
 
 					this.logger.info(`Execution ${msg.executionId} (job ${jobId}) finished`, {
 						workerId: msg.workerId,
@@ -645,7 +665,13 @@ export class ScalingService {
 						},
 					);
 
-					this.recordJobFailed(queue.name, jobId, msg);
+					// The worker already reported the underlying error, so this copy is only a handled signal
+					this.jobOutcomeTracker.recordFailed(
+						queue.name,
+						jobId,
+						msg.executionId,
+						new OperationalError(msg.errorMsg),
+					);
 					break;
 				case 'abort-job':
 					break; // only for worker
@@ -665,55 +691,6 @@ export class ScalingService {
 			}
 		});
 
-		this.registerBullOutcomeListeners(queue);
-
-		if (this.isQueueMetricsEnabled) {
-			queue.on('global:completed', () => this.jobCounters.completed++);
-			queue.on('global:failed', () => this.jobCounters.failed++);
-		}
-	}
-
-	/**
-	 * Record the outcome of a `job-finished` message. A v1 message from an
-	 * older worker carries no result, but it still ends the wait for the job.
-	 */
-	private recordJobFinished(queueName: string, jobId: JobId, msg: JobFinishedMessage) {
-		this.jobOutcomeTracker.recordFinished(
-			queueName,
-			jobId,
-			msg.executionId,
-			msg.version === 2
-				? {
-						success: msg.success,
-						error: msg.error,
-						status: msg.status,
-						lastNodeExecuted: msg.lastNodeExecuted,
-						usedDynamicCredentials: msg.usedDynamicCredentials,
-						metadata: msg.metadata,
-						...(msg.failedBeforeStart && { failedBeforeStart: true }),
-						startedAt: new Date(msg.startedAt),
-						stoppedAt: new Date(msg.stoppedAt),
-						// Dropping `waitTill` here makes the caller mistake a waiting execution
-						// for a finished one and delete it when the workflow does not
-						// save successful executions
-						waitTill: msg.waitTill ? new Date(msg.waitTill) : null,
-						nodeTimeSavedMinutes: msg.nodeTimeSavedMinutes,
-					}
-				: undefined,
-		);
-	}
-
-	private recordJobFailed(queueName: string, jobId: JobId, msg: JobFailedMessage) {
-		// The worker already reported the underlying error, so this copy is only a handled signal
-		this.jobOutcomeTracker.recordFailed(
-			queueName,
-			jobId,
-			msg.executionId,
-			new OperationalError(msg.errorMsg),
-		);
-	}
-
-	private registerBullOutcomeListeners(queue: JobQueue) {
 		// Failures such as a stall are reported only by Bull, not by the worker
 		queue.on('global:failed', (jobId: JobId, failedReason: string) => {
 			this.jobOutcomeTracker.settleByJobKey(queue.name, jobId, new OperationalError(failedReason));
@@ -721,6 +698,11 @@ export class ScalingService {
 		queue.on('global:completed', (jobId: JobId) => {
 			this.jobOutcomeTracker.settleByJobKey(queue.name, jobId);
 		});
+
+		if (this.isQueueMetricsEnabled) {
+			queue.on('global:completed', () => this.jobCounters.completed++);
+			queue.on('global:failed', () => this.jobCounters.failed++);
+		}
 	}
 
 	/** Whether the argument is a message sent via Bull's internal pubsub setup. */

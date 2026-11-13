@@ -10,8 +10,7 @@ import type {
 	IHttpRequestMethods,
 	IRequestOptions,
 } from 'n8n-workflow';
-import { NodeApiError } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { NodeApiError, UserError } from 'n8n-workflow';
 
 import type { Filter, Address, Search, FilterGroup, ProductAttribute } from './types';
 

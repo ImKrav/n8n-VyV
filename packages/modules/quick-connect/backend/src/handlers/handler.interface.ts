@@ -1,4 +1,4 @@
-import type { Person } from '@n8n/db';
+import type { User } from '@n8n/db';
 
 import type { QuickConnectOption } from '../quick-connect.config';
 
@@ -15,10 +15,10 @@ export interface IQuickConnectHandler<ConfigOption = QuickConnectOption> {
 	/**
 	 * Fetches api key from the third-party service.
 	 * Used only for backend-based Quick connect flows.
-	 * @param person - The person requesting the credential. The third party knows them by email.
+	 * @param user - The user requesting the credential
 	 * @returns The credential data
 	 */
-	getCredentialData(person: Person): Promise<{ apiKey: string }>;
+	getCredentialData(user: User): Promise<{ apiKey: string }>;
 }
 
 export type IQuickConnectHandlerOption<Handler> = Handler extends IQuickConnectHandler<infer Option>

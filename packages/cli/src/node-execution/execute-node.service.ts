@@ -25,10 +25,7 @@ import {
 	getExecutionRedaction,
 	loadExecutionForViewer,
 } from '@/executions/execution-viewer-reader';
-import {
-	findCredentialRefusal,
-	findOwnAccessCredentialRefusal,
-} from '@/executions/pre-execution-checks';
+import { findCredentialRefusal } from '@/executions/pre-execution-checks';
 import { NodeTypes } from '@/node-types';
 import { WorkflowRunner } from '@/workflow-runner';
 import { DeprecatedNodesValidationService } from '@/workflows/deprecated-nodes-validation.service';
@@ -128,11 +125,7 @@ export class ExecuteNodeService {
 
 		const workflow = await this.createTemporaryWorkflow(request.projectId, node, timeoutMs);
 		try {
-			// The project check lets an Owner or Admin use any personal credential in
-			// their personal project, but redaction would hide the result of such a run.
-			const refusal =
-				(await findCredentialRefusal(workflow.id, [node], user.id)) ??
-				(await findOwnAccessCredentialRefusal([node], user.id));
+			const refusal = await findCredentialRefusal(workflow.id, [node], user.id);
 			if (refusal) {
 				const { message, description } = refusal;
 				return { status: 'error', error: { message, description, refused: true } };

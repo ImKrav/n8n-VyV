@@ -1,0 +1,62 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.mts:28:29). Use `import.meta.dirname` instead
+  - import "../@n8n/design-system/src/icons/lucide/vite" without a file extension (vite.config.mts:12:35). Add the file extension
+  - import "./vite/i18n-locales-hmr-helpers" without a file extension (vite.config.mts:15:48). Add the file extension
+  - import "../../@n8n/constants/src/csp" without a file extension (vite.config.mts:20:40). Add the file extension
+  - ESM syntax in a file loaded as CommonJS (../../@n8n/constants/src/csp.ts:6:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - import "./bucket" without a file extension (../@n8n/design-system/src/icons/lucide/vite.ts:5:46). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/frontend/editor-ui
+
+ ❯ ../../../qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts (5 tests | 2 failed) 27ms
+   ❯ EX-02 executionFilterToQueryFilter() · rango de fechas (5)
+     ✓ mantiene un rango válido sin cambios 7ms
+     × normaliza un rango invertido (fin anterior al inicio) 10ms
+     × normaliza un rango invertido cuando el date picker entrega objetos Date 2ms
+     ✓ acepta un solo extremo del rango sin inventar el otro 3ms
+     ✓ no añade fechas cuando el filtro no tiene rango 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../../qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts > EX-02 executionFilterToQueryFilter() · rango de fechas > normaliza un rango invertido (fin anterior al inicio)
+AssertionError: expected '2026-01-31T23:59:59.000Z' to be '2026-01-01T00:00:00.000Z' // Object.is equality
+
+Expected: "2026-01-01T00:00:00.000Z"
+Received: "2026-01-31T23:59:59.000Z"
+
+ ❯ ../../../qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts:45:30
+     43|
+     44|   // Assert
+     45|   expect(query.startedAfter).toBe(EARLIER);
+       |                              ^
+     46|   expect(query.startedBefore).toBe(LATER);
+     47|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  ../../../qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts > EX-02 executionFilterToQueryFilter() · rango de fechas > normaliza un rango invertido cuando el date picker entrega objetos Date
+AssertionError: expected '2026-01-31T23:59:59.000Z' to be '2026-01-01T00:00:00.000Z' // Object.is equality
+
+Expected: "2026-01-01T00:00:00.000Z"
+Received: "2026-01-31T23:59:59.000Z"
+
+ ❯ ../../../qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts:60:64
+     58|
+     59|   // Assert
+     60|   expect(new Date(query.startedAfter as string).toISOString()).toBe(EA…
+       |                                                                ^
+     61|   expect(new Date(query.startedBefore as string).toISOString()).toBe(L…
+     62|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  03:07:49
+   Duration  15.30s (transform 79%, import 16%, setup 3%, environment 2%)
+
+  Transform  transforming modules took 11.97s · 79% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns

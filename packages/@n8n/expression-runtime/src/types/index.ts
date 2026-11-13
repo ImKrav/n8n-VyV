@@ -30,6 +30,4 @@ export {
 	TimeoutError,
 	SecurityViolationError,
 	SyntaxError,
-	HostCallError,
-	RuntimeRestartingError,
 } from './evaluator';

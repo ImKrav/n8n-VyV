@@ -5,7 +5,7 @@ import { test, expect } from '../../../fixtures/base';
 test.describe(
 	'HTTP Request credential picker with mismatched credentials object',
 	{
-		annotation: [{ type: 'owner', description: 'Identity & Access' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('should show saved credentials when nodeCredentialType matches despite mismatched credentials object', async ({

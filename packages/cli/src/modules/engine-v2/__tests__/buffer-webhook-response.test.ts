@@ -13,10 +13,9 @@ import { mock } from 'vitest-mock-extended';
 import { createExecutionIdV2 } from '@/executions/execution-id';
 import { EngineV2WebhookResponseRegistry } from '@/modules/engine-v2/webhook-response/webhook-response-registry.service';
 
-import { createExecutionResponseCodec } from '../execution-channel/execution-response-frame';
-import { ExecutionChannelReceiver } from '../execution-channel/execution-channel-receiver';
-import { ExecutionChannelSender } from '../execution-channel/execution-channel-sender';
-import { createInMemoryExecutionChannel } from '../execution-channel/in-memory-execution-channel';
+import { InMemoryExecutionResponseChannel } from '../response-channel/in-memory-execution-response-channel';
+import { InMemoryExecutionResponseReceiver } from '../response-channel/in-memory-execution-response-receiver';
+import { InMemoryExecutionResponseSender } from '../response-channel/in-memory-execution-response-sender';
 
 /**
  * Runs `sendResponse` through the real hook, sender, receiver and registry.
@@ -28,16 +27,9 @@ describe('a Buffer webhook response through the response channel', () => {
 	const headers = { 'content-type': 'image/png', 'content-length': bytes.length };
 
 	const buildPath = async (expectation: ResponseExpectation = { kind: 'stepResponse' }) => {
-		const { publisher, subscriber } = createInMemoryExecutionChannel();
-		const sender = new ExecutionChannelSender(
-			publisher,
-			createExecutionResponseCodec(mockLogger()),
-		);
-		const receiver = new ExecutionChannelReceiver(
-			subscriber,
-			createExecutionResponseCodec(mockLogger()),
-			mockLogger(),
-		);
+		const channel = new InMemoryExecutionResponseChannel();
+		const sender = new InMemoryExecutionResponseSender(channel, mockLogger());
+		const receiver = new InMemoryExecutionResponseReceiver(channel, mockLogger());
 
 		const registry = new EngineV2WebhookResponseRegistry(
 			mock<EngineConfig>({ webhookResponseTimeout: 50_000 }),
@@ -62,7 +54,7 @@ describe('a Buffer webhook response through the response channel', () => {
 			respond: createResponseEmitter(sender, { id: executionId, responseExpectation: expectation }),
 		} as unknown as StepExecutionRequest);
 
-		return { additionalData, pending, publish: vi.spyOn(publisher, 'publish') };
+		return { additionalData, pending, publish: vi.spyOn(channel, 'publish') };
 	};
 
 	it('delivers the original bytes, headers and status code to the control plane', async () => {

@@ -4,10 +4,6 @@ import { z } from 'zod';
 
 import { dataTableColumnTypeSchema } from '../../schemas/data-table.schema';
 import { projectIconSchema } from '../../schemas/project.schema';
-import {
-	dataTableUnresolvedKindSchema,
-	tagUnresolvedKindSchema,
-} from '../packages/import-blocking-issue.schema';
 import { variableTypeSchema, variableValueSchema } from '../variables/base.dto';
 
 const sourceId = z.string().min(1);
@@ -40,39 +36,31 @@ export const promotionVariableScopeSchema = z.discriminatedUnion('kind', [
 	z.object({ kind: z.literal('project'), project: promotionBindingProjectSchema }),
 ]);
 
-/**
- * The package reader keeps an expression for each leaf. It also keeps a plain value of a field
- * that decides which other fields show, such as a toggle or an auth type.
- */
+/** The package reader validates that each leaf is an expression. */
 export type PromotionCredentialExpressionValue =
 	| string
-	| boolean
 	| PromotionCredentialExpressionValue[]
 	| { [key: string]: PromotionCredentialExpressionValue };
 
 const expressionValueComponentName = 'PromotionCredentialExpressionValue';
-export const promotionCredentialExpressionValueRef = {
-	$ref: `#/components/schemas/${expressionValueComponentName}`,
-};
+const expressionValueRef = { $ref: `#/components/schemas/${expressionValueComponentName}` };
 
 // Describe recursive branches explicitly because the OpenAPI generator cannot inspect z.lazy.
 const promotionCredentialExpressionValueSchema: z.ZodType<PromotionCredentialExpressionValue> = z
 	.union([
 		z.string(),
-		z.boolean(),
 		z.array(z.lazy(() => promotionCredentialExpressionValueSchema)).openapi({
 			type: 'array',
-			items: promotionCredentialExpressionValueRef,
+			items: expressionValueRef,
 		}),
 		z.record(z.lazy(() => promotionCredentialExpressionValueSchema)).openapi({
 			type: 'object',
-			additionalProperties: promotionCredentialExpressionValueRef,
+			additionalProperties: expressionValueRef,
 		}),
 	])
 	.openapi(expressionValueComponentName, {
 		description:
-			'Values can be strings, booleans, arrays, or nested objects. A string leaf is an expression, ' +
-			'except the plain value of a field that decides which other fields show.',
+			'Values can be strings, arrays, or nested objects. Every leaf is an expression string.',
 	});
 
 export const promotionCredentialExpressionDataSchema = z
@@ -231,8 +219,7 @@ export const promotionBindingConflictSchema = z.discriminatedUnion('code', [
 		code: z.literal('data-table-conflict'),
 		id: sourceId.optional(),
 		name: z.string().optional(),
-		/** The import's cause. The UI shows a message for each cause. */
-		reason: dataTableUnresolvedKindSchema,
+		reason: z.string(),
 		consumers: consumersSchema,
 	}),
 	z.object({
@@ -240,8 +227,7 @@ export const promotionBindingConflictSchema = z.discriminatedUnion('code', [
 		code: z.literal('tag-conflict'),
 		id: sourceId.optional(),
 		name: z.string().optional(),
-		/** The import's cause. The UI shows a message for each cause. */
-		reason: tagUnresolvedKindSchema,
+		reason: z.string(),
 		consumers: consumersSchema,
 	}),
 	/** Stops every workflow of the project. */
@@ -271,26 +257,23 @@ export const promotionBindingWarningSchema = z.object({
  * This result does not certify a complete mirror or authorize later writes.
  * Callers must enforce the permissions for their endpoint.
  */
-export const promotionApplyCheckSchema = z
-	.object({
-		missingProjects: z.array(promotionMissingProjectSchema).openapi({
-			description:
-				'Projects in the package that do not exist on this instance. ' +
-				'The check keeps their metadata without checking project creation rules. ' +
-				'The project creation API can reject invalid values.',
-		}),
-		missingBindings: z.array(
-			z.discriminatedUnion('kind', [
-				promotionMissingCredentialBindingSchema,
-				promotionMissingVariableBindingSchema,
-			]),
-		),
-		accessRequirements: z.array(promotionBindingAccessRequirementSchema),
-		conflicts: z.array(promotionBindingConflictSchema),
-		warnings: z.array(promotionBindingWarningSchema),
-	})
-	// One component for the Apply results and the Apply preview.
-	.openapi('PromotionApplyCheck');
+export const promotionApplyCheckSchema = z.object({
+	missingProjects: z.array(promotionMissingProjectSchema).openapi({
+		description:
+			'Projects in the package that do not exist on this instance. ' +
+			'The check keeps their metadata without checking project creation rules. ' +
+			'The project creation API can reject invalid values.',
+	}),
+	missingBindings: z.array(
+		z.discriminatedUnion('kind', [
+			promotionMissingCredentialBindingSchema,
+			promotionMissingVariableBindingSchema,
+		]),
+	),
+	accessRequirements: z.array(promotionBindingAccessRequirementSchema),
+	conflicts: z.array(promotionBindingConflictSchema),
+	warnings: z.array(promotionBindingWarningSchema),
+});
 
 /** The Apply check of the preview, with the moves between projects as separate lists. */
 export const promotionPreviewCheckSchema = promotionApplyCheckSchema.extend({

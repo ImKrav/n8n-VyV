@@ -1,7 +1,6 @@
 import '../../openapi-extend';
 import { z } from 'zod';
 
-import type { DependencyType } from '../../schemas/dependency.schema';
 import { Z } from '../../zod-class';
 import { publicApiPaginationSchema } from '../pagination/pagination.dto';
 
@@ -16,17 +15,6 @@ export const dependencyPublicTypes = [
 ] as const;
 
 export type DependencyPublicType = (typeof dependencyPublicTypes)[number];
-
-/** Maps the internal dependency type to the name that external clients see. */
-export const DEPENDENCY_PUBLIC_TYPES: Record<DependencyType, DependencyPublicType> = {
-	agentUsage: 'agent',
-	credentialId: 'credential',
-	dataTableId: 'dataTable',
-	errorWorkflow: 'errorWorkflow',
-	errorWorkflowParent: 'errorWorkflowParent',
-	workflowCall: 'subWorkflow',
-	workflowParent: 'parentWorkflow',
-};
 
 const dependencyPublicSchema = z.object({
 	type: z.enum(dependencyPublicTypes).openapi({

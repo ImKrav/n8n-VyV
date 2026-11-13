@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 import { byName } from '../request';
 import type { ProviderModel } from '../types';

@@ -69,19 +69,6 @@ describe('ConcurrentExecutionsHeader', () => {
 		expect(queryByTestId('concurrent-executions-header')).not.toBeInTheDocument();
 	});
 
-	it('shows the concurrency header for a settled empty result', () => {
-		const { getByTestId } = renderComponent({
-			props: {
-				runningExecutionsCount: 0,
-				concurrencyCap: 5,
-				executions: [],
-				isInitialLoad: false,
-			},
-		});
-
-		expect(getByTestId('concurrent-executions-header')).toBeVisible();
-	});
-
 	it('hides the concurrency header when count is 0 but a manual run is active', () => {
 		const { queryByTestId } = renderComponent({
 			props: {

@@ -24,7 +24,7 @@ test.use({
 test.describe(
 	'Poll Trigger cursor (unmigrated)',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('should advance the cursor in the workflow static data', async ({ api, services }) => {

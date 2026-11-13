@@ -42,7 +42,6 @@ const config = (
 			authentication: { type: 'oauth2', ...authentication },
 			surfaces: { 'public-api': {} },
 		}),
-		{ managedBy },
 	);
 
 describe('TrustedSourceMetadataSchema', () => {

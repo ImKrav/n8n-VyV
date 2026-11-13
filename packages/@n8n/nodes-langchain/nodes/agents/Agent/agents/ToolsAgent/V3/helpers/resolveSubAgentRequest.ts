@@ -8,7 +8,7 @@ import type {
 	INodeExecutionData,
 	ISupplyDataFunctions,
 } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
 import { getTools } from '../../common';
 

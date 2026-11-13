@@ -1,8 +1,9 @@
 import type { User } from '@n8n/db';
 import { toEngineConnections, toGroupValidationNodes } from '@n8n/workflow-sdk';
-import { validateWorkflowGroups, type INodeTypes } from 'n8n-workflow';
+import { validateWorkflowGroups } from 'n8n-workflow';
 import z from 'zod';
 
+import type { NodeTypes } from '@/node-types';
 import type { Telemetry } from '@/telemetry';
 import { makeGetNodeTypeForGrouping } from '@/workflow-helpers';
 
@@ -54,7 +55,7 @@ const outputSchema = {
 export const createValidateWorkflowCodeTool = (
 	user: User,
 	telemetry: Telemetry,
-	nodeTypes: INodeTypes,
+	nodeTypes: NodeTypes,
 ): ToolDefinition<typeof inputSchema> => ({
 	name: CODE_BUILDER_VALIDATE_TOOL.toolName,
 	config: {

@@ -20,7 +20,7 @@ test.use(durableScheduleTestConfig);
 test.describe(
 	'Schedule Trigger (durable scheduler)',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('should fire an activated Schedule Trigger through the durable scheduler', async ({

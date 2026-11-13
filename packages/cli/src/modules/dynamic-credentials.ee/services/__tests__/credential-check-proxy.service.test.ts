@@ -11,7 +11,8 @@ import type {
 
 import type { CredentialTypes } from '@/credential-types';
 import type { EnterpriseCredentialsService } from '@/credentials/credentials.service.ee';
-import type { UrlService, NodeTypesProxy } from '@n8n/backend-services';
+import type { NodeTypes } from '@/node-types';
+import type { UrlService } from '@n8n/backend-services';
 import type { ExecutionContextService } from 'n8n-core';
 import { CredentialsEntity } from '@n8n/db';
 
@@ -49,7 +50,7 @@ describe('CredentialCheckProxyService', () => {
 	let mockDynamicCredentialService: Mocked<DynamicCredentialService>;
 	let mockUrlService: Mocked<UrlService>;
 	let mockCredentialTypes: Mocked<CredentialTypes>;
-	let mockNodeTypes: Mocked<NodeTypesProxy>;
+	let mockNodeTypes: Mocked<NodeTypes>;
 
 	const executionContext: IExecutionContext = {
 		version: 1,
@@ -107,7 +108,7 @@ describe('CredentialCheckProxyService', () => {
 			getByName: vi.fn().mockImplementation(() => {
 				throw new Error('Unrecognized node type');
 			}),
-		} as unknown as Mocked<NodeTypesProxy>;
+		} as unknown as Mocked<NodeTypes>;
 
 		const globalConfig = { endpoints: { rest: 'rest' } } as unknown as GlobalConfig;
 

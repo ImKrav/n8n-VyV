@@ -4,8 +4,7 @@ import type { DynamicTool } from '@langchain/classic/tools';
 import type { DocumentInterface } from '@langchain/core/documents';
 import type { Embeddings } from '@langchain/core/embeddings';
 import type { VectorStore } from '@langchain/core/vectorstores';
-import { NodeApiError, NodeOperationError } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { NodeApiError, NodeOperationError, UserError } from 'n8n-workflow';
 import type {
 	IExecuteFunctions,
 	INode,

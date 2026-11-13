@@ -1,6 +1,6 @@
 import { LicenseState } from '@n8n/backend-common';
 import { GlobalConfig } from '@n8n/config';
-import { isPerson, type User } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { Service } from '@n8n/di';
 import { OPEN_AI_API_CREDENTIAL_TYPE } from 'n8n-workflow';
 
@@ -8,7 +8,6 @@ import { FREE_AI_CREDITS_CREDENTIAL_NAME } from '@/constants';
 import { CredentialsService } from '@/credentials/credentials.service';
 import { AiService } from '@/services/ai.service';
 import { UserService } from '@/services/user.service';
-import { assertPerson } from '@/utils/assert-person';
 
 /**
  * Provisions the free OpenAI credits managed credential. Backs both the
@@ -25,10 +24,9 @@ export class FreeAiCreditsService {
 		private readonly userService: UserService,
 	) {}
 
-	/** Whether this user can claim free OpenAI credits right now. The credits are made for a person's email. */
+	/** Whether this user can claim free OpenAI credits right now. */
 	isEligible(user: User): boolean {
 		return (
-			isPerson(user) &&
 			this.licenseState.isAiCreditsLicensed() &&
 			!!this.globalConfig.aiAssistant.baseUrl &&
 			!(this.globalConfig.aiGateway.enabled && this.licenseState.isAiGatewayLicensed()) &&
@@ -38,10 +36,7 @@ export class FreeAiCreditsService {
 
 	/** Claims free credits: provisions the managed openAiApi credential and marks the user as claimed. */
 	async claim(user: User, projectId?: string) {
-		// The credits are made for a person's email, so reject a service account before anything is provisioned.
-		assertPerson(user);
-
-		const aiCredits = await this.aiService.createFreeAiCredits(user.toIUser());
+		const aiCredits = await this.aiService.createFreeAiCredits(user);
 
 		const credential = await this.credentialsService.createManagedCredential(
 			{

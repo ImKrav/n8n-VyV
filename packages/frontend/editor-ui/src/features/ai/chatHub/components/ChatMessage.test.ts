@@ -3,9 +3,22 @@ import { createComponentRenderer } from '@/__tests__/render';
 import { createTestingPinia } from '@pinia/testing';
 import ChatMessage from './ChatMessage.vue';
 import type { ChatMessage as ChatMessageType } from '../chat.types';
-import { waitFor } from '@testing-library/vue';
-import userEvent from '@testing-library/user-event';
+import { waitFor, within } from '@testing-library/vue';
 import { createMockMessage } from '../__test__/data';
+
+const mockCopy = vi.fn();
+vi.mock('@vueuse/core', async () => {
+	const actual = await vi.importActual('@vueuse/core');
+	return {
+		...actual,
+		useClipboard: () => ({
+			copy: mockCopy,
+			copied: { value: false },
+			isSupported: { value: true },
+			text: { value: '' },
+		}),
+	};
+});
 
 const renderComponent = createComponentRenderer(ChatMessage);
 
@@ -14,6 +27,7 @@ describe('ChatMessage', () => {
 
 	beforeEach(() => {
 		pinia = createTestingPinia();
+		mockCopy.mockClear();
 	});
 
 	it('should render syntax highlighting for code blocks', async () => {
@@ -101,9 +115,6 @@ describe('ChatMessage', () => {
 	});
 
 	it('should allow to copy code block contents', async () => {
-		const user = userEvent.setup();
-		const mockCopy = vi.spyOn(navigator.clipboard, 'writeText');
-
 		const codeContent = 'const foo = "bar";\nfunction test() {\n  return true;\n}';
 		const message: ChatMessageType = createMockMessage({
 			type: 'ai',
@@ -122,11 +133,13 @@ describe('ChatMessage', () => {
 			pinia,
 		});
 
-		await user.click(await rendered.findByRole('button', { name: 'Copy code' }));
+		const preElement = (await rendered.findByText(/function/)).closest('pre')!;
 
-		/** Fenced code includes the newline before the closing fence. */
-		expect(mockCopy).toHaveBeenCalledWith(`${codeContent}\n`);
-		expect(await rendered.findByRole('button', { name: 'Copied to clipboard' })).toBeVisible();
+		preElement.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+
+		(await within(preElement).findByRole('button', { name: /copy/i })).click();
+
+		expect(mockCopy).toHaveBeenCalledWith(codeContent);
 	});
 
 	it('should render footnote references as pill spans and hide the definition block', async () => {

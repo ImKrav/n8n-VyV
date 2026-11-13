@@ -1,13 +1,9 @@
 import { type INodeProperties } from 'n8n-workflow';
 
-import {
-	JAILBREAK_PROMPT,
-	NSFW_SYSTEM_PROMPT,
-	PII_NAME_MAP,
-	PIIEntity,
-	TOPICAL_ALIGNMENT_SYSTEM_PROMPT,
-} from '@n8n/ai-utilities/guardrails';
-
+import { JAILBREAK_PROMPT } from './actions/checks/jailbreak';
+import { NSFW_SYSTEM_PROMPT } from './actions/checks/nsfw';
+import { PII_NAME_MAP, PIIEntity } from './actions/checks/pii';
+import { TOPICAL_ALIGNMENT_SYSTEM_PROMPT } from './actions/checks/topicalAlignment';
 import { LLM_SYSTEM_RULES } from './helpers/model';
 
 const THRESHOLD_OPTION: INodeProperties = {

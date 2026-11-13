@@ -9,8 +9,7 @@ import type {
 	IHttpRequestMethods,
 	IRequestOptions,
 } from 'n8n-workflow';
-import { NodeApiError } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import { NodeApiError, OperationalError } from 'n8n-workflow';
 
 export interface IFormstackFieldDefinitionType {
 	id: string;

@@ -1,7 +1,7 @@
 import type { AgentSseEvent, AppBinding } from '@n8n/api-types';
 import type { Logger } from '@n8n/backend-common';
 import type { EventService } from '@n8n/backend-services';
-import { Person } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { NotFoundError } from '@n8n/errors';
 import type { Response } from 'express';
 import { mock } from 'vitest-mock-extended';
@@ -106,12 +106,7 @@ function setup({ host = 'published' }: { host?: 'published' | 'preview' } = {}) 
 	preview.admit.mockResolvedValue({
 		app,
 		versionId: DRAFT_ID,
-		user: Object.assign(new Person(), {
-			id: 'editor-1',
-			email: 'e@b.c',
-			firstName: 'Eve',
-			lastName: null,
-		}),
+		user: { id: 'editor-1', email: 'e@b.c', firstName: 'Eve', lastName: null } as unknown as User,
 	});
 	const versions = mock<AppVersionRepository>();
 	// Plain objects: `mock()` does not keep arrays such as `bindings`.
@@ -299,7 +294,7 @@ describe('AppRuntimeController', () => {
 			preview.admit.mockResolvedValue({
 				app: { ...app, publishedVersionId: null } as App,
 				versionId: DRAFT_ID,
-				user: Object.assign(new Person(), { id: 'editor-1', email: 'e@b.c' }),
+				user: { id: 'editor-1', email: 'e@b.c' } as User,
 			});
 			const req = request({ headers: sameOrigin, runtime: false });
 			const next = vi.fn();

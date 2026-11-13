@@ -14,7 +14,7 @@ import {
 } from 'n8n-workflow';
 
 import type { DirectedGraph } from './directed-graph';
-import { getIncomingDataForConnection } from './get-incoming-data';
+import { getIncomingDataFromAnyRun } from './get-incoming-data';
 import { getSourceDataGroups } from './get-source-data-groups';
 
 export function addWaitingExecution(
@@ -127,24 +127,34 @@ export function recreateNodeExecutionStack(
 					incomingSourceData = { main: [] };
 
 					for (const incomingConnection of sourceData.connections) {
+						let runIndex = 0;
 						const sourceNode = incomingConnection.from;
-						const nodeIncomingData = getIncomingDataForConnection(
-							incomingConnection,
-							runData,
-							pinData,
-						);
 
-						a.ok(
-							nodeIncomingData,
-							`Start node(${incomingConnection.to.name}) has an incoming connection that carries no run or pinned items. This is not supported. The connection in question is "${sourceNode.name}->${startNode.name}". Are you sure the start nodes come from the "findStartNodes" function?`,
-						);
+						if (pinData[sourceNode.name]) {
+							incomingData.push(pinData[sourceNode.name]);
+						} else {
+							a.ok(
+								runData[sourceNode.name],
+								`Start node(${incomingConnection.to.name}) has an incoming connection with no run or pinned data. This is not supported. The connection in question is "${sourceNode.name}->${startNode.name}". Are you sure the start nodes come from the "findStartNodes" function?`,
+							);
 
-						incomingData.push(nodeIncomingData.data);
+							const nodeIncomingData = getIncomingDataFromAnyRun(
+								runData,
+								sourceNode.name,
+								incomingConnection.type,
+								incomingConnection.outputIndex,
+							);
+
+							if (nodeIncomingData) {
+								runIndex = nodeIncomingData.runIndex;
+								incomingData.push(nodeIncomingData.data);
+							}
+						}
 
 						incomingSourceData.main.push({
 							previousNode: incomingConnection.from.name,
 							previousNodeOutput: incomingConnection.outputIndex,
-							previousNodeRun: nodeIncomingData.runIndex,
+							previousNodeRun: runIndex,
 						});
 					}
 
@@ -162,11 +172,14 @@ export function recreateNodeExecutionStack(
 						: 0;
 
 					for (const incomingConnection of sourceData.connections) {
-						const nodeIncomingData = getIncomingDataForConnection(
-							incomingConnection,
+						const sourceNode = incomingConnection.from;
+						const maybeNodeIncomingData = getIncomingDataFromAnyRun(
 							runData,
-							pinData,
+							sourceNode.name,
+							incomingConnection.type,
+							incomingConnection.outputIndex,
 						);
+						const nodeIncomingData = maybeNodeIncomingData?.data ?? null;
 
 						if (nodeIncomingData) {
 							addWaitingExecution(
@@ -175,7 +188,7 @@ export function recreateNodeExecutionStack(
 								nextRunIndex,
 								incomingConnection.type,
 								incomingConnection.inputIndex,
-								nodeIncomingData.data,
+								nodeIncomingData,
 							);
 
 							addWaitingExecutionSource(
@@ -184,11 +197,13 @@ export function recreateNodeExecutionStack(
 								nextRunIndex,
 								incomingConnection.type,
 								incomingConnection.inputIndex,
-								{
-									previousNode: incomingConnection.from.name,
-									previousNodeRun: nodeIncomingData.runIndex,
-									previousNodeOutput: incomingConnection.outputIndex,
-								},
+								nodeIncomingData
+									? {
+											previousNode: incomingConnection.from.name,
+											previousNodeRun: nextRunIndex,
+											previousNodeOutput: incomingConnection.outputIndex,
+										}
+									: null,
 							);
 						}
 					}

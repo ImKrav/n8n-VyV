@@ -2,10 +2,7 @@ operationId: unpublishWorkflow
 tags:
   - Workflow
 summary: Unpublish a workflow
-description: |-
-  Unpublish a workflow. In n8n v1, this action was termed deactivating a workflow.
-
-  Requires the `workflow:deactivate` API key scope.
+description: Unpublish a workflow. In n8n v1, this action was termed deactivating a workflow.
 x-required-scope: workflow:deactivate
 parameters:
   - schema:

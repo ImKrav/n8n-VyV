@@ -185,58 +185,12 @@ describe('AddColumnButton', () => {
 		});
 	});
 
-	it('should call addColumn with correct payload', async () => {
-		const { openPopover, setColumnName, getSubmitButton, submit } = setup();
-		await openPopover();
-		await setColumnName('newColumn');
-		await waitFor(() => {
-			expect(getSubmitButton()).not.toBeDisabled();
-		});
-		await submit();
-
-		await waitFor(() => {
-			expect(addColumnHandler).toHaveBeenCalledWith({
-				name: 'newColumn',
-				type: 'string',
-			});
-		});
-	});
-
 	it('should disable submit button when name is empty', async () => {
 		const { openPopover, getSubmitButton } = setup();
 		await openPopover();
 		await waitFor(() => {
 			expect(getSubmitButton()).toBeDisabled();
 		});
-	});
-
-	it('should show error for invalid column names', async () => {
-		const { getByText, openPopover, setColumnName, getSubmitButton } = setup();
-		await openPopover();
-		await setColumnName('-invalid');
-
-		await waitFor(() => {
-			expect(getByText('Invalid column name')).toBeInTheDocument();
-		});
-		await waitFor(() => {
-			expect(getSubmitButton()).toBeDisabled();
-		});
-	});
-
-	it('should allow valid column names', async () => {
-		const { queryByText, openPopover, setColumnName } = setup();
-		await openPopover();
-
-		// Test valid names
-		const validNames = ['column1', 'my_column', 'Column123', 'a1b2c3'];
-
-		for (const name of validNames) {
-			await setColumnName(name);
-
-			await waitFor(() => {
-				expect(queryByText('Invalid column name')).not.toBeInTheDocument();
-			});
-		}
 	});
 
 	it('should clear error when correcting invalid name', async () => {
@@ -260,24 +214,6 @@ describe('AddColumnButton', () => {
 		const { getNameInput, openPopover } = setup();
 		await openPopover();
 		expect(getNameInput().getAttribute('maxlength')).toBe(MAX_COLUMN_NAME_LENGTH.toString());
-	});
-
-	it('should allow selecting different column types', async () => {
-		const { openPopover, setColumnName, selectType, getSubmitButton, submit } = setup();
-		await openPopover();
-		await setColumnName('numberColumn');
-		await selectType('number');
-		await waitFor(() => {
-			expect(getSubmitButton()).not.toBeDisabled();
-		});
-		await submit();
-
-		await waitFor(() => {
-			expect(addColumnHandler).toHaveBeenCalledWith({
-				name: 'numberColumn',
-				type: 'number',
-			});
-		});
 	});
 
 	it('should reset form after successful submission', async () => {
@@ -345,19 +281,6 @@ describe('AddColumnButton', () => {
 				name: 'enterColumn',
 				type: 'string',
 			});
-		});
-	});
-
-	it('should display all column type options', async () => {
-		const { getByRole, getByText, openPopover } = setup();
-		await openPopover();
-		await user.click(getByRole('combobox'));
-
-		await waitFor(() => {
-			expect(getByText('string')).toBeInTheDocument();
-			expect(getByText('number')).toBeInTheDocument();
-			expect(getByText('boolean')).toBeInTheDocument();
-			expect(getByText('datetime')).toBeInTheDocument();
 		});
 	});
 

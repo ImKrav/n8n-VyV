@@ -173,7 +173,6 @@ describe('RoleService.getRoleAssignments and getRoleProjectMembers', () => {
 					lastName: 'Smith',
 					email: 'alice@example.com',
 					role: 'project:editor',
-					kind: 'person' as const,
 				},
 				{
 					userId: 'user-2',
@@ -181,7 +180,6 @@ describe('RoleService.getRoleAssignments and getRoleProjectMembers', () => {
 					lastName: null,
 					email: 'bob@example.com',
 					role: 'project:editor',
-					kind: 'person' as const,
 				},
 			];
 

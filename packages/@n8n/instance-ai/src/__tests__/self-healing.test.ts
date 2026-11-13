@@ -9,21 +9,19 @@ const report = {
 
 describe('self-healing output', () => {
 	it.each([
-		{ outcome: 'fix_ready', candidateWorkflowIds: ['workflow'] },
-		{ outcome: 'fix_ready', candidateWorkflowIds: ['workflow', 'sub-workflow'] },
-		{ outcome: 'needs_you', candidateWorkflowIds: ['workflow'] },
-		{ outcome: 'needs_you', candidateWorkflowIds: [] },
-		{ outcome: 'could_not_fix', candidateWorkflowIds: [] },
+		{ outcome: 'fix_ready', candidateFilePath: 'self-healing/candidate.workflow.ts' },
+		{ outcome: 'needs_you', candidateFilePath: 'self-healing/candidate.workflow.ts' },
+		{ outcome: 'needs_you', candidateFilePath: null },
+		{ outcome: 'could_not_fix', candidateFilePath: null },
 	])('accepts $outcome with its candidate rules', (output) => {
 		expect(selfHealingOutputSchema.safeParse({ ...report, ...output }).success).toBe(true);
 	});
 
 	it.each([
 		{ outcome: 'fix_ready' },
-		{ outcome: 'needs_you', candidateWorkflowIds: undefined },
-		{ outcome: 'needs_you', candidateWorkflowIds: null },
-		{ outcome: 'could_not_fix', candidateWorkflowIds: ['workflow'] },
-		{ outcome: 'needs_you', candidateWorkflowIds: [''] },
+		{ outcome: 'needs_you', candidateFilePath: undefined },
+		{ outcome: 'could_not_fix', candidateFilePath: 'candidate.ts' },
+		{ outcome: 'needs_you', candidateFilePath: '' },
 		{ outcome: 'needs_you', summary: ' ' },
 		{ outcome: 'needs_you', report: ' ' },
 		{ outcome: 'needs_you', report: 'x'.repeat(50_001) },
@@ -31,7 +29,7 @@ describe('self-healing output', () => {
 		{ outcome: 'needs_you', workflowId: 'other-workflow' },
 	])('rejects invalid output %#', (output) => {
 		expect(
-			selfHealingOutputSchema.safeParse({ ...report, candidateWorkflowIds: [], ...output }).success,
+			selfHealingOutputSchema.safeParse({ ...report, candidateFilePath: null, ...output }).success,
 		).toBe(false);
 	});
 
@@ -44,7 +42,7 @@ describe('self-healing output', () => {
 			...report,
 			outcome: 'needs_you',
 			summary,
-			candidateWorkflowIds: [],
+			candidateFilePath: null,
 		};
 		expect(selfHealingOutputSchema.parse(output)).toEqual({ ...output, summary: expected });
 	});

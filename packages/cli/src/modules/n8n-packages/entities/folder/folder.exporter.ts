@@ -21,7 +21,7 @@ export interface FolderExportRequest {
 	writer: PackageWriter;
 	includeTags: boolean;
 	versionPolicy: ExportVersionPolicy;
-	includeArchived: boolean;
+	includeArchivedWorkflows: boolean;
 	/**
 	 * Directory the folder tree is written under. Empty for a top-level folder
 	 * export (`folders/...`); a project exporter passes `projects/<slug>-<id>` so
@@ -34,8 +34,6 @@ export interface FolderExportRequest {
 	 * exactly as a full export would.
 	 */
 	selectedWorkflowIds?: ReadonlySet<string>;
-	/** With `selectedWorkflowIds`, also export these folders and the folders above them. */
-	selectedFolderIds?: ReadonlySet<string>;
 }
 
 export interface FolderExportResult {
@@ -82,16 +80,11 @@ export class FolderExporter {
 
 		const workflowIdsByFolder = await this.workflowFinder.findWorkflowIdsByFolder(
 			folders.map((folder) => folder.id),
-			{ includeArchived: request.includeArchived },
+			{ includeArchived: request.includeArchivedWorkflows },
 		);
 
 		const foldersToWrite = request.selectedWorkflowIds
-			? this.foldersContaining(
-					request.selectedWorkflowIds,
-					request.selectedFolderIds ?? new Set(),
-					folders,
-					workflowIdsByFolder,
-				)
+			? this.foldersContaining(request.selectedWorkflowIds, folders, workflowIdsByFolder)
 			: undefined;
 
 		const foldersDir = packageDirectory('folders', request.basePrefix);
@@ -103,20 +96,17 @@ export class FolderExporter {
 		});
 	}
 
-	/** The selected folders and the folders that hold a selected workflow, plus their in-set ancestors. */
+	/** Folders that hold a selected workflow, plus their in-set ancestors. */
 	private foldersContaining(
 		selectedWorkflowIds: ReadonlySet<string>,
-		selectedFolderIds: ReadonlySet<string>,
 		folders: Folder[],
 		workflowIdsByFolder: Map<string, string[]>,
 	): Set<string> {
 		const parentById = new Map(folders.map((folder) => [folder.id, folder.parentFolderId]));
 		const result = new Set<string>();
 
-		const holding = [...workflowIdsByFolder]
-			.filter(([, workflowIds]) => workflowIds.some((id) => selectedWorkflowIds.has(id)))
-			.map(([folderId]) => folderId);
-		for (const folderId of [...selectedFolderIds, ...holding]) {
+		for (const [folderId, workflowIds] of workflowIdsByFolder) {
+			if (!workflowIds.some((id) => selectedWorkflowIds.has(id))) continue;
 			for (let current: string | null | undefined = folderId; current; ) {
 				if (result.has(current)) break;
 				result.add(current);

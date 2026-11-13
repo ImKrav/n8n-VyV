@@ -94,7 +94,7 @@ async function output(api: ApiHelpers, parentId: string) {
 
 test.describe(
 	'Sub-workflow output contract',
-	{ annotation: [{ type: 'owner', description: 'Core Execution' }] },
+	{ annotation: [{ type: 'owner', description: 'Catalysts' }] },
 	() => {
 		// TODO(CET-315): the child's branches converge on one input, which engine v2
 		// refuses. Engine v2 does not run `each` mode at all.

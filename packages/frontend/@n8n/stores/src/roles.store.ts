@@ -8,7 +8,7 @@ import type {
 import {
 	type AllRolesMap,
 	type Role,
-	isReservedGlobalRole,
+	GLOBAL_OWNER_ROLE_SLUG,
 	GLOBAL_CHAT_USER_ROLE_SLUG,
 	PROJECT_OWNER_ROLE_SLUG,
 	PROJECT_CHAT_USER_ROLE_SLUG,
@@ -61,7 +61,7 @@ export const useRolesStore = defineStore('roles', () => {
 		roles.value.global
 			.filter(
 				(role) =>
-					!isReservedGlobalRole(role.slug) &&
+					role.slug !== GLOBAL_OWNER_ROLE_SLUG &&
 					(settingsStore.isChatFeatureEnabled || role.slug !== GLOBAL_CHAT_USER_ROLE_SLUG),
 			)
 			.sort(sortByOrderThenName(globalRoleOrderMap.value)),

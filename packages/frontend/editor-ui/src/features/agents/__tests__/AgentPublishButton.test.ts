@@ -6,6 +6,7 @@ import type { AgentConfigValidationIssue } from '@n8n/api-types';
 import { TELEMETRY_EVENT } from '@n8n/telemetry';
 import type { AgentVersionMetadataModalData } from '../components/AgentVersionMetadataModal.vue';
 import type { AgentResource } from '../types';
+import type { AgentVersion } from '../agent.types';
 
 const trackMock = vi.fn();
 vi.mock('@n8n/composables/useTelemetry', () => ({
@@ -14,7 +15,6 @@ vi.mock('@n8n/composables/useTelemetry', () => ({
 
 vi.mock('../composables/useAgentApi', () => ({
 	publishAgent: vi.fn(),
-	getAgent: vi.fn(),
 	getAgentVersion: vi.fn().mockResolvedValue({ name: null, description: null }),
 	unpublishAgent: vi.fn(),
 	revertAgentToPublished: vi.fn(),
@@ -95,7 +95,12 @@ const STUBS = {
 	},
 };
 
-const activeVersion = { versionId: 'v1', integrations: [] };
+const activeVersion: AgentVersion = {
+	versionId: 'v1',
+	schema: null,
+	skills: null,
+	author: 'Test User',
+};
 
 function createAgent(overrides: Partial<AgentResource> = {}): AgentResource {
 	return {
@@ -103,23 +108,13 @@ function createAgent(overrides: Partial<AgentResource> = {}): AgentResource {
 		id: 'agent-1',
 		name: 'My Agent',
 		projectId: 'project-1',
-		project: null,
-		availableInMCP: false,
-		isArchived: false,
+		isCompiled: false,
 		createdAt: '2026-01-01T00:00:00Z',
 		updatedAt: '2026-01-01T00:00:00Z',
 		versionId: 'v1',
 		activeVersionId: null,
-		config: null,
-		configHash: null,
 		tools: {},
 		skills: {},
-		skillHashes: {},
-		outdatedSkillIds: [],
-		skillVersions: {},
-		isRunnable: false,
-		hasPublishHistory: false,
-		hasVersionHistory: false,
 		activeVersion: null,
 		...overrides,
 	};
@@ -175,7 +170,7 @@ vi.setConfig({ testTimeout: 30_000 });
 describe('AgentPublishButton', () => {
 	async function renderComponent(props: RenderProps = {}, attachTo?: Element) {
 		const { default: AgentPublishButton } = await import('../components/AgentPublishButton.vue');
-		const wrapper = mount(AgentPublishButton, {
+		return mount(AgentPublishButton, {
 			props: {
 				agent: createAgent(),
 				projectId: 'project-1',
@@ -185,9 +180,6 @@ describe('AgentPublishButton', () => {
 			global: { stubs: STUBS },
 			...(attachTo ? { attachTo } : {}),
 		});
-		const { getAgent } = await import('../composables/useAgentApi');
-		vi.mocked(getAgent).mockImplementation(async () => wrapper.props('agent')!);
-		return wrapper;
 	}
 
 	beforeEach(() => {
@@ -264,17 +256,10 @@ describe('AgentPublishButton', () => {
 		);
 		await flushPromises();
 
-		expect(publishAgent).toHaveBeenCalledWith(
-			{},
-			'project-1',
-			'agent-1',
-			undefined,
-			{
-				name: null,
-				description: null,
-			},
-			{ versionId: 'v1', skillVersions: {} },
-		);
+		expect(publishAgent).toHaveBeenCalledWith({}, 'project-1', 'agent-1', 'v1', {
+			name: null,
+			description: null,
+		});
 		expect(wrapper.emitted('published')?.[0]).toEqual([updatedAgent]);
 		wrapper.unmount();
 	});
@@ -298,9 +283,8 @@ describe('AgentPublishButton', () => {
 			{},
 			'project-1',
 			'agent-1',
-			undefined,
+			'saved-after-flush',
 			expect.anything(),
-			{ versionId: 'saved-after-flush', skillVersions: {} },
 		);
 	});
 
@@ -369,28 +353,6 @@ describe('AgentPublishButton', () => {
 		expect(button.attributes('disabled')).toBeUndefined();
 	});
 
-	it.each([
-		{ draft: 2, published: 1, latest: 2, pinned: false, changed: true },
-		{ draft: 1, published: 1, latest: 2, pinned: true, changed: false },
-	])(
-		'uses the resolved skill version when the agent id is unchanged: $changed',
-		async ({ changed, ...versions }) => {
-			const wrapper = await renderComponent({
-				agent: createAgent({
-					versionId: 'v1',
-					activeVersionId: 'v1',
-					activeVersion,
-					skillVersions: { tone: versions },
-				}),
-			});
-			const button = wrapper.find('[data-testid="publish-agent-button"]');
-			expect(button.attributes('disabled') === undefined).toBe(changed);
-			expect(
-				wrapper.find('[data-action="revert-to-published"]').attributes('disabled') === undefined,
-			).toBe(changed);
-		},
-	);
-
 	// Publish button click
 	it('calls publishAgent and emits published when Publish is clicked', async () => {
 		const { publishAgent } = await import('../composables/useAgentApi');
@@ -402,17 +364,10 @@ describe('AgentPublishButton', () => {
 		await wrapper.find('[data-testid="publish-agent-button"]').trigger('click');
 		await flushPromises();
 
-		expect(publishAgent).toHaveBeenCalledWith(
-			{},
-			'project-1',
-			'agent-1',
-			undefined,
-			{
-				name: null,
-				description: null,
-			},
-			{ versionId: 'v1', skillVersions: {} },
-		);
+		expect(publishAgent).toHaveBeenCalledWith({}, 'project-1', 'agent-1', 'v1', {
+			name: null,
+			description: null,
+		});
 		expect(wrapper.emitted('published')?.[0]).toEqual([updatedAgent]);
 	});
 
@@ -430,17 +385,10 @@ describe('AgentPublishButton', () => {
 		await wrapper.find('[data-testid="publish-agent-button"]').trigger('click');
 		await flushPromises();
 
-		expect(publishAgent).toHaveBeenCalledWith(
-			{},
-			'project-1',
-			'agent-1',
-			undefined,
-			{
-				name: null,
-				description: null,
-			},
-			{ versionId: 'v2', skillVersions: {} },
-		);
+		expect(publishAgent).toHaveBeenCalledWith({}, 'project-1', 'agent-1', 'v2', {
+			name: null,
+			description: null,
+		});
 		expect(wrapper.emitted('published')?.[0]).toEqual([updatedAgent]);
 	});
 
@@ -466,17 +414,10 @@ describe('AgentPublishButton', () => {
 		await wrapper.find('[data-action="publish"]').trigger('click');
 		await flushPromises();
 
-		expect(publishAgent).toHaveBeenCalledWith(
-			{},
-			'project-1',
-			'agent-1',
-			undefined,
-			{
-				name: null,
-				description: null,
-			},
-			{ versionId: 'v1', skillVersions: {} },
-		);
+		expect(publishAgent).toHaveBeenCalledWith({}, 'project-1', 'agent-1', 'v1', {
+			name: null,
+			description: null,
+		});
 		expect(wrapper.emitted('published')?.[0]).toEqual([updatedAgent]);
 	});
 
@@ -806,17 +747,10 @@ describe('AgentPublishButton', () => {
 			await flushPromises();
 
 			expect(beforePublish).toHaveBeenCalled();
-			expect(publishAgent).toHaveBeenCalledWith(
-				{},
-				'project-1',
-				'agent-1',
-				undefined,
-				{
-					name: null,
-					description: null,
-				},
-				{ versionId: 'v1', skillVersions: {} },
-			);
+			expect(publishAgent).toHaveBeenCalledWith({}, 'project-1', 'agent-1', 'v1', {
+				name: null,
+				description: null,
+			});
 			expect(wrapper.emitted('published')?.[0]).toEqual([updatedAgent]);
 		});
 
@@ -836,17 +770,10 @@ describe('AgentPublishButton', () => {
 			await button.trigger('click');
 			await flushPromises();
 
-			expect(publishAgent).toHaveBeenCalledWith(
-				{},
-				'project-1',
-				'agent-1',
-				undefined,
-				{
-					name: null,
-					description: null,
-				},
-				{ versionId: 'v1', skillVersions: {} },
-			);
+			expect(publishAgent).toHaveBeenCalledWith({}, 'project-1', 'agent-1', 'v1', {
+				name: null,
+				description: null,
+			});
 			expect(wrapper.emitted('published')?.[0]).toEqual([updatedAgent]);
 		});
 	});

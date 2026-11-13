@@ -12,7 +12,6 @@ import { GlobalConfig } from '@n8n/config';
 import { UUID_V7_PATTERN } from '@n8n/constants';
 import type { User } from '@n8n/db';
 import { Container } from '@n8n/di';
-import type { ExecutionResponseSender } from '@n8n/engine';
 import type { INode } from 'n8n-workflow';
 import { WEBHOOK_NODE_TYPE } from 'n8n-workflow';
 import { randomUUID } from 'node:crypto';
@@ -20,10 +19,9 @@ import { agent as testAgent } from 'supertest';
 
 import { CacheService } from '@n8n/backend-services';
 import { ActiveExecutions } from '@/active-executions';
-import { createExecutionResponseCodec } from '@/modules/engine-v2/execution-channel/execution-response-frame';
-import { ExecutionChannelReceiver } from '@/modules/engine-v2/execution-channel/execution-channel-receiver';
-import { ExecutionChannelSender } from '@/modules/engine-v2/execution-channel/execution-channel-sender';
-import { createInMemoryExecutionChannel } from '@/modules/engine-v2/execution-channel/in-memory-execution-channel';
+import { InMemoryExecutionResponseChannel } from '@/modules/engine-v2/response-channel/in-memory-execution-response-channel';
+import { InMemoryExecutionResponseReceiver } from '@/modules/engine-v2/response-channel/in-memory-execution-response-receiver';
+import { InMemoryExecutionResponseSender } from '@/modules/engine-v2/response-channel/in-memory-execution-response-sender';
 import { EngineDataPlaneProxyService } from '@/services/engine-data-plane-proxy.service';
 import { EngineV2WebhookResponseRegistry } from '@/modules/engine-v2/webhook-response/webhook-response-registry.service';
 import { Telemetry } from '@/telemetry';
@@ -46,7 +44,7 @@ const getExecution = vi.fn();
 let builder: User;
 let webhookAgent: SuperAgentTest;
 let webhookTestEndpoint: string;
-let responseSender: ExecutionResponseSender;
+let responseSender: InMemoryExecutionResponseSender;
 
 const webhookNode = (webhookId: string): INode => ({
 	id: randomUUID(),
@@ -83,19 +81,17 @@ beforeAll(async () => {
 		searchExecutions: vi.fn().mockResolvedValue({ items: [], nextCursor: null, total: 0 }),
 		findLatestExecution: vi.fn(),
 		cancelExecution: vi.fn(),
-		locateResume: vi.fn(),
+		locateResumeTarget: vi.fn(),
 		resolveStep: vi.fn(),
-		readApprovalCallback: vi.fn(),
 	});
 	// The host hands the response registry its receiver at boot (`EngineV2Module.init`).
 	// This test drives the webhook route directly, without the module, so it
 	// wires the same receiver by hand.
-	const { publisher, subscriber } = createInMemoryExecutionChannel();
-	const responseCodec = createExecutionResponseCodec(Container.get(Logger));
+	const responseChannel = new InMemoryExecutionResponseChannel();
 	Container.get(EngineV2WebhookResponseRegistry).useReceiver(
-		new ExecutionChannelReceiver(subscriber, responseCodec, Container.get(Logger)),
+		new InMemoryExecutionResponseReceiver(responseChannel, Container.get(Logger)),
 	);
-	responseSender = new ExecutionChannelSender(publisher, responseCodec);
+	responseSender = new InMemoryExecutionResponseSender(responseChannel, Container.get(Logger));
 
 	// `/webhook-test/*` is mounted only when a server opts into test webhooks.
 	class EditorFacingWebhookServer extends WebhookServer {

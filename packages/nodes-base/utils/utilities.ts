@@ -13,8 +13,7 @@ import type {
 	INodeProperties,
 	IPairedItemData,
 } from 'n8n-workflow';
-import { jsonParse, MYSQL_NODE_TYPE, POSTGRES_NODE_TYPE, randomInt } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { jsonParse, MYSQL_NODE_TYPE, POSTGRES_NODE_TYPE, randomInt, UserError } from 'n8n-workflow';
 
 /**
  * Creates an array of elements split into groups the length of `size`.

@@ -8,13 +8,11 @@ import {
 	buildCollapsedGroupByNodeId,
 	computeGroupFrameRects,
 	computeNodesRectFromStore,
-	getStickyZIndex,
 	mapGroupsToVueFlowNodes,
 	remapCollapsedGroupConnections,
 	titleBarFromNodesRect,
 } from './useCanvasMapping.groups';
 import {
-	FREE_STICKY_Z_INDEX_OFFSET,
 	GROUP_HEADER_HEIGHT,
 	GROUP_HEADER_WIDTH_COLLAPSED,
 	GROUP_NODE_Z_INDEX_COLLAPSED,
@@ -545,7 +543,7 @@ describe('mapGroupsToVueFlowNodes', () => {
 		expect(out[0].data?.allNodesDisabled).toBe(false);
 	});
 
-	it('stacks the expanded frame below sticky members and the collapsed chip above all stickies', () => {
+	it('stacks the expanded frame below stickies and the collapsed chip above them', () => {
 		// See the stacking contract in canvasNodeGroups.constants.ts: the
 		// expanded frame must render below sticky members (no tint), while the
 		// collapsed chip keeps interaction priority over free stickies.
@@ -567,18 +565,6 @@ describe('mapGroupsToVueFlowNodes', () => {
 		});
 
 		expect(out[0].zIndex).toBe(GROUP_NODE_Z_INDEX_EMPTY_COLLAPSED);
-	});
-});
-
-describe('getStickyZIndex', () => {
-	it('keeps the overlap z-index of a sticky in a group, above the expanded frame', () => {
-		expect(getStickyZIndex(-99, true)).toBe(-99);
-		expect(getStickyZIndex(-99, true)).toBeGreaterThan(GROUP_NODE_Z_INDEX_EXPANDED);
-	});
-
-	it('moves a sticky outside groups below the expanded frame', () => {
-		expect(getStickyZIndex(-99, false)).toBe(-99 + FREE_STICKY_Z_INDEX_OFFSET);
-		expect(getStickyZIndex(-99, false)).toBeLessThan(GROUP_NODE_Z_INDEX_EXPANDED);
 	});
 });
 

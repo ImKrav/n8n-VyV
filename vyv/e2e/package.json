@@ -1,0 +1,48 @@
+{
+  "name": "vyv-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pruebas E2E del plan de pruebas de n8n-VyV (Cypress) · Core: data tables y carpetas (ESC-016 a ESC-020) · Mario Andrade",
+  "type": "module",
+  "scripts": {
+    "n8n": "npx --yes n8n@2.46.6",
+    "n8n:storage-limit": "cross-env N8N_DATA_TABLES_MAX_SIZE_BYTES=1048576 npx --yes n8n@2.46.6",
+    "cy:open": "cypress open",
+    "test:api": "cypress run --spec \"{workflows,executions,credentials,core}/**/*.api.cy.js\"",
+    "test:ui": "cypress run --browser chrome --spec \"{workflows,executions,credentials,core}/**/*.ui.cy.js\"",
+    "test:bdd": "cypress run --browser chrome --spec \"{workflows,executions,credentials,core}/**/*.feature\"",
+    "test:security": "cypress run --spec \"core/security/**/*.cy.js\"",
+    "test:a11y": "cypress run --browser chrome --spec \"core/accessibility/**/*.cy.js\"",
+    "test:regression": "cypress run --spec \"core/regression/**/*.cy.js\"",
+    "test:storage-limit": "cypress run --spec \"core/CO-02/storage-limit.api.cy.js\" --env limite=true",
+    "test:all": "cypress run --browser chrome --spec \"{workflows,executions,credentials,core}/**/*.{api.cy.js,ui.cy.js,feature},core/{security,accessibility}/**/*.cy.js\"",
+    "report": "node scripts/merge-reports.mjs",
+    "regression:compare": "node scripts/compare-regression.mjs",
+    "audit": "npm audit --omit=dev --json > results/npm-audit.json || exit 0",
+    "evidence": "node scripts/organize-evidence.mjs",
+    "test:refactor": "cypress run --spec \"core/CO-03/csv-import-export.api.cy.js,core/security/**/*.cy.js,core/CO-01/data-tables.ui.cy.js\" --browser chrome"
+  },
+  "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^22.0.1",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.4",
+    "axe-core": "^4.10.2",
+    "cross-env": "^7.0.3",
+    "cypress": "^14.3.2",
+    "cypress-axe": "^1.6.0",
+    "esbuild": "^0.25.2",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^5.0.0",
+    "mochawesome-report-generator": "^6.2.0"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": "support/step_definitions/**/*.js",
+    "html": {
+      "enabled": true,
+      "output": "results/cucumber-report.html"
+    },
+    "json": {
+      "enabled": true,
+      "output": "results/cucumber-report.json"
+    }
+  }
+}

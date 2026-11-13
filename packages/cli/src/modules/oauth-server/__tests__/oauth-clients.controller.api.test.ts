@@ -2,25 +2,24 @@ import { testDb } from '@n8n/backend-test-utils';
 import { GlobalConfig } from '@n8n/config';
 import type { User } from '@n8n/db';
 import { Container } from '@n8n/di';
-import { DataSource, type Repository } from '@n8n/typeorm';
 
 import { createOwner, createMember } from '@test-integration/db/users';
 import { setupTestServer } from '@test-integration/utils';
 
-import { OAuthClient } from '../database/entities/oauth-client.entity';
+import { OAuthClientRepository } from '../database/repositories/oauth-client.repository';
 import { UserConsentRepository } from '../database/repositories/oauth-user-consent.repository';
 
 const testServer = setupTestServer({ endpointGroups: ['mcp'], modules: ['oauth-server', 'mcp'] });
 
 let owner: User;
 let member: User;
-let oauthClientRepository: Repository<OAuthClient>;
+let oauthClientRepository: OAuthClientRepository;
 let userConsentRepository: UserConsentRepository;
 
 beforeAll(async () => {
 	owner = await createOwner();
 	member = await createMember();
-	oauthClientRepository = Container.get(DataSource).getRepository(OAuthClient);
+	oauthClientRepository = Container.get(OAuthClientRepository);
 	userConsentRepository = Container.get(UserConsentRepository);
 });
 

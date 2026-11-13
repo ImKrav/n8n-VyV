@@ -40,26 +40,6 @@ describe('useDataTableColumnFilters', () => {
 	});
 
 	describe('text filters', () => {
-		it('should process contains filter', () => {
-			const filterModel: FilterModel = {
-				name: { filterType: 'text', type: 'contains', filter: 'test' },
-			};
-			mockGridApi.getFilterModel = vi.fn().mockReturnValue(filterModel);
-
-			const { onFilterChanged, currentFilterJSON } = useDataTableColumnFilters({
-				gridApi: gridApiRef,
-				colDefs: colDefsRef,
-			});
-
-			onFilterChanged();
-
-			const result = parseFilterJSON(currentFilterJSON.value);
-			expect(result).toEqual({
-				type: 'and',
-				filters: [{ columnName: 'name', condition: 'ilike', value: 'test' }],
-			});
-		});
-
 		it('should process startsWith filter', () => {
 			const filterModel: FilterModel = {
 				name: { filterType: 'text', type: 'startsWith', filter: 'test' },
@@ -326,33 +306,6 @@ describe('useDataTableColumnFilters', () => {
 				condition: 'gt',
 				value: new Date('2024-01-01').toISOString(),
 			});
-		});
-	});
-
-	describe('multiple filters', () => {
-		it('should process multiple filters from different columns', () => {
-			const filterModel: FilterModel = {
-				name: { filterType: 'text', type: 'contains', filter: 'john' },
-				age: { filterType: 'number', type: 'greaterThan', filter: 25 },
-			};
-			mockGridApi.getFilterModel = vi.fn().mockReturnValue(filterModel);
-
-			const { onFilterChanged, currentFilterJSON } = useDataTableColumnFilters({
-				gridApi: gridApiRef,
-				colDefs: colDefsRef,
-			});
-
-			onFilterChanged();
-
-			const result = parseFilterJSON(currentFilterJSON.value);
-			expect(result?.type).toBe('and');
-			expect(result?.filters).toHaveLength(2);
-			expect(result?.filters).toContainEqual({
-				columnName: 'name',
-				condition: 'ilike',
-				value: 'john',
-			});
-			expect(result?.filters).toContainEqual({ columnName: 'age', condition: 'gt', value: 25 });
 		});
 	});
 

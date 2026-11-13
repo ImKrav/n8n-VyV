@@ -32,6 +32,8 @@ import type {
 	StructuredChunk,
 } from 'n8n-workflow';
 import {
+	UnexpectedError,
+	OperationalError,
 	NodeHelpers,
 	NodeConnectionTypes,
 	WAIT_FOR_SUB_EXECUTION,
@@ -42,11 +44,9 @@ import {
 	takeAttachedDynamicCredentialsUsage,
 	escalateSubWorkflowRedaction,
 	takeAttachedSubWorkflowRedaction,
-	isExecutionOutputRedacted,
+	shouldRedactConsoleOutput,
 	CONSOLE_OUTPUT_REDACTED_MESSAGE,
-	AI_EVENT_REDACTED_MESSAGE,
 } from 'n8n-workflow';
-import { UnexpectedError, OperationalError } from '@n8n/errors';
 import { randomUUID } from 'node:crypto';
 
 import { PLACEHOLDER_EMPTY_EXECUTION_ID } from '@/constants';
@@ -387,13 +387,22 @@ export class BaseExecuteContext extends NodeExecutionContext {
 	}
 
 	/**
-	 * Console output and AI event payloads never pass through the execution-data
-	 * redaction pipeline, so the push, stdout and log-streaming sinks gate on this
-	 * before emitting. Fails closed: an error while resolving the policy redacts
-	 * rather than emits.
+	 * Console output never passes through the execution-data redaction pipeline,
+	 * so the push/stdout sinks gate on this before emitting. Fails closed: an
+	 * error while resolving the policy redacts rather than emits.
 	 */
 	isConsoleOutputRedacted(): boolean {
-		return isExecutionOutputRedacted(this.runExecutionData, this.workflow.settings, this.mode);
+		try {
+			const runtimeData = this.runExecutionData.executionData?.runtimeData;
+			return shouldRedactConsoleOutput(
+				runtimeData?.redaction,
+				this.workflow.settings,
+				this.mode,
+				runtimeData?.subWorkflowRedaction,
+			);
+		} catch {
+			return true;
+		}
 	}
 
 	/**
@@ -449,9 +458,7 @@ export class BaseExecuteContext extends NodeExecutionContext {
 			workflowName: this.workflow.name ?? 'Unnamed workflow',
 			nodeType: this.node.type,
 			workflowId: this.workflow.id ?? 'unsaved-workflow',
-			// The payload holds prompts, completions and tool I/O, which the
-			// log-streaming sink would otherwise carry unredacted.
-			msg: this.isConsoleOutputRedacted() ? AI_EVENT_REDACTED_MESSAGE : msg,
+			msg,
 		});
 	}
 

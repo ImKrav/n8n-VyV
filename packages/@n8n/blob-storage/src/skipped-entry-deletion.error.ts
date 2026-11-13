@@ -1,4 +1,4 @@
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 
 import type { StorageLocation } from './types';
 

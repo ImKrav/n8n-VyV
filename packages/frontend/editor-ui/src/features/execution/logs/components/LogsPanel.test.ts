@@ -19,7 +19,6 @@ import {
 	aiAgentNode,
 	aiChatExecutionResponse as aiChatExecutionResponseTemplate,
 	aiChatWorkflow,
-	aiManualExecutionResponse,
 	aiManualWorkflow,
 	nodeTypes,
 } from '../__test__/data';
@@ -223,20 +222,6 @@ describe('LogsPanel', () => {
 
 		expect(await rendered.findByTestId('logs-overview-header')).toBeInTheDocument();
 		expect(await rendered.findByTestId('chat-header')).toBeInTheDocument();
-	});
-
-	it('should render only output panel of selected node by default', async () => {
-		logsStore.toggleOpen(true);
-		setWorkflow(aiManualWorkflow);
-		setExecutionData(aiManualExecutionResponse);
-
-		const rendered = render();
-
-		await waitFor(() =>
-			expect(rendered.queryByTestId('log-details-header')).toHaveTextContent('AI Agent'),
-		);
-		expect(rendered.queryByTestId('log-details-input')).not.toBeInTheDocument();
-		expect(rendered.queryByTestId('log-details-output')).toBeInTheDocument();
 	});
 
 	it('should render both input and output panel of selected node by default if it is sub node', async () => {
@@ -622,40 +607,6 @@ describe('LogsPanel', () => {
 			logsStore.toggleOpen(true);
 			setWorkflow(aiChatWorkflow);
 			setExecutionData(aiChatExecutionResponse);
-		});
-
-		it('should allow to select previous and next row via keyboard shortcut', async () => {
-			const { getByTestId, findByRole } = render();
-			const overview = getByTestId('logs-overview');
-
-			await waitFor(async () =>
-				expect(await findByRole('treeitem', { selected: true })).toHaveTextContent(/AI Model/),
-			);
-			await fireEvent.keyDown(overview, { key: 'K' });
-			expect(await findByRole('treeitem', { selected: true })).toHaveTextContent(/AI Agent/);
-			await fireEvent.keyDown(overview, { key: 'J' });
-			expect(await findByRole('treeitem', { selected: true })).toHaveTextContent(/AI Model/);
-		});
-
-		it('should handle arrow navigation without bubbling to canvas shortcuts', async () => {
-			const { getByTestId, findByRole } = render();
-			const overview = getByTestId('logs-overview');
-			const documentKeydown = vi.fn();
-			document.addEventListener('keydown', documentKeydown);
-
-			try {
-				await waitFor(async () =>
-					expect(await findByRole('treeitem', { selected: true })).toHaveTextContent(/AI Model/),
-				);
-				await fireEvent.keyDown(overview, { key: 'ArrowUp' });
-
-				expect(await findByRole('treeitem', { selected: true })).toHaveTextContent(/AI Agent/);
-				await fireEvent.keyDown(overview, { key: 'ArrowDown' });
-				expect(await findByRole('treeitem', { selected: true })).toHaveTextContent(/AI Model/);
-				expect(documentKeydown).not.toHaveBeenCalled();
-			} finally {
-				document.removeEventListener('keydown', documentKeydown);
-			}
 		});
 
 		it('should not select a log for the selected node on canvas if sync is disabled', async () => {

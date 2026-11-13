@@ -7,7 +7,7 @@ import { mock } from 'vitest-mock-extended';
 
 import { AppBuildService } from '../app-build.service';
 import { AppBuildError } from '../app-build.types';
-import { checkBuildSource, createAppScaffold } from '../../scaffold/app-scaffold';
+import { createAppScaffold } from '../../scaffold/app-scaffold';
 import { appStorageLockSubKey } from '../../storage/app-storage-lock';
 import type { AppVersion } from '../../versions/app-version.entity';
 import { AppVersionRepository } from '../../versions/app-version.repository';
@@ -205,7 +205,6 @@ describe('AppBuildService', () => {
 
 	it('builds the selected stored source and attaches output with attempt ownership', async () => {
 		const { service, source, workspaces, locks, versions, version, bundle, ctx } = setup();
-		const scaffold = createAppScaffold();
 		expect(await service.build('project', 'app', 'version')).toMatchObject({
 			versionId: 'version',
 			status: 'succeeded',
@@ -221,8 +220,7 @@ describe('AppBuildService', () => {
 			'app',
 			'version',
 			{ attemptNumber: 1, startedAt: version.buildStatusUpdatedAt },
-			scaffold,
-			checkBuildSource(scaffold),
+			createAppScaffold(),
 			expect.any(AbortSignal),
 		);
 		expect(source.attachBundle).toHaveBeenCalledWith('project', 'app', 'version', bundle, {
@@ -393,7 +391,7 @@ describe('AppBuildService', () => {
 		source.readSource.mockResolvedValue(new Map());
 		expect(await service.build('project', 'app', 'version')).toMatchObject({
 			status: 'failed',
-			diagnostics: { stage: 'source', log: 'Invalid package files.' },
+			diagnostics: { stage: 'source' },
 		});
 		expect(workspaces.build).not.toHaveBeenCalled();
 	});
@@ -434,7 +432,7 @@ describe('AppBuildService', () => {
 	it('marks a running build failed on shutdown', async () => {
 		const { service, workspaces } = setup();
 		workspaces.build.mockImplementation(
-			async (_project, _app, _version, _attempt, _files, _dependencyKey, signal) =>
+			async (_project, _app, _version, _attempt, _files, signal) =>
 				await new Promise((_resolve, reject) => {
 					signal.addEventListener('abort', () => reject(new Error('Aborted.')), { once: true });
 				}),

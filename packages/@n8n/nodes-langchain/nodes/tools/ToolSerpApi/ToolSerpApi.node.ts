@@ -12,14 +12,12 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 
-import { getRequiredApiKey } from '@utils/helpers';
-
 async function getTool(ctx: ISupplyDataFunctions | IExecuteFunctions, itemIndex: number) {
 	const credentials = await ctx.getCredentials('serpApi');
 
 	const options = ctx.getNodeParameter('options', itemIndex) as object;
 
-	return new SerpAPI(getRequiredApiKey(ctx.getNode(), credentials.apiKey), options);
+	return new SerpAPI(credentials.apiKey as string, options);
 }
 
 export class ToolSerpApi implements INodeType {

@@ -51,12 +51,6 @@ export class SubAgentSourceResolver {
 		context: ResolveSubAgentSourceContext,
 	): Promise<ResolvedSubAgentRuntimeSource> {
 		const agent = await getAgentOrThrow(this.agentRepository, source.agentId, context.projectId);
-		if (agent.isArchived) {
-			throw new UserError(
-				`Sub-agent "${agent.name}" is archived. Restore it before delegating to it.`,
-			);
-		}
-
 		if (context.runtimeSnapshot !== undefined) {
 			const saved = jsonParse<ResolvedSubAgentRuntimeSource | null>(context.runtimeSnapshot, {
 				fallbackValue: null,

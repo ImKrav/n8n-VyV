@@ -1,9 +1,8 @@
 import { randomValidPassword, uniqueId, testDb, mockInstance } from '@n8n/backend-test-utils';
 import { InstanceSettingsLoaderConfig } from '@n8n/config';
 import { LICENSE_FEATURES } from '@n8n/constants';
-import { Person, SettingsRepository } from '@n8n/db';
+import { SettingsRepository, UserRepository, type User } from '@n8n/db';
 import { Container } from '@n8n/di';
-import { DataSource } from '@n8n/typeorm';
 import { randomString } from 'n8n-workflow';
 import request from 'supertest';
 
@@ -23,7 +22,7 @@ import * as utils from '../shared/utils';
 
 vi.mock('@/telemetry');
 
-let owner: Person;
+let owner: User;
 
 const externalHooks = mockInstance(ExternalHooks);
 
@@ -37,7 +36,7 @@ beforeEach(async () => {
 
 	owner = await createOwner();
 
-	owner = await Container.get(DataSource).manager.findOneOrFail(Person, {
+	owner = await Container.get(UserRepository).findOneOrFail({
 		where: { id: owner.id },
 		relations: ['role'],
 	});
@@ -142,13 +141,13 @@ describe('Enable MFA setup', () => {
 			await testServer.authAgentFor(owner).post('/mfa/verify').send({ mfaCode }).expect(200);
 			await testServer.authAgentFor(owner).post('/mfa/enable').send({ mfaCode }).expect(200);
 
-			const person = await Container.get(DataSource).manager.findOneOrFail(Person, {
+			const user = await Container.get(UserRepository).findOneOrFail({
 				where: {},
 			});
 
-			expect(person.mfaEnabled).toBe(true);
-			expect(person.mfaRecoveryCodes).toBeDefined();
-			expect(person.mfaSecret).toBeDefined();
+			expect(user.mfaEnabled).toBe(true);
+			expect(user.mfaRecoveryCodes).toBeDefined();
+			expect(user.mfaSecret).toBeDefined();
 		});
 
 		test('POST /enable should not enable MFA if pre check fails', async () => {
@@ -165,11 +164,11 @@ describe('Enable MFA setup', () => {
 
 			await testServer.authAgentFor(owner).post('/mfa/enable').send({ mfaCode }).expect(400);
 
-			const person = await Container.get(DataSource).manager.findOneOrFail(Person, {
+			const user = await Container.get(UserRepository).findOneOrFail({
 				where: {},
 			});
 
-			expect(person.mfaEnabled).toBe(false);
+			expect(user.mfaEnabled).toBe(false);
 		});
 	});
 });
@@ -187,13 +186,13 @@ describe('Disable MFA setup', () => {
 			})
 			.expect(200);
 
-		const dbPerson = await Container.get(DataSource).manager.findOneOrFail(Person, {
+		const dbUser = await Container.get(UserRepository).findOneOrFail({
 			where: { id: user.id },
 		});
 
-		expect(dbPerson.mfaEnabled).toBe(false);
-		expect(dbPerson.mfaSecret).toBe(null);
-		expect(dbPerson.mfaRecoveryCodes.length).toBe(0);
+		expect(dbUser.mfaEnabled).toBe(false);
+		expect(dbUser.mfaSecret).toBe(null);
+		expect(dbUser.mfaRecoveryCodes.length).toBe(0);
 	});
 
 	test('POST /disable should fail if invalid MFA recovery code is given', async () => {
@@ -244,28 +243,20 @@ describe('Disable MFA setup', () => {
 
 		expect((await getCurrentUser(earlierToken)).status).toBe(401);
 
-		const personWithoutMfa = await Container.get(DataSource).manager.findOneOrFail(Person, {
+		const userWithoutMfa = await Container.get(UserRepository).findOneOrFail({
 			where: { id: user.id },
 		});
-		const qrResponse = await testServer.authAgentFor(personWithoutMfa).get('/mfa/qr').expect(200);
+		const qrResponse = await testServer.authAgentFor(userWithoutMfa).get('/mfa/qr').expect(200);
 		const mfaCode = new TOTPService().generateTOTP(qrResponse.body.data.secret);
-		await testServer
-			.authAgentFor(personWithoutMfa)
-			.post('/mfa/verify')
-			.send({ mfaCode })
-			.expect(200);
-		await testServer
-			.authAgentFor(personWithoutMfa)
-			.post('/mfa/enable')
-			.send({ mfaCode })
-			.expect(200);
+		await testServer.authAgentFor(userWithoutMfa).post('/mfa/verify').send({ mfaCode }).expect(200);
+		await testServer.authAgentFor(userWithoutMfa).post('/mfa/enable').send({ mfaCode }).expect(200);
 
 		// Confirm the final rejection follows a real, different enrollment, not an MFA-less user.
-		const personWithNewMfa = await Container.get(DataSource).manager.findOneOrFail(Person, {
+		const userWithNewMfa = await Container.get(UserRepository).findOneOrFail({
 			where: { id: user.id },
 		});
-		expect(personWithNewMfa.mfaEnabled).toBe(true);
-		expect(personWithNewMfa.mfaSecret).not.toBe(user.mfaSecret);
+		expect(userWithNewMfa.mfaEnabled).toBe(true);
+		expect(userWithNewMfa.mfaSecret).not.toBe(user.mfaSecret);
 
 		expect((await getCurrentUser(earlierToken)).status).toBe(401);
 	});
@@ -452,13 +443,13 @@ describe('Login', () => {
 			const data = response.body.data;
 			expect(data.mfaEnabled).toBe(true);
 
-			const dbPerson = await Container.get(DataSource).manager.findOneOrFail(Person, {
+			const dbUser = await Container.get(UserRepository).findOneOrFail({
 				where: { id: user.id },
 			});
 
 			// Make sure the recovery code used was removed
-			expect(dbPerson.mfaRecoveryCodes.length).toBe(rawRecoveryCodes.length - 1);
-			expect(dbPerson.mfaRecoveryCodes.includes(rawRecoveryCodes[0])).toBe(false);
+			expect(dbUser.mfaRecoveryCodes.length).toBe(rawRecoveryCodes.length - 1);
+			expect(dbUser.mfaRecoveryCodes.includes(rawRecoveryCodes[0])).toBe(false);
 		});
 	});
 });
@@ -585,10 +576,10 @@ describe('Enforce MFA', () => {
 		await testServer.authAgentFor(user).post('/mfa/enable').send({ mfaCode }).expect(200);
 
 		// Verify MFA was enabled for the user
-		const updatedPerson = await Container.get(DataSource).manager.findOneOrFail(Person, {
+		const updatedUser = await Container.get(UserRepository).findOneOrFail({
 			where: { id: user.id },
 		});
-		expect(updatedPerson.mfaEnabled).toBe(true);
+		expect(updatedUser.mfaEnabled).toBe(true);
 
 		// Clean up
 		await settingsRepository.delete({

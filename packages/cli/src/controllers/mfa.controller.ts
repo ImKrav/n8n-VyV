@@ -15,8 +15,6 @@ import { BadRequestError, ForbiddenError, NotFoundError } from '@n8n/errors';
 import { ExternalHooks } from '@/external-hooks';
 import { MfaService } from '@/mfa/mfa.service';
 import { MFA } from '@/requests';
-import { assertPerson } from '@/utils/assert-person';
-import { toUserLike } from '@/utils/to-user-like';
 
 @RestController('/mfa')
 export class MFAController {
@@ -49,7 +47,13 @@ export class MFAController {
 		await this.mfaService.enforceMFA(req.body.enforce);
 
 		this.eventService.emit('instance-policies-updated', {
-			user: toUserLike(req.user),
+			user: {
+				id: req.user.id,
+				email: req.user.email,
+				firstName: req.user.firstName,
+				lastName: req.user.lastName,
+				role: req.user.role,
+			},
 			settingName: '2fa_enforcement',
 			value: req.body.enforce,
 		});
@@ -69,8 +73,6 @@ export class MFAController {
 		allowSkipMFA: true,
 	})
 	async getQRCode(req: AuthenticatedRequest) {
-		assertPerson(req.user);
-
 		const { email, id, mfaEnabled } = req.user;
 
 		if (mfaEnabled)
@@ -114,8 +116,6 @@ export class MFAController {
 		keyedRateLimit: createUserKeyedRateLimiter({}),
 	})
 	async activateMFA(req: MFA.Activate, res: Response) {
-		assertPerson(req.user);
-
 		const { mfaCode = null } = req.body;
 		const { id, mfaEnabled } = req.user;
 
@@ -140,7 +140,13 @@ export class MFAController {
 		const updatedPerson = await this.mfaService.enableMfa(id);
 
 		this.eventService.emit('user-mfa-enabled', {
-			user: toUserLike(req.user),
+			user: {
+				id: req.user.id,
+				email: req.user.email,
+				firstName: req.user.firstName,
+				lastName: req.user.lastName,
+				role: req.user.role,
+			},
 		});
 
 		this.authService.issueCookie(res, updatedPerson, verified, req.browserId);
@@ -172,7 +178,13 @@ export class MFAController {
 		}
 
 		this.eventService.emit('user-mfa-disabled', {
-			user: toUserLike(req.user),
+			user: {
+				id: req.user.id,
+				email: req.user.email,
+				firstName: req.user.firstName,
+				lastName: req.user.lastName,
+				role: req.user.role,
+			},
 			disableMethod: mfaCodeDefined ? 'mfaCode' : 'recoveryCode',
 		});
 

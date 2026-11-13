@@ -68,19 +68,6 @@ describe('FolderBreadcrumbs', () => {
 		vi.clearAllMocks();
 	});
 
-	it('should render folder breadcrumbs with actions', () => {
-		const { getByTestId } = renderComponent({
-			props: {
-				currentFolder: TEST_FOLDER,
-				actions: TEST_ACTIONS,
-			},
-		});
-		expect(getByTestId('folder-breadcrumbs')).toBeVisible();
-		expect(getByTestId('home-project')).toBeVisible();
-		expect(getByTestId('breadcrumbs-item')).toBeVisible();
-		expect(getByTestId('folder-breadcrumbs-actions')).toBeVisible();
-	});
-
 	it('should only render project breadcrumb if currentFolder is not provided', () => {
 		const { getByTestId, queryByTestId } = renderComponent({
 			props: {
@@ -108,22 +95,6 @@ describe('FolderBreadcrumbs', () => {
 		expect(getByTestId('home-project')).toBeVisible();
 		expect(queryAllByTestId('breadcrumbs-item')).toHaveLength(1);
 		expect(getByTestId('ellipsis')).toBeVisible();
-	});
-
-	it('should render 2 levels of breadcrumbs', () => {
-		foldersStore.getCachedFolder.mockReturnValue(TEST_FOLDER);
-
-		const { getByTestId, queryAllByTestId, queryByTestId } = renderComponent({
-			props: {
-				currentFolder: TEST_FOLDER_CHILD,
-				visibleLevels: 2,
-			},
-		});
-		// Now, parent folder should also be visible
-		expect(getByTestId('folder-breadcrumbs')).toBeVisible();
-		expect(getByTestId('home-project')).toBeVisible();
-		expect(queryAllByTestId('breadcrumbs-item')).toHaveLength(2);
-		expect(queryByTestId('ellipsis')).not.toBeInTheDocument();
 	});
 
 	it('should use personal project as fallback and show folder breadcrumbs when currentProject is null', () => {

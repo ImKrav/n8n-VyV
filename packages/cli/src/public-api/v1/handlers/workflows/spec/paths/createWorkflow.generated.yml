@@ -2,10 +2,7 @@ operationId: createWorkflow
 tags:
   - Workflow
 summary: Create a workflow
-description: |-
-  Create a workflow in your instance.
-
-  Requires the `workflow:create` API key scope.
+description: Create a workflow in your instance.
 x-required-scope: workflow:create
 parameters:
   - $ref: ../../../../shared/spec/parameters/idempotencyKey.yml

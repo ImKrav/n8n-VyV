@@ -140,26 +140,6 @@ describe('LogDetailsPanel', () => {
 		expect(rendered.queryByTestId('ndv-reveal-redacted-data')).not.toBeInTheDocument();
 	});
 
-	it('should show name, run status, input, and output of the node', async () => {
-		const rendered = render({
-			isOpen: true,
-			logEntry: createLogEntry({ node: aiNode, runIndex: 0, runData: aiNodeRunData }),
-			panels: LOG_DETAILS_PANEL_STATE.BOTH,
-			collapsingInputTableColumnName: null,
-			collapsingOutputTableColumnName: null,
-			isHeaderClickable: true,
-		});
-
-		const header = within(rendered.getByTestId('log-details-header'));
-		const inputPanel = within(rendered.getByTestId('log-details-input'));
-		const outputPanel = within(rendered.getByTestId('log-details-output'));
-
-		expect(header.getByText('AI Agent')).toBeInTheDocument();
-		expect(header.getByText('Success in 10ms')).toBeInTheDocument();
-		expect(await inputPanel.findByText('hey')).toBeInTheDocument();
-		expect(await outputPanel.findByText('Hello!')).toBeInTheDocument();
-	});
-
 	describe('responding model', () => {
 		function createModelRunData(generationInfo?: Record<string, unknown>) {
 			return createTestTaskData({

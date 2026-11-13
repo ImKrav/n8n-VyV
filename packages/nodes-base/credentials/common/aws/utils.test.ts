@@ -1,5 +1,4 @@
-import type { IHttpRequestOptions } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { UserError, type IHttpRequestOptions } from 'n8n-workflow';
 
 import { regions, type AWSRegion } from './regions';
 import * as systemCredentialsUtils from './system-credentials-utils';

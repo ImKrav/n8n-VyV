@@ -7,7 +7,7 @@ import { createLocalJWKSet, jwtVerify } from 'jose';
 import jwt from 'jsonwebtoken';
 import { generateKeyPairSync } from 'node:crypto';
 
-import { Publisher } from '@n8n/backend-services';
+import { Publisher } from '@/scaling/pubsub/publisher.service';
 
 import {
 	OAUTH_ACCESS_TOKEN_TTL_SECONDS,

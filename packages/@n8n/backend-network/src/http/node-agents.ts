@@ -1,4 +1,4 @@
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 import http from 'node:http';
 import https from 'node:https';
 import type { LookupFunction } from 'node:net';

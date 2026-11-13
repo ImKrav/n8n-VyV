@@ -1,0 +1,278 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 9,
+    "passes": 9,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-11-11T02:26:07.770Z",
+    "end": "2026-11-11T02:26:11.969Z",
+    "duration": 4199,
+    "testsRegistered": 9,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "517d56a0-11d9-487c-a6fb-4e1876053279",
+      "title": "",
+      "fullFile": "cypress\\e2e\\api\\co02-edicion-filas.api.cy.js",
+      "file": "cypress\\e2e\\api\\co02-edicion-filas.api.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "f61b34aa-4d33-47e2-bdcb-200750742eed",
+          "title": "CO-02 · Edición de filas (API)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-017-01 · añade una fila con un valor válido por tipo",
+              "fullTitle": "CO-02 · Edición de filas (API) CP-017-01 · añade una fila con un valor válido por tipo",
+              "timedOut": null,
+              "duration": 280,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "n8nApi.insertar(p, t, [{ nombre: \"Ana\", edad: 25, activo: true, fecha: \"2026-11-08T00:00:00.000Z\" }]).its(\"status\").should(\"eq\", 200);\nn8nApi.filasOk(p, t).then(([fila]) => {\n  expect(fila).to.include({ nombre: \"Ana\", edad: 25, activo: true });\n  expect(new Date(fila.fecha).toISOString()).to.eq(\"2026-11-08T00:00:00.000Z\");\n});",
+              "err": {},
+              "uuid": "233ac134-a32a-4b27-9cbe-200897ba2a3f",
+              "parentUUID": "f61b34aa-4d33-47e2-bdcb-200750742eed",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-017-02 · rechaza valores incompatibles con el tipo de la columna",
+              "fullTitle": "CO-02 · Edición de filas (API) CP-017-02 · rechaza valores incompatibles con el tipo de la columna",
+              "timedOut": null,
+              "duration": 209,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "n8nApi.insertar(p, t, [{ edad: \"abc\" }]).then((r) => {\n  expect(r.status).to.eq(400);\n  expect(mensaje(r)).to.match(/does not match column type 'number'/);\n  cy.evidencia(mensaje(r));\n});\nn8nApi.insertar(p, t, [{ activo: \"quiz\\xE1s\" }]).its(\"status\").should(\"eq\", 400);\nn8nApi.insertar(p, t, [{ fecha: \"no-es-fecha\" }]).its(\"status\").should(\"eq\", 400);\nn8nApi.filasOk(p, t).should(\"have.length\", 0);",
+              "err": {},
+              "uuid": "5c4516ec-d88c-4698-aa1c-6582e778d35d",
+              "parentUUID": "f61b34aa-4d33-47e2-bdcb-200750742eed",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-017-03 · guarda fechas en formato ISO UTC",
+              "fullTitle": "CO-02 · Edición de filas (API) CP-017-03 · guarda fechas en formato ISO UTC",
+              "timedOut": null,
+              "duration": 183,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "n8nApi.insertar(p, t, [{ nombre: \"Fecha\", fecha: \"2026-11-08\" }]).its(\"status\").should(\"eq\", 200);\nn8nApi.filasOk(p, t).then(([f]) => expect(f.fecha).to.match(/^2026-11-08T/));",
+              "err": {},
+              "uuid": "fa631b2a-d3e0-4bb5-ac5a-b4e3219b5922",
+              "parentUUID": "f61b34aa-4d33-47e2-bdcb-200750742eed",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-017-04 · admite nulos y el filtro isEmpty los encuentra",
+              "fullTitle": "CO-02 · Edición de filas (API) CP-017-04 · admite nulos y el filtro isEmpty los encuentra",
+              "timedOut": null,
+              "duration": 141,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "n8nApi.insertar(p, t, [{ nombre: \"SinEdad\", edad: null }, { nombre: \"ConEdad\", edad: 9 }]);\nn8nApi.filasOk(p, t, { filter: { type: \"and\", filters: [{ columnName: \"edad\", condition: \"isEmpty\", value: null }] } }).then((filas) => expect(filas.map((f) => f.nombre)).to.deep.equal([\"SinEdad\"]));",
+              "err": {},
+              "uuid": "c480d941-529d-492b-8f57-35bc2ebaa9e1",
+              "parentUUID": "f61b34aa-4d33-47e2-bdcb-200750742eed",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-017-05 · guarda una celda de 10.000 caracteres",
+              "fullTitle": "CO-02 · Edición de filas (API) CP-017-05 · guarda una celda de 10.000 caracteres",
+              "timedOut": null,
+              "duration": 172,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const texto = \"x\".repeat(largo);\nconst inicio = Date.now();\nn8nApi.insertar(p, t, [{ nombre: texto }]).then((r) => {\n  expect(r.status).to.eq(200);\n  cy.evidencia(`Inserci\\xF3n de ${largo} caracteres en ${Date.now() - inicio} ms`);\n});\nn8nApi.filasOk(p, t).then(([f]) => expect(f.nombre).to.have.length(largo));",
+              "err": {},
+              "uuid": "946aeae5-6d1b-44f7-a8e5-c4b8ef8ba41e",
+              "parentUUID": "f61b34aa-4d33-47e2-bdcb-200750742eed",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-017-05 · guarda una celda de 100.000 caracteres",
+              "fullTitle": "CO-02 · Edición de filas (API) CP-017-05 · guarda una celda de 100.000 caracteres",
+              "timedOut": null,
+              "duration": 197,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const texto = \"x\".repeat(largo);\nconst inicio = Date.now();\nn8nApi.insertar(p, t, [{ nombre: texto }]).then((r) => {\n  expect(r.status).to.eq(200);\n  cy.evidencia(`Inserci\\xF3n de ${largo} caracteres en ${Date.now() - inicio} ms`);\n});\nn8nApi.filasOk(p, t).then(([f]) => expect(f.nombre).to.have.length(largo));",
+              "err": {},
+              "uuid": "c5bbd068-4cd6-4144-ae77-7ddd815456f9",
+              "parentUUID": "f61b34aa-4d33-47e2-bdcb-200750742eed",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [
+            {
+              "uuid": "1977f84f-0020-4aea-9c91-b4d6eb9eaba0",
+              "title": "Con datos de ejemplo",
+              "fullFile": "",
+              "file": "",
+              "beforeHooks": [],
+              "afterHooks": [],
+              "tests": [
+                {
+                  "title": "CP-017-06 · ordena por edad ascendente y descendente",
+                  "fullTitle": "CO-02 · Edición de filas (API) Con datos de ejemplo CP-017-06 · ordena por edad ascendente y descendente",
+                  "timedOut": null,
+                  "duration": 195,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "n8nApi.filasOk(p, t, { sortBy: \"edad:asc\" }).then((f) => expect(f.map((x) => x.edad)).to.deep.equal([12, 30, 45]));\nn8nApi.filasOk(p, t, { sortBy: \"edad:desc\" }).then((f) => expect(f.map((x) => x.edad)).to.deep.equal([45, 30, 12]));",
+                  "err": {},
+                  "uuid": "a474e943-b1c1-456f-8249-fc23e9fe8928",
+                  "parentUUID": "1977f84f-0020-4aea-9c91-b4d6eb9eaba0",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "CP-017-07 · filtra con gt (valor límite excluido), eq y like",
+                  "fullTitle": "CO-02 · Edición de filas (API) Con datos de ejemplo CP-017-07 · filtra con gt (valor límite excluido), eq y like",
+                  "timedOut": null,
+                  "duration": 217,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "const filtro = (columnName, condition, value) => ({ filter: { type: \"and\", filters: [{ columnName, condition, value }] } });\nn8nApi.filasOk(p, t, filtro(\"edad\", \"gt\", 30)).then((f) => expect(f.map((x) => x.edad)).to.deep.equal([45]));\nn8nApi.filasOk(p, t, filtro(\"nombre\", \"eq\", \"Ana\")).then((f) => expect(f).to.have.length(1));\nn8nApi.filasOk(p, t, filtro(\"nombre\", \"like\", \"%an%\")).then((f) => expect(f.map((x) => x.nombre).sort()).to.deep.equal([\"Juan\", \"Mariana\"]));",
+                  "err": {},
+                  "uuid": "3fc5c6ac-8988-47e2-8f8d-c03b22d51854",
+                  "parentUUID": "1977f84f-0020-4aea-9c91-b4d6eb9eaba0",
+                  "isHook": false,
+                  "skipped": false
+                },
+                {
+                  "title": "Complementaria · elimina filas seleccionadas",
+                  "fullTitle": "CO-02 · Edición de filas (API) Con datos de ejemplo Complementaria · elimina filas seleccionadas",
+                  "timedOut": null,
+                  "duration": 207,
+                  "state": "passed",
+                  "speed": "fast",
+                  "pass": true,
+                  "fail": false,
+                  "pending": false,
+                  "context": null,
+                  "code": "n8nApi.filasOk(p, t).then((filas) => {\n  n8nApi.borrarFilas(p, t, filas.slice(0, 2).map((f) => f.id)).its(\"status\").should(\"eq\", 200);\n  n8nApi.filasOk(p, t).should(\"have.length\", 1);\n});",
+                  "err": {},
+                  "uuid": "3455e1ea-bebb-4607-924f-e4f5f30d0e1a",
+                  "parentUUID": "1977f84f-0020-4aea-9c91-b4d6eb9eaba0",
+                  "isHook": false,
+                  "skipped": false
+                }
+              ],
+              "suites": [],
+              "passes": [
+                "a474e943-b1c1-456f-8249-fc23e9fe8928",
+                "3fc5c6ac-8988-47e2-8f8d-c03b22d51854",
+                "3455e1ea-bebb-4607-924f-e4f5f30d0e1a"
+              ],
+              "failures": [],
+              "pending": [],
+              "skipped": [],
+              "duration": 619,
+              "root": false,
+              "rootEmpty": false,
+              "_timeout": 2000
+            }
+          ],
+          "passes": [
+            "233ac134-a32a-4b27-9cbe-200897ba2a3f",
+            "5c4516ec-d88c-4698-aa1c-6582e778d35d",
+            "fa631b2a-d3e0-4bb5-ac5a-b4e3219b5922",
+            "c480d941-529d-492b-8f57-35bc2ebaa9e1",
+            "946aeae5-6d1b-44f7-a8e5-c4b8ef8ba41e",
+            "c5bbd068-4cd6-4144-ae77-7ddd815456f9"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1182,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "evidencias/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

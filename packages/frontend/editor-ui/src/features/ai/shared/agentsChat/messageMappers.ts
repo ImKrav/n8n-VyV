@@ -24,7 +24,6 @@ import type { ToolCallState } from './constants';
 import { isDelegateSubAgentTool, isFailedDelegateOutput } from './delegateTool';
 import type { AgentsChatInteractionExtension } from './interactionRegistry';
 import { summariseToolCall } from './interactiveSummary';
-import { addReplyAttachments, newReplyAttachments } from './replyFiles';
 import { isPolicyRefusedToolOutput } from './toolPolicyRefusal';
 import type {
 	AgentsChatHostEvent,
@@ -374,7 +373,6 @@ export function convertDbMessages(
 					displaySummary: summariseToolCall(part.toolName, output, part.input),
 				};
 				toolCalls.push(toolCall);
-				attachments.push(...newReplyAttachments(attachments, toolCall));
 				if (msg.executionStatus === 'cancelled') continue;
 
 				const rebuilt = rebuildInteractiveFromHistory(toolCall, extensions);
@@ -474,7 +472,6 @@ export function applyOpenSuspensions(
 				if (suspension.suspendPayload !== undefined) {
 					toolCall.suspendPayload = suspension.suspendPayload;
 				}
-				addReplyAttachments(msg, toolCall);
 				const rebuilt = rebuildInteractiveFromHistory(toolCall, extensions);
 				if (rebuilt) {
 					rebuilt.runId = suspension.runId;

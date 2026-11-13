@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, useTemplateRef, watch, type Ref } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import {
 	base64EncodedSize,
 	exceedsAttachmentSizeLimit,
@@ -20,8 +20,6 @@ const props = withDefaults(
 		blockCanvasShortcuts?: boolean;
 		modelValue: string;
 		placeholder?: string;
-		/** Read animation frames here so chat hosts do not render on each tick. */
-		placeholderPreview?: Readonly<Ref<string | undefined>>;
 		isStreaming: boolean;
 		/** Override the action button separately from the composer busy state. */
 		showStopButton?: boolean;
@@ -83,7 +81,6 @@ const toast = useToast();
 const inputRef = useTemplateRef<InstanceType<typeof N8nChatInput>>('inputRef');
 const fileInputRef = useTemplateRef<HTMLInputElement>('fileInputRef');
 const isFocused = ref(false);
-const resolvedPlaceholder = computed(() => props.placeholderPreview?.value ?? props.placeholder);
 const canAcceptFiles = computed(() =>
 	Boolean(props.showAttach && !props.disabled && !props.isStreaming),
 );
@@ -108,7 +105,7 @@ const speechInput = useSpeechRecognition({
 });
 
 watch(speechInput.result, (spoken) => {
-	if (props.showVoice && !props.disabled) {
+	if (props.showVoice) {
 		const prefix = committedSpokenMessage.value;
 		const separator = prefix.length > 0 ? ' ' : '';
 		emit('update:modelValue', prefix + separator + spoken.trimStart());
@@ -123,13 +120,6 @@ watch(
 		}
 	},
 	{ flush: 'post' },
-);
-
-watch(
-	() => props.disabled,
-	(disabled) => {
-		if (disabled && speechInput.isListening.value) speechInput.stop();
-	},
 );
 
 function handleMic() {
@@ -293,7 +283,7 @@ defineExpose({
 			data-test-id="chat-input-composer"
 			:block-canvas-shortcuts="blockCanvasShortcuts"
 			:model-value="modelValue"
-			:placeholder="resolvedPlaceholder"
+			:placeholder="placeholder"
 			:streaming="showStopButton ?? isStreaming"
 			:disabled="disabled"
 			:submit-disabled="!canSubmit"

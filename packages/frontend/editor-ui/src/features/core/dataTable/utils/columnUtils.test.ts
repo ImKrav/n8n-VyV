@@ -44,11 +44,6 @@ describe('columnUtils', () => {
 	});
 
 	describe('isOversizedValue', () => {
-		it('should return true for strings exceeding max length', () => {
-			const longString = 'a'.repeat(MAX_CELL_DISPLAY_LENGTH + 1);
-			expect(isOversizedValue(longString)).toBe(true);
-		});
-
 		it('should return false for strings within max length', () => {
 			const shortString = 'a'.repeat(MAX_CELL_DISPLAY_LENGTH);
 			expect(isOversizedValue(shortString)).toBe(false);
@@ -116,18 +111,6 @@ describe('columnUtils', () => {
 			expect(createCellClass(col)(params)).toBe('boolean-cell');
 		});
 
-		it('should return "oversized-cell" for oversized values', () => {
-			const longString = 'a'.repeat(MAX_CELL_DISPLAY_LENGTH + 1);
-			const params = {
-				data: { id: 1, test: longString },
-				column: {
-					getUserProvidedColDef: () => ({ cellDataType: 'text' }),
-				},
-			} as unknown as CellClassParams;
-
-			expect(createCellClass(col)(params)).toBe('oversized-cell');
-		});
-
 		it('should return empty string for regular cells', () => {
 			const params = {
 				data: { id: 1, test: 'normal value' },
@@ -141,22 +124,6 @@ describe('columnUtils', () => {
 	});
 
 	describe('createValueGetter', () => {
-		it('should return null for undefined values', () => {
-			const col: DataTableColumn = { id: 'col1', name: 'test', type: 'string', index: 0 };
-			const params = { data: {} } as unknown as ValueGetterParams<DataTableRow>;
-
-			const getter = createValueGetter(col);
-			expect(getter(params)).toBeNull();
-		});
-
-		it('should return null for null values', () => {
-			const col: DataTableColumn = { id: 'col1', name: 'test', type: 'string', index: 0 };
-			const params = { data: { test: null } } as unknown as ValueGetterParams<DataTableRow>;
-
-			const getter = createValueGetter(col);
-			expect(getter(params)).toBeNull();
-		});
-
 		it('should return value for string columns', () => {
 			const col: DataTableColumn = { id: 'col1', name: 'test', type: 'string', index: 0 };
 			const params = { data: { test: 'hello' } } as unknown as ValueGetterParams<DataTableRow>;

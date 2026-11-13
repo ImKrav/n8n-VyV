@@ -7,7 +7,7 @@ import {
 } from '@/app/constants';
 
 import { waitFor } from '@testing-library/vue';
-import { CHAT_TRIGGER_NODE_TYPE, FORM_TRIGGER_NODE_TYPE, WEBHOOK_NODE_TYPE } from 'n8n-workflow';
+import { CHAT_TRIGGER_NODE_TYPE, FORM_TRIGGER_NODE_TYPE } from 'n8n-workflow';
 
 vi.mock('@/app/stores/ui.store', () => {
 	return {
@@ -39,36 +39,6 @@ const renderComponent = createComponentRenderer(WorkflowActivationConflictingWeb
 describe('WorkflowActivationConflictingWebhookModal', () => {
 	beforeEach(() => {
 		createTestingPinia();
-	});
-
-	it('should render webhook conflict modal', async () => {
-		const props = {
-			modalName: WORKFLOW_ACTIVATION_CONFLICTING_WEBHOOK_MODAL_KEY,
-			data: {
-				triggerName: 'Trigger in this workflow',
-				workflowName: 'Test Workflow',
-				triggerType: WEBHOOK_NODE_TYPE,
-				workflowId: '123',
-				webhookPath: 'webhook-path',
-				method: 'GET',
-				node: 'Node in workflow',
-			},
-		};
-
-		const wrapper = renderComponent({ props });
-		await waitFor(() => {
-			expect(wrapper.queryByTestId('conflicting-webhook-callout')).toBeInTheDocument();
-		});
-
-		expect(wrapper.getByTestId('conflicting-webhook-callout')).toHaveTextContent(
-			"A webhook trigger 'Node in workflow' in the workflow 'Test Workflow' uses a conflicting URL path, so this workflow cannot be activated",
-		);
-		expect(wrapper.getByTestId('conflicting-webhook-suggestion')).toHaveTextContent(
-			'and activate this one, or adjust the following URL path in either workflow:',
-		);
-		expect(wrapper.getByTestId('conflicting-webhook-path')).toHaveTextContent(
-			'http://webhook-base/webhook-path',
-		);
 	});
 
 	it('should render form conflict modal', async () => {

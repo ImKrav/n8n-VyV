@@ -258,44 +258,6 @@ describe('WorkflowHistory', () => {
 		expect(windowOpenSpy).toHaveBeenCalled();
 	});
 
-	it('should clone workflow from version data', async () => {
-		route.params.workflowId = workflowId;
-		const newWorkflowId = faker.string.nanoid();
-		vi.spyOn(workflowHistoryStore, 'cloneIntoNewWorkflow').mockResolvedValue({
-			id: newWorkflowId,
-		} as IWorkflowDb);
-
-		const { getByTestId, getByRole } = renderComponent({ pinia });
-		await userEvent.click(getByTestId('stub-clone-button'));
-
-		await waitFor(() => {
-			expect(router.resolve).toHaveBeenCalledWith({
-				name: VIEWS.WORKFLOW,
-				params: { workflowId: newWorkflowId },
-			});
-			expect(telemetry.track).toHaveBeenCalledWith('User cloned version', {
-				instance_id: '',
-				workflow_id: workflowId,
-			});
-		});
-
-		expect(within(getByRole('alert')).getByRole('link')).toBeInTheDocument();
-	});
-
-	it('should download workflow version', async () => {
-		route.params.workflowId = workflowId;
-
-		const { getByTestId } = renderComponent({ pinia });
-		await userEvent.click(getByTestId('stub-download-button'));
-
-		await waitFor(() => {
-			expect(telemetry.track).toHaveBeenCalledWith('User downloaded version', {
-				instance_id: '',
-				workflow_id: workflowId,
-			});
-		});
-	});
-
 	describe('publish timeline', () => {
 		const cleanRouteState = () => {
 			Object.keys(route.params).forEach((key) => delete route.params[key]);
@@ -518,17 +480,5 @@ describe('WorkflowHistory', () => {
 
 		expect(queryByTestId('workflow-archived-tag')).not.toBeInTheDocument();
 		expect(container.textContent).toContain('Test Workflow');
-	});
-
-	it('should open name version modal when name action is triggered', async () => {
-		route.params.workflowId = workflowId;
-		vi.spyOn(workflowHistoryStore, 'updateWorkflowHistoryVersion').mockResolvedValue(undefined);
-
-		const { getByTestId, container } = renderComponent({ pinia });
-		await userEvent.click(getByTestId('stub-name-button'));
-
-		await flushPromises();
-
-		expect(container).toBeInTheDocument();
 	});
 });

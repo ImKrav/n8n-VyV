@@ -1,4 +1,4 @@
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 
 /**
  * What a decorator collects at module-load time, for a single consumer to

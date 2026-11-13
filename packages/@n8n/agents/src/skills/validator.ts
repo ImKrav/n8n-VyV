@@ -18,9 +18,6 @@ export const RUNTIME_SKILL_NAME_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/;
 const RUNTIME_SKILL_FRONTMATTER_FIELDS = [
 	'name',
 	'description',
-	'recommended_tool_groups',
-	// Deprecated: replaced by recommended_tool_groups. Still accepted, but ignored, so that
-	// skills written before the rename continue to load.
 	'recommended_tools',
 	'allowed_tools',
 	'interface',
@@ -83,11 +80,7 @@ export function parseRuntimeSkillMarkdown(
 	}
 
 	const description = requiredFrontmatterString(frontmatter.data, 'description', errors);
-	const recommendedToolGroups = optionalStringArray(
-		frontmatter.data,
-		'recommended_tool_groups',
-		errors,
-	);
+	const recommendedTools = optionalStringArray(frontmatter.data, 'recommended_tools', errors);
 	const allowedTools = optionalStringArray(frontmatter.data, 'allowed_tools', errors);
 	const skillInterface = optionalSkillInterface(frontmatter.data, errors);
 	const policy = optionalSkillPolicy(frontmatter.data, errors);
@@ -114,7 +107,7 @@ export function parseRuntimeSkillMarkdown(
 		...(options.directory ? { directory: options.directory } : {}),
 		...(options.sourceDirectory ? { sourceDirectory: options.sourceDirectory } : {}),
 		...(options.category ? { category: options.category } : {}),
-		...(recommendedToolGroups ? { recommendedToolGroups } : {}),
+		...(recommendedTools ? { recommendedTools } : {}),
 		...(allowedTools ? { allowedTools } : {}),
 		...(skillInterface ? { interface: skillInterface } : {}),
 		...(policy ? { policy } : {}),

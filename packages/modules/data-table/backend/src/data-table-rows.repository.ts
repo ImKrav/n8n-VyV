@@ -15,14 +15,15 @@ import {
 	DataTableColumnJsType,
 	DataTableRows,
 	DataTableRowReturn,
+	UnexpectedError,
 	DataTableRowsReturn,
 	DATA_TABLE_SYSTEM_COLUMNS,
 	DataTableInsertRowsReturnType,
 	DataTableInsertRowsResult,
 	DataTableRowReturnWithState,
 	DataTableRawRowReturn,
+	UserError,
 } from 'n8n-workflow';
-import { UnexpectedError, UserError } from '@n8n/errors';
 
 import { DataTableColumn } from './data-table-column.entity';
 import { DataTable } from './data-table.entity';

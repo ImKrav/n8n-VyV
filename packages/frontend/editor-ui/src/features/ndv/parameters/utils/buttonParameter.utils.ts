@@ -1,6 +1,5 @@
 import type { Schema } from '@/Interface';
-import type { INode, INodeExecutionData } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
+import { UserError, type INode, type INodeExecutionData } from 'n8n-workflow';
 import { useDataSchema } from '@/app/composables/useDataSchema';
 import { executionDataToJson } from '@/app/utils/nodeTypesUtils';
 import { generateCodeForPrompt } from '@/features/ai/assistant/assistant.api';

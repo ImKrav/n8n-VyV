@@ -1,5 +1,5 @@
 import { MOONSHOTAI_KIMI_K3_MODEL_ID, UNLIMITED_CREDITS } from '@n8n/api-types';
-import { setN8nVersion, type Logger } from '@n8n/backend-common';
+import type { Logger } from '@n8n/backend-common';
 import type { OutboundHttp } from '@n8n/backend-network';
 import type { InstanceAiConfig } from '@n8n/config';
 import type { User } from '@n8n/db';
@@ -56,7 +56,6 @@ describe('InstanceAiModelService', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		setN8nVersion('1.2.3');
 		capturedTokenGetters.length = 0;
 		instanceAiConfig.modelRequestLabels = true;
 		service = new InstanceAiModelService(
@@ -104,7 +103,7 @@ describe('InstanceAiModelService', () => {
 			const headers = new Headers(baseFetch.mock.calls[0]?.[1]?.headers);
 			expect(headers.get('authorization')).toBe('Bearer key');
 			expect(headers.get('x-n8n-feature')).toBe('instance-ai');
-			expect(headers.get('x-n8n-version')).toBe('1.2.3');
+			expect(headers.get('x-n8n-version')).not.toBeNull();
 			expect(headers.get('x-n8n-run-id')).toBe('run-1');
 			expect(headers.get('x-n8n-thread-id')).toBe('thread-1');
 			expect(outboundHttp.transport).toHaveBeenCalledTimes(1);
@@ -299,7 +298,7 @@ describe('InstanceAiModelService', () => {
 				modelId: MOONSHOTAI_KIMI_K3_MODEL_ID,
 				tokenManager,
 				feature: 'instance-ai',
-				n8nVersion: '1.2.3',
+				n8nVersion: expect.any(String),
 				outboundHttp,
 				runId: undefined,
 				threadId: undefined,

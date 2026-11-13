@@ -100,15 +100,15 @@ export default class PackageExport extends BaseCommand {
 		credentialExportPolicy: Flags.option({
 			options: ['expression-values-only', 'no-values'] as const,
 			description:
-				'Whether expression values from credential data are bundled into the package; a literal value travels only when it decides whether a field with a bundled expression shows (default on the instance: expression-values-only)',
+				'Whether expression values from credential data are bundled into the package; literal values never travel (default on the instance: expression-values-only)',
 			aliases: ['credential-export-policy'],
 		})(),
-		includeArchived: Flags.option({
+		includeArchivedWorkflows: Flags.option({
 			description:
-				'Whether folder exports include archived workflows and project exports include archived workflows and agents (workflows and agents given by id always export)',
+				'Whether folder and project exports include their archived workflows (workflows given by id always export)',
 			options: ['true', 'false'] as const,
 			default: 'false',
-			aliases: ['include-archived'],
+			aliases: ['include-archived-workflows'],
 		})(),
 	};
 
@@ -123,7 +123,7 @@ export default class PackageExport extends BaseCommand {
 		const dependencyPolicy = flags.dependencyPolicy;
 		const versionPolicy = flags.versionPolicy;
 		const credentialExportPolicy = flags.credentialExportPolicy;
-		const includeArchived = flags.includeArchived === 'true';
+		const includeArchivedWorkflows = flags.includeArchivedWorkflows === 'true';
 
 		const hasLooseSelection = agentIds.length > 0 || workflowIds.length > 0 || folderIds.length > 0;
 		if (projectIds.length > 0 && hasLooseSelection) {
@@ -148,7 +148,7 @@ export default class PackageExport extends BaseCommand {
 								dependencyPolicy,
 								versionPolicy,
 								credentialExportPolicy,
-								...(includeArchived ? { includeArchived } : {}),
+								...(includeArchivedWorkflows ? { includeArchivedWorkflows } : {}),
 							}
 						: {
 								...(agentIds.length > 0 ? { agentIds } : {}),
@@ -159,7 +159,7 @@ export default class PackageExport extends BaseCommand {
 								dependencyPolicy,
 								versionPolicy,
 								credentialExportPolicy,
-								...(includeArchived ? { includeArchived } : {}),
+								...(includeArchivedWorkflows ? { includeArchivedWorkflows } : {}),
 							},
 				);
 			} catch (error) {

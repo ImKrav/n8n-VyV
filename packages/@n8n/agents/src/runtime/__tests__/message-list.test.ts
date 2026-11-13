@@ -173,9 +173,8 @@ describe('AgentMessageList — forLlm observation memory', () => {
 		);
 	});
 
-	it('injects the rendered observation log into the system prompt with system placement', () => {
+	it('injects the rendered observation log into the system prompt', () => {
 		const list = new AgentMessageList();
-		list.observationLogPlacement = 'system';
 		list.observationLogMemory = [
 			'<observations>',
 			'The following is your memory of this conversation.',

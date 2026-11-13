@@ -2,10 +2,7 @@ operationId: updateWorkflowTags
 tags:
   - Workflow
 summary: Update tags of a workflow
-description: |-
-  Update tags of a workflow.
-
-  Requires the `workflowTags:update` API key scope.
+description: Update tags of a workflow.
 x-required-scope: workflowTags:update
 parameters:
   - schema:

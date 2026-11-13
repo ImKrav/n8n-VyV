@@ -60,12 +60,11 @@ import type { N8nMemory } from '../integrations/n8n-memory';
 import { N8nChatIntegration } from '../integrations/platforms/n8n-chat/n8n-chat-integration';
 import type * as FromJsonConfig from '../json-config/from-json-config';
 import type { ToolExecutor } from '../json-config/from-json-config';
-import type { KnowledgeFileRepository } from '@/modules/knowledge/repositories/knowledge-file.repository';
+import type { AgentFileRepository } from '../repositories/agent-file.repository';
 import type { AgentRepository } from '../repositories/agent.repository';
 import type { AgentSecureRuntime } from '../runtime/agent-secure-runtime';
 import { SubAgentRunner } from '../sub-agents/sub-agent-runner';
 import { storedRunSource } from './test-utils/stored-agent-config';
-import type { AgentSandboxFilesService } from '../agent-sandbox-files.service';
 
 const { getCachedCatalog } = vi.hoisted(() => ({ getCachedCatalog: vi.fn() }));
 vi.mock('@n8n/agents/catalog', () => ({ getCachedCatalog }));
@@ -111,7 +110,7 @@ function makeReconstructionService(
 		agentRepository?: AgentRepository;
 		agentSandboxRuntimeService?: AgentSandboxRuntimeService;
 		n8nCheckpointStorage?: N8NCheckpointStorage;
-		agentFileRepository?: KnowledgeFileRepository;
+		agentFileRepository?: AgentFileRepository;
 		agentWorkspaceService?: AgentWorkspaceService;
 		agentKnowledgeMirrorService?: AgentKnowledgeMirrorService;
 		knowledgeAvailabilityService?: KnowledgeAvailabilityService;
@@ -132,7 +131,7 @@ function makeReconstructionService(
 	return new AgentRuntimeReconstructionService(
 		overrides.logger ?? mock<Logger>(),
 		overrides.agentRepository ?? mock<AgentRepository>(),
-		overrides.agentFileRepository ?? mock<KnowledgeFileRepository>(),
+		overrides.agentFileRepository ?? mock<AgentFileRepository>(),
 		mock<ActiveExecutions>(),
 		mock<WorkflowRepository>(),
 		overrides.n8nCheckpointStorage ?? mock<N8NCheckpointStorage>(),
@@ -152,7 +151,6 @@ function makeReconstructionService(
 		mock<CredentialsService>(),
 		mock<AgentKnowledgeUsageTracker>(),
 		overrides.knowledgeAvailabilityService ?? makeKnowledgeAvailabilityService(),
-		mock<AgentSandboxFilesService>(),
 	);
 }
 
@@ -349,7 +347,7 @@ describe('AgentRuntimeReconstructionService — workspace attachment', () => {
 	});
 
 	it('attaches a workspace when the effective sandbox setting is enabled', async () => {
-		const agentFileRepository = mock<KnowledgeFileRepository>();
+		const agentFileRepository = mock<AgentFileRepository>();
 		const agentSandboxRuntimeService = mock<AgentSandboxRuntimeService>({
 			isEnabled: () => true,
 		});
@@ -378,7 +376,7 @@ describe('AgentRuntimeReconstructionService — workspace attachment', () => {
 	});
 
 	it('keeps knowledge tools gated by uploaded files', async () => {
-		const agentFileRepository = mock<KnowledgeFileRepository>();
+		const agentFileRepository = mock<AgentFileRepository>();
 		const agentSandboxRuntimeService = mock<AgentSandboxRuntimeService>({
 			isEnabled: () => true,
 		});
@@ -402,7 +400,7 @@ describe('AgentRuntimeReconstructionService — workspace attachment', () => {
 	});
 
 	it('keeps the workspace but skips knowledge tools when the knowledge module is inactive', async () => {
-		const agentFileRepository = mock<KnowledgeFileRepository>();
+		const agentFileRepository = mock<AgentFileRepository>();
 		const agentSandboxRuntimeService = mock<AgentSandboxRuntimeService>({
 			isEnabled: () => true,
 		});
@@ -437,7 +435,7 @@ describe('AgentRuntimeReconstructionService — workspace attachment', () => {
 			const construction = createDeferredPromise<agents.Agent>();
 			const acquisition =
 				createDeferredPromise<Awaited<ReturnType<AgentWorkspaceService['getAgentWorkspace']>>>();
-			const agentFileRepository = mock<KnowledgeFileRepository>();
+			const agentFileRepository = mock<AgentFileRepository>();
 			const agentWorkspaceService = mock<AgentWorkspaceService>();
 			agentWorkspaceService.getAgentWorkspace.mockImplementationOnce(async () => {
 				started.resolve();

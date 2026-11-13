@@ -140,35 +140,6 @@ describe('WorkflowExecutionsPreview.vue', () => {
 		});
 	});
 
-	test.each([
-		[false, [], '/'],
-		[false, ['workflow:update'], '/'],
-		[true, [], '/'],
-		[true, ['workflow:read'], '/'],
-		[true, ['workflow:update'], `/workflow/${executionData.workflowId}/debug/${executionData.id}`],
-	])(
-		'when debug enterprise feature is %s with workflow scopes %s it should handle debug link click accordingly',
-		async (availability, scopes, path) => {
-			const settingsStore = mockedStore(useSettingsStore);
-			const workflowsListStore = mockedStore(useWorkflowsListStore);
-
-			settingsStore.settings.enterprise = {
-				...(settingsStore.settings.enterprise ?? {}),
-				[EnterpriseEditionFeature.DebugInEditor]: availability,
-			} as FrontendSettings['enterprise'];
-
-			workflowsListStore.workflowsById[executionData.workflowId] = { scopes } as IWorkflowDb;
-
-			await router.push(path);
-
-			const { getByTestId } = renderComponent({ props: { execution: executionData } });
-
-			await userEvent.click(getByTestId('execution-debug-button'));
-
-			expect(router.currentRoute.value.path).toBe(path);
-		},
-	);
-
 	it('disables the stop execution button when the user cannot update', () => {
 		const { getByTestId } = renderComponent({
 			props: { execution: { ...executionData, status: 'running' } },

@@ -1,11 +1,11 @@
-import type {
-	IDataObject,
-	INodeType,
-	INodeTypeDescription,
-	INodeTypes,
-	IVersionedNodeType,
+import {
+	UnexpectedError,
+	type IDataObject,
+	type INodeType,
+	type INodeTypeDescription,
+	type INodeTypes,
+	type IVersionedNodeType,
 } from 'n8n-workflow';
-import { UnexpectedError } from '@n8n/errors';
 
 import type { NeededNodeType } from './runner-types';
 

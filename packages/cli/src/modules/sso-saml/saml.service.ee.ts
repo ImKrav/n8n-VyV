@@ -2,7 +2,7 @@ import type { SamlPreferences, SamlPreferencesAttributeMapping } from '@n8n/api-
 import { Logger } from '@n8n/backend-common';
 import { OutboundHttp } from '@n8n/backend-network';
 import { GlobalConfig } from '@n8n/config';
-import type { Person, Settings } from '@n8n/db';
+import type { Settings, User } from '@n8n/db';
 import {
 	AuthIdentityRepository,
 	isPerson,
@@ -373,7 +373,7 @@ export class SamlService {
 		binding: SamlLoginBinding,
 		metadataOverride?: string,
 	): Promise<{
-		authenticatedUser: Person | undefined;
+		authenticatedUser: User | undefined;
 		attributes: SamlUserAttributes;
 		rawAttributes: Record<string, unknown>;
 		onboardingRequired: boolean;
@@ -492,23 +492,20 @@ export class SamlService {
 	}
 
 	private async applySsoProvisioning(
-		person: Person,
+		user: User,
 		attributes: SamlPreferencesAttributeMapping,
 		rawAttributes: Record<string, unknown>,
 	): Promise<void> {
 		if (await this.provisioningService.isExpressionMappingEnabled()) {
 			const context = buildSamlClaimsContext(rawAttributes);
-			await this.provisioningService.provisionExpressionMappedRolesForUser(person, context);
+			await this.provisioningService.provisionExpressionMappedRolesForUser(user, context);
 			return;
 		}
 		// Called even when the attribute is missing so the configured default condition applies
-		await this.provisioningService.provisionInstanceRoleForUser(
-			person,
-			attributes?.n8nInstanceRole,
-		);
+		await this.provisioningService.provisionInstanceRoleForUser(user, attributes?.n8nInstanceRole);
 		if (attributes?.n8nProjectRoles) {
 			await this.provisioningService.provisionProjectRolesForUser(
-				person.id,
+				user.id,
 				attributes.n8nProjectRoles,
 			);
 		}
@@ -516,7 +513,7 @@ export class SamlService {
 
 	private async broadcastReloadSAMLConfigurationCommand(): Promise<void> {
 		if (this.instanceSettings.isMultiMain) {
-			const { Publisher } = await import('@n8n/backend-services');
+			const { Publisher } = await import('@/scaling/pubsub/publisher.service.js');
 			await Container.get(Publisher).publishCommand({ command: 'reload-saml-config' });
 		}
 	}

@@ -48,7 +48,7 @@ function renderContent(
 	return renderComponent({
 		props: {
 			detail: result(),
-			workflowNames: new Map([['workflow-1', 'Daily report']]),
+			workflowName: 'Daily report',
 			tab: 'activity',
 			pendingAction: null,
 			publishAccess: 'allowed',
@@ -66,24 +66,8 @@ async function openMenu(name: 'Review' | 'Continue in…') {
 beforeEach(() => {
 	diffProps = undefined;
 	componentRegistry.register('workflow-diff', DiffView);
-	vi.stubGlobal(
-		'IntersectionObserver',
-		class {
-			constructor(private readonly onIntersect: IntersectionObserverCallback) {}
-			observe(target: Element) {
-				this.onIntersect(
-					[{ target, isIntersecting: true }] as unknown as IntersectionObserverEntry[],
-					this as unknown as IntersectionObserver,
-				);
-			}
-			disconnect() {}
-		},
-	);
 });
-afterEach(() => {
-	componentRegistry.clear();
-	vi.unstubAllGlobals();
-});
+afterEach(() => componentRegistry.clear());
 
 describe('SelfHealingResultContent', () => {
 	it('renders the saved report as read-only Markdown', () => {
@@ -145,9 +129,7 @@ describe('SelfHealingResultContent', () => {
 		expect(
 			within(menu).getByRole('menuitem', { name: 'Continue with Editor' }),
 		).not.toHaveAttribute('data-disabled');
-		expect(menu).toHaveTextContent(
-			'Publish permission on every changed workflow is required to apply and publish.',
-		);
+		expect(menu).toHaveTextContent('Publish permission is required to apply and publish.');
 	});
 
 	it('disables publishing without a permission note while access is unknown', async () => {
@@ -158,7 +140,7 @@ describe('SelfHealingResultContent', () => {
 		expect(within(menu).getByRole('menuitem', { name: 'Apply and publish' })).toHaveAttribute(
 			'data-disabled',
 		);
-		expect(menu).not.toHaveTextContent('Publish permission');
+		expect(menu).not.toHaveTextContent('Publish permission is required');
 	});
 
 	it('disables every decision while a decision is pending', () => {
@@ -186,13 +168,13 @@ describe('SelfHealingResultContent', () => {
 	);
 
 	it.each([
-		{ proposals: [], notice: false },
-		{ proposals: [suggestion({ resultKind: 'needs_you' })], notice: true },
+		{ proposal: null, notice: false },
+		{ proposal: suggestion({ resultKind: 'needs_you' }), notice: true },
 	])(
 		'offers both continuations without publishing for Needs attention',
-		async ({ proposals, notice }) => {
+		async ({ proposal, notice }) => {
 			const { getByRole, queryByRole, getByTestId, emitted } = renderContent({
-				detail: result({ outcome: 'needs_you', suggestions: proposals }),
+				detail: result({ outcome: 'needs_you', suggestion: proposal }),
 			});
 
 			expect(getByTestId('self-healing-outcome-notice')).toHaveTextContent(
@@ -200,7 +182,7 @@ describe('SelfHealingResultContent', () => {
 			);
 			expect(getByTestId('self-healing-status-card')).toHaveTextContent(/^StatusNeeds attention$/);
 			expect(queryByRole('button', { name: /Review/ })).not.toBeInTheDocument();
-			expect(queryByRole('tab', { name: 'Changes' }) !== null).toBe(proposals.length > 0);
+			expect(queryByRole('tab', { name: 'Changes' }) !== null).toBe(proposal !== null);
 
 			const menu = await openMenu('Continue in…');
 			expect(
@@ -218,7 +200,7 @@ describe('SelfHealingResultContent', () => {
 
 	it('shows a closed Could not fix result without review actions', () => {
 		const { getByTestId, queryByRole } = renderContent({
-			detail: result({ outcome: 'could_not_fix', suggestions: [], reviewState: 'closed' }),
+			detail: result({ outcome: 'could_not_fix', suggestion: null, reviewState: 'closed' }),
 		});
 
 		expect(getByTestId('self-healing-status-card')).toHaveTextContent(/^StatusCould not fix$/);
@@ -236,13 +218,15 @@ describe('SelfHealingResultContent', () => {
 		const { getByTestId, getAllByText } = renderContent({
 			detail: result({
 				outcome: 'could_not_fix',
-				suggestions: [],
+				suggestion: null,
 				reviewState: 'dismissed',
-				updatedAt: '2026-10-09T09:01:00.000Z',
+				dismissedAt: '2026-10-09T09:01:00.000Z',
+				dismissedById: 'human-1',
 			}),
 		});
 
 		expect(getByTestId('self-healing-report')).toBeInTheDocument();
+		expect(getByTestId('self-healing-activity')).not.toHaveTextContent('human-1');
 		expect(getByTestId('self-healing-status-card')).toHaveTextContent('Closed');
 		expect(getAllByText('Closed', { exact: true })).toHaveLength(1);
 		expect(getByTestId('self-healing-activity')).toHaveTextContent('Completed the investigation');
@@ -253,7 +237,7 @@ describe('SelfHealingResultContent', () => {
 
 	it('keeps the editor and discard available when chat is unavailable', async () => {
 		const { getByRole } = renderContent({
-			detail: result({ outcome: 'needs_you', suggestions: [] }),
+			detail: result({ outcome: 'needs_you', suggestion: null }),
 			canChat: false,
 		});
 
@@ -289,7 +273,7 @@ describe('SelfHealingResultContent', () => {
 		expect(queryByTestId('self-healing-outdated-notice')).not.toBeInTheDocument();
 	});
 
-	it.each(['applied', 'outdated', 'dismissed'] as const)(
+	it.each(['applied', 'outdated', 'discarded', 'dismissed'] as const)(
 		'keeps %s results read-only',
 		(reviewState) => {
 			const { getByTestId, queryByTestId, queryByRole } = renderContent({
@@ -310,15 +294,15 @@ describe('SelfHealingResultContent', () => {
 		},
 	);
 
-	it('renders the exact stored snapshots even after a suggestion is outdated', async () => {
+	it('renders the exact stored snapshots even after a suggestion is outdated', () => {
 		const proposal = suggestion({ state: 'closed', closedReason: 'outdated' });
 		proposal.payload.original.settings = { executionOrder: 'v1' };
-		const { findByTestId } = renderContent({
-			detail: result({ suggestions: [proposal], reviewState: 'outdated' }),
+		const { getByTestId } = renderContent({
+			detail: result({ suggestion: proposal, reviewState: 'outdated' }),
 			tab: 'changes',
 		});
 
-		expect(await findByTestId('saved-workflow-diff')).toBeInTheDocument();
+		expect(getByTestId('saved-workflow-diff')).toBeInTheDocument();
 		expect(diffProps).toMatchObject({
 			sourceSnapshot: proposal.payload.original,
 			targetSnapshot: proposal.payload.proposed,
@@ -333,15 +317,11 @@ describe('SelfHealingResultContent', () => {
 
 	it('keeps continuation available while reviewing the suggested changes', async () => {
 		const { queryByTestId, emitted } = renderContent({
-			detail: result({
-				outcome: 'needs_you',
-				suggestions: [suggestion({ resultKind: 'needs_you' })],
-			}),
+			detail: result({ outcome: 'needs_you', suggestion: suggestion({ resultKind: 'needs_you' }) }),
 			tab: 'changes',
 		});
 
 		expect(queryByTestId('self-healing-activity-panel')).not.toBeInTheDocument();
-		expect(queryByTestId('self-healing-metadata')).not.toBeInTheDocument();
 		const menu = await openMenu('Continue in…');
 		await userEvent.click(within(menu).getByRole('menuitem', { name: 'Continue with Assistant' }));
 		expect(emitted('action')).toEqual([['chat']]);
@@ -349,7 +329,7 @@ describe('SelfHealingResultContent', () => {
 
 	it('falls back to Activity when a linked Changes tab has no proposal', () => {
 		const { getByTestId, queryByTestId } = renderContent({
-			detail: result({ outcome: 'could_not_fix', suggestions: [] }),
+			detail: result({ outcome: 'could_not_fix', suggestion: null }),
 			tab: 'changes',
 		});
 
@@ -474,7 +454,7 @@ describe('SelfHealingResultContent', () => {
 			},
 		];
 		const { getAllByTestId, getByTestId } = renderContent({
-			detail: result({ suggestions: [suggestion({ activity })] }),
+			detail: result({ suggestion: suggestion({ activity }) }),
 		});
 		const entries = getAllByTestId('self-healing-activity-entry');
 
@@ -482,94 +462,6 @@ describe('SelfHealingResultContent', () => {
 		expect(entries[1]).toHaveTextContent(/System\s*\|\s*Marked the suggestion as outdated/);
 		expect(entries[2]).toHaveTextContent(/A user\s*\|\s*Discarded the suggested changes/);
 		expect(getByTestId('self-healing-activity')).not.toHaveTextContent('human-private-id');
-	});
-
-	describe('with sub-workflow changes', () => {
-		const detail = (overrides: Parameters<typeof result>[0] = {}) =>
-			result({
-				suggestions: [
-					suggestion(),
-					suggestion({ suggestionId: 'suggestion-2', workflowId: 'child-1' }),
-				],
-				...overrides,
-			});
-		const workflowNames = new Map([
-			['workflow-1', 'Daily report'],
-			['child-1', 'Send email'],
-		]);
-
-		it('counts the changed workflows and lists the sub-workflows in the metadata', () => {
-			const { getByRole, getAllByTestId } = renderContent({ detail: detail(), workflowNames });
-
-			expect(getByRole('tab', { name: /Changes\s*2/ })).toBeInTheDocument();
-			const links = getAllByTestId('self-healing-sub-workflow-link');
-			expect(links.map((link) => link.textContent?.trim())).toEqual(['Send email']);
-			expect(links[0]).toHaveAttribute('href', '/workflow/child-1');
-		});
-
-		it('gives the workflow diffs the full width of the Changes tab', () => {
-			const { getAllByTestId, queryByTestId } = renderContent({
-				detail: detail(),
-				workflowNames,
-				tab: 'changes',
-			});
-
-			expect(getAllByTestId('self-healing-changes-card')).toHaveLength(2);
-			expect(queryByTestId('self-healing-metadata')).not.toBeInTheDocument();
-			expect(queryByTestId('self-healing-changes-outdated-notice')).not.toBeInTheDocument();
-		});
-
-		it('shows the unchanged failing workflow above a single sub-workflow fix', () => {
-			const { getAllByTestId, getByRole, queryByTestId } = renderContent({
-				detail: detail({
-					suggestions: [suggestion({ suggestionId: 'suggestion-2', workflowId: 'child-1' })],
-					workflows: [
-						{
-							workflowId: 'workflow-1',
-							name: 'Daily report',
-							change: 'unchanged',
-							suggestionId: null,
-						},
-						{
-							workflowId: 'child-1',
-							name: 'Send email',
-							change: 'modified',
-							suggestionId: 'suggestion-2',
-						},
-					],
-					calls: [{ callerWorkflowId: 'workflow-1', calledWorkflowId: 'child-1' }],
-				}),
-				workflowNames,
-				tab: 'changes',
-			});
-
-			expect(getByRole('tab', { name: 'Changes' })).toBeInTheDocument();
-			expect(
-				getAllByTestId('self-healing-changes-nav-item').map((item) => item.getAttribute('title')),
-			).toEqual(['Daily report', 'Send email']);
-			expect(queryByTestId('self-healing-metadata')).not.toBeInTheDocument();
-		});
-
-		it('keeps review actions for the whole fix on the Changes tab', async () => {
-			const { emitted } = renderContent({ detail: detail(), workflowNames, tab: 'changes' });
-
-			const menu = await openMenu('Review');
-			await userEvent.click(within(menu).getByRole('menuitem', { name: 'Apply and publish' }));
-			expect(emitted('action')).toEqual([['approve-and-publish']]);
-		});
-
-		it('explains an outdated fix above its workflow diffs', () => {
-			const { getByTestId, queryByRole } = renderContent({
-				detail: detail({ reviewState: 'outdated' }),
-				workflowNames,
-				tab: 'changes',
-			});
-
-			expect(getByTestId('self-healing-changes-outdated-notice')).toHaveTextContent(
-				'A workflow in this fix changed after the suggestion.',
-			);
-			expect(queryByRole('button', { name: /Review/ })).not.toBeInTheDocument();
-		});
 	});
 
 	it('emits tab changes without selecting a new item', async () => {

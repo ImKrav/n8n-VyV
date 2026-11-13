@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import type { WorkflowGraph } from '../workflow-graph';
 import {
-	createNodeLabeler,
 	findTriggerNode,
 	getDescendantNodeIds,
 	getPredecessorNodeIds,
@@ -23,16 +22,6 @@ const graph: WorkflowGraph = {
 		{ from: 'a', to: 'b', outputIndex: 0, inputIndex: 0 },
 	],
 };
-
-describe('createNodeLabeler', () => {
-	it('labels a node id with the quoted node name', () => {
-		expect(createNodeLabeler(graph)('a')).toBe('"A"');
-	});
-
-	it('falls back to the quoted id for an id that is not in the graph', () => {
-		expect(createNodeLabeler(graph)('missing')).toBe('"missing"');
-	});
-});
 
 describe('findTriggerNode', () => {
 	it('returns the trigger node', () => {

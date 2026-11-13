@@ -181,7 +181,7 @@ function getAvailableItems(container: Element) {
 }
 
 function getActionButtons(item: Element) {
-	return Array.from(item.querySelectorAll('.actions button:not([role="switch"])'));
+	return Array.from(item.querySelectorAll('.actions button'));
 }
 
 function getToggle(item: Element) {

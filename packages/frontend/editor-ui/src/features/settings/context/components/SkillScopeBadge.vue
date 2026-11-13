@@ -1,63 +1,26 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { ProjectIcon as ProjectIconData, SkillListItem } from '@n8n/api-types';
+import type { SkillListItem } from '@n8n/api-types';
 import { N8nBadge, N8nIcon } from '@n8n/design-system';
-import ProjectIcon from '@/features/collaboration/projects/components/ProjectIcon.vue';
-import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 
 import { useSkillScopeDisplay } from '../skills.utils';
 
 const props = defineProps<{
-	skill: Pick<SkillListItem, 'scope' | 'projectId' | 'projectName' | 'projectType' | 'projectIcon'>;
-	projectIcon?: ProjectIconData | null;
-	/** Use the caller's scope label in a modal or review. */
-	label?: string;
+	skill: Pick<SkillListItem, 'scope' | 'projectId' | 'projectName' | 'projectType'>;
 }>();
 
 const { scopeDisplay } = useSkillScopeDisplay();
-const projectsStore = useProjectsStore();
 
-const project = computed(() => {
-	if (props.skill.projectId === projectsStore.personalProject?.id) {
-		return projectsStore.personalProject;
-	}
-	if (props.skill.projectId === projectsStore.currentProject?.id) {
-		return projectsStore.currentProject;
-	}
-	return (
-		projectsStore.myProjects.find((project) => project.id === props.skill.projectId) ??
-		projectsStore.projects.find((project) => project.id === props.skill.projectId)
-	);
-});
-const display = computed(() =>
-	scopeDisplay({
-		...props.skill,
-		projectType:
-			props.skill.projectType ??
-			(project.value?.type === 'personal' || project.value?.type === 'team'
-				? project.value.type
-				: null),
-	}),
-);
-const projectIcon = computed(
-	() => props.projectIcon ?? props.skill.projectIcon ?? project.value?.icon,
-);
+const display = computed(() => scopeDisplay(props.skill));
 </script>
 
 <template>
 	<N8nBadge variant="outline" :class="$style.badge" data-test-id="skill-scope-badge">
 		<!-- The leading slot is a direct flex child of the badge, so the icon centres with the label. -->
 		<template #leading>
-			<ProjectIcon
-				v-if="props.skill.scope === 'project' && projectIcon"
-				:class="$style.icon"
-				:icon="projectIcon"
-				size="mini"
-				border-less
-			/>
-			<N8nIcon v-else :class="$style.icon" :icon="display.icon" size="small" />
+			<N8nIcon :class="$style.icon" :icon="display.icon" size="small" />
 		</template>
-		{{ label ?? display.label }}
+		{{ display.label }}
 	</N8nBadge>
 </template>
 

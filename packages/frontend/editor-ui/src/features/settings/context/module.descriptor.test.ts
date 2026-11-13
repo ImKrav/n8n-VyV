@@ -1,8 +1,14 @@
 import { createTestingPinia } from '@pinia/testing';
 import type { FrontendSettings } from '@n8n/api-types';
+import {
+	CONTEXT_PREFERENCES_CONTROL_VARIANT,
+	CONTEXT_PREFERENCES_ENABLED_VARIANT,
+	CONTEXT_PREFERENCES_FLAG,
+} from '@n8n/api-types';
 import { createMemoryHistory, createRouter, type RouteRecordRaw } from 'vue-router';
 
 import { VIEWS } from '@/app/constants';
+import { usePostHog } from '@/app/stores/posthog.store';
 import { useSettingsStore } from '@n8n/stores/settings.store';
 
 import { ContextModule } from './module.descriptor';
@@ -23,8 +29,10 @@ const createTestRouter = () =>
 		],
 	});
 
-const setup = (agentsActive = false) => {
+/** The flag is multivariate, so only the enabled arm opens the pages. */
+const setup = (value?: string | boolean, agentsActive = false) => {
 	createTestingPinia({ stubActions: false });
+	if (value !== undefined) usePostHog().overrides[CONTEXT_PREFERENCES_FLAG] = { value };
 	useSettingsStore().settings = {
 		activeModules: agentsActive ? ['skills', 'agents'] : [],
 	} as unknown as FrontendSettings;
@@ -34,8 +42,8 @@ describe('ContextModule routes', () => {
 	test.each([
 		['/settings/context', VIEWS.SETTINGS_CONTEXT],
 		['/settings/context/preferences', VIEWS.SETTINGS_CONTEXT_PREFERENCES],
-	])('opens %s without a flag or an active module', async (path, name) => {
-		setup();
+	])('opens %s for enrolled users', async (path, name) => {
+		setup(CONTEXT_PREFERENCES_ENABLED_VARIANT);
 		const router = createTestRouter();
 
 		await router.push(path);
@@ -43,21 +51,47 @@ describe('ContextModule routes', () => {
 		expect(router.currentRoute.value.name).toBe(name);
 	});
 
+	test.each([
+		['unassigned', undefined],
+		['control', CONTEXT_PREFERENCES_CONTROL_VARIANT],
+		['a boolean', true],
+	])('redirects %s users to the homepage', async (_, value) => {
+		setup(value);
+		const router = createTestRouter();
+
+		for (const path of ['/settings/context', '/settings/context/preferences']) {
+			await router.push(path);
+
+			expect(router.currentRoute.value.name).toBe(VIEWS.HOMEPAGE);
+		}
+	});
+
 	describe('skills', () => {
-		it('opens the skills page while the agents module is active', async () => {
-			setup(true);
+		it('opens the skills page and the overview while the agents module is active', async () => {
+			setup(undefined, true);
 			const router = createTestRouter();
 
 			await router.push('/settings/context/skills');
-
 			expect(router.currentRoute.value.name).toBe(VIEWS.SETTINGS_CONTEXT_SKILLS);
+
+			await router.push('/settings/context');
+			expect(router.currentRoute.value.name).toBe(VIEWS.SETTINGS_CONTEXT);
 		});
 
 		it('redirects to the homepage while the agents module is inactive', async () => {
-			setup(false);
+			setup(CONTEXT_PREFERENCES_ENABLED_VARIANT, false);
 			const router = createTestRouter();
 
 			await router.push('/settings/context/skills');
+
+			expect(router.currentRoute.value.name).toBe(VIEWS.HOMEPAGE);
+		});
+
+		it('keeps the preferences page closed when only the agents module is active', async () => {
+			setup(undefined, true);
+			const router = createTestRouter();
+
+			await router.push('/settings/context/preferences');
 
 			expect(router.currentRoute.value.name).toBe(VIEWS.HOMEPAGE);
 		});

@@ -18,7 +18,7 @@ test.describe(
 	'Engine v2 split database Kafka throughput',
 	{
 		annotation: [
-			{ type: 'owner', description: 'Core Execution' },
+			{ type: 'owner', description: 'Catalysts' },
 			{ type: 'question', description: 'engine-v2-split-db-kafka' },
 		],
 	},

@@ -9,7 +9,6 @@ export type {
 	WorkflowGraph,
 } from './workflow-graph';
 export {
-	createNodeLabeler,
 	findTriggerNode,
 	getDescendantNodeIds,
 	getPredecessorNodeIds,

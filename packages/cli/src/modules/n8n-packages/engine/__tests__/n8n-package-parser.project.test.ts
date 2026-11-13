@@ -1,7 +1,6 @@
 import type { Logger } from '@n8n/backend-common';
 import { mock } from 'vitest-mock-extended';
 
-import type { CredentialTypes } from '@/credential-types';
 import type { NodeTypes } from '@/node-types';
 
 import type { WorkflowSerializer } from '../../entities/workflow/workflow.serializer';
@@ -35,7 +34,6 @@ describe('N8nPackageParser.getProjects — custom span attributes', () => {
 		mock<Logger>(),
 		mock<NodeTypes>(),
 		mock<WorkflowSerializer>(),
-		mock<CredentialTypes>(),
 	);
 
 	it('reads customTelemetryTags into the prepared project', async () => {

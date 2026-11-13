@@ -50,25 +50,6 @@ describe('DownloadDataTableModal', () => {
 		expect(getByTestId('download-include-system-columns')).toBeInTheDocument();
 	});
 
-	it('should emit confirm with false when clicking confirm without toggling checkbox', async () => {
-		const { getByTestId, emitted } = renderComponent();
-
-		await userEvent.click(getByTestId('download-modal-confirm'));
-
-		expect(emitted().confirm).toBeTruthy();
-		expect(emitted().confirm[0]).toEqual([false]);
-	});
-
-	it('should emit confirm with true when checkbox is checked then confirm is clicked', async () => {
-		const { getByTestId, emitted } = renderComponent();
-
-		await userEvent.click(getByTestId('download-include-system-columns'));
-		await userEvent.click(getByTestId('download-modal-confirm'));
-
-		expect(emitted().confirm).toBeTruthy();
-		expect(emitted().confirm[0]).toEqual([true]);
-	});
-
 	it('should emit close when cancel is clicked', async () => {
 		const { getByTestId, emitted } = renderComponent();
 

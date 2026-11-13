@@ -72,7 +72,6 @@ function source(overrides: SourceOverrides = {}): TrustedSource {
 				authentication: { type: 'oauth2', ...authentication },
 				surfaces: { 'public-api': {} },
 			}),
-			{ managedBy },
 		),
 		metadata: null,
 		...rest,

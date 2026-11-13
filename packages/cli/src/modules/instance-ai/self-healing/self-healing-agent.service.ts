@@ -1,32 +1,27 @@
-import { createScopedWorkspace } from '@n8n/agents';
+import { createScopedWorkspace, type Workspace } from '@n8n/agents';
 import { getWorkspaceRoot } from '@n8n/agents/sandbox';
 import {
 	applyBranchReadOnlyOverrides,
 	type SelfHealingResultUsage,
 	type WorkflowSuggestionBaseline,
 } from '@n8n/api-types';
-import { getN8nVersion, Logger } from '@n8n/backend-common';
+import { Logger } from '@n8n/backend-common';
 import { InstanceWriteAccessService } from '@n8n/backend-services';
 import { GlobalConfig } from '@n8n/config';
-import { WorkflowDependencyRepository, type User } from '@n8n/db';
+import type { User } from '@n8n/db';
 import { Service } from '@n8n/di';
-import {
-	BadRequestError,
-	ConflictError,
-	ForbiddenError,
-	UnexpectedError,
-	UserError,
-} from '@n8n/errors';
+import { BadRequestError, ForbiddenError, UnexpectedError } from '@n8n/errors';
 import {
 	createInstanceAiTraceContext,
 	createSelfHealingAgent,
+	generateWorkflowSource,
 	getSelfHealingResourceId,
 	orchestratorAgentId,
 	SELF_HEALING_PROFILE_VERSION,
 	selfHealingOutputSchema,
 	streamAgentRun,
+	writeWorkspaceFile,
 	MAX_STEPS,
-	OutsideThreadProjectError,
 	type InstanceAiContext,
 	type InstanceAiTraceContext,
 	type ModelConfig,
@@ -39,7 +34,7 @@ import { getErrorMessage } from '@n8n/utils/errors/get-error-message';
 import { sanitizeErrorDetail } from '@n8n/utils/redaction/sanitize-error-detail';
 import { nanoid } from 'nanoid';
 
-import { WORKFLOW_SDK_VERSION } from '@/constants';
+import { N8N_VERSION, WORKFLOW_SDK_VERSION } from '@/constants';
 import type { ProxyTokenManager } from '@/services/proxy-token-manager';
 import { AiUsageService } from '@/services/ai-usage.service';
 import { modelStreamStallOptions } from '@/utils/model-stream-stall-options';
@@ -58,19 +53,12 @@ import { toWorkflowJSON } from '../workflow-json';
 import { SelfHealingExecutionReferenceService } from './self-healing-execution-reference.service';
 import { SelfHealingCandidateService } from './self-healing-candidate.service';
 import type { CandidateWorkflowResult } from './candidate-workflow';
-import { SelfHealingConfigurationService } from './self-healing-configuration.service';
 
 export type SelfHealingRunInput = {
 	user: User;
 	baseline: WorkflowSuggestionBaseline;
-	configurationId: number;
-	includeSubWorkflows: boolean;
 	executionId: string;
 };
-
-type Targets = Map<string, WorkflowSuggestionBaseline>;
-type Admission = { baseline: WorkflowSuggestionBaseline } | { refusal: string };
-type CandidateFiles = Map<string, { baseline: WorkflowSuggestionBaseline; filePath: string }>;
 
 export type SelfHealingRunResult = {
 	threadId: string;
@@ -82,10 +70,10 @@ export type SelfHealingRunResult = {
 	validationError?: string;
 	error?: unknown;
 	usage: SelfHealingResultUsage;
-	candidates?: Array<{
-		baseline: WorkflowSuggestionBaseline;
+	candidate?: {
+		filePath: string;
 		compile: () => Promise<CandidateWorkflowResult>;
-	}>;
+	};
 };
 
 export type SelfHealingRunLifecycle = {
@@ -124,7 +112,7 @@ export type SelfHealingRunOptions = {
 	) => void;
 };
 
-const MAX_SUB_WORKFLOW_TARGETS = 10;
+const CANDIDATE_FILE_PATH = 'self-healing/candidate.workflow.ts';
 const INVESTIGATION_MESSAGE = 'Investigate the failed execution using the execution tools.';
 
 @Service()
@@ -144,8 +132,6 @@ export class SelfHealingAgentService {
 		private readonly events: InProcessEventBus,
 		private readonly candidates: SelfHealingCandidateService,
 		private readonly errorReporter: InstanceAiErrorReporterService,
-		private readonly configurations: SelfHealingConfigurationService,
-		private readonly dependencies: WorkflowDependencyRepository,
 	) {}
 
 	assertEnabled(): void {
@@ -217,11 +203,9 @@ export class SelfHealingAgentService {
 			user = await this.validateInput(input);
 			signal.throwIfAborted();
 
-			const targets: Targets = new Map([[baseline.workflowId, baseline]]);
-			const candidateFiles: CandidateFiles = new Map();
-			const environment = await this.prepareEnvironment({ ...input, user }, targets, options);
+			const environment = await this.prepareEnvironment({ ...input, user }, options);
 			modelId = environment.modelId;
-			const { context, proxy, admit } = environment;
+			const { context, proxy, shareParameters } = environment;
 
 			tracing = await createInstanceAiTraceContext({
 				threadId,
@@ -239,7 +223,7 @@ export class SelfHealingAgentService {
 					self_healing_project_id: baseline.projectId,
 				},
 				proxyConfig: proxy.tracingProxyConfig,
-				n8nVersion: getN8nVersion(),
+				n8nVersion: N8N_VERSION,
 				workflowSdkVersion: WORKFLOW_SDK_VERSION,
 			});
 			if (tracing) {
@@ -250,8 +234,12 @@ export class SelfHealingAgentService {
 			signal.throwIfAborted();
 			const entry = await options.sandbox.getOrCreateWorkspace(threadId, user, context);
 			if (!entry) throw new UnexpectedError('The self-healing workspace is unavailable.');
-			const root = await getWorkspaceRoot(entry.workspace);
-			context.workspace = createScopedWorkspace(entry.workspace, root);
+			const workspace = createScopedWorkspace(
+				entry.workspace,
+				await getWorkspaceRoot(entry.workspace),
+			);
+			context.workspace = workspace;
+			await this.prepareCandidate(baseline, workspace, shareParameters, signal);
 
 			signal.throwIfAborted();
 			stream = await this.runAgent({
@@ -260,8 +248,6 @@ export class SelfHealingAgentService {
 				context,
 				modelId,
 				metadata,
-				admit,
-				candidateFiles,
 				onStreamStart: () => {
 					providerStream = true;
 				},
@@ -273,17 +259,16 @@ export class SelfHealingAgentService {
 			const output = selfHealingOutputSchema.safeParse(stream.structuredOutput);
 			if (output.success) result.output = output.data;
 			else result.validationError = output.error.message;
-			const ids = new Set(output.success ? output.data.candidateWorkflowIds : []);
-			const resolved = [...ids].map((id) => candidateFiles.get(id));
-			if (resolved.length > 0 && resolved.every((candidate) => candidate !== undefined)) {
-				result.candidates = resolved.map(({ baseline: target, filePath }) => ({
-					baseline: target,
+			if (output.success && output.data.candidateFilePath) {
+				const filePath = output.data.candidateFilePath;
+				result.candidate = {
+					filePath,
 					compile: async () =>
 						await this.candidates.compile(
-							{ baseline: target, context, filePath, abortSignal: signal },
-							await this.suggestions.requireEditor(target.backgroundUserId, target.workflowId),
+							{ baseline, context, filePath, abortSignal: signal },
+							await this.suggestions.requireEditor(baseline.backgroundUserId, baseline.workflowId),
 						),
-				}));
+				};
 			}
 			if (stream.status === 'suspended') {
 				result.reason = 'unexpected_suspension';
@@ -364,7 +349,7 @@ export class SelfHealingAgentService {
 		result.status = 'cancelled';
 		result.reason = reason;
 		delete result.output;
-		delete result.candidates;
+		delete result.candidate;
 		delete result.finishReason;
 		delete result.validationError;
 	}
@@ -380,59 +365,7 @@ export class SelfHealingAgentService {
 		return actor;
 	}
 
-	private async admitSubWorkflow(
-		{ user, configurationId, baseline: { projectId } }: SelfHealingRunInput,
-		workflowId: string,
-		targets: Targets,
-		signal: AbortSignal,
-	): Promise<Admission> {
-		signal.throwIfAborted();
-		const callerVersionIds = [...targets.values()].map(
-			({ expectedBaseline }) => expectedBaseline.publishedVersionId,
-		);
-		if (targets.size > MAX_SUB_WORKFLOW_TARGETS) {
-			return { refusal: 'This run has reached the maximum number of sub-workflows.' };
-		}
-		if (!(await this.dependencies.isCalledBy(workflowId, callerVersionIds))) {
-			return {
-				refusal: 'No published version of a workflow that this run can change calls this workflow.',
-			};
-		}
-		if (await this.suggestions.getPendingResultId(workflowId)) {
-			return { refusal: 'This workflow already has a pending suggestion.' };
-		}
-		if (!(await this.configurations.canActOn(user, workflowId))) {
-			return { refusal: 'The run user cannot change this workflow or read its executions.' };
-		}
-		if (
-			!(await this.configurations.hasReviewerWhoCanEditAll({ id: configurationId, projectId }, [
-				...targets.keys(),
-				workflowId,
-			]))
-		) {
-			return { refusal: 'No reviewer can edit this workflow and all other workflows of this run.' };
-		}
-		try {
-			const target = await this.suggestions.captureBaseline(workflowId, user.id);
-			signal.throwIfAborted();
-			if (target.projectId !== projectId) {
-				return { refusal: 'This workflow belongs to a different project.' };
-			}
-			targets.set(workflowId, target);
-			return { baseline: target };
-		} catch (error) {
-			if (error instanceof ConflictError || error instanceof ForbiddenError) {
-				return { refusal: error.message };
-			}
-			throw error;
-		}
-	}
-
-	private async prepareEnvironment(
-		input: SelfHealingRunInput,
-		targets: Targets,
-		options: SelfHealingRunOptions,
-	) {
+	private async prepareEnvironment(input: SelfHealingRunInput, options: SelfHealingRunOptions) {
 		const { user } = input;
 		const { signal, runId, threadId } = options;
 
@@ -474,67 +407,36 @@ export class SelfHealingAgentService {
 		}
 		context.threadMemory = this.memory;
 
-		const admit = this.bindWorkflowReads(context, input, targets, shareParameters, signal);
+		this.bindWorkflowReads(context, input, shareParameters);
 
-		return { context, modelId, proxy, admit };
+		return { context, modelId, proxy, shareParameters };
 	}
 
 	private bindWorkflowReads(
 		context: InstanceAiContext,
-		input: SelfHealingRunInput,
-		targets: Targets,
+		{ user, baseline }: SelfHealingRunInput,
 		shareParameters: boolean,
-		signal: AbortSignal,
 	) {
-		const { user } = input;
 		const workflowService = context.workflowService;
-		let queue: Promise<unknown> = Promise.resolve();
-		const admit = async (workflowId: string): Promise<Admission> => {
-			const baseline = targets.get(workflowId);
-			if (baseline) return { baseline };
-			if (!input.includeSubWorkflows) {
-				return { refusal: 'This run can change only the triggering workflow.' };
-			}
-			const admission = queue.then(async (): Promise<Admission> => {
-				const admitted = targets.get(workflowId);
-				return admitted
-					? { baseline: admitted }
-					: await this.admitSubWorkflow(input, workflowId, targets, signal);
-			});
-			queue = admission.catch(() => undefined);
-			return await admission;
-		};
-
-		const { assertInThreadProject } = context;
-		context.assertInThreadProject = async (resource) => {
-			await assertInThreadProject?.(resource);
-			if (resource.kind !== 'workflow') return;
-			const admission = await admit(resource.id);
-			if ('refusal' in admission) {
-				throw new UserError(admission.refusal, { cause: new OutsideThreadProjectError() });
-			}
-		};
 
 		context.workflowService = {
 			...workflowService,
 			get: async (workflowId) => {
-				const admission = await admit(workflowId);
-				if ('refusal' in admission) return await workflowService.get(workflowId);
-				const target = admission.baseline;
+				if (workflowId !== baseline.workflowId) return await workflowService.get(workflowId);
 				await this.suggestions.requireEditor(user.id, workflowId);
 				const detail = await workflowService.get(workflowId);
 
 				return {
 					...detail,
-					name: target.original.name,
-					connections: structuredClone(target.original.connections),
-					settings: target.original.settings
-						? { ...structuredClone(target.original.settings) }
+					name: baseline.original.name,
+					connections: structuredClone(baseline.original.connections),
+					settings: baseline.original.settings
+						? { ...structuredClone(baseline.original.settings) }
 						: undefined,
-					versionId: target.expectedBaseline.savedVersionId,
-					activeVersionId: target.expectedBaseline.publishedVersionId,
-					checksum: target.expectedBaseline.checksum,
-					nodes: target.original.nodes.map((node) => ({
+					versionId: baseline.expectedBaseline.savedVersionId,
+					activeVersionId: baseline.expectedBaseline.publishedVersionId,
+					checksum: baseline.expectedBaseline.checksum,
+					nodes: baseline.original.nodes.map((node) => ({
 						...structuredClone(node),
 						parameters: shareParameters ? structuredClone(node.parameters) : undefined,
 					})),
@@ -542,45 +444,39 @@ export class SelfHealingAgentService {
 			},
 
 			getAsWorkflowJSON: async (workflowId, versionId) => {
-				let target = targets.get(workflowId);
-				if (!target && !versionId) {
-					const admission = await admit(workflowId);
-					if ('baseline' in admission) target = admission.baseline;
+				if (workflowId !== baseline.workflowId) {
+					return await workflowService.getAsWorkflowJSON(workflowId, versionId);
 				}
-				if (!target) return await workflowService.getAsWorkflowJSON(workflowId, versionId);
 				await this.suggestions.requireEditor(user.id, workflowId);
-				if (versionId && versionId !== target.expectedBaseline.publishedVersionId) {
+				if (versionId && versionId !== baseline.expectedBaseline.publishedVersionId) {
 					throw new ForbiddenError('Read the published baseline assigned to this investigation.');
 				}
 
 				return toWorkflowJSON(
-					{ ...structuredClone(target.original), id: workflowId },
+					{ ...structuredClone(baseline.original), id: workflowId },
 					{ redactParameters: !shareParameters },
 				);
 			},
 			getVersion: async (workflowId, versionId) => {
-				const target = targets.get(workflowId);
-				if (target) {
+				if (workflowId === baseline.workflowId) {
 					await this.suggestions.requireEditor(user.id, workflowId);
-					if (versionId !== target.expectedBaseline.publishedVersionId) {
+					if (versionId !== baseline.expectedBaseline.publishedVersionId) {
 						throw new ForbiddenError('Read the published baseline assigned to this investigation.');
 					}
 				}
 				const version = await workflowService.getVersion?.(workflowId, versionId);
 				if (!version) throw new BadRequestError('The requested workflow version is unavailable.');
-				if (!target) return version;
+				if (workflowId !== baseline.workflowId) return version;
 				return {
 					...version,
-					nodes: target.original.nodes.map((node) => ({
+					nodes: baseline.original.nodes.map((node) => ({
 						...structuredClone(node),
 						parameters: shareParameters ? structuredClone(node.parameters) : undefined,
 					})),
-					connections: structuredClone(target.original.connections),
+					connections: structuredClone(baseline.original.connections),
 				};
 			},
 		};
-
-		return admit;
 	}
 
 	private async runAgent({
@@ -589,8 +485,6 @@ export class SelfHealingAgentService {
 		context,
 		modelId,
 		metadata,
-		admit,
-		candidateFiles,
 		onStreamStart,
 	}: {
 		input: SelfHealingRunInput;
@@ -598,8 +492,6 @@ export class SelfHealingAgentService {
 		context: InstanceAiContext;
 		modelId: ModelConfig;
 		metadata: SelfHealingThreadMetadata;
-		admit: (workflowId: string) => Promise<Admission>;
-		candidateFiles: CandidateFiles;
 		onStreamStart: () => void;
 	}): Promise<StreamRunResult> {
 		const { user, baseline, executionId } = input;
@@ -616,47 +508,23 @@ export class SelfHealingAgentService {
 			abortSignal: signal,
 			verifyCandidate: async (args) => {
 				signal.throwIfAborted();
-				const admission = await admit(args.workflowId);
-				if ('refusal' in admission) {
-					return {
-						filePath: args.filePath,
-						validation: {
-							success: false,
-							errors: [
-								`You cannot change this workflow. ${admission.refusal} Use its source only to understand the failure.`,
-							],
-						},
-						verification: { status: 'not_run' },
-					};
-				}
-				const target = admission.baseline;
 
-				const result = await this.candidates.verify({
+				return await this.candidates.verify({
 					...args,
 					user,
-					baseline: target,
+					baseline,
 					context,
 					abortSignal: signal,
 				});
-				if (result.validation.success) {
-					candidateFiles.set(target.workflowId, { baseline: target, filePath: args.filePath });
-				}
-				return result;
 			},
 		});
-		const message =
-			`${INVESTIGATION_MESSAGE}\n\nTriggering workflow: ${JSON.stringify(baseline.original.name)} ` +
-			`(${baseline.workflowId})\nFailed execution: ${executionId}\n` +
-			(input.includeSubWorkflows
-				? 'You can change the triggering workflow and its sub-workflows.'
-				: 'You can change only the triggering workflow.');
 
 		signal.throwIfAborted();
 		const consume = async () => {
 			onStreamStart();
 			return await streamAgentRun(
 				agent,
-				message,
+				`${INVESTIGATION_MESSAGE}\n\nWorkflow: ${baseline.workflowId}\nFailed execution: ${executionId}\nCandidate: ${CANDIDATE_FILE_PATH}`,
 				{
 					maxIterations: MAX_STEPS.ORCHESTRATOR,
 					abortSignal: signal,
@@ -678,6 +546,24 @@ export class SelfHealingAgentService {
 		};
 
 		return tracing ? await tracing.withActiveSpan(tracing.actorRun, consume) : await consume();
+	}
+
+	private async prepareCandidate(
+		baseline: WorkflowSuggestionBaseline,
+		workspace: Workspace,
+		shareParameters: boolean,
+		abortSignal: AbortSignal,
+	): Promise<void> {
+		const workflow = toWorkflowJSON(
+			{ ...baseline.original, id: baseline.workflowId },
+			{ redactParameters: !shareParameters },
+		);
+		const source = await generateWorkflowSource(workflow);
+
+		await writeWorkspaceFile(workspace, CANDIDATE_FILE_PATH, source, {
+			logger: this.logger,
+			abortSignal,
+		});
 	}
 
 	private async finish(

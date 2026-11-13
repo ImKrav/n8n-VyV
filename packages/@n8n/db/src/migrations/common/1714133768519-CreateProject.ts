@@ -1,7 +1,8 @@
 import type { ProjectRole } from '@n8n/permissions';
 import { generateNanoId } from '@n8n/utils/generate-nano-id';
-import { UserError } from '@n8n/errors';
+import { UserError } from 'n8n-workflow';
 
+import type { User } from '../../entities';
 import type { MigrationContext, ReversibleMigration } from '../migration-types';
 
 const projectAdminRole: ProjectRole = 'project:personalOwner';
@@ -178,7 +179,7 @@ export class CreateProject1714133768519 implements ReversibleMigration {
 	async createUserPersonalProjects({ runQuery, runInBatches, escape }: MigrationContext) {
 		const { c, t } = escapeNames(escape);
 		const getUserQuery = `SELECT id, ${c.firstName}, ${c.lastName}, email FROM ${t.user}`;
-		await runInBatches<{ id: string; firstName: string; lastName: string; email: string }>(
+		await runInBatches<Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>>(
 			getUserQuery,
 			async (users) => {
 				await Promise.all(

@@ -1,0 +1,1 @@
+{ "filas": [ { "nombre": "Ana", "edad": 30, "activo": true }, { "nombre": "Juan", "edad": 12, "activo": false }, { "nombre": "Mariana", "edad": 45, "activo": true } ] }

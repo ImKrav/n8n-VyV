@@ -3,7 +3,7 @@ import { test, expect } from '../../../../fixtures/base';
 test.describe(
 	'Executions Filter',
 	{
-		annotation: [{ type: 'owner', description: 'Core Execution' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test.beforeEach(async ({ n8n }) => {

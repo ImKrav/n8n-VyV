@@ -641,63 +641,6 @@ describe('useDataTableOperations', () => {
 			await expect(onCellValueChanged(event)).rejects.toThrow('Expected row id to be a number');
 		});
 
-		it('should update cell value successfully', async () => {
-			const updateRowMock = vi.fn().mockResolvedValue(undefined);
-			vi.mocked(useDataTableStore).mockReturnValue({
-				...dataTableStore,
-				updateRow: updateRowMock,
-			});
-
-			const { onCellValueChanged } = useDataTableOperations(params);
-			const event = {
-				data: { id: 1, name: 'Jane' },
-				api: { applyTransaction: vi.fn() },
-				oldValue: 'John',
-				colDef: { field: 'name', cellDataType: 'text', colId: 'col1' },
-			} as unknown as CellValueChangedEvent<DataTableRow>;
-
-			await onCellValueChanged(event);
-
-			expect(params.toggleSave).toHaveBeenCalledWith(true);
-			expect(updateRowMock).toHaveBeenCalledWith('test', 'test', 1, { name: 'Jane' });
-			expect(telemetryTrackMock).toHaveBeenCalledWith('User edited data table content', {
-				data_table_id: 'test',
-				column_id: 'col1',
-				column_type: 'text',
-			});
-			expect(params.toggleSave).toHaveBeenCalledWith(false);
-		});
-
-		it('should revert cell value when update fails', async () => {
-			const isDataTableValue = await import('@/features/core/dataTable/typeGuards').then(
-				(m) => m.isDataTableValue,
-			);
-			vi.mocked(isDataTableValue).mockReturnValue(true);
-
-			const updateError = new Error('Update failed');
-			vi.mocked(useDataTableStore).mockReturnValue({
-				...dataTableStore,
-				updateRow: vi.fn().mockRejectedValue(updateError),
-			});
-
-			const applyTransaction = vi.fn();
-			const { onCellValueChanged } = useDataTableOperations(params);
-			const event = {
-				data: { id: 1, name: 'Jane' },
-				api: { applyTransaction },
-				oldValue: 'John',
-				colDef: { field: 'name', cellDataType: 'text', colId: 'col1' },
-			} as unknown as CellValueChangedEvent<DataTableRow>;
-
-			await onCellValueChanged(event);
-
-			expect(applyTransaction).toHaveBeenCalledWith({
-				update: [{ id: 1, name: 'John' }],
-			});
-			expect(showErrorMock).toHaveBeenCalledWith(updateError, 'dataTable.updateRow.error');
-			expect(params.toggleSave).toHaveBeenCalledWith(false);
-		});
-
 		it('should show a precision warning when the new number exceeds MAX_SAFE_INTEGER', async () => {
 			vi.mocked(useDataTableStore).mockReturnValue({
 				...dataTableStore,

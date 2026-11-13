@@ -38,7 +38,7 @@ const DEFAULT_SERVICE_OPTIONS = {
 	dependencyPolicy: 'fail',
 	versionPolicy: 'latest',
 	credentialExportPolicy: 'expression-values-only',
-	includeArchived: false,
+	includeArchivedWorkflows: false,
 };
 
 describe('N8nPackagesPublicController', () => {
@@ -359,16 +359,16 @@ describe('N8nPackagesPublicController', () => {
 			);
 		});
 
-		it('forwards includeArchived', async () => {
+		it('forwards includeArchivedWorkflows', async () => {
 			mockExportStream();
 
-			const caught = await runAndCatch({ workflowIds: ['wf-1'], includeArchived: true }, [
+			const caught = await runAndCatch({ workflowIds: ['wf-1'], includeArchivedWorkflows: true }, [
 				'workflow:export',
 			]);
 
 			expect(caught).toBeUndefined();
 			expect(mockService.exportPackage).toHaveBeenCalledWith(
-				expect.objectContaining({ includeArchived: true }),
+				expect.objectContaining({ includeArchivedWorkflows: true }),
 			);
 		});
 

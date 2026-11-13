@@ -1,5 +1,4 @@
 import { effectScope, ref } from 'vue';
-import { toArtifactTurns } from '../agentTreeArtifactTurns';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 import { flushPromises } from '@vue/test-utils';
@@ -58,9 +57,6 @@ function harness() {
 	const thread = {
 		id: 'thread-1',
 		messages: [] as InstanceAiMessage[],
-		get artifactTurns() {
-			return toArtifactTurns(this.messages);
-		},
 		sendMessage: vi.fn().mockResolvedValue(true),
 		rememberManualExecution: vi.fn(),
 	};

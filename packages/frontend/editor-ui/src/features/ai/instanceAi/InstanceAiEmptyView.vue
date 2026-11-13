@@ -37,7 +37,6 @@ import {
 import { useSettingsStore } from '@n8n/stores/settings.store';
 import { useCloudPlanStore } from '@n8n/stores/cloudPlan.store';
 import { useInstanceAiStore } from './instanceAi.store';
-import { useAssistantCreditsStore } from './assistantCredits.store';
 import type { InstanceAiMessageAuthorship, InstanceAiPrefillDeclaration } from './prefills';
 import { useInstanceAiSettingsStore } from './instanceAiSettings.store';
 import {
@@ -126,7 +125,7 @@ import {
 	stashPendingN8nChatMessage,
 } from '@/features/agents/n8nChatPage/pendingN8nChatMessage';
 import {
-	ASSISTANT_AGENT_ACCEPTED_MIME_TYPES,
+	ASSISTANT_AGENT_ATTACHMENT_CAPABILITIES,
 	clearAssistantAgentLaunch,
 	discardPendingAssistantAgentMessage,
 	stashAssistantAgentLaunch,
@@ -196,8 +195,7 @@ const canSelectProject = computed(
 		projectsStore.myProjects.length > 1,
 );
 const settingsStore = useInstanceAiSettingsStore();
-const creditsStore = useAssistantCreditsStore();
-const { isLowCredits, isOutOfCredits } = storeToRefs(creditsStore);
+const { isLowCredits, isOutOfCredits } = storeToRefs(store);
 const rootStore = useRootStore();
 const toast = useToast();
 const telemetry = useTelemetry();
@@ -715,11 +713,6 @@ const composerAttachOnlyMimeTypes = computed(() =>
 		: undefined,
 );
 
-// The Assistant agent accepts only the files it can read. Check them on drop, not at send.
-const composerAcceptedMimeTypes = computed(() =>
-	settingsStore.isAssistantAgentEnabled ? ASSISTANT_AGENT_ACCEPTED_MIME_TYPES : undefined,
-);
-
 const chatInputRef = ref<InstanceType<typeof InstanceAiInput> | null>(null);
 // Layout changes mount a new, empty composer.
 watch(chatInputRef, () => {
@@ -813,6 +806,7 @@ async function handleSubmit(
 	restoreDraft: () => boolean,
 	authorship: InstanceAiMessageAuthorship,
 	responseStartedAtEpochMs?: number,
+	acceptDraft: () => void = () => {},
 	mentionCounts: AssistantMentionCounts = EMPTY_ASSISTANT_MENTION_COUNTS,
 	mentionedWorkflowIds: readonly string[] = [],
 ) {
@@ -833,6 +827,7 @@ async function handleSubmit(
 		}
 		const pendingMessage = { agentId, text: message, files };
 		stashPendingN8nChatMessage(pendingMessage);
+		acceptDraft();
 		const failure = await router.push({ name: AGENT_N8N_CHAT_VIEW, params: { agentId } });
 		// A blocked or cancelled navigation must not leave the hand-off for a later
 		// visit. Only discard and restore the draft if the slot still holds this
@@ -860,8 +855,7 @@ async function handleSubmit(
 			message,
 			attachments,
 			restoreDraft,
-			authorship,
-			mentionCounts,
+			acceptDraft,
 		);
 		return;
 	}
@@ -943,6 +937,7 @@ async function handleSubmit(
 			runtime: 'instance-ai',
 		});
 	}
+	acceptDraft();
 
 	try {
 		await router.replace({
@@ -965,10 +960,9 @@ async function startAssistantAgentThread(
 	message: string,
 	attachments: InstanceAiAttachment[] | undefined,
 	restoreDraft: () => boolean,
-	authorship: InstanceAiMessageAuthorship,
-	mentionCounts: AssistantMentionCounts,
+	acceptDraft: () => void,
 ) {
-	const acceptString = ASSISTANT_AGENT_ACCEPTED_MIME_TYPES;
+	const acceptString = acceptedMimeTypesFromCapabilities(ASSISTANT_AGENT_ATTACHMENT_CAPABILITIES);
 	const fileAttachments: InstanceAiFileAttachment[] = [];
 	for (const attachment of attachments ?? []) {
 		if (attachment.type !== 'file') continue;
@@ -996,8 +990,6 @@ async function startAssistantAgentThread(
 			base64ToFile(attachment.data, attachment.fileName, attachment.mimeType),
 		),
 		references: (attachments ?? []).filter((attachment) => attachment.type !== 'file'),
-		authorship,
-		mentionCounts,
 	};
 	stashPendingAssistantAgentMessage(pendingMessage);
 	stashAssistantAgentLaunch(pendingMessage.threadId, {
@@ -1005,6 +997,7 @@ async function startAssistantAgentThread(
 		source: resolveLaunchSource(),
 		origin: 'internal',
 	});
+	acceptDraft();
 	const failure = await router.push({
 		name: INSTANCE_AI_THREAD_VIEW,
 		params: { threadId: pendingMessage.threadId },
@@ -1061,8 +1054,8 @@ async function handleWorkflowPreviewExampleUse(
 				<div :class="$style.proactiveInput">
 					<CreditWarningBanner
 						v-if="isOutOfCredits || creditBanner.visible.value"
-						:credits-remaining="creditsStore.creditsRemaining"
-						:credits-quota="creditsStore.creditsQuota"
+						:credits-remaining="store.creditsRemaining"
+						:credits-quota="store.creditsQuota"
 						:message="outOfCreditsMessage"
 						:dismissible="!isOutOfCredits"
 						@upgrade-click="goToUpgrade('instance-ai', 'upgrade-instance-ai')"
@@ -1107,8 +1100,8 @@ async function handleWorkflowPreviewExampleUse(
 					<div :class="$style.centeredInput">
 						<CreditWarningBanner
 							v-if="isOutOfCredits || creditBanner.visible.value"
-							:credits-remaining="creditsStore.creditsRemaining"
-							:credits-quota="creditsStore.creditsQuota"
+							:credits-remaining="store.creditsRemaining"
+							:credits-quota="store.creditsQuota"
 							:message="outOfCreditsMessage"
 							:dismissible="!isOutOfCredits"
 							@upgrade-click="goToUpgrade('instance-ai', 'upgrade-instance-ai')"
@@ -1188,7 +1181,7 @@ async function handleWorkflowPreviewExampleUse(
 					<InstanceAiFreeNudge
 						v-if="!isCreatingApp"
 						:eligible="
-							creditsStore.creditsQuota !== undefined &&
+							store.creditsQuota !== undefined &&
 							!isOutOfCredits &&
 							!creditBanner.visible.value &&
 							settingsStore.isWorkflowBuilderAvailable
@@ -1196,8 +1189,8 @@ async function handleWorkflowPreviewExampleUse(
 					/>
 					<CreditWarningBanner
 						v-if="isOutOfCredits || creditBanner.visible.value"
-						:credits-remaining="creditsStore.creditsRemaining"
-						:credits-quota="creditsStore.creditsQuota"
+						:credits-remaining="store.creditsRemaining"
+						:credits-quota="store.creditsQuota"
 						:message="outOfCreditsMessage"
 						:dismissible="!isOutOfCredits"
 						@upgrade-click="goToUpgrade('instance-ai', 'upgrade-instance-ai')"
@@ -1214,7 +1207,6 @@ async function handleWorkflowPreviewExampleUse(
 						:mention-project-id="selectedProject"
 						:placeholder="isAgentsN8nChatVariantB ? n8nChatPickerPlaceholder : undefined"
 						:attach-only-mime-types="composerAttachOnlyMimeTypes"
-						:accepted-mime-types="composerAcceptedMimeTypes"
 						v-bind="
 							// Experiment cleanup (124_workflow_previews_above_assistant)
 							showWorkflowPreviewsAboveAssistant

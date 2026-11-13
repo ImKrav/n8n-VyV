@@ -278,7 +278,6 @@ export class AgentIntegrationPersistenceService {
 		context: CredentialIntegrationMutationContext,
 		credentialProvider: ReturnType<typeof createAgentCredentialProvider>,
 	) {
-		if (agent.isArchived) throw new UserError('Cannot update an archived agent');
 		// Keep each channel change distinct from the published version.
 		const versionId = uuid();
 

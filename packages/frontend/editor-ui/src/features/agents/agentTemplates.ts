@@ -19,7 +19,6 @@ export interface AgentTemplate {
 	id: string;
 	labelKey: BaseTextKey;
 	descriptionKey: BaseTextKey;
-	placeholderKey: BaseTextKey;
 	icon: string;
 	/** Avatar gradient shown on the option and written onto the agent. */
 	gradient: AgentTemplateGradient;
@@ -75,7 +74,6 @@ export const AGENT_TEMPLATES: readonly AgentTemplate[] = [
 		id: 'morning-news-brief',
 		labelKey: 'agents.builder.templates.morningNewsBrief.label',
 		descriptionKey: 'agents.builder.templates.morningNewsBrief.description',
-		placeholderKey: 'agents.builder.templates.morningNewsBrief.placeholder',
 		icon: 'sun',
 		gradient: { from: '#F5A524', to: '#FF5A1F', angle: 160, fromStop: 8, toStop: 92 },
 		config: {
@@ -99,7 +97,6 @@ export const AGENT_TEMPLATES: readonly AgentTemplate[] = [
 		id: 'process-incoming-emails',
 		labelKey: 'agents.builder.templates.processIncomingEmails.label',
 		descriptionKey: 'agents.builder.templates.processIncomingEmails.description',
-		placeholderKey: 'agents.builder.templates.processIncomingEmails.placeholder',
 		icon: 'mail',
 		gradient: { from: '#2563EB', to: '#7C3AED', angle: 135, fromStop: 0, toStop: 100 },
 		config: {
@@ -148,7 +145,6 @@ export const AGENT_TEMPLATES: readonly AgentTemplate[] = [
 		id: 'qualify-new-leads',
 		labelKey: 'agents.builder.templates.qualifyNewLeads.label',
 		descriptionKey: 'agents.builder.templates.qualifyNewLeads.description',
-		placeholderKey: 'agents.builder.templates.qualifyNewLeads.placeholder',
 		icon: 'users',
 		gradient: { from: '#059669', to: '#84CC16', angle: 120, fromStop: 4, toStop: 88 },
 		config: {
@@ -161,7 +157,6 @@ export const AGENT_TEMPLATES: readonly AgentTemplate[] = [
 		id: 'propose-meeting-times',
 		labelKey: 'agents.builder.templates.proposeMeetingTimes.label',
 		descriptionKey: 'agents.builder.templates.proposeMeetingTimes.description',
-		placeholderKey: 'agents.builder.templates.proposeMeetingTimes.placeholder',
 		icon: 'calendar',
 		gradient: { from: '#0F766E', to: '#2DD4BF', angle: 150, fromStop: 4, toStop: 96 },
 		config: {

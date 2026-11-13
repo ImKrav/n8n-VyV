@@ -1,15 +1,15 @@
 import type { Embeddings } from '@langchain/core/embeddings';
 import type { MemoryVectorStore } from '@langchain/classic/vectorstores/memory';
-import type {
-	INodeProperties,
-	ILoadOptionsFunctions,
-	INodeListSearchResult,
-	IDataObject,
-	NodeParameterValueType,
-	IExecuteFunctions,
-	ISupplyDataFunctions,
+import {
+	type INodeProperties,
+	type ILoadOptionsFunctions,
+	type INodeListSearchResult,
+	type IDataObject,
+	type NodeParameterValueType,
+	type IExecuteFunctions,
+	type ISupplyDataFunctions,
+	UserError,
 } from 'n8n-workflow';
-import { UserError } from '@n8n/errors';
 
 import { createVectorStoreNode, MemoryVectorStoreManager } from '@n8n/ai-utilities';
 

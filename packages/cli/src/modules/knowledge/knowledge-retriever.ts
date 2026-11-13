@@ -1,4 +1,3 @@
-import type { KnowledgeConsumerScope } from './knowledge-consumer-scope';
 import type {
 	GlobKnowledgeFilesRequest,
 	GlobKnowledgeFilesResult,
@@ -6,7 +5,9 @@ import type {
 	ReadKnowledgeResult,
 	SearchKnowledgeRequest,
 	SearchKnowledgeResult,
-} from './retrieval/retrieval-schemas';
+} from '@/modules/agents/agent-knowledge-retrieval';
+
+import type { KnowledgeConsumerScope } from './knowledge-consumer-scope';
 
 /**
  * What the knowledge module offers to a consumer. The agents module exposes

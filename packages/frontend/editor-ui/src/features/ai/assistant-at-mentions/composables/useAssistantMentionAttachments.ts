@@ -2,10 +2,11 @@ import {
 	MAX_INSTANCE_AI_ATTACHMENTS_PER_MESSAGE,
 	type InstanceAiResourceAttachment,
 } from '@n8n/api-types';
-import { toValue, watch, type MaybeRefOrGetter, type Ref } from 'vue';
+import { onScopeDispose, toValue, watch, type MaybeRefOrGetter, type Ref } from 'vue';
 
 import {
 	EMPTY_ASSISTANT_MENTION_COUNTS,
+	type AssistantMentionArtifactReference,
 	type AssistantMentionCounts,
 	type AssistantMentionItem,
 	type AssistantMentionSelection,
@@ -16,7 +17,7 @@ type NodesAttachment = Extract<InstanceAiResourceAttachment, { type: 'nodes' }>;
 
 interface SelectedMentionRecord {
 	item: AssistantMentionItem;
-	recordId: string;
+	referenceId: string;
 }
 
 export type AssistantMentionAttachmentSelectionResult =
@@ -24,35 +25,45 @@ export type AssistantMentionAttachmentSelectionResult =
 	| { status: 'duplicate'; truncated: false }
 	| { status: 'limit'; truncated: false };
 
+export interface AssistantMentionAttachmentSubmission {
+	accept(): void;
+	restore(): void;
+}
+
 export type AssistantMentionAttachmentSubmissionSnapshot = readonly string[];
 
-/**
- * Stages the mentions the user picks as resource attachments of the composer.
- * A mention stays a composer draft until the message is sent.
- */
 export function useAssistantMentionAttachments(options: {
 	files: Ref<File[]>;
 	resources: Ref<InstanceAiResourceAttachment[]>;
 	projectId: MaybeRefOrGetter<string | undefined>;
 	reservedAttachmentCount: MaybeRefOrGetter<number>;
+	onReferenceAdded: (reference: AssistantMentionArtifactReference) => void;
+	onReferenceRemoved: (referenceId: string) => void;
 	onMentionRemoved?: (kind: AssistantMentionItem['kind']) => void;
 	onCleared?: () => void;
 }) {
-	let recordSequence = 0;
-	/** The staged mentions, keyed by mention key. */
+	let referenceSequence = 0;
 	const selectedRecords = new Map<string, SelectedMentionRecord>();
-	/** The same records by id, so a submission snapshot resolves to the records it captured. */
-	const recordsById = new Map<string, SelectedMentionRecord>();
+	const ownedRecords = new Map<string, SelectedMentionRecord>();
 
-	function addRecord(item: AssistantMentionItem): void {
-		const record = { item, recordId: `${item.key}:${++recordSequence}` };
+	function addReference(item: AssistantMentionItem): SelectedMentionRecord {
+		const record = {
+			item,
+			referenceId: `${item.key}:${++referenceSequence}`,
+		};
 		selectedRecords.set(item.key, record);
-		recordsById.set(record.recordId, record);
+		ownedRecords.set(record.referenceId, record);
+		options.onReferenceAdded({
+			referenceId: record.referenceId,
+			workflowId: item.workflowId,
+			workflowName: item.workflowName,
+		});
+		return record;
 	}
 
-	function dropRecord(record: SelectedMentionRecord): void {
-		if (selectedRecords.get(record.item.key) === record) selectedRecords.delete(record.item.key);
-		recordsById.delete(record.recordId);
+	function releaseReference(record: SelectedMentionRecord): void {
+		if (!ownedRecords.delete(record.referenceId)) return;
+		options.onReferenceRemoved(record.referenceId);
 	}
 
 	function setMatchesMention(set: NodesAttachment['sets'][number], item: AssistantMentionItem) {
@@ -78,10 +89,11 @@ export function useAssistantMentionAttachments(options: {
 	}
 
 	function reconcileSelectedRecords(): void {
-		for (const record of [...selectedRecords.values()]) {
+		for (const [mentionKey, record] of selectedRecords) {
 			if (attachmentContainsMention(record.item)) continue;
-			dropRecord(record);
+			selectedRecords.delete(mentionKey);
 			options.onMentionRemoved?.(record.item.kind);
+			releaseReference(record);
 		}
 	}
 
@@ -150,7 +162,7 @@ export function useAssistantMentionAttachments(options: {
 			return { status: 'limit', truncated: false };
 		}
 
-		addRecord(selection.item);
+		addReference(selection.item);
 		return { status: 'added', truncated: selection.truncated };
 	}
 
@@ -193,12 +205,13 @@ export function useAssistantMentionAttachments(options: {
 		}
 		options.resources.value = nextResources;
 
-		for (const record of records) dropRecord(record);
+		selectedRecords.clear();
+		for (const record of records) releaseReference(record);
 		options.onCleared?.();
 	}
 
 	function snapshotSubmission(): AssistantMentionAttachmentSubmissionSnapshot {
-		return [...selectedRecords.values()].map(({ recordId }) => recordId);
+		return [...selectedRecords.values()].map(({ referenceId }) => referenceId);
 	}
 
 	function snapshotCounts(): AssistantMentionCounts {
@@ -214,31 +227,40 @@ export function useAssistantMentionAttachments(options: {
 		return [...new Set([...selectedRecords.values()].map(({ item }) => item.workflowId))];
 	}
 
-	/**
-	 * Take the mentions of a submission out of the draft, so the same mention
-	 * can be picked again once the message is sent.
-	 * @return A function that
-	 * puts them back after a refused send, once the attachments are restored.
-	 */
 	function detachSubmission(
-		recordIds: AssistantMentionAttachmentSubmissionSnapshot = snapshotSubmission(),
-	): () => void {
-		const records = recordIds
-			.map((recordId) => recordsById.get(recordId))
+		referenceIds: AssistantMentionAttachmentSubmissionSnapshot = snapshotSubmission(),
+	): AssistantMentionAttachmentSubmission {
+		const records = referenceIds
+			.map((referenceId) => ownedRecords.get(referenceId))
 			.filter((record) => record !== undefined);
-		for (const record of records) dropRecord(record);
-
-		let restored = false;
-		return () => {
-			if (restored) return;
-			restored = true;
-			for (const record of records) {
-				// A newer pick of the same mention, made after the send, wins.
-				if (selectedRecords.has(record.item.key)) continue;
-				if (!attachmentContainsMention(record.item)) continue;
-				selectedRecords.set(record.item.key, record);
-				recordsById.set(record.recordId, record);
+		for (const record of records) {
+			if (selectedRecords.get(record.item.key) === record) {
+				selectedRecords.delete(record.item.key);
 			}
+		}
+
+		let settled = false;
+		return {
+			accept() {
+				if (settled) return;
+				settled = true;
+				for (const record of records) releaseReference(record);
+			},
+			restore() {
+				if (settled) return;
+				settled = true;
+				for (const record of records) {
+					if (selectedRecords.has(record.item.key)) {
+						releaseReference(record);
+						continue;
+					}
+					if (attachmentContainsMention(record.item)) {
+						selectedRecords.set(record.item.key, record);
+					} else {
+						releaseReference(record);
+					}
+				}
+			},
 		};
 	}
 
@@ -250,6 +272,10 @@ export function useAssistantMentionAttachments(options: {
 			}
 		},
 	);
+
+	onScopeDispose(() => {
+		for (const record of ownedRecords.values()) releaseReference(record);
+	});
 
 	return {
 		select,

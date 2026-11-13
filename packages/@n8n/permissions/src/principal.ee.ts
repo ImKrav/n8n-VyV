@@ -1,9 +1,6 @@
-import type { z } from 'zod';
-
-import type { principalTypeSchema } from './schemas.ee';
 import type { AuthPrincipal } from './types.ee';
 
-export type PrincipalType = z.infer<typeof principalTypeSchema>;
+export type PrincipalType = 'person' | 'service';
 
 /** The resolved caller. One per party. Structurally an AuthPrincipal, so every scope check accepts it unchanged. */
 export type Principal = AuthPrincipal & {

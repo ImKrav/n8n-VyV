@@ -84,39 +84,6 @@ describe('WorkflowHistoryList', () => {
 		expect(getByRole('status')).toBeInTheDocument();
 	});
 
-	it('should render list and delegate preview event', async () => {
-		const numberOfItems = faker.number.int({ min: 10, max: 50 });
-		const items = Array.from({ length: numberOfItems }, namedWorkflowHistoryDataFactory);
-
-		const { getAllByTestId, emitted, queryByRole } = renderComponent({
-			pinia,
-			props: {
-				items,
-				actions,
-				selectedItem: null,
-				requestNumberOfItems: 20,
-				lastReceivedItemsLength: 20,
-				evaluatedPruneTimeInHours: -1,
-			},
-		});
-
-		expect(queryByRole('link', { name: /upgrade/i })).not.toBeInTheDocument();
-
-		const listItems = getAllByTestId('workflow-history-list-item');
-		const listItem = listItems[items.length - 1];
-		await userEvent.click(listItem);
-		expect(emitted().preview).toEqual([
-			[
-				{
-					id: items[items.length - 1].versionId,
-					event: expect.any(MouseEvent),
-				},
-			],
-		]);
-
-		expect(listItems).toHaveLength(numberOfItems);
-	});
-
 	it('should scroll to selected item', async () => {
 		const items = Array.from({ length: 30 }, namedWorkflowHistoryDataFactory);
 

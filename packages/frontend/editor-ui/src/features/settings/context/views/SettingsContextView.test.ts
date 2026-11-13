@@ -8,9 +8,10 @@ import { useContextStore } from '../context.store';
 import { useSkillsStore } from '../skills.store';
 
 const push = vi.fn();
-const flags = vi.hoisted(() => ({ skills: false }));
+const flags = vi.hoisted(() => ({ preferences: true, skills: false }));
 
 vi.mock('../context.utils', () => ({
+	isContextPreferencesEnabled: () => flags.preferences,
 	isContextSkillsEnabled: () => flags.skills,
 }));
 const showErrorMock = vi.fn();
@@ -30,6 +31,7 @@ const renderView = createComponentRenderer(SettingsContextView);
 describe('SettingsContextView', () => {
 	beforeEach(() => {
 		createTestingPinia();
+		flags.preferences = true;
 		flags.skills = false;
 		push.mockClear();
 		showErrorMock.mockClear();
@@ -51,18 +53,19 @@ describe('SettingsContextView', () => {
 		expect(getByText('Preview')).toBeInTheDocument();
 	});
 
-	it('lists Preferences and Skills, with no Sources row: sources show in the skills table', () => {
-		const { getByTestId, queryByTestId } = renderView();
+	it('lists Preferences, Skills and Sources', () => {
+		const { getByTestId } = renderView();
 
 		expect(getByTestId('settings-context-preferences-row')).toBeInTheDocument();
 		expect(getByTestId('settings-context-skills-row')).toBeInTheDocument();
-		expect(queryByTestId('settings-context-sources-row')).toBeNull();
+		expect(getByTestId('settings-context-sources-row')).toBeInTheDocument();
 	});
 
-	it('marks Skills as unavailable while the agents module is off', () => {
+	it('marks Skills and Sources as unavailable while the agents module is off', () => {
 		const { getByTestId } = renderView();
 
 		expect(getByTestId('settings-context-skills-row')).toHaveTextContent('Coming soon');
+		expect(getByTestId('settings-context-sources-row')).toHaveTextContent('Coming soon');
 	});
 
 	it.each([
@@ -112,6 +115,15 @@ describe('SettingsContextView', () => {
 			await new Promise(process.nextTick);
 
 			expect(showErrorMock).toHaveBeenCalled();
+		});
+
+		it('hides Preferences when only skills are on', () => {
+			flags.preferences = false;
+
+			const { queryByTestId } = renderView();
+
+			expect(queryByTestId('settings-context-preferences-row')).not.toBeInTheDocument();
+			expect(mockedStore(useContextStore).fetchPreferenceCount).not.toHaveBeenCalled();
 		});
 	});
 });

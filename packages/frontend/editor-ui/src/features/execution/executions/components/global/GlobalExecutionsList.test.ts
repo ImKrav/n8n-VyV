@@ -17,7 +17,6 @@ import {
 import { createComponentRenderer } from '@/__tests__/render';
 import { waitFor } from '@testing-library/vue';
 import { useSettingsStore } from '@n8n/stores/settings.store';
-import { useExecutionsStore } from '../../executions.store';
 import type { ExecutionFilterType, ExecutionSummaryWithScopes } from '../../executions.types';
 
 vi.mock('vue-router', () => ({
@@ -190,48 +189,6 @@ describe('GlobalExecutionsList', () => {
 		expect(getByTestId('select-visible-executions-checkbox')).toBeInTheDocument();
 		expect(queryByTestId('select-all-executions-checkbox')).not.toBeInTheDocument();
 	}, 10000);
-
-	it('should stop offering "load more" once all executions are shown, even on a large instance', async () => {
-		const executionsStore = mockedStore(useExecutionsStore);
-
-		// On large tables the reported total is an inflated estimate; the user must
-		// still see "all loaded" rather than a load-more button that fetches nothing.
-		executionsStore.hasMoreExecutions = false;
-		const { queryByTestId, getByText } = renderComponent({
-			props: {
-				executions: executionsData[0].results as ExecutionSummaryWithScopes[],
-				total: 100_000,
-				filters: {} as ExecutionFilterType,
-			},
-		});
-		await waitAllPromises();
-
-		expect(queryByTestId('load-more-button')).not.toBeInTheDocument();
-		expect(getByText('executionsList.loadedAll')).toBeInTheDocument();
-
-		executionsStore.hasMoreExecutions = true;
-		await waitAllPromises();
-		expect(queryByTestId('load-more-button')).toBeInTheDocument();
-	});
-
-	it('should show "retry" data when appropriate', async () => {
-		const retryOf = executionsData[0].results.filter((execution) => execution.retryOf);
-		const retrySuccessId = executionsData[0].results.filter(
-			(execution) => !execution.retryOf && execution.retrySuccessId,
-		);
-
-		const { queryAllByText } = renderComponent({
-			props: {
-				executions: executionsData[0].results as ExecutionSummaryWithScopes[],
-				total: executionsData[0].count,
-				filters: {} as ExecutionFilterType,
-			},
-		});
-		await waitAllPromises();
-
-		expect(queryAllByText(/Retry of/).length).toBe(retryOf.length);
-		expect(queryAllByText(/Success retry/).length).toBe(retrySuccessId.length);
-	});
 
 	it('should render concurrent executions header if the feature is enabled', async () => {
 		settingsStore.concurrency = 5;

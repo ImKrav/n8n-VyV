@@ -235,8 +235,7 @@ type EntityName =
 	| 'TrustedKeyEntity'
 	| 'TrustedSourceEntity'
 	| 'TrustedSourceIdentityEntity'
-	| 'WorkflowStatisticsDelta'
-	| 'ExecutionLedgerEntity';
+	| 'WorkflowStatisticsDelta';
 
 /**
  * Truncate specific DB tables in a test DB.

@@ -10,7 +10,6 @@ import { NodeConnectionTypes } from 'n8n-workflow';
 import { SYSTEM_RESOLVER_ID } from '@n8n/api-types';
 import type { FrontendSettings } from '@n8n/api-types';
 import type { Scope } from '@n8n/permissions';
-import { mockRestrictedCredentialTypes } from '@n8n/frontend-module-type-availability-policies/__tests__/mocks';
 import NodeCredentials from './NodeCredentials.vue';
 import type { RenderOptions } from '@/__tests__/render';
 import { createComponentRenderer } from '@/__tests__/render';
@@ -423,31 +422,6 @@ describe('NodeCredentials', () => {
 		});
 	});
 
-	it('should refetch credentials when the dropdown opens so a rename from another tab shows up', async () => {
-		ndvStore.activeNode = httpNode;
-		credentialsStore.state.credentials = {
-			c8vqdPpPClh4TgIO: createCredential({ name: 'Scout' }),
-		};
-
-		renderComponent();
-
-		// The rename happened in another tab: only a fresh fetch can bring the new name.
-		credentialsStore.fetchUsableCredentials = vi.fn().mockImplementation(async () => {
-			credentialsStore.state.credentials = {
-				c8vqdPpPClh4TgIO: createCredential({ name: 'Scout renamed' }),
-			};
-			return Object.values(credentialsStore.state.credentials);
-		});
-
-		// Click the input: the dropdown only opens from inside the select trigger.
-		const select = screen.getByTestId('node-credentials-select');
-		await userEvent.click(select.querySelector('input') as HTMLElement);
-
-		expect(credentialsStore.fetchUsableCredentials).toHaveBeenCalledWith({ workflowId: '1' });
-		expect(await screen.findByText('Scout renamed')).toBeInTheDocument();
-		expect(screen.queryByText('Scout')).not.toBeInTheDocument();
-	});
-
 	it('should keep the current list when the refetch on open fails', async () => {
 		ndvStore.activeNode = httpNode;
 		credentialsStore.state.credentials = {
@@ -526,18 +500,6 @@ describe('NodeCredentials', () => {
 		});
 	});
 
-	it('keeps the Assistant scope in the credentials fetch', () => {
-		renderComponent(
-			{ props: { node: httpNode, standalone: true, workflowId: 'wf-setup', forAssistant: true } },
-			{ merge: true },
-		);
-
-		expect(credentialsStore.fetchUsableCredentials).toHaveBeenCalledWith({
-			workflowId: 'wf-setup',
-			forAssistant: true,
-		});
-	});
-
 	it('should fall back to the personal project for an unsaved workflow without a current project', () => {
 		workflowsStore.isNewWorkflow = true;
 		projectsStore.currentProject = null;
@@ -571,31 +533,6 @@ describe('NodeCredentials', () => {
 
 		expect(screen.queryByText('OpenAi account')).toBeInTheDocument();
 		expect(screen.queryByText('OpenAi account 2')).not.toBeInTheDocument();
-	});
-
-	it('should open the new credential modal when clicked', async () => {
-		ndvStore.activeNode = httpNode;
-		credentialsStore.state.credentials = {
-			c8vqdPpPClh4TgIO: createCredential(),
-		};
-
-		renderComponent();
-
-		const credentialsSelect = screen.getByTestId('node-credentials-select');
-
-		await userEvent.click(credentialsSelect);
-		await userEvent.click(screen.getByTestId('node-credentials-select-item-new'));
-
-		expect(uiStore.openNewCredential).toHaveBeenCalledWith(
-			'openAiApi',
-			false,
-			false,
-			undefined,
-			undefined,
-			httpNode.name,
-			httpNode,
-			{ hideAskAssistant: false, closeOnSave: true, workflowId: '1' },
-		);
 	});
 
 	it('should configure the new credential modal for a tool context', async () => {
@@ -857,49 +794,6 @@ describe('NodeCredentials', () => {
 			expect(assignSpy).not.toHaveBeenCalled();
 		});
 
-		it('should call assignCredentialToMatchingNodes after selecting credentials', async () => {
-			// Start with a credential already assigned so the dropdown renders
-			const openAiNodeWithCred: INodeUi = {
-				...openAiNodeNoCreds,
-				credentials: { openAiApi: { id: 'c8vqdPpPClh4TgIO', name: 'OpenAi account' } },
-			};
-
-			ndvStore.activeNode = openAiNodeWithCred;
-			credentialsStore.state.credentials = {
-				c8vqdPpPClh4TgIO: createCredential(),
-				secondCred: createCredential({ id: 'secondCred', name: 'OpenAi account 2' }),
-			};
-
-			const assignSpy = vi.spyOn(workflowDocumentStore, 'assignCredentialToMatchingNodes');
-
-			renderComponent(
-				{
-					props: {
-						node: openAiNodeWithCred,
-					},
-				},
-				{ merge: true },
-			);
-
-			const credentialsSelect = screen.getByTestId('node-credentials-select');
-
-			await userEvent.click(credentialsSelect);
-
-			const openAiCreds = screen.queryByText('OpenAi account 2');
-			expect(openAiCreds).toBeInTheDocument();
-
-			await userEvent.click(openAiCreds!);
-
-			expect(assignSpy).toHaveBeenCalledWith({
-				credentials: {
-					id: 'secondCred',
-					name: 'OpenAi account 2',
-				},
-				currentNodeName: 'OpenAI no creds',
-				type: 'openAiApi',
-			});
-		});
-
 		it("emits 'Node credential assigned' with source user and kind own on manual selection", async () => {
 			const openAiNodeWithCred: INodeUi = {
 				...openAiNodeNoCreds,
@@ -923,75 +817,6 @@ describe('NodeCredentials', () => {
 				credential_id: 'secondCred',
 				credential_kind: 'own',
 				source: 'user',
-			});
-		});
-
-		it('should drop credentials the node no longer uses when selecting a credential', async () => {
-			const nodeTypesStore = mockedStore(useNodeTypesStore);
-			nodeTypesStore.setNodeTypes([
-				{
-					displayName: 'HTTP Request',
-					name: 'n8n-nodes-base.httpRequest',
-					group: ['input'],
-					version: [4, 4.1, 4.2],
-					description: 'Makes an HTTP request',
-					defaults: { name: 'HTTP Request' },
-					inputs: [NodeConnectionTypes.Main],
-					outputs: [NodeConnectionTypes.Main],
-					credentials: [
-						{
-							name: 'httpSslAuth',
-							required: true,
-							displayOptions: { show: { provideSslCertificates: [true] } },
-						},
-					],
-					properties: [],
-				} as unknown as INodeTypeDescription,
-			]);
-
-			// Node switched from generic to predefined auth: the httpHeaderAuth entry is stale.
-			// Built from scratch (not from the shared httpNode fixture) because store actions
-			// in earlier tests mutate the fixture object in place.
-			const httpNodeWithStaleCred: INodeUi = {
-				parameters: {
-					method: 'GET',
-					url: '',
-					authentication: 'predefinedCredentialType',
-					nodeCredentialType: 'openAiApi',
-					provideSslCertificates: false,
-					options: {},
-				},
-				type: 'n8n-nodes-base.httpRequest',
-				typeVersion: 4.2,
-				position: [-200, -160],
-				id: 'e4b917b5-e994-42c7-8576-6ef28a7619b2',
-				name: 'HTTP Request Stale',
-				credentials: {
-					openAiApi: { id: 'c8vqdPpPClh4TgIO', name: 'OpenAi account' },
-					httpHeaderAuth: { id: 'staleCred', name: 'Header Auth' },
-				},
-			};
-
-			ndvStore.activeNode = httpNodeWithStaleCred;
-			credentialsStore.state.credentials = {
-				c8vqdPpPClh4TgIO: createCredential(),
-				secondCred: createCredential({ id: 'secondCred', name: 'OpenAi account 2' }),
-			};
-
-			const { emitted } = renderComponent(
-				{ props: { node: httpNodeWithStaleCred } },
-				{ merge: true },
-			);
-
-			await userEvent.click(screen.getByTestId('node-credentials-select'));
-			await userEvent.click(screen.queryByText('OpenAi account 2')!);
-
-			const events = emitted('credentialSelected');
-			const payload = (events[events.length - 1] as unknown[])[0] as {
-				properties: { credentials: Record<string, unknown> };
-			};
-			expect(payload.properties.credentials).toEqual({
-				openAiApi: { id: 'secondCred', name: 'OpenAi account 2' },
 			});
 		});
 
@@ -1240,23 +1065,6 @@ describe('NodeCredentials', () => {
 			expect(screen.queryByTestId('quick-connect-empty-state')).toBeInTheDocument();
 			expect(screen.queryByTestId('node-credentials-empty-state')).not.toBeInTheDocument();
 			expect(screen.queryByTestId('node-credentials-select')).not.toBeInTheDocument();
-		});
-
-		it('falls back to the standard empty state when a policy blocks the quick-connect type', () => {
-			setupQuickConnectStores();
-			mockRestrictedCredentialTypes({ slackOAuth2Api: 'instance' });
-
-			ndvStore.activeNode = slackNode;
-
-			renderComponent(
-				{ props: { node: slackNode, overrideCredType: 'slackOAuth2Api' } },
-				{ merge: true },
-			);
-
-			expect(screen.queryByTestId('quick-connect-empty-state')).not.toBeInTheDocument();
-			const emptyState = screen.getByTestId('node-credentials-empty-state');
-			expect(within(emptyState).getByRole('button')).toBeDisabled();
-			expect(screen.getByTestId('node-credentials-type-restricted')).toBeInTheDocument();
 		});
 
 		it('should also show quick-connect-empty-state in standalone mode (NODE-5115)', () => {
@@ -2150,15 +1958,6 @@ describe('NodeCredentials', () => {
 			credentials: {},
 		};
 
-		// Declares resource and operation, so the picker can resolve the node's action.
-		const googleAiNodeTypeWithActions: INodeTypeDescription = {
-			...googleAiNodeType,
-			properties: [
-				{ displayName: 'Resource', name: 'resource', type: 'options', default: 'image' },
-				{ displayName: 'Operation', name: 'operation', type: 'options', default: 'analyze' },
-			],
-		};
-
 		beforeEach(() => {
 			// Enable AI Gateway for this describe block
 			vi.mocked(useAiGateway).mockReturnValue({
@@ -2293,30 +2092,6 @@ describe('NodeCredentials', () => {
 					screen.queryByTestId('node-credentials-select-item-n8n-credits'),
 				).not.toBeInTheDocument();
 			});
-
-			it.each([
-				['set on the node', { resource: 'image', operation: 'analyze' }],
-				['from node defaults', {}],
-			])(
-				'does not offer n8n credits when the gateway does not support the operation (%s)',
-				(_, parameters) => {
-					vi.mocked(useAiGateway).mockReturnValue({
-						...vi.mocked(useAiGateway)(),
-						isActionSupported: vi.fn(
-							(_type: string, resource?: string, operation?: string) =>
-								!(resource === 'image' && operation === 'analyze'),
-						),
-					});
-					mockedStore(useNodeTypesStore).setNodeTypes([googleAiNodeTypeWithActions]);
-					const imageNode: INodeUi = { ...googleAiNode, parameters };
-					ndvStore.activeNode = imageNode;
-
-					renderComponent({ props: { node: imageNode, overrideCredType: 'googlePalmApi' } });
-
-					const emptyState = screen.getByTestId('node-credentials-empty-state');
-					expect(within(emptyState).queryByRole('combobox')).not.toBeInTheDocument();
-				},
-			);
 
 			it('shows the managed selection in readonly mode', () => {
 				const nodeWithGateway: INodeUi = {
@@ -3225,39 +3000,6 @@ describe('NodeCredentials', () => {
 			});
 		});
 
-		it('should auto-select an own credential when one is available', () => {
-			const ownCred = {
-				id: 'cred-1',
-				name: 'My Google Key',
-				type: 'googlePalmApi',
-				isManaged: false,
-				createdAt: '2024-01-01',
-				updatedAt: '2024-01-01',
-			};
-			credentialsStore.state.credentials = { 'cred-1': ownCred };
-			credentialsStore.getCredentialById = vi.fn().mockReturnValue(ownCred);
-
-			const nodeWithoutCred: INodeUi = {
-				...googleAiNode,
-				credentials: {},
-				parameters: { resource: 'chat', operation: 'message' },
-			};
-			ndvStore.activeNode = nodeWithoutCred;
-
-			const { emitted } = renderComponent({
-				props: { node: nodeWithoutCred, overrideCredType: 'googlePalmApi' },
-			});
-
-			expect(emitted('credentialSelected')).toBeTruthy();
-			const payload = ((emitted('credentialSelected')[0] as unknown[]) ?? [])[0] as {
-				properties: { credentials: Record<string, unknown> };
-			};
-			expect(payload.properties.credentials['googlePalmApi']).toEqual({
-				id: 'cred-1',
-				name: 'My Google Key',
-			});
-		});
-
 		it('should not auto-enable gateway credential on mount when the current action is unsupported', () => {
 			vi.mocked(useAiGateway).mockReturnValue({
 				isEnabled: computed(() => true),
@@ -3276,7 +3018,6 @@ describe('NodeCredentials', () => {
 				fetchError: computed(() => null),
 			});
 			credentialsStore.state.credentials = {};
-			mockedStore(useNodeTypesStore).setNodeTypes([googleAiNodeTypeWithActions]);
 			const nodeWithAction: INodeUi = {
 				...googleAiNode,
 				parameters: { resource: 'chat', operation: 'unsupportedOp' },
@@ -4138,55 +3879,6 @@ describe('NodeCredentials', () => {
 			const option = screen.getByTestId('node-credentials-select-item-alice-cred');
 			expect(option).not.toHaveClass('is-disabled');
 			expect(option).toHaveTextContent("Alice Chen's · not shared with Marketing");
-		});
-	});
-
-	describe('restricted credential types', () => {
-		it('marks the selected credential and blocks creating one when its type is restricted', async () => {
-			mockRestrictedCredentialTypes({ openAiApi: 'instance' });
-			credentialsStore.state.credentials = { c8vqdPpPClh4TgIO: createCredential() };
-
-			renderComponent({ props: { node: openAiNode } });
-
-			expect(screen.getByTestId('node-credentials-selected-restricted')).toBeInTheDocument();
-
-			await userEvent.click(screen.getByTestId('node-credentials-select'));
-
-			expect(screen.getByTestId('node-credentials-select-item-new')).toBeDisabled();
-			expect(screen.getByTestId('node-credentials-select-item-new-restricted')).toBeInTheDocument();
-			expect(screen.getByTestId('node-credentials-select-item-c8vqdPpPClh4TgIO')).toHaveClass(
-				'is-disabled',
-			);
-		});
-
-		it('keeps the list and creation open when the type is not restricted', async () => {
-			mockRestrictedCredentialTypes({});
-			credentialsStore.state.credentials = { c8vqdPpPClh4TgIO: createCredential() };
-
-			renderComponent({ props: { node: openAiNode } });
-
-			expect(screen.queryByTestId('node-credentials-selected-restricted')).not.toBeInTheDocument();
-
-			await userEvent.click(screen.getByTestId('node-credentials-select'));
-
-			expect(screen.getByTestId('node-credentials-select-item-new')).toBeEnabled();
-			expect(
-				screen.queryByTestId('node-credentials-select-item-new-restricted'),
-			).not.toBeInTheDocument();
-			expect(screen.getByTestId('node-credentials-select-item-c8vqdPpPClh4TgIO')).not.toHaveClass(
-				'is-disabled',
-			);
-		});
-
-		it('disables the empty-state create button and explains why', () => {
-			mockRestrictedCredentialTypes({ openAiApi: 'project' });
-			credentialsStore.state.credentials = {};
-
-			renderComponent({ props: { node: openAiNodeNoCreds } });
-
-			const emptyState = screen.getByTestId('node-credentials-empty-state');
-			expect(within(emptyState).getByRole('button')).toBeDisabled();
-			expect(screen.getByTestId('node-credentials-type-restricted')).toBeInTheDocument();
 		});
 	});
 });

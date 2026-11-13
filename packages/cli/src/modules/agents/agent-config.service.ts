@@ -100,8 +100,6 @@ export class AgentConfigService {
 			metadata?: AgentDefinitionMetadata;
 			plannedDestinations?: PlannedAgentDestinations;
 			writeSkills?: AgentSkillWriter;
-			/** A package import replaces the definition of an archived agent. */
-			allowArchivedUpdate?: boolean;
 		},
 	): Promise<ProjectAgent> {
 		await Container.get(AgentsSettingsService).assertEnabled();
@@ -146,9 +144,7 @@ export class AgentConfigService {
 		agent.tools = structuredClone(content.tools);
 		markAgentDraftDirty(agent);
 		const { skillRefs, tasksChanged } = await this.transactionRunner.run({}, async (ctx) => {
-			await saveAgentDraftFenced(this.agentRepository, agent, ctx, options.metadata, {
-				allowArchivedUpdate: options.allowArchivedUpdate,
-			});
+			await saveAgentDraftFenced(this.agentRepository, agent, ctx, options.metadata);
 			await options.writeSkills?.(ctx);
 			const skillRefs = await this.agentSkillRefs.replaceAllDraftRefs(
 				agent,

@@ -123,26 +123,20 @@ describe('N8nClient packages', () => {
 		it.each([
 			{
 				title: 'applies a selection with only the workflow ids by default',
-				send: async () =>
-					await client.applyProjectSelection('proj-1', { workflowIds: ['wf-1', 'wf-2'] }),
+				send: async () => await client.applyProjectSelection('proj-1', ['wf-1', 'wf-2']),
 				path: 'apply',
 				body: { workflowIds: ['wf-1', 'wf-2'] },
 			},
 			{
 				title: 'pins the reviewed source when applying a selection',
-				send: async () =>
-					await client.applyProjectSelection('proj-1', { workflowIds: ['wf-1'] }, expectedSource),
+				send: async () => await client.applyProjectSelection('proj-1', ['wf-1'], expectedSource),
 				path: 'apply',
 				body: { workflowIds: ['wf-1'], expectedSource },
 			},
 			{
 				title: 'continues a selection apply against the reviewed source',
 				send: async () =>
-					await client.continueApplyProjectSelection(
-						'proj-1',
-						{ workflowIds: ['wf-1'] },
-						expectedSource,
-					),
+					await client.continueApplyProjectSelection('proj-1', ['wf-1'], expectedSource),
 				path: 'apply/continue',
 				body: { workflowIds: ['wf-1'], expectedSource },
 			},
@@ -150,12 +144,7 @@ describe('N8nClient packages', () => {
 				title:
 					'continues a selection apply with the confirmation of destructive data table changes',
 				send: async () =>
-					await client.continueApplyProjectSelection(
-						'proj-1',
-						{ workflowIds: ['wf-1'] },
-						expectedSource,
-						true,
-					),
+					await client.continueApplyProjectSelection('proj-1', ['wf-1'], expectedSource, true),
 				path: 'apply/continue',
 				body: { workflowIds: ['wf-1'], expectedSource, confirmDestructiveChanges: true },
 			},
@@ -173,16 +162,26 @@ describe('N8nClient packages', () => {
 
 		describe('list changes', () => {
 			beforeEach(() => {
-				fetchMock.mockResolvedValue(
-					jsonResponse(200, { commitSha: null, resources: [], dependencies: [] }),
-				);
+				fetchMock.mockResolvedValue(jsonResponse(200, { commitSha: null, changes: [] }));
 			});
 
-			it('requests the preview of the direction', async () => {
+			it('sends no query parameters when no options are given', async () => {
 				await client.listProjectPromotionChanges('proj-1', 'apply');
 
 				expect(requestLines(fetchMock)).toEqual([
 					'GET https://n8n.example.com/api/v1/promotions/projects/proj-1/changes/apply',
+				]);
+			});
+
+			it('sends search, sort, and order as query parameters', async () => {
+				await client.listProjectPromotionChanges('proj-1', 'promote', {
+					search: 'checkout',
+					sort: 'updatedAt',
+					order: 'desc',
+				});
+
+				expect(requestLines(fetchMock)).toEqual([
+					'GET https://n8n.example.com/api/v1/promotions/projects/proj-1/changes/promote?search=checkout&sort=updatedAt&order=desc',
 				]);
 			});
 		});
@@ -518,16 +517,18 @@ describe('N8nClient packages', () => {
 			);
 		});
 
-		it('sends includeArchived only when true', async () => {
+		it('sends includeArchivedWorkflows only when true', async () => {
 			fetchMock.mockResolvedValue(binaryResponse(200, new Uint8Array([1])));
 
-			await client.exportPackage({ workflowIds: ['a'], includeArchived: false });
-			await client.exportPackage({ workflowIds: ['a'], includeArchived: true });
+			await client.exportPackage({ workflowIds: ['a'], includeArchivedWorkflows: false });
+			await client.exportPackage({ workflowIds: ['a'], includeArchivedWorkflows: true });
 
 			const [, first] = fetchMock.mock.calls[0] as [string, RequestInit];
 			const [, second] = fetchMock.mock.calls[1] as [string, RequestInit];
 			expect(first.body).toBe(JSON.stringify({ workflowIds: ['a'] }));
-			expect(second.body).toBe(JSON.stringify({ workflowIds: ['a'], includeArchived: true }));
+			expect(second.body).toBe(
+				JSON.stringify({ workflowIds: ['a'], includeArchivedWorkflows: true }),
+			);
 		});
 	});
 

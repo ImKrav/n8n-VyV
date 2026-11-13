@@ -6,6 +6,7 @@ import {
 	findClassProperty,
 	findObjectProperty,
 	getStringLiteralValue,
+	isFileType,
 	createRule,
 } from '../utils/index.js';
 
@@ -24,6 +25,10 @@ export const ResourceOperationPatternRule = createRule({
 	},
 	defaultOptions: [],
 	create(context) {
+		if (!isFileType(context.filename, '.node.ts')) {
+			return {};
+		}
+
 		const analyzeNodeDescription = (descriptionValue: TSESTree.Expression | null): void => {
 			if (descriptionValue?.type !== AST_NODE_TYPES.ObjectExpression) {
 				return;

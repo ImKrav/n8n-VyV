@@ -692,8 +692,6 @@ describe('ExecutionRecoveryService', () => {
 
 				const workflow = await createCrashedActiveWorkflow();
 				mockOwnershipForDeactivation();
-				const { WorkflowService } = await import('@/workflows/workflow.service.js');
-				const deactivateSpy = vi.spyOn(WorkflowService.prototype, 'deactivateWorkflowAsSystem');
 
 				/**
 				 * Act
@@ -706,7 +704,6 @@ describe('ExecutionRecoveryService', () => {
 				const updatedWorkflow = await getWorkflowById(workflow.id);
 				if (!updatedWorkflow) expect.fail('Expected `updatedWorkflow` to be defined');
 				expect(updatedWorkflow.activeVersionId).toBeNull();
-				expect(deactivateSpy).toHaveBeenCalledWith(workflow.id, 'crash-recovery');
 			});
 
 			test('should deactivate workflow if the last crashed executions were not saved', async () => {

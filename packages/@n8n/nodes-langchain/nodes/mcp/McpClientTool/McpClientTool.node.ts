@@ -178,12 +178,6 @@ export class McpClientTool implements INodeType {
 						name: 'None',
 						value: 'none',
 					},
-					{
-						name: 'OAuth2',
-						value: 'oAuth2Api',
-						description:
-							'Use a generic OAuth2 API credential. It has no Resource URL field. If your server needs one, use MCP OAuth2.',
-					},
 				],
 				default: 'none',
 				description: 'The way to authenticate with your endpoint',
@@ -200,13 +194,7 @@ export class McpClientTool implements INodeType {
 				default: '',
 				displayOptions: {
 					show: {
-						authentication: [
-							'headerAuth',
-							'bearerAuth',
-							'mcpOAuth2Api',
-							'oAuth2Api',
-							'multipleHeadersAuth',
-						],
+						authentication: ['headerAuth', 'bearerAuth', 'mcpOAuth2Api', 'multipleHeadersAuth'],
 					},
 				},
 			},

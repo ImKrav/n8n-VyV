@@ -250,7 +250,7 @@ async function prepareMcpQueueExecution(
 		firstItem && 'json' in firstItem ? firstItem.json?.mcpListToolsRelay : null;
 	if (!isMcpListToolsRelay(mcpListToolsRelayValue)) return false;
 
-	const { Publisher } = await import('@n8n/backend-services');
+	const { Publisher } = await import('@/scaling/pubsub/publisher.service.js');
 	const publisher = Container.get(Publisher);
 	await publisher.publishMcpRelay({
 		sessionId: mcpListToolsRelayValue.sessionId,
@@ -855,7 +855,8 @@ async function prepareWebhookAdditionalData({
 
 	additionalData.getUserById = async (id: string) => {
 		const user = await Container.get(UserRepository).findByIdWithRole(id);
-		return user?.toIUser();
+		if (!user) return undefined;
+		return toWebhookUser(user);
 	};
 
 	const oauth2FlowProxy = Container.get(OAuth2FlowProxy);

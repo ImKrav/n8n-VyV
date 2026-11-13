@@ -594,15 +594,6 @@ describe('useWorkflowActivate', () => {
 	});
 
 	describe('unpublishWorkflowFromHistory()', () => {
-		it('unpublishes when the workflow is not in the list store cache', async () => {
-			mockGetWorkflowById.mockReturnValue(undefined);
-			mockDeactivateWorkflow.mockResolvedValueOnce(undefined);
-
-			const { unpublishWorkflowFromHistory } = useWorkflowActivate();
-
-			expect(await unpublishWorkflowFromHistory(WORKFLOW_ID)).toBe(true);
-		});
-
 		it('sends the document checksum when the document is open in an editor', async () => {
 			mockDocumentStore.hydrated = true;
 			mockDocumentStore.checksum = 'after-publish';

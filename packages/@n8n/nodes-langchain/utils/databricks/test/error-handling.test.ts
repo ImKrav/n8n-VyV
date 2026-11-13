@@ -1,8 +1,7 @@
 import { AsyncCaller } from '@langchain/core/utils/async_caller';
 import { makeN8nLlmFailedAttemptHandler } from '@n8n/ai-utilities';
 import type { INode, ISupplyDataFunctions } from 'n8n-workflow';
-import { NodeApiError } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import { NodeApiError, OperationalError } from 'n8n-workflow';
 import { RateLimitError } from 'openai';
 import { mock } from 'vitest-mock-extended';
 

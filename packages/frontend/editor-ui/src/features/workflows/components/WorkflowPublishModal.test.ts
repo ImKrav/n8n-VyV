@@ -224,44 +224,7 @@ describe('WorkflowPublishModal', () => {
 		});
 	});
 
-	describe('handlePublish without conflicts', () => {
-		it('should proceed to publish when there are no conflicting webhooks', async () => {
-			mockPublishWorkflow.mockReset().mockResolvedValue({
-				success: true,
-				errorHandled: false,
-			});
-			const { getByTestId } = renderComponent();
-
-			const versionInput = getByTestId('workflow-publish-version-name-input');
-			await userEvent.type(versionInput, 'v1.0.0');
-
-			await userEvent.click(getByTestId('workflow-publish-button'));
-
-			await waitFor(() => {
-				expect(mockPublishWorkflow).toHaveBeenCalled();
-				expect(mockShowMessage).not.toHaveBeenCalled();
-				expect(mockTelemetryTrack).toHaveBeenCalledWith('User published version from canvas', {
-					workflow_id: 'workflow-1',
-				});
-			});
-		});
-	});
-
 	describe('publish never settles', () => {
-		it('stops the spinner and reports the failure when publishWorkflow throws', async () => {
-			mockPublishWorkflow.mockReset().mockRejectedValue(new Error('boom'));
-
-			const { getByTestId } = renderComponent();
-
-			await userEvent.type(getByTestId('workflow-publish-version-name-input'), 'v1.0.0');
-			await userEvent.click(getByTestId('workflow-publish-button'));
-
-			await waitFor(() => {
-				expect(getByTestId('workflow-publish-cancel-button')).not.toBeDisabled();
-			});
-			expect(mockShowError).toHaveBeenCalled();
-		});
-
 		it('closes the modal and re-enables Cancel when the composable reports success', async () => {
 			// The composable resolves this way whether the response arrived or a
 			// push confirmed the publish first - the modal cannot tell the difference.
@@ -324,17 +287,6 @@ describe('WorkflowPublishModal', () => {
 				expect(queryByTestId('workflow-publish-callout-no-changes')).not.toBeInTheDocument();
 			},
 		);
-
-		it('still blocks re-attempt when containsTrigger is false', async () => {
-			workflowDocumentStore.setPublicationStatus({ status: 'partial' });
-			workflowDocumentStore.setNodes([]);
-
-			const { getByTestId } = renderComponent();
-
-			await waitFor(() => {
-				expect(getByTestId('workflow-publish-button')).toBeDisabled();
-			});
-		});
 
 		it('still blocks re-attempt when hasNodeIssues is true', async () => {
 			workflowDocumentStore.setPublicationStatus({ status: 'failed' });

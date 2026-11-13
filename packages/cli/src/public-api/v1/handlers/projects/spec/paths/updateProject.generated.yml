@@ -2,10 +2,7 @@ operationId: updateProject
 tags:
   - Projects
 summary: Update a project
-description: |-
-  Update a project on your instance.
-
-  Requires the `project:update` API key scope.
+description: Update a project on your instance.
 x-required-scope: project:update
 parameters:
   - schema:

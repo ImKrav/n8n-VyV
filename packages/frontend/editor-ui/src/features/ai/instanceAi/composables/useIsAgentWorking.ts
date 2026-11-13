@@ -1,5 +1,6 @@
 import { computed, type ComputedRef } from 'vue';
 
+import { collectActiveBuilderAgents } from '../builderAgents';
 import { useArtifactThread, type ArtifactThread } from '../artifactThread';
 
 /**
@@ -21,5 +22,11 @@ import { useArtifactThread, type ArtifactThread } from '../artifactThread';
 export function useIsAgentWorking(runtime?: ArtifactThread): ComputedRef<boolean> {
 	const thread = runtime ?? useArtifactThread();
 
-	return computed(() => thread.isHydratingThread || thread.isStreaming || thread.isSendingMessage);
+	return computed(
+		() =>
+			thread.isHydratingThread ||
+			thread.isStreaming ||
+			thread.isSendingMessage ||
+			collectActiveBuilderAgents(thread.messages).length > 0,
+	);
 }

@@ -848,7 +848,7 @@ watch(
 					<template #trailingContent>
 						<N8nIcon
 							icon="x"
-							:title="i18n.baseText('generic.dismiss')"
+							title="Dismiss"
 							size="medium"
 							type="secondary"
 							class="callout-dismiss"

@@ -1,24 +1,105 @@
-import type { INodeTypeBaseDescription, IVersionedNodeType } from 'n8n-workflow';
-import { VersionedNodeType } from 'n8n-workflow';
+import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
 
-import { N8nV1 } from './v1/N8nV1.node';
+import { auditFields, auditOperations } from './AuditDescription';
+import { credentialFields, credentialOperations } from './CredentialDescription';
+import { executionFields, executionOperations } from './ExecutionDescription';
+import { projectFields, projectOperations } from './ProjectDescription';
+import { userFields, userOperations } from './UserDescription';
+import { workflowFields, workflowOperations } from './WorkflowDescription';
+import { searchWorkflows } from './WorkflowLocator';
 
-export class N8n extends VersionedNodeType {
-	constructor() {
-		const baseDescription: INodeTypeBaseDescription = {
-			displayName: 'n8n',
+/**
+ * The n8n node provides access to the n8n API.
+ *
+ * See: https://docs.n8n.io/api/api-reference/
+ */
+export class N8n implements INodeType {
+	description: INodeTypeDescription = {
+		displayName: 'n8n',
+		name: 'n8n',
+		icon: 'node:n8n',
+		group: ['transform'],
+		version: 1,
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		description: 'Handle events and perform actions on your n8n instance',
+		defaults: {
 			name: 'n8n',
-			icon: 'node:n8n',
-			group: ['transform'],
-			subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-			description: 'Handle events and perform actions on your n8n instance',
-			defaultVersion: 1,
-		};
+		},
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
+		credentials: [
+			{
+				name: 'n8nApi',
+				required: true,
+			},
+		],
+		requestDefaults: {
+			returnFullResponse: true,
+			baseURL: '={{ $credentials.baseUrl.replace(new RegExp("/$"), "") }}',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+		},
+		properties: [
+			{
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Audit',
+						value: 'audit',
+					},
+					{
+						name: 'Credential',
+						value: 'credential',
+					},
+					{
+						name: 'Execution',
+						value: 'execution',
+					},
+					{
+						name: 'Project',
+						value: 'project',
+					},
+					{
+						name: 'User',
+						value: 'user',
+					},
+					{
+						name: 'Workflow',
+						value: 'workflow',
+					},
+				],
+				default: 'workflow',
+			},
 
-		const nodeVersions: IVersionedNodeType['nodeVersions'] = {
-			1: new N8nV1(baseDescription),
-		};
+			...auditOperations,
+			...auditFields,
 
-		super(nodeVersions, baseDescription);
-	}
+			...credentialOperations,
+			...credentialFields,
+
+			...executionOperations,
+			...executionFields,
+
+			...projectOperations,
+			...projectFields,
+
+			...userOperations,
+			...userFields,
+
+			...workflowOperations,
+			...workflowFields,
+		],
+	};
+
+	methods = {
+		listSearch: {
+			// Provide workflows search capability for the workflow resourceLocator
+			searchWorkflows,
+		},
+	};
 }

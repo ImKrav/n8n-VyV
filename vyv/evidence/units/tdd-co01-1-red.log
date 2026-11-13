@@ -1,0 +1,108 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.mts:28:29). Use `import.meta.dirname` instead
+  - import "../@n8n/design-system/src/icons/lucide/vite" without a file extension (vite.config.mts:12:35). Add the file extension
+  - import "./vite/i18n-locales-hmr-helpers" without a file extension (vite.config.mts:15:48). Add the file extension
+  - import "../../@n8n/constants/src/csp" without a file extension (vite.config.mts:20:40). Add the file extension
+  - ESM syntax in a file loaded as CommonJS (../../@n8n/constants/src/csp.ts:6:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - import "./bucket" without a file extension (../@n8n/design-system/src/icons/lucide/vite.ts:5:46). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/frontend/editor-ui
+
+stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-01 · Crear data table con nombre válido > crea la tabla desde cero en el proyecto actual y abre su detalle
+[Vue warn]: Invalid watch source:  { params: { projectId: 'project-1' } } A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.
+[Vue warn] toRefs() expects a reactive object but received a plain one.
+
+stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-01 · Crear data table con nombre válido > crea la tabla al pulsar Enter en el campo de nombre
+[Vue warn]: Invalid watch source:  { params: { projectId: 'project-1' } } A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.
+[Vue warn] toRefs() expects a reactive object but received a plain one.
+
+stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-01 · Crear data table con nombre válido > vuelve a la lista de data tables al cancelar
+[Vue warn]: Invalid watch source:  { params: { projectId: 'project-1' } } A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.
+[Vue warn] toRefs() expects a reactive object but received a plain one.
+
+stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > deshabilita «Create» mientras el nombre está vacío
+[Vue warn]: Invalid watch source:  { params: { projectId: 'project-1' } } A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.
+[Vue warn] toRefs() expects a reactive object but received a plain one.
+
+stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > deshabilita «Create» con un nombre de solo espacios
+[Vue warn]: Invalid watch source:  { params: { projectId: 'project-1' } } A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.
+[Vue warn] toRefs() expects a reactive object but received a plain one.
+
+stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > no crea la tabla al pulsar Enter con un nombre de solo espacios
+[Vue warn]: Invalid watch source:  { params: { projectId: 'project-1' } } A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.
+[Vue warn] toRefs() expects a reactive object but received a plain one.
+
+stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-03 · Nombre duplicado en el proyecto > muestra el error del servidor (p. ej. nombre duplicado) y no cierra ni navega
+[Vue warn]: Invalid watch source:  { params: { projectId: 'project-1' } } A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.
+[Vue warn] toRefs() expects a reactive object but received a plain one.
+
+ ❯ ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts (7 tests | 2 failed) 492ms
+   ✓ CP-CO-01-01 · Crear data table con nombre válido (3)
+     ✓ crea la tabla desde cero en el proyecto actual y abre su detalle 180ms
+     ✓ crea la tabla al pulsar Enter en el campo de nombre 68ms
+     ✓ vuelve a la lista de data tables al cancelar 37ms
+   ❯ CP-CO-01-02 · Nombre vacío o solo espacios (3)
+     ✓ deshabilita «Create» mientras el nombre está vacío 34ms
+     × deshabilita «Create» con un nombre de solo espacios 56ms
+     × no crea la tabla al pulsar Enter con un nombre de solo espacios 49ms
+   ✓ CP-CO-01-03 · Nombre duplicado en el proyecto (1)
+     ✓ muestra el error del servidor (p. ej. nombre duplicado) y no cierra ni navega 64ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > deshabilita «Create» con un nombre de solo espacios
+Error: expect(element).toBeDisabled()
+
+Received element is not disabled:
+  <button
+  aria-live="polite"
+  class="button button solid large"
+  data-test-id="proceed-from-select-button"
+  type="button"
+/>
+ ❯ ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts:140:26
+    138|
+    139|   // Assert
+    140|   expect(createButton()).toBeDisabled();
+       |                          ^
+    141|  });
+    142|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > no crea la tabla al pulsar Enter con un nombre de solo espacios
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      "   ",
+      "project-1",
+    ]
+
+
+Number of calls: 1
+
+ ❯ ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts:151:46
+    149|
+    150|   // Assert
+    151|   expect(dataTableStore.createDataTable).not.toHaveBeenCalled();
+       |                                              ^
+    152|  });
+    153| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  04:29:27
+   Duration  14.12s (transform 75%, import 16%, tests 4%, setup 3%, environment 3%)
+
+  Transform  transforming modules took 10.52s · 75% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

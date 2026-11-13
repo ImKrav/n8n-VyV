@@ -1,14 +1,13 @@
 import { Service } from '@n8n/di';
 import type { Attachment, PostableCard, PostableMarkdown, PostableRaw, Thread } from 'chat';
-import { OperationalError, UserError } from '@n8n/errors';
-import { posix } from 'node:path';
+import { OperationalError } from '@n8n/errors';
 
-import { AgentChatAttachmentService, AgentFileLimitError } from '../agent-chat-attachment.service';
-import { AgentSandboxFilesService } from '../agent-sandbox-files.service';
+import { AgentChatAttachmentService } from '../agent-chat-attachment.service';
 import type { AgentChatAttachment } from '../entities/agent-chat-attachment.entity';
 import {
 	type AgentChatIntegration,
 	ChatIntegrationRegistry,
+	MAX_CHANNEL_SEND_FILE_BYTES,
 	MAX_FILE_MESSAGES_PER_SEND,
 } from './agent-chat-integration';
 import { splitMessage } from './message-split';
@@ -104,7 +103,6 @@ export class AgentOutboundFiles {
 	constructor(
 		private readonly attachmentService: AgentChatAttachmentService,
 		private readonly integrationRegistry: ChatIntegrationRegistry,
-		private readonly sandboxFiles: AgentSandboxFilesService,
 	) {}
 
 	/**
@@ -132,21 +130,9 @@ export class AgentOutboundFiles {
 			);
 		}
 
-		const maxFileBytes = limits.maxFileBytes;
-		let resolvedIds: string[];
-		try {
-			resolvedIds = await this.sandboxFiles.resolveFileRefs(fileIds, scope);
-		} catch (error) {
-			if (!(error instanceof UserError)) throw error;
-			// The file exists but is too large to store, so the model must not look for it again.
-			const code =
-				error instanceof AgentFileLimitError
-					? INTEGRATION_ERROR_CODES.FILE_UPLOAD_LIMIT_EXCEEDED
-					: INTEGRATION_ERROR_CODES.FILE_NOT_FOUND;
-			return integrationError(code, error.message);
-		}
+		const maxFileBytes = Math.min(limits.maxFileBytes, MAX_CHANNEL_SEND_FILE_BYTES);
 		const attachments: AgentChatAttachment[] = [];
-		for (const fileId of resolvedIds) {
+		for (const fileId of fileIds) {
 			const attachment = await this.attachmentService.getReadable(fileId, scope);
 			if (!attachment) {
 				return integrationError(
@@ -188,19 +174,18 @@ export class AgentOutboundFiles {
 	groups(platform: string, attachments: AgentChatAttachment[]): OutboundFileGroup[] {
 		const integration = this.integrationRegistry.get(platform);
 		return this.group(platform, attachments).map((group) => async () => {
-			// Each file is loaded into memory. The storage caps limit its size.
+			// Each file is loaded into memory. MAX_CHANNEL_SEND_FILE_BYTES caps the size.
 			const loaded = await Promise.all(
 				group.map(async (attachment) => ({
 					attachment,
 					data: await this.attachmentService.getBuffer(attachment),
 				})),
 			);
-			// A sandbox file name is a path in outputs/. The platform gets the base name.
 			if (!integration?.sendFilesAsAttachments) {
 				return {
 					files: loaded.map(({ attachment, data }) => ({
 						data,
-						filename: posix.basename(attachment.fileName),
+						filename: attachment.fileName,
 						mimeType: attachment.mimeType,
 					})),
 				};
@@ -210,7 +195,7 @@ export class AgentOutboundFiles {
 				attachments: loaded.map(({ attachment, data }) => ({
 					type: outboundAttachmentType(attachment, maxImageBytes),
 					data,
-					name: posix.basename(attachment.fileName),
+					name: attachment.fileName,
 					mimeType: attachment.mimeType,
 				})),
 			};

@@ -13,7 +13,6 @@ export class Example implements INodeType {
 		icon: { light: 'file:example.svg', dark: 'file:example.dark.svg' },
 		group: ['input'],
 		version: [1],
-		subtitle: '={{$parameter["myString"]}}',
 		description: 'Basic Example Node',
 		defaults: {
 			name: 'Example',
@@ -65,7 +64,7 @@ export class Example implements INodeType {
 						// If the error thrown already contains the context property,
 						// only append the itemIndex
 						error.context.itemIndex = itemIndex;
-						throw new NodeOperationError(this.getNode(), error, { itemIndex });
+						throw error;
 					}
 					throw new NodeOperationError(this.getNode(), error, {
 						itemIndex,

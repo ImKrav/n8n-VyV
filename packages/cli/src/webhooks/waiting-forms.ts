@@ -74,7 +74,6 @@ export class WaitingForms extends WaitingWebhooks {
 	protected override answerEngineV2WithoutTarget(
 		executionId: string,
 		snapshot: ExecutionSnapshot,
-		suffix: string | undefined,
 		res: express.Response,
 	): IWebhookResponseCallbackData {
 		if (snapshot.status === 'completed') {
@@ -91,7 +90,7 @@ export class WaitingForms extends WaitingWebhooks {
 			return { noWebhookResponse: true };
 		}
 
-		return super.answerEngineV2WithoutTarget(executionId, snapshot, suffix, res);
+		return super.answerEngineV2WithoutTarget(executionId, snapshot, res);
 	}
 
 	protected override sanitizeEngineV2Request(req: WaitingWebhookRequest, resumeNode: INode): void {

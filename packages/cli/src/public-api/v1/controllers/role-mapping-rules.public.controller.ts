@@ -8,7 +8,7 @@ import {
 	roleMappingRuleIdParamSchema,
 } from '@n8n/api-types';
 import { LicenseState } from '@n8n/backend-common';
-import { AuthenticatedRequest, isPerson } from '@n8n/db';
+import { AuthenticatedRequest } from '@n8n/db';
 import {
 	ApiDescription,
 	ApiErrorResponse,
@@ -130,7 +130,7 @@ export class RoleMappingRulesPublicController {
 			id: roleMappingRuleId,
 			targetIndex: body.targetIndex,
 			userId: req.user.id,
-			userEmail: isPerson(req.user) ? req.user.email : undefined,
+			userEmail: req.user.email,
 		});
 
 		return toRoleMappingRulePublicDto(rule);
@@ -157,7 +157,7 @@ export class RoleMappingRulesPublicController {
 			id: roleMappingRuleId,
 			dto: body,
 			userId: req.user.id,
-			userEmail: isPerson(req.user) ? req.user.email : undefined,
+			userEmail: req.user.email,
 		});
 
 		return toRoleMappingRulePublicDto(rule);
@@ -182,7 +182,7 @@ export class RoleMappingRulesPublicController {
 		const rule = await this.roleMappingRuleService.delete({
 			id: roleMappingRuleId,
 			userId: req.user.id,
-			userEmail: isPerson(req.user) ? req.user.email : undefined,
+			userEmail: req.user.email,
 		});
 
 		return toRoleMappingRulePublicDto(rule);

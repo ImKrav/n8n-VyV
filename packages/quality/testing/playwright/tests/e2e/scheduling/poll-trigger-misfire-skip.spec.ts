@@ -20,7 +20,7 @@ test.use({
 test.describe(
 	'Poll Trigger misfire policy: skip',
 	{
-		annotation: [{ type: 'owner', description: 'Core Application' }],
+		annotation: [{ type: 'owner', description: 'Catalysts' }],
 	},
 	() => {
 		test('drops a missed backlog instead of firing a stale poll', async ({ api, services }) => {

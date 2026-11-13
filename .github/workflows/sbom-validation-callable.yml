@@ -23,8 +23,9 @@ jobs:
           persist-credentials: false
 
       # Callers pass the nightly source SHA or the PR merge SHA.
-      # Reject refs before checking out the source.
-      - name: Validate SBOM source SHA
+      # Reject refs before fetching the source.
+      # poutine: untrusted_checkout_exec
+      - name: Checkout SBOM source
         env:
           SOURCE_SHA: ${{ inputs.sha }}
         run: |
@@ -32,13 +33,8 @@ jobs:
             echo '::error::The SBOM source must be a full commit SHA.'
             exit 1
           fi
-
-      # poutine: untrusted_checkout_exec
-      - name: Checkout SBOM source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ inputs.sha }}
-          persist-credentials: false
+          git fetch --depth=1 origin "$SOURCE_SHA"
+          git checkout --detach "$SOURCE_SHA"
 
       - name: Build production deployment artifact
         uses: ./.github/actions/setup-nodejs

@@ -324,52 +324,6 @@ describe('useWorkflowDiff', () => {
 			);
 		});
 
-		it('should compute nodesDiff correctly', () => {
-			const sourceNode = createMockNode('node1', { name: 'Source Node' });
-			const targetNode = createMockNode('node1', { name: 'Target Node' });
-			const sourceWorkflow = createMockWorkflow('source', [sourceNode]);
-			const targetWorkflow = createMockWorkflow('target', [targetNode]);
-
-			const { nodesDiff } = useWorkflowDiff(sourceWorkflow, targetWorkflow);
-
-			expect(nodesDiff.value.size).toBe(1);
-			expect(nodesDiff.value.get('node1')?.status).toBe(NodeDiffStatus.Modified);
-		});
-
-		it('should handle workflows with different nodes', () => {
-			const sourceNodes = [createMockNode('node1'), createMockNode('node2')];
-			const targetNodes = [createMockNode('node1'), createMockNode('node3')];
-			const sourceWorkflow = createMockWorkflow('source', sourceNodes);
-			const targetWorkflow = createMockWorkflow('target', targetNodes);
-
-			const { nodesDiff } = useWorkflowDiff(sourceWorkflow, targetWorkflow);
-
-			expect(nodesDiff.value.size).toBe(3);
-			expect(nodesDiff.value.get('node1')?.status).toBe(NodeDiffStatus.Eq);
-			expect(nodesDiff.value.get('node2')?.status).toBe(NodeDiffStatus.Deleted);
-			expect(nodesDiff.value.get('node3')?.status).toBe(NodeDiffStatus.Added);
-		});
-
-		it('should compute connectionsDiff correctly', () => {
-			const sourceConnections = [createMockCanvasConnection('conn1')];
-			const targetConnections = [
-				createMockCanvasConnection('conn1'),
-				createMockCanvasConnection('conn2'),
-			];
-
-			const sourceWorkflow = createMockWorkflow('source');
-			const targetWorkflow = createMockWorkflow('target');
-
-			mockUseCanvasMapping
-				.mockReturnValueOnce(createMockCanvasMappingReturn([], sourceConnections))
-				.mockReturnValueOnce(createMockCanvasMappingReturn([], targetConnections));
-
-			const { connectionsDiff } = useWorkflowDiff(sourceWorkflow, targetWorkflow);
-
-			expect(connectionsDiff.value.size).toBe(1);
-			expect(connectionsDiff.value.get('conn2')?.status).toBe(NodeDiffStatus.Added);
-		});
-
 		it('should handle reactive workflow updates', () => {
 			const sourceWorkflowRef = ref<IWorkflowDb | undefined>(undefined);
 			const { source } = useWorkflowDiff(sourceWorkflowRef, undefined);

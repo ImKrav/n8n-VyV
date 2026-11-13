@@ -4,7 +4,6 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { mock } from 'vitest-mock-extended';
 
-import type { CredentialTypes } from '@/credential-types';
 import type { NodeTypes } from '@/node-types';
 
 import {
@@ -25,12 +24,7 @@ import type { SerializedAgent } from '../../spec/serialized/agent.schema';
 import type { SerializedSkill } from '../../spec/serialized/skill.schema';
 import { N8nPackageParser } from '../n8n-package-parser';
 
-const parser = new N8nPackageParser(
-	mock<Logger>(),
-	mock<NodeTypes>(),
-	mock<WorkflowSerializer>(),
-	mock<CredentialTypes>(),
-);
+const parser = new N8nPackageParser(mock<Logger>(), mock<NodeTypes>(), mock<WorkflowSerializer>());
 const limits = new PackageImportConfig();
 const agentTarget = 'agents/support';
 const agentPath = `${agentTarget}/agent.json`;

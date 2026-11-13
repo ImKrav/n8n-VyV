@@ -6,7 +6,8 @@ import { useI18n } from '@n8n/i18n';
 import { computed, onMounted, ref } from 'vue';
 import type { EventBus } from '@n8n/utils/event-bus';
 
-import { N8nIcon, N8nSwitch, N8nText } from '@n8n/design-system';
+import { ElSwitch } from 'element-plus';
+import { N8nIcon, N8nText } from '@n8n/design-system';
 const emit = defineEmits<{
 	change: [value: boolean];
 }>();
@@ -80,8 +81,7 @@ async function onUpdateConnected(value: string | number | boolean) {
 				)
 			}}
 		</N8nText>
-		<N8nSwitch
-			size="large"
+		<ElSwitch
 			:model-value="provider.connected"
 			:title="
 				i18n.baseText('settings.externalSecrets.card.connectedSwitch.title', {
@@ -91,7 +91,8 @@ async function onUpdateConnected(value: string | number | boolean) {
 			:disabled="disabled"
 			data-test-id="settings-external-secrets-connected-switch"
 			@update:model-value="onUpdateConnected"
-		/>
+		>
+		</ElSwitch>
 	</div>
 </template>
 
@@ -101,5 +102,12 @@ async function onUpdateConnected(value: string | number | boolean) {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+
+	&.error {
+		:deep(.el-switch.is-checked .el-switch__core) {
+			background-color: #ff4027;
+			border-color: #ff4027;
+		}
+	}
 }
 </style>

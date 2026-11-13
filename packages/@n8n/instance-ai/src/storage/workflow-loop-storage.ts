@@ -1,4 +1,4 @@
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 import { z } from 'zod';
 
 import { getThread, patchThread, type PatchableThreadMemory } from './thread-patch';

@@ -7,7 +7,7 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from '@n8n/typeorm';
-import { UnexpectedError } from '@n8n/errors';
+import { UnexpectedError } from 'n8n-workflow';
 
 import { InsightsMetadata } from './insights-metadata.entity';
 import type { PeriodUnit } from './insights-shared';

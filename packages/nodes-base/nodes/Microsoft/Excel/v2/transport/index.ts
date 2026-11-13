@@ -8,8 +8,7 @@ import type {
 	IRequestOptions,
 	JsonObject,
 } from 'n8n-workflow';
-import { NodeApiError, NodeOperationError } from 'n8n-workflow';
-import { OperationalError } from '@n8n/errors';
+import { NodeApiError, NodeOperationError, OperationalError } from 'n8n-workflow';
 
 export type ExcelCredentialType =
 	| 'microsoftExcelOAuth2Api'

@@ -5,10 +5,10 @@ import { Time } from '@n8n/constants';
 import { mock } from 'vitest-mock-extended';
 import type WebSocket from 'ws';
 
-import { HIGHEST_SHUTDOWN_PRIORITY, ShutdownMetadata } from '@n8n/decorators';
+import { ShutdownMetadata } from '@n8n/decorators';
 import { Container } from '@n8n/di';
 
-import { WsStatusCodes } from '@/constants';
+import { HIGHEST_SHUTDOWN_PRIORITY, WsStatusCodes } from '@/constants';
 import type { DefaultTaskRunnerDisconnectAnalyzer } from '@/task-runners/default-task-runner-disconnect-analyzer';
 import {
 	SHUTDOWN_TASK_BUDGET_RATIO,

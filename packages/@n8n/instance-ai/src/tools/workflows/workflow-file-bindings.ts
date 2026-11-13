@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
-import { OperationalError } from '@n8n/errors';
+import { OperationalError } from 'n8n-workflow';
 
 import { getThread, patchThread } from '../../storage/thread-patch';
 import type { InstanceAiContext } from '../../types';
@@ -47,12 +47,11 @@ export function hashWorkflowSource(source: string): string {
 
 export function normalizeWorkflowSourceFilePath(
 	filePath: string,
-	options: { workspaceRoot?: string; fallbackWorkspaceRoot?: string } = {},
+	options: { workspaceRoot?: string } = {},
 ): string {
 	return normalizeWorkspaceRelativePath(filePath, {
 		resourceLabel: 'Workflow source file',
 		workspaceRoot: options.workspaceRoot,
-		fallbackWorkspaceRoot: options.fallbackWorkspaceRoot,
 	});
 }
 

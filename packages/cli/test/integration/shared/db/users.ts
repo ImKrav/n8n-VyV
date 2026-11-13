@@ -8,10 +8,8 @@ import {
 	GLOBAL_OWNER_ROLE,
 	Project,
 	ProjectRelation,
-	Person,
 	type Role,
 	type ServiceAccount,
-	PersonRepository,
 	ServiceAccountRepository,
 	UserRepository,
 	type User,
@@ -48,9 +46,9 @@ async function handlePasswordSetup(password: string | null | undefined): Promise
 }
 
 /** Store a new user object, defaulting to a `member` */
-export async function newUser(attributes: DeepPartial<Person> = {}): Promise<Person> {
+export async function newUser(attributes: DeepPartial<User> = {}): Promise<User> {
 	const { email, password, firstName, lastName, role, lastActiveAt, ...rest } = attributes;
-	return Container.get(DataSource).manager.create(Person, {
+	return Container.get(UserRepository).create({
 		email: email ?? randomEmail(),
 		password: await handlePasswordSetup(password),
 		firstName: firstName ?? randomName(),
@@ -61,35 +59,14 @@ export async function newUser(attributes: DeepPartial<Person> = {}): Promise<Per
 	});
 }
 
-type NewServiceAccount = { kind: 'service'; name?: string; role?: Role };
-
-/**
- * Store an account in the DB, with its personal project. A person by default;
- * pass `{ kind: 'service' }` for a service account.
- */
-export async function createUser(attributes: NewServiceAccount): Promise<ServiceAccount>;
-export async function createUser(attributes?: DeepPartial<Person>): Promise<Person>;
-export async function createUser(
-	attributes: DeepPartial<Person> | NewServiceAccount = {},
-): Promise<Person | ServiceAccount> {
-	if (isNewServiceAccount(attributes)) {
-		return await createServiceAccountWithProject(attributes.role, attributes.name);
-	}
+/** Store a user object in the DB */
+export async function createUser(attributes: DeepPartial<User> = {}): Promise<User> {
 	const userInstance = await newUser(attributes);
-	const { user } = await Container.get(PersonRepository).createPersonWithProject(userInstance);
+	const { user } = await Container.get(UserRepository).createUserWithProject(userInstance);
 	return user;
 }
 
-function isNewServiceAccount(
-	attributes: DeepPartial<Person> | NewServiceAccount,
-): attributes is NewServiceAccount {
-	return attributes.kind === 'service';
-}
-
-export async function createLdapUser(
-	attributes: DeepPartial<Person>,
-	ldapId: string,
-): Promise<Person> {
+export async function createLdapUser(attributes: DeepPartial<User>, ldapId: string): Promise<User> {
 	const user = await createUser(attributes);
 	await Container.get(AuthIdentityRepository).save(AuthIdentity.create(user, ldapId, 'ldap'));
 	return user;
@@ -118,7 +95,7 @@ export async function createUserWithMfaEnabled(
 		email,
 	});
 
-	await Container.get(DataSource).manager.update(Person, user.id, {
+	await Container.get(UserRepository).update(user.id, {
 		mfaSecret: encryptedSecret,
 		mfaRecoveryCodes: encryptedRecoveryCodes,
 	});
@@ -185,14 +162,14 @@ export async function createChatUser() {
 	return await createUser({ role: GLOBAL_CHAT_USER_ROLE });
 }
 
-export async function createUserShell(role: Role): Promise<Person> {
-	const shell: DeepPartial<Person> = { role };
+export async function createUserShell(role: Role): Promise<User> {
+	const shell: DeepPartial<User> = { role };
 
 	if (role.slug !== GLOBAL_OWNER_ROLE.slug) {
 		shell.email = randomEmail();
 	}
 
-	const { user } = await Container.get(PersonRepository).createPersonWithProject(shell);
+	const { user } = await Container.get(UserRepository).createUserWithProject(shell);
 	return user;
 }
 
@@ -225,14 +202,14 @@ export async function createServiceAccountWithProject(
  */
 export async function createManyUsers(
 	amount: number,
-	attributes: DeepPartial<Person> = {},
-): Promise<Person[]> {
+	attributes: DeepPartial<User> = {},
+): Promise<User[]> {
 	const result = await Promise.all(
 		Array(amount)
 			.fill(0)
 			.map(async () => {
 				const userInstance = await newUser(attributes);
-				return await Container.get(PersonRepository).createPersonWithProject(userInstance);
+				return await Container.get(UserRepository).createUserWithProject(userInstance);
 			}),
 	);
 	return result.map((result) => result.user);

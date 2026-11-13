@@ -65,8 +65,6 @@ export type {
 	OpenAIPromptCachingConfig,
 	PromptCachingConfig,
 	NativeToolDeferralConfig,
-	ToolDeferralConfig,
-	ToolDeferralMode,
 } from './sdk/agent';
 export { FINISH_REASONS, isFinishReason } from './sdk/agent';
 
@@ -80,7 +78,6 @@ export type {
 	InterruptibleToolContext,
 	ToolSuspendOptions,
 	BuiltTool,
-	ToolDispatch,
 	BuiltProviderTool,
 } from './sdk/tool';
 
@@ -127,10 +124,6 @@ export type {
 	NewEpisodicMemoryCaptureCandidate,
 	ObservationLogMemoryConfig,
 	ObservationalMemoryConfig,
-	ObservationWindowShares,
-	ObservationLogPlacement,
-	ObservationFailurePolicy,
-	ObservationReflectionMode,
 	CheckpointStore,
 	TitleGenerationConfig,
 } from './sdk/memory';
@@ -146,11 +139,7 @@ export type {
 	VectorFilter,
 } from './sdk/vector-store';
 
-export type {
-	BuiltObservationResumeStore,
-	ObservationCursor,
-	ObservationResumeState,
-} from './sdk/observation';
+export type { ObservationCursor } from './sdk/observation';
 
 export type {
 	BuiltObservationLogStore,

@@ -1,8 +1,6 @@
 import {
 	isCredentialAgentIntegration,
 	isDraftIntegration,
-	reuseIntegrationSetup,
-	toDraftIntegration,
 	type AgentIntegrationConfig,
 } from '@n8n/api-types';
 
@@ -38,11 +36,11 @@ export function resolveImportedChannels(
 		const index = configured.findIndex(({ type }) => type === entry.type);
 		if (index !== -1) {
 			const [existing] = configured.splice(index, 1);
-			integrations.push(reuseIntegrationSetup(entry, existing));
+			integrations.push({ ...entry, credentialId: existing.credentialId });
 			channels.push({ type: entry.type, status: 'reused' });
 			continue;
 		}
-		integrations.push(toDraftIntegration(entry));
+		integrations.push({ ...entry, credentialId: '' });
 		channels.push({
 			type: entry.type,
 			status: 'setup-required',

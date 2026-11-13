@@ -28,7 +28,6 @@ export const SKILLS = {
 	agentBuilder: 'agent-builder',
 	intentRecognition: 'intent-recognition',
 	suggestAutomations: 'suggest-automations',
-	v3Migration: 'v3-migration',
 	appBuilder: 'app-builder',
 } as const;
 

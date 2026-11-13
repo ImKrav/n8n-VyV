@@ -2,16 +2,13 @@ operationId: updateFolder
 tags:
   - Folders
 summary: Update a folder
-description: |-
-  Update folder name or parent folder.
-
-  Requires the `folder:update` API key scope.
+description: Update folder name or parent folder.
 x-required-scope: folder:update
 parameters:
   - schema:
       type: string
     required: true
-    description: The ID of the project, or `personal` for the calling user's own personal project.
+    description: The ID of the project.
     name: projectId
     in: path
   - schema:

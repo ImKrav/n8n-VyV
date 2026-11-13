@@ -5,8 +5,12 @@ import { Service } from '@n8n/di';
 import type { ReportingOptions } from '@n8n/errors';
 import type { DataCollection, ErrorEvent, EventHint, Integration } from '@sentry/core';
 import type Sentry from '@sentry/node';
-import { ApplicationError, ExecutionCancelledError } from 'n8n-workflow';
-import { BaseError, UnexpectedError } from '@n8n/errors';
+import {
+	ApplicationError,
+	ExecutionCancelledError,
+	BaseError,
+	UnexpectedError,
+} from 'n8n-workflow';
 import { createHash } from 'node:crypto';
 
 import {

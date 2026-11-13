@@ -1,0 +1,57 @@
+[
+  {
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "Endpoints protegidos devuelven 401 sin sesión",
+    "severidad": "N/A"
+  },
+  {
+    "owasp": "A07",
+    "resultado": "OK",
+    "detalle": "Sesión ligada al browser-id",
+    "severidad": "N/A"
+  },
+  {
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "fileId con ../ rechazado (500: Path traversal detected, refusing to join paths: C:\\Users\\User\\AppData\\Local\\Tem)",
+    "severidad": "N/A"
+  },
+  {
+    "owasp": "A03",
+    "resultado": "OK",
+    "detalle": "Sin inyección SQL en nombres ni filtros",
+    "severidad": "N/A"
+  },
+  {
+    "owasp": "A03",
+    "resultado": "OK",
+    "detalle": "Nombre de carpeta con < > rechazado",
+    "severidad": "N/A"
+  },
+  {
+    "owasp": "A03",
+    "resultado": "OK",
+    "detalle": "Nombre de tabla con HTML se renderiza escapado",
+    "severidad": "N/A"
+  },
+  {
+    "owasp": "A03",
+    "resultado": "HALLAZGO",
+    "detalle": "4 celdas exportadas empiezan por = + - @ sin neutralizar (se ejecutan al abrir en Excel)",
+    "severidad": "Media",
+    "recomendacion": "Prefijar con comilla simple (') las celdas que empiezan por = + - @ en escapeCsvValue (data-table.service.ts)."
+  },
+  {
+    "owasp": "A04",
+    "resultado": "OK",
+    "detalle": "Extensiones distintas de .csv rechazadas",
+    "severidad": "N/A"
+  },
+  {
+    "owasp": "A05",
+    "resultado": "REVISAR",
+    "detalle": "{\"x-content-type-options\":\"nosniff\",\"x-frame-options / CSP frame-ancestors\":false,\"x-powered-by (no debe exponerse)\":\"ausente\"}",
+    "severidad": "Baja"
+  }
+]
