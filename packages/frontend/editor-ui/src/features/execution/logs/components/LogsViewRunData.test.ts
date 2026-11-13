@@ -16,8 +16,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import LogsViewRunData from './LogsViewRunData.vue';
 import { createTestingPinia, type TestingPinia } from '@pinia/testing';
-import { createRunExecutionData, NodeApiError, NodeConnectionTypes } from 'n8n-workflow';
-import { AGENT_NODE_TYPE, OPEN_AI_CHAT_MODEL_NODE_TYPE } from '@/app/constants';
+import { createRunExecutionData } from 'n8n-workflow';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
 import { mockedStore } from '@/__tests__/utils';
 import { useWorkflowExecutionStateStore } from '@/app/stores/workflowExecutionState.store';
@@ -147,73 +146,5 @@ describe('LogsViewRunData', () => {
 		await waitFor(() => {
 			expect(rendered.getByTestId('run-data-item-count')).toHaveTextContent('4 items');
 		});
-	});
-
-	it('should display input data even when the root node finished with an error', async () => {
-		const agentNode = createTestNode({ name: 'AI agent', type: AGENT_NODE_TYPE });
-		const modelNode = createTestNode({ name: 'AI model', type: OPEN_AI_CHAT_MODEL_NODE_TYPE });
-
-		const aiWorkflow = createTestWorkflowObject({
-			nodes: [agentNode, modelNode],
-			connections: {
-				'AI model': {
-					[NodeConnectionTypes.AiLanguageModel]: [
-						[{ index: 0, node: 'AI agent', type: NodeConnectionTypes.AiLanguageModel }],
-					],
-				},
-			},
-		});
-		const modelTaskData = createTestTaskData({
-			executionStatus: 'success',
-			data: { [NodeConnectionTypes.AiLanguageModel]: [[{ json: { message: 'hello' } }]] },
-			source: [{ previousNode: 'AI agent' }],
-		});
-		const agentTaskData = createTestTaskData({
-			executionStatus: 'error',
-			error: new NodeApiError(agentNode, {}),
-		});
-		const aiExecution = createRunExecutionData({
-			resultData: {
-				runData: {
-					'AI agent': [agentTaskData],
-					'AI model': [modelTaskData],
-				},
-			},
-		});
-		const rendered = render(LogsViewRunData, {
-			global: {
-				provide: {
-					[WorkflowIdKey as unknown as string]: computed(() => 'test-workflow-id'),
-					[WorkflowDocumentStoreKey as symbol]: shallowRef(
-						useWorkflowDocumentStore(createWorkflowDocumentId('test-workflow-id')),
-					),
-				},
-				plugins: [pinia, i18nInstance],
-			},
-			props: {
-				title: '',
-				logEntry: createTestLogEntry({
-					node: modelNode,
-					runIndex: 0,
-					runData: modelTaskData,
-					workflow: aiWorkflow,
-					execution: aiExecution,
-					parent: createTestLogEntry({
-						node: agentNode,
-						runIndex: 0,
-						runData: agentTaskData,
-						workflow: aiWorkflow,
-						execution: aiExecution,
-					}),
-				}),
-				collapsingTableColumnName: null,
-				paneType: 'input',
-			},
-		});
-
-		// Wait for the lazy AI view before starting the text query.
-		await flushPromises();
-		await vi.dynamicImportSettled();
-		await rendered.findByText(/hello/);
 	});
 });

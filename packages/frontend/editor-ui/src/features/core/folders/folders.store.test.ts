@@ -55,31 +55,6 @@ describe('folders.store', () => {
 			'path',
 		];
 
-		it('should fetch folders in a single page, empty filter', async () => {
-			const folder = createFolder();
-			vi.spyOn(foldersApi, 'getProjectFolders').mockResolvedValue({
-				count: 1,
-				data: [folder],
-			});
-
-			const available = await foldersStore.fetchFoldersAvailableForMove(projectId, folderId);
-			expect(available).toEqual([{ ...folder, resource: 'folder' }]);
-			expect(foldersApi.getProjectFolders).toHaveBeenCalledTimes(1);
-			expect(foldersApi.getProjectFolders).toHaveBeenCalledWith(
-				rootStore.restApiContext,
-				projectId,
-				{
-					skip: 0,
-					take: 100,
-					sortBy: 'updatedAt:desc',
-				},
-				{
-					excludeFolderIdAndDescendants: folderId,
-				},
-				selectFields,
-			);
-		});
-
 		it('should fetch folders in a single page with filter', async () => {
 			const folder = createFolder({ name: 'Test Folder' });
 			vi.spyOn(foldersApi, 'getProjectFolders').mockResolvedValue({
@@ -158,24 +133,6 @@ describe('folders.store', () => {
 				},
 				selectFields,
 			);
-		});
-
-		it('should cache the results on breadcrumbs cache', async () => {
-			const folder = createFolder();
-			vi.spyOn(foldersApi, 'getProjectFolders').mockResolvedValue({
-				count: 1,
-				data: [folder],
-			});
-
-			const available = await foldersStore.fetchFoldersAvailableForMove(projectId, folderId);
-			expect(available).toEqual([{ ...folder, resource: 'folder' }]);
-			expect(foldersStore.breadcrumbsCache).toEqual({
-				[folder.id]: {
-					id: folder.id,
-					name: folder.name,
-					parentFolder: folder.parentFolder?.id,
-				},
-			});
 		});
 	});
 

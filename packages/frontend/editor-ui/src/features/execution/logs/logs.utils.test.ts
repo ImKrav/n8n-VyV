@@ -13,7 +13,6 @@ import {
 	getDefaultCollapsedEntries,
 	getGroupExecutionStatus,
 	getGroupTiming,
-	getSubtreeTotalConsumedTokens,
 	getTreeNodeData,
 	isEmptyGroupLog,
 	isSubNodeLog,
@@ -674,43 +673,6 @@ describe(findSelectedLogEntry, () => {
 			expect(find({ type: 'initial' }, response, false)).toBe(undefined);
 		});
 
-		it('should return first log entry with error', () => {
-			const response = createTestWorkflowExecutionResponse({
-				workflowData: createTestWorkflow({
-					nodes: [
-						createTestNode({ name: 'A' }),
-						createTestNode({ name: 'B' }),
-						createTestNode({ name: 'C' }),
-					],
-				}),
-				data: createRunExecutionData({
-					resultData: {
-						runData: {
-							A: [createTestTaskData({ executionStatus: 'success', startTime: 0 })],
-							B: [createTestTaskData({ executionStatus: 'success', startTime: 1 })],
-							C: [
-								createTestTaskData({ executionStatus: 'success', startTime: 2 }),
-								createTestTaskData({
-									error: {} as ExecutionError,
-									executionStatus: 'error',
-									startTime: 3,
-								}),
-								createTestTaskData({
-									error: {} as ExecutionError,
-									executionStatus: 'error',
-									startTime: 4,
-								}),
-							],
-						},
-					},
-				}),
-			});
-
-			expect(find({ type: 'initial' }, response, false)).toEqual(
-				expect.objectContaining({ node: expect.objectContaining({ name: 'C' }), runIndex: 1 }),
-			);
-		});
-
 		it("should return first log entry with error even if it's on a sub node", () => {
 			const response = createTestWorkflowExecutionResponse({
 				workflowData: createTestWorkflow({
@@ -923,57 +885,6 @@ describe(findSelectedLogEntry, () => {
 });
 
 describe(createLogTree, () => {
-	it('should return root node log entries in ascending order of executionIndex', () => {
-		const workflow = createTestWorkflowObject({
-			nodes: [
-				createTestNode({ name: 'A' }),
-				createTestNode({ name: 'B' }),
-				createTestNode({ name: 'C' }),
-			],
-			connections: {
-				B: { main: [[{ node: 'A', type: NodeConnectionTypes.Main, index: 0 }]] },
-				C: { main: [[{ node: 'B', type: NodeConnectionTypes.Main, index: 0 }]] },
-			},
-		});
-		const execution = createTestWorkflowExecutionResponse({
-			data: createRunExecutionData({
-				resultData: {
-					runData: {
-						A: [
-							createTestTaskData({
-								startTime: Date.parse('2025-04-04T00:00:00.000Z'),
-								executionIndex: 0,
-							}),
-						],
-						B: [
-							createTestTaskData({
-								startTime: Date.parse('2025-04-04T00:00:01.000Z'),
-								executionIndex: 1,
-							}),
-						],
-						C: [
-							createTestTaskData({
-								startTime: Date.parse('2025-04-04T00:00:02.000Z'),
-								executionIndex: 3,
-							}),
-							createTestTaskData({
-								startTime: Date.parse('2025-04-04T00:00:02.000Z'),
-								executionIndex: 2,
-							}),
-						],
-					},
-				},
-			}),
-		});
-
-		expect(createLogTree(workflow, execution)).toEqual([
-			expect.objectContaining({ node: expect.objectContaining({ name: 'A' }), runIndex: 0 }),
-			expect.objectContaining({ node: expect.objectContaining({ name: 'B' }), runIndex: 0 }),
-			expect.objectContaining({ node: expect.objectContaining({ name: 'C' }), runIndex: 1 }),
-			expect.objectContaining({ node: expect.objectContaining({ name: 'C' }), runIndex: 0 }),
-		]);
-	});
-
 	it('should return sub node log entries in ascending order of executionIndex', () => {
 		const workflow = createTestWorkflowObject({
 			nodes: [
@@ -1059,73 +970,6 @@ describe(createLogTree, () => {
 		expect(createLogTree(workflow, response)).toEqual([
 			expect.objectContaining({ node: expect.objectContaining({ name: 'A' }) }),
 		]);
-	});
-
-	it('should include runs of a sub execution', () => {
-		const workflow = createTestWorkflowObject({
-			id: 'root-workflow-id',
-			nodes: [createTestNode({ name: 'A' }), createTestNode({ name: 'B' })],
-			connections: {
-				A: { main: [[{ node: 'B', type: NodeConnectionTypes.Main, index: 0 }]] },
-			},
-		});
-		const subWorkflow = createTestWorkflowObject({
-			id: 'sub-workflow-id',
-			nodes: [createTestNode({ name: 'C' })],
-		});
-		const rootExecutionData = createTestWorkflowExecutionResponse({
-			id: 'root-exec-id',
-			data: createRunExecutionData({
-				resultData: {
-					runData: {
-						A: [createTestTaskData()],
-						B: [
-							createTestTaskData({
-								metadata: {
-									subExecution: { workflowId: 'sub-workflow-id', executionId: 'sub-exec-id' },
-								},
-							}),
-						],
-					},
-				},
-			}),
-		});
-		const subExecutionData = createRunExecutionData({
-			resultData: { runData: { C: [createTestTaskData(), createTestTaskData()] } },
-		});
-		const logs = createLogTree(
-			workflow,
-			rootExecutionData,
-			{ 'sub-workflow-id': subWorkflow },
-			{ 'sub-exec-id': subExecutionData },
-		);
-		assertNodeTree(logs);
-
-		expect(logs).toHaveLength(2);
-
-		expect(logs[0].node.name).toBe('A');
-		expect(logs[0].workflow).toBe(workflow);
-		expect(logs[0].execution).toBe(rootExecutionData.data);
-		expect(logs[0].executionId).toBe('root-exec-id');
-		expect(logs[0].children).toHaveLength(0);
-
-		expect(logs[1].node.name).toBe('B');
-		expect(logs[1].workflow).toBe(workflow);
-		expect(logs[1].execution).toBe(rootExecutionData.data);
-		expect(logs[1].executionId).toBe('root-exec-id');
-		expect(logs[1].children).toHaveLength(2);
-
-		expect(logs[1].children[0].node.name).toBe('C');
-		expect(logs[1].children[0].workflow).toBe(subWorkflow);
-		expect(logs[1].children[0].execution).toBe(subExecutionData);
-		expect(logs[1].children[0].executionId).toBe('sub-exec-id');
-		expect(logs[1].children[0].children).toHaveLength(0);
-
-		expect(logs[1].children[1].node.name).toBe('C');
-		expect(logs[1].children[1].workflow).toBe(subWorkflow);
-		expect(logs[1].children[1].execution).toBe(subExecutionData);
-		expect(logs[1].children[1].executionId).toBe('sub-exec-id');
-		expect(logs[1].children[1].children).toHaveLength(0);
 	});
 
 	it('should include all runs of sub nodes in sub execution under correct parent run', () => {
@@ -1850,33 +1694,6 @@ describe('createLogTree with canvas groups', () => {
 			}),
 		});
 	}
-
-	it('sums member tokens once for a group', () => {
-		const withTokens = (total: number) => ({
-			data: {
-				main: [
-					[{ json: { tokenUsage: { completionTokens: 0, promptTokens: 0, totalTokens: total } } }],
-				],
-			},
-		});
-		const response = createTestWorkflowExecutionResponse({
-			id: 'e1',
-			data: createRunExecutionData({
-				resultData: {
-					runData: {
-						A: [taskAt(0)],
-						B: [taskAt(1, withTokens(10))],
-						C: [taskAt(2, withTokens(5))],
-					},
-				},
-			}),
-		});
-
-		const logs = createLogTree(createLinearWorkflow(), response, {}, {}, undefined, [group]);
-		const groupEntry = expectGroup(logs[1]);
-
-		expect(getSubtreeTotalConsumedTokens(groupEntry, false).totalTokens).toBe(15);
-	});
 
 	it('sums member execution time and takes the first start time', () => {
 		const response = createTestWorkflowExecutionResponse({

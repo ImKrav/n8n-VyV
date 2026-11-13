@@ -56,6 +56,8 @@ const telemetry = useTelemetry();
 
 const creationMode = ref<CreationMode>('select');
 const dataTableName = ref('');
+// A name of only spaces is not a valid table name
+const hasDataTableName = computed(() => dataTableName.value.trim() !== '');
 const inputRef = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
 const uploadedFileId = ref<string | null>(null);
@@ -149,7 +151,7 @@ onMounted(() => {
 const selectedOption = ref<'scratch' | 'import'>('scratch');
 
 const proceedFromSelect = async () => {
-	if (!selectedOption.value || !dataTableName.value || isLoading.value) return;
+	if (!selectedOption.value || !hasDataTableName.value || isLoading.value) return;
 
 	if (selectedOption.value === 'scratch') {
 		await onSubmit();
@@ -501,7 +503,7 @@ const redirectToDataTables = () => {
 					:loading="isLoading"
 					size="large"
 					:disabled="
-						!dataTableName || !selectedOption || (selectedOption === 'import' && !selectedFile)
+						!hasDataTableName || !selectedOption || (selectedOption === 'import' && !selectedFile)
 					"
 					:label="i18n.baseText('generic.create')"
 					data-test-id="proceed-from-select-button"

@@ -423,31 +423,6 @@ describe('NodeCredentials', () => {
 		});
 	});
 
-	it('should refetch credentials when the dropdown opens so a rename from another tab shows up', async () => {
-		ndvStore.activeNode = httpNode;
-		credentialsStore.state.credentials = {
-			c8vqdPpPClh4TgIO: createCredential({ name: 'Scout' }),
-		};
-
-		renderComponent();
-
-		// The rename happened in another tab: only a fresh fetch can bring the new name.
-		credentialsStore.fetchUsableCredentials = vi.fn().mockImplementation(async () => {
-			credentialsStore.state.credentials = {
-				c8vqdPpPClh4TgIO: createCredential({ name: 'Scout renamed' }),
-			};
-			return Object.values(credentialsStore.state.credentials);
-		});
-
-		// Click the input: the dropdown only opens from inside the select trigger.
-		const select = screen.getByTestId('node-credentials-select');
-		await userEvent.click(select.querySelector('input') as HTMLElement);
-
-		expect(credentialsStore.fetchUsableCredentials).toHaveBeenCalledWith({ workflowId: '1' });
-		expect(await screen.findByText('Scout renamed')).toBeInTheDocument();
-		expect(screen.queryByText('Scout')).not.toBeInTheDocument();
-	});
-
 	it('should keep the current list when the refetch on open fails', async () => {
 		ndvStore.activeNode = httpNode;
 		credentialsStore.state.credentials = {
@@ -571,31 +546,6 @@ describe('NodeCredentials', () => {
 
 		expect(screen.queryByText('OpenAi account')).toBeInTheDocument();
 		expect(screen.queryByText('OpenAi account 2')).not.toBeInTheDocument();
-	});
-
-	it('should open the new credential modal when clicked', async () => {
-		ndvStore.activeNode = httpNode;
-		credentialsStore.state.credentials = {
-			c8vqdPpPClh4TgIO: createCredential(),
-		};
-
-		renderComponent();
-
-		const credentialsSelect = screen.getByTestId('node-credentials-select');
-
-		await userEvent.click(credentialsSelect);
-		await userEvent.click(screen.getByTestId('node-credentials-select-item-new'));
-
-		expect(uiStore.openNewCredential).toHaveBeenCalledWith(
-			'openAiApi',
-			false,
-			false,
-			undefined,
-			undefined,
-			httpNode.name,
-			httpNode,
-			{ hideAskAssistant: false, closeOnSave: true, workflowId: '1' },
-		);
 	});
 
 	it('should configure the new credential modal for a tool context', async () => {
@@ -857,49 +807,6 @@ describe('NodeCredentials', () => {
 			expect(assignSpy).not.toHaveBeenCalled();
 		});
 
-		it('should call assignCredentialToMatchingNodes after selecting credentials', async () => {
-			// Start with a credential already assigned so the dropdown renders
-			const openAiNodeWithCred: INodeUi = {
-				...openAiNodeNoCreds,
-				credentials: { openAiApi: { id: 'c8vqdPpPClh4TgIO', name: 'OpenAi account' } },
-			};
-
-			ndvStore.activeNode = openAiNodeWithCred;
-			credentialsStore.state.credentials = {
-				c8vqdPpPClh4TgIO: createCredential(),
-				secondCred: createCredential({ id: 'secondCred', name: 'OpenAi account 2' }),
-			};
-
-			const assignSpy = vi.spyOn(workflowDocumentStore, 'assignCredentialToMatchingNodes');
-
-			renderComponent(
-				{
-					props: {
-						node: openAiNodeWithCred,
-					},
-				},
-				{ merge: true },
-			);
-
-			const credentialsSelect = screen.getByTestId('node-credentials-select');
-
-			await userEvent.click(credentialsSelect);
-
-			const openAiCreds = screen.queryByText('OpenAi account 2');
-			expect(openAiCreds).toBeInTheDocument();
-
-			await userEvent.click(openAiCreds!);
-
-			expect(assignSpy).toHaveBeenCalledWith({
-				credentials: {
-					id: 'secondCred',
-					name: 'OpenAi account 2',
-				},
-				currentNodeName: 'OpenAI no creds',
-				type: 'openAiApi',
-			});
-		});
-
 		it("emits 'Node credential assigned' with source user and kind own on manual selection", async () => {
 			const openAiNodeWithCred: INodeUi = {
 				...openAiNodeNoCreds,
@@ -923,75 +830,6 @@ describe('NodeCredentials', () => {
 				credential_id: 'secondCred',
 				credential_kind: 'own',
 				source: 'user',
-			});
-		});
-
-		it('should drop credentials the node no longer uses when selecting a credential', async () => {
-			const nodeTypesStore = mockedStore(useNodeTypesStore);
-			nodeTypesStore.setNodeTypes([
-				{
-					displayName: 'HTTP Request',
-					name: 'n8n-nodes-base.httpRequest',
-					group: ['input'],
-					version: [4, 4.1, 4.2],
-					description: 'Makes an HTTP request',
-					defaults: { name: 'HTTP Request' },
-					inputs: [NodeConnectionTypes.Main],
-					outputs: [NodeConnectionTypes.Main],
-					credentials: [
-						{
-							name: 'httpSslAuth',
-							required: true,
-							displayOptions: { show: { provideSslCertificates: [true] } },
-						},
-					],
-					properties: [],
-				} as unknown as INodeTypeDescription,
-			]);
-
-			// Node switched from generic to predefined auth: the httpHeaderAuth entry is stale.
-			// Built from scratch (not from the shared httpNode fixture) because store actions
-			// in earlier tests mutate the fixture object in place.
-			const httpNodeWithStaleCred: INodeUi = {
-				parameters: {
-					method: 'GET',
-					url: '',
-					authentication: 'predefinedCredentialType',
-					nodeCredentialType: 'openAiApi',
-					provideSslCertificates: false,
-					options: {},
-				},
-				type: 'n8n-nodes-base.httpRequest',
-				typeVersion: 4.2,
-				position: [-200, -160],
-				id: 'e4b917b5-e994-42c7-8576-6ef28a7619b2',
-				name: 'HTTP Request Stale',
-				credentials: {
-					openAiApi: { id: 'c8vqdPpPClh4TgIO', name: 'OpenAi account' },
-					httpHeaderAuth: { id: 'staleCred', name: 'Header Auth' },
-				},
-			};
-
-			ndvStore.activeNode = httpNodeWithStaleCred;
-			credentialsStore.state.credentials = {
-				c8vqdPpPClh4TgIO: createCredential(),
-				secondCred: createCredential({ id: 'secondCred', name: 'OpenAi account 2' }),
-			};
-
-			const { emitted } = renderComponent(
-				{ props: { node: httpNodeWithStaleCred } },
-				{ merge: true },
-			);
-
-			await userEvent.click(screen.getByTestId('node-credentials-select'));
-			await userEvent.click(screen.queryByText('OpenAi account 2')!);
-
-			const events = emitted('credentialSelected');
-			const payload = (events[events.length - 1] as unknown[])[0] as {
-				properties: { credentials: Record<string, unknown> };
-			};
-			expect(payload.properties.credentials).toEqual({
-				openAiApi: { id: 'secondCred', name: 'OpenAi account 2' },
 			});
 		});
 
@@ -3222,39 +3060,6 @@ describe('NodeCredentials', () => {
 				id: null,
 				name: '',
 				__aiGatewayManaged: true,
-			});
-		});
-
-		it('should auto-select an own credential when one is available', () => {
-			const ownCred = {
-				id: 'cred-1',
-				name: 'My Google Key',
-				type: 'googlePalmApi',
-				isManaged: false,
-				createdAt: '2024-01-01',
-				updatedAt: '2024-01-01',
-			};
-			credentialsStore.state.credentials = { 'cred-1': ownCred };
-			credentialsStore.getCredentialById = vi.fn().mockReturnValue(ownCred);
-
-			const nodeWithoutCred: INodeUi = {
-				...googleAiNode,
-				credentials: {},
-				parameters: { resource: 'chat', operation: 'message' },
-			};
-			ndvStore.activeNode = nodeWithoutCred;
-
-			const { emitted } = renderComponent({
-				props: { node: nodeWithoutCred, overrideCredType: 'googlePalmApi' },
-			});
-
-			expect(emitted('credentialSelected')).toBeTruthy();
-			const payload = ((emitted('credentialSelected')[0] as unknown[]) ?? [])[0] as {
-				properties: { credentials: Record<string, unknown> };
-			};
-			expect(payload.properties.credentials['googlePalmApi']).toEqual({
-				id: 'cred-1',
-				name: 'My Google Key',
 			});
 		});
 

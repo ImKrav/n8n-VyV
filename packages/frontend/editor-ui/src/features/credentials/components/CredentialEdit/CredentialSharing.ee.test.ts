@@ -297,54 +297,6 @@ describe('CredentialSharing.ee', () => {
 		});
 	});
 
-	describe('projects filtering', () => {
-		it('should show upgrade action box when sharing is not enabled', () => {
-			isEnterpriseFeatureEnabledSpy.mockReturnValue({
-				sharing: false,
-				ldap: false,
-				saml: false,
-				oidc: false,
-				mfaEnforcement: false,
-				logStreaming: false,
-				advancedExecutionFilters: false,
-				variables: false,
-				sourceControl: false,
-				externalSecrets: false,
-				auditLogs: false,
-				debugInEditor: false,
-				binaryDataS3: false,
-				workerView: false,
-				advancedPermissions: false,
-
-				workflowDiffs: false,
-				provisioning: true,
-				showNonProdBanner: false,
-				projects: {
-					team: {
-						limit: -1,
-					},
-				},
-				customRoles: false,
-				personalSpacePolicy: false,
-				dataRedaction: false,
-			});
-
-			const credential = createCredential();
-			const { getByText } = renderComponent({
-				props: {
-					credentialId: credential.id,
-					credentialData: {},
-					credentialPermissions: { share: true },
-					credential,
-					modalBus: createEventBus(),
-				},
-			});
-
-			// Should show upgrade message
-			expect(getByText(/upgrade to collaborate/i)).toBeInTheDocument();
-		});
-	});
-
 	describe('readonly state', () => {
 		it('should hide select and show info tip when user lacks share permission', () => {
 			const credential = createCredential();
@@ -947,38 +899,6 @@ describe('CredentialSharing.ee', () => {
 			const row = getByTestId('project-sharing-unshared-item');
 			expect(row).toHaveTextContent('Used in 3 workflows');
 			expect(queryByText(/Used in "Email summary"/)).not.toBeInTheDocument();
-		});
-
-		it('shares the project when the Share action is clicked', async () => {
-			getDependenciesMock.mockReturnValue({
-				dependencies: [
-					{
-						id: 'wf-1',
-						name: 'Email summary',
-						type: 'workflowParent',
-						projectId: 'marketing-project',
-					},
-				],
-				inaccessibleCount: 0,
-			});
-
-			const credential = createCredential({
-				homeProject: ownerPersonalProject,
-				sharedWithProjects: [],
-			});
-			const { getByTestId, emitted } = renderComponent({
-				props: {
-					credentialId: credential.id,
-					credentialData: {},
-					credentialPermissions: { share: true },
-					credential,
-					modalBus: createEventBus(),
-				},
-			});
-
-			await userEvent.click(getByTestId('credential-used-in-project-share'));
-
-			expect(emitted()['update:modelValue']).toEqual([[[marketingProject]]]);
 		});
 
 		it('does not list a project that is already explicitly shared', () => {

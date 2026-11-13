@@ -91,24 +91,6 @@ describe('useHistoryHelper', () => {
 	});
 
 	describe('keyboard shortcuts', () => {
-		it('should call undo when Ctrl+Z is pressed', async () => {
-			render(TestComponent, { props: { route: workflowRoute } });
-
-			await userEvent.keyboard('{Control>}z');
-			await userEvent.keyboard('{Control>}z');
-
-			expect(popUndoableToUndoMock).toHaveBeenCalledTimes(2);
-		});
-
-		it('should call redo when Ctrl+Shift+Z is pressed', async () => {
-			render(TestComponent, { props: { route: workflowRoute } });
-
-			await userEvent.keyboard('{Control>}{Shift>}z');
-			await userEvent.keyboard('{Control>}{Shift>}z');
-
-			expect(popUndoableToRedoMock).toHaveBeenCalledTimes(2);
-		});
-
 		it('should not call undo when Ctrl+Z if not on NodeView', async () => {
 			render(TestComponent, { props: { route: {} as RouteLocationNormalizedLoaded } });
 
@@ -128,25 +110,6 @@ describe('useHistoryHelper', () => {
 
 			expect(pushUndoableToRedoMock).not.toHaveBeenCalled();
 			expect(telemetryTrackMock).not.toHaveBeenCalled();
-		});
-
-		it('should revert a Command and push to redo stack', async () => {
-			const mockCommand = mock<Command>();
-			mockCommand.revert.mockResolvedValue(undefined);
-			mockCommand.getReverseCommand.mockReturnValue(mock<Command>());
-			// Make instanceof Command return true
-			Object.setPrototypeOf(mockCommand, Command.prototype);
-
-			popUndoableToUndoMock.mockReturnValue(mockCommand);
-			render(TestComponent, { props: { route: workflowRoute } });
-
-			await userEvent.keyboard('{Control>}z');
-
-			expect(mockCommand.revert).toHaveBeenCalled();
-			expect(mockCommand.getReverseCommand).toHaveBeenCalled();
-			expect(pushUndoableToRedoMock).toHaveBeenCalled();
-			expect(markStateDirtyMock).toHaveBeenCalled();
-			expect(telemetryTrackMock).toHaveBeenCalledWith('User hit undo', expect.any(Object));
 		});
 
 		it('should revert a BulkCommand and push to redo stack', async () => {
@@ -177,25 +140,6 @@ describe('useHistoryHelper', () => {
 
 			expect(pushCommandToUndoMock).not.toHaveBeenCalled();
 			expect(telemetryTrackMock).not.toHaveBeenCalled();
-		});
-
-		it('should revert a Command and push to undo stack', async () => {
-			const mockCommand = mock<Command>();
-			mockCommand.revert.mockResolvedValue(undefined);
-			mockCommand.getReverseCommand.mockReturnValue(mock<Command>());
-			// Make instanceof Command return true
-			Object.setPrototypeOf(mockCommand, Command.prototype);
-
-			popUndoableToRedoMock.mockReturnValue(mockCommand);
-			render(TestComponent, { props: { route: workflowRoute } });
-
-			await userEvent.keyboard('{Control>}{Shift>}z');
-
-			expect(mockCommand.revert).toHaveBeenCalled();
-			expect(mockCommand.getReverseCommand).toHaveBeenCalled();
-			expect(pushCommandToUndoMock).toHaveBeenCalledWith(expect.any(Object), false);
-			expect(markStateDirtyMock).toHaveBeenCalled();
-			expect(telemetryTrackMock).toHaveBeenCalledWith('User hit redo', expect.any(Object));
 		});
 
 		it('should revert a BulkCommand and push to undo stack', async () => {

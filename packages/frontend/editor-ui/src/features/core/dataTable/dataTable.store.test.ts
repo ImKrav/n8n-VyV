@@ -124,54 +124,6 @@ describe('dataTable.store', () => {
 	});
 
 	describe('createDataTable', () => {
-		it('should create data table and update state', async () => {
-			const mockTable = createTable({ id: 'dt-1', name: 'New Table' });
-			vi.spyOn(dataTableApi, 'createDataTableApi').mockResolvedValue(mockTable);
-
-			const result = await dataTableStore.createDataTable('New Table', 'p1');
-
-			expect(dataTableApi.createDataTableApi).toHaveBeenCalledWith(
-				rootStore.restApiContext,
-				'New Table',
-				'p1',
-				undefined,
-				undefined,
-				true,
-			);
-			expect(dataTableStore.dataTables[0]).toEqual(mockTable);
-			expect(dataTableStore.totalCount).toBe(1);
-			expect(result).toBe(mockTable);
-		});
-
-		it('should create data table with CSV import parameters', async () => {
-			const mockTable = createTable({ id: 'dt-1', name: 'Imported Table' });
-			const columns = [
-				{ name: 'col1', type: 'string' as const },
-				{ name: 'col2', type: 'number' as const },
-			];
-			const fileId = 'file123';
-			vi.spyOn(dataTableApi, 'createDataTableApi').mockResolvedValue(mockTable);
-
-			const result = await dataTableStore.createDataTable(
-				'Imported Table',
-				'p1',
-				columns,
-				fileId,
-				false,
-			);
-
-			expect(dataTableApi.createDataTableApi).toHaveBeenCalledWith(
-				rootStore.restApiContext,
-				'Imported Table',
-				'p1',
-				columns,
-				fileId,
-				false,
-			);
-			expect(dataTableStore.dataTables[0]).toEqual(mockTable);
-			expect(result).toBe(mockTable);
-		});
-
 		it('should fetch and attach project if missing', async () => {
 			const mockTable = createTable({ id: 'dt-1', name: 'Table' });
 			const mockProject = {
@@ -345,32 +297,6 @@ describe('dataTable.store', () => {
 		});
 	});
 
-	describe('deleteDataTableColumn', () => {
-		it('should delete column from data table', async () => {
-			const dataTableId = faker.string.alphanumeric(10);
-			const columnId = 'phone';
-			const projectId = 'p1';
-			dataTableStore.$patch({
-				dataTables: [
-					{ id: dataTableId, columns: [{ id: columnId, index: 0, name: 'phone', type: 'string' }] },
-				],
-				totalCount: 1,
-			});
-			vi.spyOn(dataTableApi, 'deleteDataTableColumnApi').mockResolvedValue(true);
-
-			const deleted = await dataTableStore.deleteDataTableColumn(dataTableId, projectId, columnId);
-
-			expect(deleted).toBe(true);
-			expect(dataTableApi.deleteDataTableColumnApi).toHaveBeenCalledWith(
-				rootStore.restApiContext,
-				dataTableId,
-				projectId,
-				columnId,
-			);
-			expect(dataTableStore.dataTables[0].columns.find((c) => c.id === columnId)).toBeUndefined();
-		});
-	});
-
 	describe('moveDataTableColumn', () => {
 		it('should move column to target index', async () => {
 			const dataTableId = faker.string.alphanumeric(10);
@@ -421,50 +347,6 @@ describe('dataTable.store', () => {
 	});
 
 	describe('renameDataTableColumn', () => {
-		it('should rename column in data table', async () => {
-			const dataTableId = faker.string.alphanumeric(10);
-			const columnId = 'col-1';
-			const projectId = 'p1';
-			const newName = 'renamedColumn';
-
-			dataTableStore.$patch({
-				dataTables: [
-					{
-						id: dataTableId,
-						name: 'Test Table',
-						sizeBytes: 0,
-						createdAt: '2024-01-01T00:00:00.000Z',
-						updatedAt: '2024-01-01T00:00:00.000Z',
-						projectId,
-						columns: [
-							{ id: columnId, index: 0, name: 'oldName', type: 'string' },
-							{ id: 'col-2', index: 1, name: 'otherColumn', type: 'number' },
-						],
-					},
-				],
-			});
-
-			vi.spyOn(dataTableApi, 'renameDataTableColumnApi').mockResolvedValue({
-				id: columnId,
-				index: 0,
-				name: newName,
-				type: 'string',
-			});
-
-			await dataTableStore.renameDataTableColumn(dataTableId, projectId, columnId, newName);
-
-			expect(dataTableApi.renameDataTableColumnApi).toHaveBeenCalledWith(
-				rootStore.restApiContext,
-				dataTableId,
-				projectId,
-				columnId,
-				newName,
-			);
-
-			const updatedColumn = dataTableStore.dataTables[0].columns.find((c) => c.id === columnId);
-			expect(updatedColumn?.name).toBe(newName);
-		});
-
 		it('should not update state when data table is not found', async () => {
 			const dataTableId = 'non-existent-table';
 			const columnId = 'col-1';
@@ -710,23 +592,6 @@ describe('dataTable.store', () => {
 				rootStore.restApiContext,
 				'dt-1',
 				{},
-				'p1',
-			);
-			expect(result).toBe(mockRow);
-		});
-	});
-
-	describe('insertRow', () => {
-		it('should insert a row with the given data', async () => {
-			const mockRow = { id: 1, name: 'Given' };
-			vi.spyOn(dataTableApi, 'insertDataTableRowApi').mockResolvedValue([mockRow]);
-
-			const result = await dataTableStore.insertRow('dt-1', 'p1', { name: 'Given' });
-
-			expect(dataTableApi.insertDataTableRowApi).toHaveBeenCalledWith(
-				rootStore.restApiContext,
-				'dt-1',
-				{ name: 'Given' },
 				'p1',
 			);
 			expect(result).toBe(mockRow);

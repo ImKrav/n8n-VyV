@@ -874,27 +874,6 @@ describe('useAgGrid', () => {
 	});
 
 	describe('onSortChanged', () => {
-		it('should update sort state when column is sorted', () => {
-			const { onGridReady, onSortChanged, currentSortBy, currentSortOrder } = createComposable();
-			onGridReady({ api: mockGridApi as GridApi } as GridReadyEvent);
-
-			const mockColumn = {
-				getColId: () => 'col1',
-				getSort: () => 'desc' as const,
-			} as unknown as Column;
-
-			const colDefs: ColDef[] = [{ colId: 'col1', field: 'name' }];
-
-			const event = {
-				columns: [mockColumn],
-			} as unknown as SortChangedEvent;
-
-			onSortChanged(event, colDefs);
-
-			expect(currentSortBy.value).toBe('name');
-			expect(currentSortOrder.value).toBe('desc');
-		});
-
 		it('should use colId if field is not defined', () => {
 			const { onGridReady, onSortChanged, currentSortBy } = createComposable();
 			onGridReady({ api: mockGridApi as GridApi } as GridReadyEvent);

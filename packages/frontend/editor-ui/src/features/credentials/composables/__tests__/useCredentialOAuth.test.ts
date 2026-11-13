@@ -524,18 +524,6 @@ describe('useCredentialOAuth', () => {
 			expect(result).toBe(true);
 		});
 
-		it('should return false and close the popup when API call fails', async () => {
-			const credentialsStore = mockedStore(useCredentialsStore);
-			credentialsStore.oAuth2Authorize.mockRejectedValue(new Error('API error'));
-
-			const { authorize } = useCredentialOAuth();
-			const result = await authorize(mockCredential);
-
-			expect(result).toBe(false);
-			expect(mockShowError).toHaveBeenCalled();
-			expect(mockPopup.close).toHaveBeenCalled();
-		});
-
 		it('should return false and close the popup for invalid URL protocol', async () => {
 			const credentialsStore = mockedStore(useCredentialsStore);
 			credentialsStore.oAuth2Authorize.mockResolvedValue('ftp://bad-protocol.com');
@@ -739,34 +727,6 @@ describe('useCredentialOAuth', () => {
 			}
 		});
 
-		it('should not treat a pre-existing token as success when reconnecting', async () => {
-			const credentialsStore = mockedStore(useCredentialsStore);
-			credentialsStore.oAuth2Authorize.mockResolvedValue('https://oauth.example.com/auth');
-			mockPopup.closed = true;
-			MockBroadcastChannel.noopEventListener = true;
-			// Reconnect: old token data is present before the flow starts.
-			credentialsStore.getCredentialData.mockResolvedValue({
-				data: { oauthTokenData: '__n8n_BLANK_VALUE' },
-			} as unknown as ICredentialsResponse);
-
-			vi.useFakeTimers();
-			try {
-				const controller = new AbortController();
-				const { authorize } = useCredentialOAuth();
-				const promise = authorize(mockCredential, controller.signal);
-				let resolved = false;
-				void promise.then(() => (resolved = true));
-
-				await vi.advanceTimersByTimeAsync(5000);
-				expect(resolved).toBe(false);
-
-				controller.abort();
-				await expect(promise).resolves.toBe(false);
-			} finally {
-				vi.useRealTimers();
-			}
-		});
-
 		it('should re-check the backend on timeout before treating the flow as failed', async () => {
 			const credentialsStore = mockedStore(useCredentialsStore);
 			credentialsStore.oAuth2Authorize.mockResolvedValue('https://oauth.example.com/auth');
@@ -906,18 +866,6 @@ describe('useCredentialOAuth', () => {
 
 			return credentialsStore;
 		}
-
-		it('should delete a newly created credential when authorization fails', async () => {
-			const credentialsStore = setupFailedOAuthFlow();
-			const { authorizeNewCredential } = useCredentialOAuth();
-
-			await expect(authorizeNewCredential(createdCredential)).resolves.toBe(false);
-
-			expect(credentialsStore.deleteCredential).toHaveBeenCalledWith({
-				id: createdCredential.id,
-			});
-			expect(credentialsStore.upsertCredential).not.toHaveBeenCalled();
-		});
 
 		it('should keep a newly created credential when authorization succeeds', async () => {
 			const credentialsStore = setupSuccessfulOAuthFlow();

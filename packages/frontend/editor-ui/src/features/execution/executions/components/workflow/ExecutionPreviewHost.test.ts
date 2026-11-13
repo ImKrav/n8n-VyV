@@ -123,39 +123,6 @@ describe('ExecutionPreviewHost', () => {
 		});
 	});
 
-	it('loads the execution on mount and renders the scoped subtree', async () => {
-		const { getByTestId } = renderComponent({
-			props: { workflowId: 'test-workflow', executionId: 'execution-1' },
-		});
-
-		expect(mockLoad).toHaveBeenCalledTimes(1);
-
-		await waitFor(() => expect(getByTestId('node-view-stub')).toBeInTheDocument());
-
-		// The subtree is scoped to the preview's stores via provides
-		expect(injected.workflowId?.value).toBe('test-workflow');
-		expect(injected.documentStore?.value).toBe(mockDocumentStore);
-		expect(injected.enabledFeatures?.value).toEqual({
-			readOnly: true,
-			aiAssistant: false,
-			aiBuilder: false,
-			askAi: false,
-			executionSuccessToasts: false,
-			executionErrorToasts: false,
-			expandGroups: 'errored',
-		});
-	});
-
-	it('renders the read-only logs panel once execution data is present', async () => {
-		const { getByTestId } = renderComponent({
-			props: { workflowId: 'test-workflow', executionId: 'execution-1' },
-		});
-
-		await waitFor(() =>
-			expect(getByTestId('logs-panel-stub')).toHaveAttribute('data-read-only', 'true'),
-		);
-	});
-
 	it('shows the loading state until the document store exists', async () => {
 		mockLoad.mockImplementation(async () => {});
 

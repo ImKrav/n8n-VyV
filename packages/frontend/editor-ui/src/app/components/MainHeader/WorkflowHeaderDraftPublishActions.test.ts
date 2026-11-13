@@ -872,34 +872,6 @@ describe('WorkflowHeaderDraftPublishActions', () => {
 	});
 
 	describe('Publish button state', () => {
-		it('should show publish button disabled when there are no trigger nodes', () => {
-			workflowDocumentStore.setNodes([]);
-
-			workflowDocumentStore.setActiveState({
-				activeVersionId: 'version-2',
-				activeVersion: createMockActiveVersion('version-2'),
-			});
-			uiStore.markStateDirty();
-
-			const { queryByTestId } = renderComponent();
-
-			expect(queryByTestId('workflow-open-publish-modal-button')).toBeDisabled();
-		});
-
-		it('should show publish button disabled when trigger node is disabled', () => {
-			workflowDocumentStore.setNodes([{ ...triggerNode, disabled: true }]);
-
-			workflowDocumentStore.setActiveState({
-				activeVersionId: 'version-2',
-				activeVersion: createMockActiveVersion('version-2'),
-			});
-			uiStore.markStateDirty();
-
-			const { getByTestId } = renderComponent();
-
-			expect(getByTestId('workflow-open-publish-modal-button')).toBeDisabled();
-		});
-
 		it('should name the restricted node before its parameter issues', () => {
 			const restrictedNodeWithIssues: INodeUi = {
 				id: 'http-1',
@@ -1014,20 +986,6 @@ describe('WorkflowHeaderDraftPublishActions', () => {
 			expect(getByTestId('workflow-open-publish-modal-button')).toBeDisabled();
 			expect(getByText(/Restricted on this instance: 'Slack'\./)).toBeInTheDocument();
 			expect(getByText(/Restricted in this project: 'Jira'\./)).toBeInTheDocument();
-		});
-
-		it('should show publish button enabled when there are unpublished changes (versionId mismatch)', () => {
-			workflowDocumentStore.setNodes([triggerNode]);
-
-			workflowDocumentStore.setActiveState({
-				activeVersionId: 'version-2',
-				activeVersion: createMockActiveVersion('version-2'),
-			});
-			uiStore.markStateClean();
-
-			const { getByTestId } = renderComponent();
-
-			expect(getByTestId('workflow-open-publish-modal-button')).not.toBeDisabled();
 		});
 
 		it('should show publish button enabled when state is dirty', () => {

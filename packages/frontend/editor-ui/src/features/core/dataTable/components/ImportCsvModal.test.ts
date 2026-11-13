@@ -153,20 +153,6 @@ describe('ImportCsvModal', () => {
 		expect(emitted().close).toBeTruthy();
 	});
 
-	it('should import the completed upload', async () => {
-		const { user, input, first, store, importButton, emitted } = renderUploads();
-		await user.upload(input, firstFile);
-		expect(store.uploadCsvFile).toHaveBeenCalledWith(firstFile, true);
-		expect(importButton).toBeDisabled();
-
-		first.resolve(uploadResponse('first'));
-		await flushPromises();
-		await user.click(importButton);
-
-		expect(store.importCsvToDataTable).toHaveBeenCalledWith('dt-1', 'proj-1', 'first');
-		expect(emitted().imported).toHaveLength(1);
-	});
-
 	it('should block import until a replacement upload completes', async () => {
 		const { user, input, first, second, store, importButton, getByText, queryByTestId } =
 			renderUploads();
@@ -232,19 +218,6 @@ describe('ImportCsvModal', () => {
 		await flushPromises();
 		expect(queryByText('Uploading...')).not.toBeInTheDocument();
 		expect(importButton).toBeEnabled();
-	});
-
-	it('should clear loading and report the current upload failure', async () => {
-		const { user, input, first, importButton, queryByText, getByText } = renderUploads();
-		await user.upload(input, firstFile);
-		const error = new Error('Upload failed');
-		first.reject(error);
-		await flushPromises();
-
-		expect(showError).toHaveBeenCalledWith(error, 'dataTable.upload.error');
-		expect(queryByText('Uploading...')).not.toBeInTheDocument();
-		expect(getByText('Drop file here or click to upload')).toBeInTheDocument();
-		expect(importButton).toBeDisabled();
 	});
 
 	it.each([

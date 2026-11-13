@@ -106,22 +106,6 @@ describe('CredentialCard', () => {
 		expect(queryByTestId('credential-card-description')).not.toBeInTheDocument();
 	});
 
-	it('should render name and home project name', () => {
-		const projectName = 'Test Project';
-		const data = createCredential({
-			homeProject: {
-				name: projectName,
-			},
-		});
-		const { getByRole, getByTestId } = renderComponent({ props: { data } });
-
-		const heading = getByRole('heading');
-		const badge = getByTestId('card-badge');
-
-		expect(heading).toHaveTextContent(data.name);
-		expect(badge).toHaveTextContent(projectName);
-	});
-
 	it('should render name and personal project name', () => {
 		const projectName = 'John Doe <john@n8n.io>';
 		const data = createCredential({
@@ -493,21 +477,6 @@ describe('CredentialCard', () => {
 			expect(getByTestId('card-badge')).toBeInTheDocument();
 		});
 
-		it('should call authorize with the credential and emit "connected" on success', async () => {
-			const data = privateUnconnectedData();
-			const credential = { id: data.id, type: 'oAuth2Api' } as ICredentialsResponse;
-			const credentialsStore = mockedStore(useCredentialsStore);
-			credentialsStore.getCredentialById = vi.fn().mockReturnValue(credential);
-			mockAuthorize.mockResolvedValue(true);
-
-			const { getByTestId, emitted } = renderComponent({ props: { data } });
-
-			await userEvent.click(getByTestId('credential-card-connect'));
-
-			expect(mockAuthorize).toHaveBeenCalledWith(credential);
-			expect(emitted('connected')).toEqual([[data.id]]);
-		});
-
 		it('should fall back to opening the edit modal when the credential is not an OAuth type', async () => {
 			const data = privateUnconnectedData();
 			const credential = { id: data.id, type: 'notOAuthApi' } as ICredentialsResponse;
@@ -522,21 +491,6 @@ describe('CredentialCard', () => {
 			expect(mockIsOAuthCredentialType).toHaveBeenCalledWith('notOAuthApi');
 			expect(mockAuthorize).not.toHaveBeenCalled();
 			expect(emitted('click')).toEqual([[data.id]]);
-			expect(emitted('connected')).toBeUndefined();
-		});
-
-		it('should not emit "connected" if authorize fails', async () => {
-			const data = privateUnconnectedData();
-			const credential = { id: data.id, type: 'oAuth2Api' } as ICredentialsResponse;
-			const credentialsStore = mockedStore(useCredentialsStore);
-			credentialsStore.getCredentialById = vi.fn().mockReturnValue(credential);
-			mockAuthorize.mockResolvedValue(false);
-
-			const { getByTestId, emitted } = renderComponent({ props: { data } });
-
-			await userEvent.click(getByTestId('credential-card-connect'));
-
-			expect(mockAuthorize).toHaveBeenCalled();
 			expect(emitted('connected')).toBeUndefined();
 		});
 

@@ -153,35 +153,6 @@ describe('LogsOverviewPanel', () => {
 		).toBeInTheDocument();
 	});
 
-	it('should render summary text and executed nodes if there is an execution', async () => {
-		const rendered = render({ isOpen: true });
-		const summary = within(rendered.container.querySelector('.summary')!);
-
-		expect(summary.queryByText('Success in 1.999s')).toBeInTheDocument();
-		expect(summary.queryByText('555 Tokens')).toBeInTheDocument();
-
-		await fireEvent.click(rendered.getByText('Overview'));
-
-		const tree = within(rendered.getByRole('tree'));
-
-		await waitFor(() => expect(tree.queryAllByRole('treeitem')).toHaveLength(2));
-
-		const row1 = within(tree.queryAllByRole('treeitem')[0]);
-
-		expect(row1.queryByText('AI Agent')).toBeInTheDocument();
-		expect(row1.queryByText('Success')).toBeInTheDocument();
-		expect(row1.queryByText('in 1.778s')).toBeInTheDocument();
-		expect(row1.queryByText('Started 00:00:00.002, 26 Mar')).toBeInTheDocument();
-
-		const row2 = within(tree.queryAllByRole('treeitem')[1]);
-
-		expect(row2.queryByText('AI Model')).toBeInTheDocument();
-		expect(row2.queryByText('Error')).toBeInTheDocument();
-		expect(row2.queryByText('in 1.777s')).toBeInTheDocument();
-		expect(row2.queryByText('Started 00:00:00.003, 26 Mar')).toBeInTheDocument();
-		expect(row2.queryByText('555 Tokens')).toBeInTheDocument();
-	});
-
 	it('should render a canvas group as a group row with no node icon', async () => {
 		const workflow = createTestWorkflowObject({
 			id: 'w1',

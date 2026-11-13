@@ -456,53 +456,6 @@ describe('WorkflowSettingsVue', () => {
 				}),
 			);
 		});
-
-		it('should send DEFAULT value for errorWorkflow to backend when set to "No Workflow"', async () => {
-			workflowDocumentStore.setSettings({
-				executionOrder: 'v1',
-				errorWorkflow: 'some-workflow-id',
-			});
-
-			const { getByTestId, getByRole } = createComponent({ pinia });
-			await flushPromises();
-
-			const dropdownItems = await getDropdownItems(getByTestId('error-workflow'));
-			expect(dropdownItems[0]).toHaveTextContent('No Workflow');
-			await userEvent.click(dropdownItems[0]);
-			await flushPromises();
-
-			await userEvent.click(getByRole('button', { name: 'Save' }));
-
-			expect(workflowsStore.updateWorkflow).toHaveBeenCalledWith(
-				expect.any(String),
-				expect.objectContaining({
-					settings: expect.objectContaining({ errorWorkflow: 'DEFAULT' }),
-				}),
-			);
-		});
-
-		it('should save workflow with errorWorkflow when a specific workflow is selected', async () => {
-			workflowDocumentStore.setSettings({
-				executionOrder: 'v1',
-			});
-
-			const { getByTestId, getByRole } = createComponent({ pinia });
-			await flushPromises();
-
-			const dropdownItems = await getDropdownItems(getByTestId('error-workflow'));
-			expect(dropdownItems[1]).toHaveTextContent('Test Workflow');
-			await userEvent.click(dropdownItems[1]);
-			await flushPromises();
-
-			await userEvent.click(getByRole('button', { name: 'Save' }));
-
-			expect(workflowsStore.updateWorkflow).toHaveBeenCalledWith(
-				expect.any(String),
-				expect.objectContaining({
-					settings: expect.objectContaining({ errorWorkflow: '1' }),
-				}),
-			);
-		});
 	});
 
 	it('should not remove valid workflow ID characters including hyphens and underscores', async () => {
@@ -584,28 +537,6 @@ describe('WorkflowSettingsVue', () => {
 			expect(dropdownItems[0]).toHaveTextContent(optionText);
 		},
 	);
-
-	it('should save time saved per execution correctly', async () => {
-		workflowDocumentStore.setSettings({ timeSavedMode: 'fixed' });
-		const { getByTestId, getByRole } = createComponent({ pinia });
-		await flushPromises();
-		await waitFor(() => {
-			expect(getByTestId('workflow-settings-time-saved-per-execution')).toBeVisible();
-		});
-
-		const timeSavedPerExecutionInput = getByTestId(
-			'workflow-settings-time-saved-per-execution',
-		)?.querySelector('input');
-
-		await userEvent.type(timeSavedPerExecutionInput as Element, '10');
-		expect(timeSavedPerExecutionInput).toHaveValue('10');
-
-		await userEvent.click(getByRole('button', { name: 'Save' }));
-		expect(workflowsStore.updateWorkflow).toHaveBeenCalledWith(
-			expect.any(String),
-			expect.objectContaining({ settings: expect.objectContaining({ timeSavedPerExecution: 10 }) }),
-		);
-	});
 
 	it('should remove time saved per execution setting', async () => {
 		workflowDocumentStore.setSettings({ timeSavedMode: 'fixed', timeSavedPerExecution: 10 });

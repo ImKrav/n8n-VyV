@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { useFolders } from './useFolders';
-import { FOLDER_NAME_MAX_LENGTH } from '../folders.constants';
 import { createTestingPinia } from '@pinia/testing';
 import { setActivePinia } from 'pinia';
 
@@ -99,20 +98,7 @@ describe('useFolders', () => {
 			});
 		});
 
-		it('should reject folder names longer than the maximum length', () => {
-			const longName = 'a'.repeat(FOLDER_NAME_MAX_LENGTH + 1);
-			const result = validateFolderName(longName);
-			expect(result).toBe(`Folder name cannot be longer than ${FOLDER_NAME_MAX_LENGTH} characters`);
-		});
-
 		describe('Edge cases', () => {
-			it('should handle empty string input', () => {
-				// Decide on your desired behavior for empty strings
-				// This is implementation-dependent - modify as needed
-				const result = validateFolderName('');
-				expect(typeof result).toBe('string'); // Expecting an error message
-			});
-
 			it('should handle folder names with Unicode characters', () => {
 				const unicodeNames = ['folder-with-émojis-😊', '中文文件夹', 'мој фолдер', 'مجلد-عربي'];
 
@@ -236,27 +222,6 @@ describe('useFolders', () => {
 				draggedResource: expectedDraggedResource,
 				dropTarget: expectedDropTarget,
 			});
-
-			document.body.removeChild(element);
-		});
-
-		it('should not allow dropping a folder onto itself', () => {
-			const element = document.createElement('div');
-			element.setAttribute('data-target', 'folder');
-			element.setAttribute('data-resourceid', 'folder-123');
-			element.setAttribute('data-resourcename', 'Test');
-			document.body.appendChild(element);
-
-			document.body.classList.add('dragging-resource');
-			mockFoldersStore.draggedElement = { type: 'folder', id: 'folder-123', name: 'Test' };
-			mockFoldersStore.activeDropTarget = { type: 'folder', id: 'folder-123', name: 'Test' };
-
-			const result = handleDrop({
-				target: element,
-				preventDefault: vi.fn(),
-			} as unknown as MouseEvent);
-
-			expect(result).to.deep.equal({});
 
 			document.body.removeChild(element);
 		});

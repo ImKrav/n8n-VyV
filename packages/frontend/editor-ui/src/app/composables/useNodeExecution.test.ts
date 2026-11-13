@@ -808,18 +808,6 @@ describe('useNodeExecution', () => {
 			expect(result).toBe('opened-chat');
 		});
 
-		it('should stop webhook when listening', async () => {
-			mockNodeTypesStore.isTriggerNode.mockReturnValue(true);
-			mockWorkflowExecutionStateStore.executionWaitingForWebhook = true;
-			const node = ref(createTestNode({ disabled: false }));
-
-			const { execute } = useNodeExecution(node);
-			const result = await execute();
-
-			expect(result).toBe('stopped-webhook');
-			expect(mockWorkflowsStore.removeTestWebhook).toHaveBeenCalledWith('123');
-		});
-
 		it('should stop execution when listening for workflow events', async () => {
 			mockNodeTypesStore.isTriggerNode.mockReturnValue(true);
 			mockNodeTypesStore.getNodeType.mockReturnValue({

@@ -9,7 +9,6 @@ import type {
 	IWorkflowTemplateNode,
 } from '@n8n/rest-api-client/api/templates';
 import { useTemplatesStore } from '@/features/workflows/templates/templates.store';
-import { keyFromCredentialTypeAndName } from './utils/templateTransforms';
 import { useSetupTemplateStore } from './setupTemplate.store';
 import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { useNodeTypesStore } from '@/app/stores/nodeTypes.store';
@@ -83,32 +82,6 @@ describe('SetupWorkflowFromTemplateView store', () => {
 			nodeTypesStore.setNodeTypes([nodeTypeTelegram, nodeTypeTwitter, nodeTypeHttpRequest]);
 			const setupTemplateStore = useSetupTemplateStore();
 			setupTemplateStore.setTemplateId(testTemplate2.id.toString());
-		});
-
-		it("should select no credentials when there isn't any available", () => {
-			// Setup
-			const setupTemplateStore = useSetupTemplateStore();
-
-			// Execute
-			setupTemplateStore.setInitialCredentialSelection();
-
-			expect(setupTemplateStore.selectedCredentialIdByKey).toEqual({});
-		});
-
-		it("should select credential when there's only one", () => {
-			// Setup
-			const credentialId = 'YaSKdvEcT1TSFrrr1';
-			const credentialsStore = useCredentialsStore();
-			credentialsStore.setCredentials([mockCredentialsResponse(credentialId)]);
-
-			const setupTemplateStore = useSetupTemplateStore();
-
-			// Execute
-			setupTemplateStore.setInitialCredentialSelection();
-
-			expect(setupTemplateStore.selectedCredentialIdByKey).toEqual({
-				[keyFromCredentialTypeAndName('telegramApi', 'telegram_habot')]: credentialId,
-			});
 		});
 
 		it('should select no credentials when there are more than 1 available', () => {

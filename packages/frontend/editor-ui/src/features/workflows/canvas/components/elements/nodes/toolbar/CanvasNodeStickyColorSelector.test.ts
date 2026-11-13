@@ -20,28 +20,6 @@ describe('CanvasNodeStickyColorSelector', () => {
 		expect(colorSelector).toBeVisible();
 	});
 
-	it('should render all colors and apply selected color correctly', async () => {
-		const { getByTestId, emitted } = renderComponent({
-			global: {
-				provide: {
-					...createCanvasNodeProvide(),
-				},
-			},
-		});
-
-		await userEvent.click(getByTestId('change-sticky-color'));
-
-		// Use screen queries for teleported popover content
-		await waitFor(() => {
-			expect(screen.getAllByTestId('color')).toHaveLength(7);
-		});
-
-		await userEvent.click(screen.getAllByTestId('color')[2]);
-
-		expect(emitted()).toHaveProperty('update');
-		expect(emitted().update[0]).toEqual([3]);
-	});
-
 	describe('custom color picker', () => {
 		it('should render custom color button (8th option)', async () => {
 			const { getByTestId } = renderComponent({

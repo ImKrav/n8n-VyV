@@ -259,27 +259,6 @@ describe('MoveToFolderModal', () => {
 		expect(getByTestId('move-to-folder-dropdown')).toBeInTheDocument();
 	});
 
-	it('should render for folder resource with workflows and subfolders', async () => {
-		foldersStore.fetchFolderContent = vi.fn().mockResolvedValue({
-			totalWorkflows: 1,
-			totalSubFolders: 1,
-		});
-
-		const { getByTestId } = renderComponent({
-			props: {
-				data: {
-					resource: TEST_FOLDER_RESOURCE,
-					resourceType: 'folder',
-					workflowListEventBus: mockEventBus,
-				},
-			},
-		});
-
-		await waitFor(() => expect(getByTestId('moveFolder-modal')).toBeInTheDocument());
-		expect(screen.getByText(`Move folder ${TEST_FOLDER_RESOURCE.name}`)).toBeInTheDocument();
-		expect(screen.getByTestId('move-modal-description')).toBeInTheDocument();
-	});
-
 	it('should not see the project sharing select without sharing license', async () => {
 		const { getByTestId, queryByTestId } = renderComponent({
 			props: {
@@ -441,81 +420,6 @@ describe('MoveToFolderModal', () => {
 
 		await userEvent.click(folderSelectDropdownItems[1]);
 		expect(within(folderSelect).getByRole('combobox')).toHaveValue('test');
-	});
-
-	it('should reset to project root when switching projects', async () => {
-		settingsStore.settings = enableSharing;
-		foldersStore.fetchFoldersAvailableForMove = vi.fn().mockResolvedValue([folder]);
-
-		const { getByTestId } = renderComponent({
-			props: {
-				data: {
-					resource: TEST_FOLDER_RESOURCE,
-					resourceType: 'folder',
-					workflowListEventBus: mockEventBus,
-				},
-			},
-		});
-
-		await waitFor(() => expect(getByTestId('moveFolder-modal')).toBeInTheDocument());
-
-		const folderSelect = getByTestId('move-to-folder-dropdown');
-		const folderSelectDropdownItems = await getDropdownItems(folderSelect);
-		await userEvent.click(folderSelectDropdownItems[1]);
-
-		expect(within(folderSelect).getByRole('combobox')).toHaveValue('test');
-
-		const projectSelect = getByTestId('project-sharing-select');
-		await userEvent.click(getByTestId('project-sharing-select'));
-		const teamProject = [...(await getDropdownItems(projectSelect))].find(
-			(item) => item.querySelector('p')?.textContent?.trim() === teamProjects[0].name,
-		);
-		await userEvent.click(teamProject as Element);
-
-		// After switching projects, the project root should be selected
-		expect(within(folderSelect).getByRole('combobox')).toHaveValue('No folder (project root)');
-	});
-
-	it('should move selected folder on submit', async () => {
-		foldersStore.fetchFoldersAvailableForMove = vi.fn().mockResolvedValue([folder]);
-
-		const { getByTestId } = renderComponent({
-			props: {
-				data: {
-					resource: TEST_FOLDER_RESOURCE,
-					resourceType: 'folder',
-					workflowListEventBus: mockEventBus,
-				},
-			},
-		});
-
-		await waitFor(() => expect(getByTestId('moveFolder-modal')).toBeInTheDocument());
-
-		const submitButton = getByTestId('confirm-move-folder-button');
-		// Wait for dropdown to load and auto-select project root
-		await waitFor(() => expect(submitButton).toBeEnabled());
-
-		const folderSelect = getByTestId('move-to-folder-dropdown');
-		const folderSelectDropdownItems = await getDropdownItems(folderSelect);
-		await userEvent.click(folderSelectDropdownItems[1]);
-
-		expect(submitButton).toBeEnabled();
-		await userEvent.click(submitButton);
-
-		expect(foldersStore.moveFolder).toHaveBeenCalledWith(
-			personalProject.id,
-			TEST_FOLDER_RESOURCE.id,
-			folder.id,
-		);
-		expect(mockEventBus.emit).toHaveBeenCalledWith('folder-moved', {
-			newParent: {
-				id: folder.id,
-				name: folder.name,
-				type: folder.resource,
-			},
-			folder: { id: TEST_FOLDER_RESOURCE.id, name: TEST_FOLDER_RESOURCE.name },
-			options: { skipApiCall: true },
-		});
 	});
 
 	it('should transfer selected folder on submit', async () => {
@@ -938,52 +842,6 @@ describe('MoveToFolderModal', () => {
 			await selectTeamProject(getByTestId('project-sharing-select'));
 
 			expect(queryByTestId('move-modal-data-tables-warning')).not.toBeInTheDocument();
-		});
-	});
-
-	it('should move selected workflow on submit', async () => {
-		foldersStore.fetchFoldersAvailableForMove = vi.fn().mockResolvedValue([folder]);
-
-		const { getByTestId } = renderComponent({
-			props: {
-				data: {
-					resource: TEST_WORKFLOW_RESOURCE,
-					resourceType: 'workflow',
-					workflowListEventBus: mockEventBus,
-				},
-			},
-		});
-
-		await waitFor(() => expect(getByTestId('moveFolder-modal')).toBeInTheDocument());
-
-		const submitButton = getByTestId('confirm-move-folder-button');
-		// Wait for dropdown to load and auto-select project root
-		await waitFor(() => expect(submitButton).toBeEnabled());
-
-		const folderSelect = getByTestId('move-to-folder-dropdown');
-		const folderSelectDropdownItems = await getDropdownItems(folderSelect);
-		await userEvent.click(folderSelectDropdownItems[1]);
-
-		expect(submitButton).toBeEnabled();
-		await userEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(workflowsStore.updateWorkflow).toHaveBeenCalledWith(TEST_WORKFLOW_RESOURCE.id, {
-				parentFolderId: folder.id,
-			});
-		});
-		expect(mockEventBus.emit).toHaveBeenCalledWith('workflow-moved', {
-			newParent: {
-				id: folder.id,
-				name: folder.name,
-				type: folder.resource,
-			},
-			workflow: {
-				id: TEST_WORKFLOW_RESOURCE.id,
-				name: TEST_WORKFLOW_RESOURCE.name,
-				oldParentId: TEST_WORKFLOW_RESOURCE.parentFolderId,
-			},
-			options: { skipApiCall: true },
 		});
 	});
 

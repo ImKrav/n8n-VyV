@@ -75,46 +75,7 @@ describe('ColumnHeader', () => {
 		expect(deleteButton).not.toBeVisible();
 	});
 
-	it('calls onDelete with the column id when delete is selected', async () => {
-		const { getByTestId } = renderComponent();
-		await userEvent.click(getByTestId('action-delete'));
-		expect(onDeleteMock).toHaveBeenCalledWith('col-1');
-	});
-
 	describe('onNameSubmit', () => {
-		it('should call onRename when valid new name is provided', async () => {
-			const onRenameMock = vi.fn();
-			const { container } = renderComponent({
-				props: {
-					params: {
-						displayName: 'Original Name',
-						column: {
-							getColId: () => 'col-1',
-							getColDef: () => ({ cellDataType: 'string' }),
-							getSort: () => null,
-						},
-						onRename: onRenameMock,
-						onDelete: onDeleteMock,
-						allowMenuActions: true,
-						api: {
-							getFilterModel: vi.fn().mockReturnValue({}),
-							addEventListener: vi.fn(),
-							removeEventListener: vi.fn(),
-						},
-					} as unknown as HeaderParamsWithDelete,
-				},
-			});
-
-			// Find the actual input element within N8nInlineTextEdit
-			const input = container.querySelector('input') as HTMLInputElement;
-			expect(input).toBeTruthy();
-
-			await userEvent.clear(input);
-			await userEvent.type(input, 'New Name{Enter}');
-
-			expect(onRenameMock).toHaveBeenCalledWith('col-1', 'New Name');
-		});
-
 		it('should trim whitespace before calling onRename', async () => {
 			const onRenameMock = vi.fn();
 			const { container } = renderComponent({

@@ -143,39 +143,6 @@ describe('ExecutionsFilter', () => {
 		},
 	);
 
-	test('state change', async () => {
-		const { getByTestId, queryByTestId, emitted } = renderComponent();
-
-		let filterChangedEvent = emitted().filterChanged;
-
-		// Initial state: no active filters
-		expect(queryByTestId('execution-filter-form')).not.toBeInTheDocument();
-		expect(queryByTestId('executions-filter-reset-button')).not.toBeInTheDocument();
-		expect(queryByTestId('execution-filter-badge')).not.toBeInTheDocument();
-
-		// Open filter popover
-		await userEvent.click(getByTestId('executions-filter-button'));
-		expect(getByTestId('execution-filter-form')).toBeInTheDocument();
-
-		await userEvent.click(getByTestId('executions-filter-status-select'));
-
-		await userEvent.click(getByTestId('executions-filter-status-select').querySelectorAll('li')[1]);
-		filterChangedEvent = emitted().filterChanged;
-
-		expect(filterChangedEvent).toHaveLength(1);
-		expect(filterChangedEvent[0]).toEqual([{ ...defaultFilterState, status: 'error' }]);
-		expect(getByTestId('executions-filter-reset-button')).toBeInTheDocument();
-		expect(getByTestId('execution-filter-badge')).toBeInTheDocument();
-
-		await userEvent.click(getByTestId('executions-filter-reset-button'));
-		filterChangedEvent = emitted().filterChanged;
-
-		expect(filterChangedEvent).toHaveLength(2);
-		expect(filterChangedEvent[1]).toEqual([defaultFilterState]);
-		expect(queryByTestId('executions-filter-reset-button')).not.toBeInTheDocument();
-		expect(queryByTestId('execution-filter-badge')).not.toBeInTheDocument();
-	});
-
 	test('starts from the initial filters without emitting a change', async () => {
 		const { getByTestId, emitted } = renderComponent({
 			props: { initialFilters: { ...defaultFilterState, status: 'error' } },

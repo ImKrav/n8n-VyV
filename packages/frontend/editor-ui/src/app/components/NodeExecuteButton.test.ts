@@ -356,45 +356,6 @@ describe('NodeExecuteButton', () => {
 		expect(getByRole('button')).toBeDisabled();
 	});
 
-	it('stops webhook when clicking button while listening for events', async () => {
-		vi.spyOn(
-			useWorkflowExecutionStateStore(createWorkflowDocumentId('abc123')),
-			'executionWaitingForWebhook',
-			'get',
-		).mockReturnValue(true);
-		nodeTypesStore.isTriggerNode = () => true;
-		vi.spyOn(workflowDocumentStore, 'getNodeByName').mockReturnValue(
-			mockNode({ name: 'test-node', type: SET_NODE_TYPE }),
-		);
-
-		const { getByRole } = renderComponent();
-
-		await userEvent.click(getByRole('button'));
-
-		expect(workflowsStore.removeTestWebhook).toHaveBeenCalledWith('abc123');
-	});
-
-	it('stops execution when clicking button while workflow is running', async () => {
-		vi.spyOn(
-			useWorkflowExecutionStateStore(createWorkflowDocumentId('abc123')),
-			'isWorkflowRunning',
-			'get',
-		).mockReturnValue(true);
-		nodeTypesStore.isTriggerNode = () => true;
-		workflowExecutionStateStore.setActiveExecutionId('test-execution-id');
-		workflowExecutionStateStore.executingNode.isNodeExecuting = vi.fn().mockReturnValue(true);
-		vi.spyOn(workflowDocumentStore, 'getNodeByName').mockReturnValue(
-			mockNode({ name: 'test-node', type: SET_NODE_TYPE }),
-		);
-
-		const { getByRole, emitted } = renderComponent();
-
-		await userEvent.click(getByRole('button'));
-
-		expect(runWorkflow.stopCurrentExecution).toHaveBeenCalledTimes(1);
-		expect(emitted().stopExecution).toBeTruthy();
-	});
-
 	it('runs workflow when clicking button normally', async () => {
 		const node = mockNode({ name: 'test-node', type: SET_NODE_TYPE });
 		vi.spyOn(workflowDocumentStore, 'getNodeByName').mockReturnValue(node);

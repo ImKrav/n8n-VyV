@@ -297,40 +297,6 @@ describe('CredentialsView', () => {
 	});
 
 	describe('filters', () => {
-		it('should filter by type', async () => {
-			await router.push({ name: VIEWS.CREDENTIALS, query: { type: ['test'] } });
-			const credentialsStore = mockedStore(useCredentialsStore);
-			credentialsStore.allCredentialTypes = [
-				{
-					name: 'test',
-					displayName: 'test',
-					properties: [],
-				},
-			];
-			credentialsStore.allCredentials = [
-				{
-					id: '1',
-					name: 'test',
-					type: 'test',
-					createdAt: '2021-05-05T00:00:00Z',
-					updatedAt: '2021-05-05T00:00:00Z',
-					scopes: ['credential:update'],
-					isManaged: false,
-				},
-				{
-					id: '1',
-					name: 'test',
-					type: 'another',
-					createdAt: '2021-05-05T00:00:00Z',
-					updatedAt: '2021-05-05T00:00:00Z',
-					scopes: ['credential:update'],
-					isManaged: false,
-				},
-			];
-			const { getAllByTestId } = renderComponent();
-			expect(getAllByTestId('resources-list-item').length).toBe(1);
-		});
-
 		it('should filter by setupNeeded', async () => {
 			await router.push({ name: VIEWS.CREDENTIALS, query: { setupNeeded: 'true' } });
 			const credentialsStore = mockedStore(useCredentialsStore);

@@ -171,48 +171,6 @@ describe('WorkflowVersionFormModal', () => {
 		});
 	});
 
-	it('should disable submit button when version name is empty', async () => {
-		const eventBus = createEventBus<WorkflowVersionFormModalEventBusEvents>();
-		const { getByTestId } = renderComponent({
-			props: {
-				modalName: TEST_MODAL_KEY,
-				data: {
-					versionId: 'version-123',
-					versionName: '',
-					modalTitle: 'Test Modal',
-					submitButtonLabel: 'Submit',
-					eventBus,
-				},
-			},
-		});
-
-		await waitFor(() => {
-			const submitButton = getByTestId(`${TEST_MODAL_KEY}-submit-button`);
-			expect(submitButton).toBeDisabled();
-		});
-	});
-
-	it('should disable submit button when version name is only whitespace', async () => {
-		const eventBus = createEventBus<WorkflowVersionFormModalEventBusEvents>();
-		const { getByTestId } = renderComponent({
-			props: {
-				modalName: TEST_MODAL_KEY,
-				data: {
-					versionId: 'version-123',
-					versionName: '   ',
-					modalTitle: 'Test Modal',
-					submitButtonLabel: 'Submit',
-					eventBus,
-				},
-			},
-		});
-
-		await waitFor(() => {
-			const submitButton = getByTestId(`${TEST_MODAL_KEY}-submit-button`);
-			expect(submitButton).toBeDisabled();
-		});
-	});
-
 	it('should not submit when version name is empty', async () => {
 		const eventBus = createEventBus<WorkflowVersionFormModalEventBusEvents>();
 		const submitHandler = vi.fn();

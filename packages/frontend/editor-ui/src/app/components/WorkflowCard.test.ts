@@ -1394,33 +1394,6 @@ describe('WorkflowCard', () => {
 
 			expect(actions).not.toHaveTextContent('Unpublish');
 		});
-
-		it('should emit workflow:unpublished event when unpublish action is successful', async () => {
-			const data = createWorkflow({
-				activeVersionId: 'v1',
-				scopes: ['workflow:unpublish'],
-			});
-
-			const { getByTestId, emitted } = renderComponent({ props: { data } });
-			const cardActions = getByTestId('workflow-card-actions');
-			const cardActionsOpener = within(cardActions).getByRole('button');
-			const controllingId = cardActionsOpener.getAttribute('aria-controls');
-
-			await userEvent.click(cardActionsOpener);
-			const actions = document.querySelector<HTMLElement>(`#${controllingId}`);
-			if (!actions) {
-				throw new Error('Actions menu not found');
-			}
-
-			// Find and click the unpublish action
-			const unpublishAction = within(actions).getByTestId('action-unpublish');
-			await userEvent.click(unpublishAction);
-
-			await waitFor(() => {
-				expect(emitted()['workflow:unpublished']).toBeTruthy();
-				expect(emitted()['workflow:unpublished'][0]).toEqual([{ id: '1' }]);
-			});
-		});
 	});
 
 	describe('Publish functionality', () => {

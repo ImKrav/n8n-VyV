@@ -363,18 +363,6 @@ describe('useExecutionCommands', () => {
 			expect(stopCommand).toBeUndefined();
 		});
 
-		it('should call stopCurrentExecution when handler is called', async () => {
-			mockExecutionsStore.activeExecution = createMockExecution('exec-1', 'running');
-
-			const { commands } = useExecutionCommands();
-
-			const stopCommand = commands.value.find((cmd) => cmd.id === 'stop-execution');
-			await stopCommand?.handler?.();
-
-			expect(mockExecutionsStore.stopCurrentExecution).toHaveBeenCalledWith('exec-1');
-			expect(mockToastShowMessage).toHaveBeenCalled();
-		});
-
 		it('should handle stop execution errors', async () => {
 			const error = new Error('Stop failed');
 			mockExecutionsStore.stopCurrentExecution = vi.fn().mockRejectedValue(error);

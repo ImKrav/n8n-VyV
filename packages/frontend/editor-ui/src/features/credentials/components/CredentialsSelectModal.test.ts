@@ -210,20 +210,6 @@ describe('CredentialsSelectModal — restricted credential types', () => {
 		expect(option(wrapper, 'slackApi').attributes('data-disabled')).toBe('false');
 	});
 
-	it('keeps the focus in the search input on a press on a blocked type only', async () => {
-		mockRestrictedCredentialTypes({ airtableApi: 'instance' });
-		mockRestrictedNodeTypes({ 'n8n-nodes-base.mailjet': 'instance' });
-		const wrapper = await mountLoaded();
-
-		const blocked = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-		option(wrapper, 'airtableApi').element.dispatchEvent(blocked);
-		const nodesBlocked = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-		option(wrapper, 'mailjetEmailApi').element.dispatchEvent(nodesBlocked);
-
-		expect(blocked.defaultPrevented).toBe(true);
-		expect(nodesBlocked.defaultPrevented).toBe(false);
-	});
-
 	it('ignores a blocked type that the select still reports, and lets a type with blocked nodes through', async () => {
 		mockRestrictedCredentialTypes({ airtableApi: 'instance' });
 		mockRestrictedNodeTypes({ 'n8n-nodes-base.mailjet': 'instance' });

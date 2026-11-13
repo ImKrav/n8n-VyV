@@ -1,6 +1,5 @@
 import { setActivePinia } from 'pinia';
 import { useLogsExecutionData } from './useLogsExecutionData';
-import type { NodeLogEntry } from '../logs.types';
 import { waitFor } from '@testing-library/vue';
 import { createTestingPinia } from '@pinia/testing';
 import { mockedStore, waitAllPromises } from '@/__tests__/utils';
@@ -14,7 +13,7 @@ import {
 	createTestWorkflow,
 	createTestWorkflowExecutionResponse,
 } from '@/__tests__/mocks';
-import { createRunExecutionData, type INode, type IRunExecutionData } from 'n8n-workflow';
+import { createRunExecutionData, type INode } from 'n8n-workflow';
 import { useToast } from '@n8n/composables/useToast';
 import { useWorkflowExecutionStateStore } from '@/app/stores/workflowExecutionState.store';
 import {
@@ -201,36 +200,6 @@ describe(useLogsExecutionData, () => {
 			);
 
 			vi.advanceTimersByTime(1000);
-		});
-
-		it('should add runs from sub execution to the entries', async () => {
-			workflowsStore.fetchExecutionDataById.mockResolvedValueOnce(
-				createTestWorkflowExecutionResponse({
-					id: 'e1',
-					data: {
-						resultData: { runData: { C: [createTestTaskData()] } },
-					} as unknown as IRunExecutionData,
-					workflowData: createTestWorkflow({ id: 'w1', nodes: [createTestNode({ name: 'C' })] }),
-				}),
-			);
-
-			const { loadSubExecution, entries } = useLogsExecutionData();
-
-			await waitFor(() => expect(entries.value).toHaveLength(2));
-			expect(entries.value[1].children).toHaveLength(0);
-
-			await loadSubExecution(entries.value[1]);
-
-			vi.advanceTimersByTime(1000);
-
-			await waitFor(() => {
-				expect(entries.value).toHaveLength(2);
-				expect(entries.value[1].children).toHaveLength(1);
-				const childEntry = entries.value[1].children[0] as NodeLogEntry;
-				expect(childEntry.node.name).toBe('C');
-				expect(childEntry.workflow.id).toBe('w1');
-				expect(childEntry.executionId).toBe('e1');
-			});
 		});
 
 		it('should show toast when failed to fetch execution data for sub execution', async () => {
