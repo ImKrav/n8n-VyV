@@ -50,6 +50,9 @@
     "results/by-case/CP-017-07/data-table-rows.ui__CP-017-07_busqueda.png",
     "results/by-case/CP-017-07/row-editing.api__CP-017-07_evidencia.png"
   ],
+  "CP-017-08": [
+    "results/by-case/CP-017-08/storage-limit.api__CP-017-08_evidencia.png"
+  ],
   "CP-018-01": [
     "results/by-case/CP-018-01/csv-import-export.api__CP-018-01_evidencia.png",
     "results/by-case/CP-018-01/csv.ui__CP-018-01_tabla_importada.png",
@@ -75,6 +78,7 @@
     "results/by-case/CP-018-07/csv-import-export.api__CP-018-07_evidencia.png"
   ],
   "CP-018-08": [
+    "results/by-case/CP-018-08/owasp__CP-018-08_evidencia.png",
     "results/by-case/CP-018-08/owasp__CP-018-08_evidencia.png"
   ],
   "CP-019-01": [
@@ -119,7 +123,7 @@
     "results/by-case/CP-CO-02-08/data-table-node.api__CP-CO-02-08_evidencia.png"
   ],
   "CP-CO-03-04": [
-    "results/by-case/CP-CO-03-04/csv-encoding-size.api__CO-03 · CSV de Excel y archivo grande (API) -- CP-CO-03-04 · CSV exportado desde Excel en español (UTF-8 con BOM, «;», tildes) -- Hallazgo CP-CO-03-04 · el separador «;» separa las columnas o n8n informa q.png",
+    "results/by-case/CP-CO-03-04/csv-encoding-size.api__CO-03 · CSV de Excel y archivo grande (API) -- CP-CO-03-04 · CSV exportad.png",
     "results/by-case/CP-CO-03-04/csv-encoding-size.api__CP-CO-03-04_evidencia.png"
   ],
   "CP-CO-03-05": [

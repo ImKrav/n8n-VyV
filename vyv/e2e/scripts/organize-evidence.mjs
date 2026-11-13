@@ -20,13 +20,14 @@ const recorrer = (dir) => {
 };
 recorrer(ORIGEN);
 
-/** Los nombres de captura de pruebas fallidas incluyen todo el título; el sistema de archivos admite 255 bytes. */
-const nombreCorto = (nombre, max = 240) => {
-  if (Buffer.byteLength(nombre) <= max) return nombre;
+/**
+ * Los nombres de captura de pruebas fallidas incluyen todo el título. Windows limita la ruta completa
+ * a 260 caracteres (Git no puede crear el archivo al clonar), así que el nombre se recorta a 100.
+ */
+const nombreCorto = (nombre, max = 100) => {
+  if (nombre.length <= max) return nombre;
   const ext = extname(nombre);
-  let base = nombre.slice(0, -ext.length);
-  while (Buffer.byteLength(base + ext) > max) base = base.slice(0, -1);
-  return base + ext;
+  return `${nombre.slice(0, max - ext.length).trimEnd()}${ext}`;
 };
 
 const indice = {};
