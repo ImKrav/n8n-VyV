@@ -222,7 +222,8 @@ const handleFileChange = async (uploadFile: UploadFile) => {
 	if (!uploadFile.raw) return;
 	const file = uploadFile.raw;
 	selectedFile.value = file;
-	if (dataTableName.value) return;
+	// A name of only spaces is not a name: replace it with the suggestion from the file
+	if (trimmedName.value) return;
 
 	const baseName = deriveNameFromFileName(file.name);
 	if (!baseName) return;
@@ -230,11 +231,11 @@ const handleFileChange = async (uploadFile: UploadFile) => {
 	const projectId = route.params.projectId as string;
 	try {
 		const suggested = await dataTableStore.findAvailableDataTableName(baseName, projectId);
-		if (selectedFile.value === file && !dataTableName.value) {
+		if (selectedFile.value === file && !trimmedName.value) {
 			dataTableName.value = suggested;
 		}
 	} catch {
-		if (selectedFile.value === file && !dataTableName.value) {
+		if (selectedFile.value === file && !trimmedName.value) {
 			dataTableName.value = baseName;
 		}
 	}
