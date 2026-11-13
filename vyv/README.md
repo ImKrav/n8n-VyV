@@ -2,60 +2,87 @@
 
 Esta carpeta contiene todas las pruebas automatizadas del **plan de pruebas de n8n-VyV** (carpeta «Final VyV»: plan, casos y escenarios, matriz de trazabilidad). El plan cubre 4 módulos con 5 funcionalidades cada uno y **142 casos** (CP-WF-01-01 … CP-CO-05-08). El sistema bajo prueba es **n8n 2.47.0 (commit `01bd57cdd`)**.
 
+```
+vyv/
+├── README.md            este índice
+├── run-tests.sh         ejecuta el plan: units, backend, e2e o all
+├── vitest.config.mts    config de Vitest de la suite unitaria (extiende la de editor-ui)
+├── suite.mts            módulos de producción medidos por la cobertura unitaria
+├── units/               pruebas unitarias del editor (Vitest)
+│   ├── workflows/WF-01 … WF-05/
+│   ├── executions/EX-01 … EX-05/
+│   ├── credentials/CR-01 … CR-05/
+│   └── core/CO-01 … CO-05/
+├── e2e/                 pruebas funcionales (Cypress): API, UI, Gherkin + Screenplay
+│   ├── workflows/ executions/ credentials/   sin pruebas Cypress todavía
+│   ├── core/CO-01 … CO-05/                   *.api.cy.js, *.ui.cy.js, *.feature
+│   ├── core/security/ core/accessibility/ core/regression/
+│   └── support/ screenplay/ fixtures/ scripts/
+├── ai/                  Stagehand, DeepEval y generador de casos con IA
+└── evidence/
+    ├── units/           ciclos TDD, ejecución completa y cobertura de la suite unitaria
+    └── e2e/             ejecución «antes» (n8n 2.46.6) y línea base de regresión de Cypress
+```
+
 | Carpeta | Qué contiene | Módulos | Herramienta |
 | --- | --- | --- | --- |
-| [`unitarias/`](unitarias/README.md) | Suite unitaria del editor: un `describe` por caso del plan, TDD, AAA, FIRST y dobles de prueba | 1 Workflows · 2 Ejecuciones · 3 Credenciales · 4 Core | Vitest |
-| [`datatables-carpetas/`](datatables-carpetas/README.md) | Pruebas funcionales de data tables y carpetas: API, UI, Gherkin + Screenplay, seguridad, accesibilidad, regresión e IA | 4 Core | Cypress |
+| [`units/`](units/README.md) | Un `describe` por caso del plan, TDD, AAA, FIRST y dobles de prueba | 1 Workflows · 2 Ejecuciones · 3 Credenciales · 4 Core | Vitest |
+| [`e2e/`](e2e/README.md) | Data tables y carpetas por API, UI y Gherkin + Screenplay; seguridad (OWASP), accesibilidad (WCAG) y regresión | 4 Core | Cypress |
+| [`ai/`](e2e/README.md#6-inteligencia-artificial-punto-14) | Flujos en lenguaje natural, evaluación de un asistente y generación de casos | 4 Core | Stagehand, DeepEval, LLM |
 
-`datatables-carpetas/` también tiene pruebas unitarias de backend (`*.vyv.test.ts`). Estas pruebas están junto al código que verifican, en `packages/` (ver la sección 5 de su README). El script `ejecutar-plan.sh` las ejecuta.
+Las pruebas unitarias de backend de data tables y carpetas (`*.vyv.test.ts`) están junto al código que verifican, en `packages/` (ver la sección 5 de [`e2e/README.md`](e2e/README.md)). `run-tests.sh` también las ejecuta.
 
 ## Cómo ejecutar el plan
 
 Requisitos: `pnpm install` y compilar las dependencias (`pnpm build > build.log 2>&1`, o solo las de editor-ui y del backend que se prueba).
 
 ```bash
-./vyv/ejecutar-plan.sh
+./vyv/run-tests.sh
 ```
 
 Sin argumento, el script ejecuta las dos partes que no necesitan un n8n en marcha. Para ejecutar una sola parte o todo el plan:
 
 ```bash
-./vyv/ejecutar-plan.sh unitarias
+./vyv/run-tests.sh units
 ```
 
 ```bash
-./vyv/ejecutar-plan.sh backend
+./vyv/run-tests.sh units CO-05
 ```
 
 ```bash
-CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' ./vyv/ejecutar-plan.sh e2e
+./vyv/run-tests.sh backend
 ```
 
 ```bash
-CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' ./vyv/ejecutar-plan.sh todo
+CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' ./vyv/run-tests.sh e2e
+```
+
+```bash
+CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' ./vyv/run-tests.sh all
 ```
 
 | Parte | Qué ejecuta | Salida |
 | --- | --- | --- |
-| `unitarias` | `vyv/unitarias/run-tests.sh` con cobertura | `vyv/unitarias/coverage/index.html` |
+| `units` | Vitest con `vitest.config.mts`, cobertura y dos workers; los argumentos siguientes pasan a Vitest | `vyv/coverage/index.html` |
 | `backend` | `*.vyv.test.ts` de `@n8n/backend-module-data-table`, `@n8n/api-types` y `n8n` | consola |
-| `e2e` | `npm run test:todo` y `npm run reporte` en `datatables-carpetas/` (n8n en `http://localhost:5678`, licencia community registrada) | `vyv/datatables-carpetas/evidencias/reporte/index.html` |
+| `e2e` | `npm run test:all` y `npm run report` en `e2e/` (n8n en `http://localhost:5678`, licencia community registrada) | `vyv/e2e/results/report/index.html` |
 
-La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/después tienen sus propios comandos. Consulte las secciones 4 y 5 de [`datatables-carpetas/README.md`](datatables-carpetas/README.md).
+La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/después tienen sus propios comandos. Consulte las secciones 4 y 5 de [`e2e/README.md`](e2e/README.md).
 
 ## Resultados
 
 | Parte | Resultado | Fecha y versión |
 | --- | --- | --- |
-| `unitarias` | 91 archivos, **263 pruebas en verde**, 21 `it.todo`; cobertura 52,4 % de líneas de los 74 módulos probados | 13/11/2026 · n8n 2.47.0 |
+| `units` | 91 archivos, **263 pruebas en verde**, 21 `it.todo`; cobertura 52,4 % de líneas de los 74 módulos probados | 13/11/2026 · n8n 2.47.0 |
 | `backend` | **64 pruebas en verde** (data-table 40, `folderNameSchema` 19, `FolderService.deleteFolder` 5) | 13/11/2026 · n8n 2.47.0 |
-| `e2e` | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente | 08/11/2026 · n8n 2.46.6 (resultado de `datatables-carpetas/`; no se repitió con 2.47.0) |
+| `e2e` | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente | 08/11/2026 · n8n 2.46.6  |
 
 ## Equivalencia de IDs en el módulo Core
 
-`datatables-carpetas/` usa los IDs de escenario ESC-016 … ESC-020, uno por funcionalidad de Core en el orden del plan, con sus propios números de caso (CP-016-01 …). La tabla relaciona esos IDs con los casos del plan (CP-CO-…). «Complementaria» es una prueba de `datatables-carpetas/` sin número de caso propio.
+`e2e/` usa los IDs de escenario ESC-016 … ESC-020, uno por funcionalidad de Core en el orden del plan, con sus propios números de caso (CP-016-01 …). La tabla relaciona esos IDs con los casos del plan (CP-CO-…). «Complementaria» es una prueba de `e2e/` sin número de caso propio.
 
-| Caso del plan | Caso | `unitarias/` | `datatables-carpetas/` |
+| Caso del plan | Caso | `units/` | `e2e/` (`core/CO-0x/`) |
 | --- | --- | --- | --- |
 | CP-CO-01-01 | Crear data table con nombre válido | ✅ | CP-016-01 (API, UI, BDD) |
 | CP-CO-01-02 | Nombre vacío o solo espacios | ✅ TDD | CP-016-02 (API, UI) · BUG-016-01 |
@@ -94,7 +121,7 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | CP-CO-05-07 | Eliminar carpeta con contenido borrando | ✅ | CP-020-05 (API) |
 | CP-CO-05-08 | Sin workflows huérfanos tras eliminar | ⏳ todo | CP-020-05 (API) · unitaria backend CP-020-06 (mocks), en parte |
 
-`datatables-carpetas/` tiene casos sin equivalente en el plan: CP-017-08 (límite de almacenamiento), CP-018-02 (archivo que no es CSV), CP-018-05 (columnas desconocidas), CP-018-07 (inferencia de fechas imposibles) y CP-018-08 (inyección de fórmulas al exportar).
+`e2e/` tiene casos sin equivalente en el plan: CP-017-08 (límite de almacenamiento), CP-018-02 (archivo que no es CSV), CP-018-05 (columnas desconocidas), CP-018-07 (inferencia de fechas imposibles) y CP-018-08 (inyección de fórmulas al exportar).
 
 Con las dos carpetas, en Core quedan sin prueba automatizada solo CP-CO-02-08, CP-CO-03-04 y CP-CO-03-05. Estos casos se ejecutan de forma manual según el plan.
 
@@ -102,10 +129,10 @@ Con las dos carpetas, en Core quedan sin prueba automatizada solo CP-CO-02-08, C
 
 | Defecto | Corrección | Pruebas |
 | --- | --- | --- |
-| Rango de fechas invertido en el filtro de ejecuciones devolvía una lista vacía (CP-EX-02-03) | `executions.utils.ts` | `unitarias/unit/executions/EX-02` |
-| Nombre de data table con solo espacios habilitaba «Create» (CP-CO-01-02 / BUG-016-01) | `AddDataTableModal.vue` (`trimmedName`) | `unitarias/unit/core/CO-01` · Cypress CP-016-02 |
+| Rango de fechas invertido en el filtro de ejecuciones devolvía una lista vacía (CP-EX-02-03) | `executions.utils.ts` | `units/executions/EX-02` |
+| Nombre de data table con solo espacios habilitaba «Create» (CP-CO-01-02 / BUG-016-01) | `AddDataTableModal.vue` (`trimmedName`) | `units/core/CO-01` · Cypress CP-016-02 |
 | Fechas imposibles y números no decimales inferidos en el CSV (BUG-018-01/02/03) | `csv-parser.service.ts` | unitaria backend CP-018-07 |
 | CSV malformado y `fileId` inválido respondían 500 (BUG-018-05) | `csv-parser.service.ts`, `data-table-uploads.controller.ts` | unitaria backend CP-018-03 · Cypress BUG-018-05 |
 | El CSV exportado no neutralizaba fórmulas (BUG-018-04) | `utils/csv-escape.ts`, `data-table.service.ts` | unitaria backend CP-018-08 |
 
-El detalle de cada ciclo rojo → verde → refactor está en [`unitarias/README.md`](unitarias/README.md) (sección TDD) y en [`datatables-carpetas/README.md`](datatables-carpetas/README.md) (sección 3).
+El detalle de cada ciclo rojo → verde → refactor está en [`units/README.md`](units/README.md) (sección TDD) y en [`e2e/README.md`](e2e/README.md) (sección 3).
