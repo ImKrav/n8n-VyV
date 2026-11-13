@@ -1,5 +1,6 @@
 /**
- * CR-01 · Crear credencial — selector del tipo de credencial (búsqueda).
+ * CR-01 · Crear credencial — selector del tipo de credencial (búsqueda). En n8n 2.47 solo se conserva
+ * la preparación del archivo original (2.48); las pruebas de este archivo son nuevas.
  * Origen: packages/frontend/editor-ui/src/features/credentials/components/CredentialsSelectModal.test.ts
  */
 /* eslint-disable import-x/no-extraneous-dependencies -- test-only pattern */
@@ -165,22 +166,6 @@ beforeEach(() => {
 
 afterEach(() => {
 	vi.useRealTimers();
-});
-
-describe('CP-CR-01-05 · Búsqueda de tipo sin resultados', () => {
-	it('keeps the focus in the search input on a press on a blocked type only', async () => {
-		mockRestrictedCredentialTypes({ airtableApi: 'instance' });
-		mockRestrictedNodeTypes({ 'n8n-nodes-base.mailjet': 'instance' });
-		const wrapper = await mountLoaded();
-
-		const blocked = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-		option(wrapper, 'airtableApi').element.dispatchEvent(blocked);
-		const nodesBlocked = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
-		option(wrapper, 'mailjetEmailApi').element.dispatchEvent(nodesBlocked);
-
-		expect(blocked.defaultPrevented).toBe(true);
-		expect(nodesBlocked.defaultPrevented).toBe(false);
-	});
 });
 
 // ---------------------------------------------------------------------------

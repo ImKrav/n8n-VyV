@@ -10,186 +10,200 @@ Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
  RUN  v5.0.1 /home/user/n8n-VyV/packages/frontend/editor-ui
       Coverage enabled with v8
 
- ✓ ../../../qa/unit/core/CO-01/AddColumnButton.test.ts (5 tests) 1746ms
+ ✓ ../../../qa/unit/core/CO-01/AddColumnButton.test.ts (5 tests) 1856ms
    ✓ CP-CO-01-05 · Añadir columnas de los cuatro tipos (3)
-     ✓ should display all column type options 373ms
-     ✓ should allow selecting different column types 464ms
+     ✓ should display all column type options 405ms
+     ✓ should allow selecting different column types 431ms
    ✓ CP-CO-01-07 · Nombre de columna con caracteres no permitidos (2)
-     ✓ should allow valid column names 458ms
- ✓ ../../../qa/unit/executions/EX-05/LogsPanel.test.ts (3 tests) 1391ms
+     ✓ should allow valid column names 502ms
+ ✓ ../../../qa/unit/executions/EX-05/LogsPanel.test.ts (3 tests) 1721ms
    ✓ CP-EX-05-02 · Detalle de entrada y salida de un nodo (1)
-     ✓ should render only output panel of selected node by default 446ms
+     ✓ should render only output panel of selected node by default 499ms
    ✓ CP-EX-05-05 · Atajos de teclado del panel (2)
      ✓ selection (1)
-       ✓ should allow to select previous and next row via keyboard shortcut 538ms
+       ✓ should allow to select previous and next row via keyboard shortcut 763ms
      ✓ selection (1)
-       ✓ should handle arrow navigation without bubbling to canvas shortcuts 403ms
- ✓ ../../../qa/unit/workflows/WF-02/WorkflowSettings.test.ts (13 tests) 11508ms
+       ✓ should handle arrow navigation without bubbling to canvas shortcuts 456ms
+ ✓ ../../../qa/unit/workflows/WF-02/WorkflowSettings.test.ts (13 tests) 13396ms
    ✓ CP-WF-02-04 · Workflow de error se dispara ante un fallo (2)
      ✓ Error Workflow (1)
-       ✓ should send DEFAULT value for errorWorkflow to backend when set to "No Workflow" 1364ms
+       ✓ should send DEFAULT value for errorWorkflow to backend when set to "No Workflow" 1536ms
      ✓ Error Workflow (1)
-       ✓ should save workflow with errorWorkflow when a specific workflow is selected 1057ms
+       ✓ should save workflow with errorWorkflow when a specific workflow is selected 1067ms
    ✓ CP-WF-02-06 · Ajustes persisten tras recargar (1)
-     ✓ should save time saved per execution correctly 900ms
+     ✓ should save time saved per execution correctly 1059ms
    ✓ CP-WF-02-01 · No guardar ejecuciones exitosas de producción (2)
-     ✓ envía saveDataSuccessExecution «none» al elegir «Do not save» 930ms
-     ✓ mantiene el guardado de ejecuciones fallidas al desactivar solo las exitosas 875ms
+     ✓ envía saveDataSuccessExecution «none» al elegir «Do not save» 980ms
+     ✓ mantiene el guardado de ejecuciones fallidas al desactivar solo las exitosas 1085ms
    ✓ CP-WF-02-02 · No guardar ejecuciones manuales (1)
-     ✓ envía saveManualExecutions false al elegir «Do not save» 861ms
+     ✓ envía saveManualExecutions false al elegir «Do not save» 1064ms
    ✓ CP-WF-02-03 · Timeout en sus valores límite (5)
-     ✓ guarda el timeout en el valor mínimo (1 s) 781ms
-     ✓ guarda el timeout en el valor intermedio (1 h) 807ms
-     ✓ guarda el timeout en el valor máximo permitido 786ms
-     ✓ rechaza un timeout activado en 0 segundos 825ms
-     ✓ rechaza un timeout de máximo + 1 segundo e informa el máximo 741ms
+     ✓ guarda el timeout en el valor mínimo (1 s) 1015ms
+     ✓ guarda el timeout en el valor intermedio (1 h) 1009ms
+     ✓ guarda el timeout en el valor máximo permitido 889ms
+     ✓ rechaza un timeout activado en 0 segundos 961ms
+     ✓ rechaza un timeout de máximo + 1 segundo e informa el máximo 982ms
    ✓ CP-WF-02-05 · Zona horaria del workflow (1)
-     ✓ guarda la zona horaria elegida 838ms
+     ✓ guarda la zona horaria elegida 877ms
    ✓ CP-WF-02-06 · Ajustes persisten tras recargar (1)
-     ✓ vuelve a enviar sin cambios los ajustes guardados al reabrir y guardar 740ms
- ✓ ../../../qa/unit/core/CO-05/MoveToFolderModal.test.ts (4 tests) 1194ms
-   ✓ CP-CO-05-01 · Mover un workflow a una carpeta (1)
-     ✓ should move selected workflow on submit 426ms
-   ✓ CP-CO-05-02 · Mover un workflow de vuelta a la raíz (1)
-     ✓ should reset to project root when switching projects 491ms
- ✓ ../../../qa/unit/credentials/CR-02/CredentialEdit.test.ts (1 test) 1218ms
+     ✓ vuelve a enviar sin cambios los ajustes guardados al reabrir y guardar 866ms
+ ✓ ../../../qa/unit/credentials/CR-02/CredentialEdit.test.ts (1 test) 1425ms
    ✓ CP-CR-02-01 · Editar un valor sin romper los workflows (1)
      ✓ saving credentials (1)
-       ✓ does not call onCredentialCreated when updating a credential 1213ms
- ✓ ../../../qa/unit/credentials/CR-05/CredentialsView.test.ts (5 tests | 1 todo) 1152ms
+       ✓ does not call onCredentialCreated when updating a credential 1421ms
+ ✓ ../../../qa/unit/core/CO-05/MoveToFolderModal.test.ts (4 tests) 1308ms
+   ✓ CP-CO-05-01 · Mover un workflow a una carpeta (1)
+     ✓ should move selected workflow on submit 440ms
+   ✓ CP-CO-05-02 · Mover un workflow de vuelta a la raíz (1)
+     ✓ should reset to project root when switching projects 546ms
+ ✓ ../../../qa/unit/credentials/CR-05/CredentialsView.test.ts (5 tests | 1 todo) 1362ms
    ✓ CP-CR-05-03 · Filtrar por tipo (1)
      ✓ filters (1)
-       ✓ should filter by type 434ms
- ✓ ../../../qa/unit/executions/EX-03/GlobalExecutionsList.test.ts (4 tests) 980ms
+       ✓ should filter by type 547ms
+   ✓ CP-CR-05-01 · Buscar credenciales por nombre (2)
+     ✓ un término parcial devuelve solo las coincidencias 356ms
+ ✓ ../../../qa/unit/executions/EX-03/GlobalExecutionsList.test.ts (4 tests) 1128ms
    ✓ CP-EX-03-03 · Reintentar con la versión actual (1)
-     ✓ should show "retry" data when appropriate 487ms
- ✓ ../../../qa/unit/core/CO-04/WorkflowsView.test.ts (3 tests) 832ms
+     ✓ should show "retry" data when appropriate 542ms
+ ✓ ../../../qa/unit/workflows/WF-05/DuplicateWorkflowDialog.test.ts (6 tests) 987ms
+   ✓ CP-WF-05-05 · Duplicar con nombre vacío, repetido y muy largo (4)
+     ✓ acepta un nombre en el límite de longitud y limita la entrada al máximo 552ms
+ ✓ ../../../qa/unit/core/CO-04/WorkflowsView.test.ts (3 tests) 938ms
    ✓ CP-CO-04-06 · Buscar workflows dentro de carpetas (2)
+     ✓ WorkflowsView (1)
+       ✓ filters (1)
+         ✓ should set search filter based on query parameters 322ms
      ✓ Folders (1)
        ✓ entering a folder from search results (1)
-         ✓ should clear the search when opening a folder from search results 340ms
- ✓ ../../../qa/unit/workflows/WF-05/DuplicateWorkflowDialog.test.ts (6 tests) 810ms
-   ✓ CP-WF-05-05 · Duplicar con nombre vacío, repetido y muy largo (4)
-     ✓ acepta un nombre en el límite de longitud y limita la entrada al máximo 446ms
- ✓ ../../../qa/unit/credentials/CR-04/NodeCredentials.test.ts (4 tests) 843ms
+         ✓ should clear the search when opening a folder from search results 396ms
+ ✓ ../../../qa/unit/executions/EX-02/ExecutionsFilter.test.ts (1 test) 935ms
+   ✓ CP-EX-02-05 · Limpiar filtros (1)
+     ✓ state change 931ms
+ ✓ ../../../qa/unit/core/CO-05/DeleteFolderModal.test.ts (7 tests) 942ms
+ ✓ ../../../qa/unit/credentials/CR-04/NodeCredentials.test.ts (4 tests) 823ms
    ✓ CP-CR-04-01 · Seleccionar una credencial existente (1)
      ✓ onCredentialSelected (1)
-       ✓ should call assignCredentialToMatchingNodes after selecting credentials 404ms
- ✓ ../../../qa/unit/executions/EX-02/ExecutionsFilter.test.ts (1 test) 802ms
-   ✓ CP-EX-02-05 · Limpiar filtros (1)
-     ✓ state change 798ms
- ✓ ../../../qa/unit/credentials/CR-02/TemplatedAuthSimpleView.test.ts (2 tests) 713ms
+       ✓ should call assignCredentialToMatchingNodes after selecting credentials 392ms
+ ✓ ../../../qa/unit/credentials/CR-02/TemplatedAuthSimpleView.test.ts (2 tests) 798ms
    ✓ CP-CR-02-02 · Secretos no visibles al reabrir (2)
-     ✓ displays the stored redacted sentinel as a full-length mask, like native credential fields 303ms
-     ✓ keeps the untouched `***` sentinel — not the display mask — when composing 406ms
- ✓ ../../../qa/unit/core/CO-05/DeleteFolderModal.test.ts (7 tests) 764ms
- ✓ ../../../qa/unit/credentials/CR-01/CredentialEdit.test.ts (3 tests) 701ms
+     ✓ displays the stored redacted sentinel as a full-length mask, like native credential fields 335ms
+     ✓ keeps the untouched `***` sentinel — not the display mask — when composing 459ms
+ ✓ ../../../qa/unit/workflows/WF-04/WorkflowHistoryList.test.ts (1 test) 333ms
+   ✓ CP-WF-04-01 · Cada guardado genera una versión (1)
+     ✓ should render list and delegate preview event 329ms
+ ✓ ../../../qa/unit/credentials/CR-01/CredentialEdit.test.ts (3 tests) 909ms
    ✓ CP-CR-01-01 · Crear credencial Header Auth válida (1)
      ✓ saving credentials (1)
-       ✓ calls onCredentialCreated with the newly created credential 364ms
- ✓ ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts (7 tests) 586ms
- ✓ ../../../qa/unit/credentials/CR-02/TypeToConfirmDialog.test.ts (6 tests) 450ms
- ✓ ../../../qa/unit/executions/EX-03/WorkflowExecutionsPreview.test.ts (5 tests) 448ms
- ✓ ../../../qa/unit/executions/EX-01/GlobalExecutionsList.test.ts (1 test) 481ms
-   ✓ CP-EX-01-05 · Carga incremental con más de 50 ejecuciones (1)
-     ✓ should stop offering "load more" once all executions are shown, even on a large instance 477ms
- ✓ ../../../qa/unit/workflows/WF-04/WorkflowHistory.test.ts (3 tests) 401ms
- ✓ ../../../qa/unit/credentials/CR-05/CredentialSharing.ee.test.ts (2 tests) 416ms
-   ✓ CP-CR-05-04 · Compartir con un miembro (con licencia) (1)
-     ✓ IAM-1435: projects used in but not shared with (1)
-       ✓ shares the project when the Share action is clicked 386ms
- ✓ ../../../qa/unit/executions/EX-05/LogDetailsPanel.test.ts (1 test) 431ms
+       ✓ calls onCredentialCreated with the newly created credential 419ms
+ ✓ ../../../qa/unit/executions/EX-05/LogDetailsPanel.test.ts (1 test) 466ms
    ✓ CP-EX-05-02 · Detalle de entrada y salida de un nodo (1)
-     ✓ should show name, run status, input, and output of the node 428ms
- ✓ ../../../qa/unit/credentials/CR-02/NodeCredentials.test.ts (1 test) 351ms
-   ✓ CP-CR-02-05 · Renombrar una credencial (1)
-     ✓ should refetch credentials when the dropdown opens so a rename from another tab shows up 347ms
- ✓ ../../../qa/unit/workflows/WF-05/ImportWorkflowUrlModal.test.ts (3 tests) 384ms
- ✓ ../../../qa/unit/credentials/CR-04/CredentialPicker.test.ts (2 tests) 380ms
- ✓ ../../../qa/unit/executions/EX-01/WorkflowExecutionsSidebar.test.ts (1 test) 362ms
+     ✓ should show name, run status, input, and output of the node 463ms
+ ✓ ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts (7 tests) 627ms
+ ✓ ../../../qa/unit/executions/EX-01/GlobalExecutionsListItem.test.ts (10 tests) 382ms
+ ✓ ../../../qa/unit/credentials/CR-02/TypeToConfirmDialog.test.ts (6 tests) 530ms
+ ✓ ../../../qa/unit/executions/EX-01/GlobalExecutionsList.test.ts (1 test) 577ms
+   ✓ CP-EX-01-05 · Carga incremental con más de 50 ejecuciones (1)
+     ✓ should stop offering "load more" once all executions are shown, even on a large instance 572ms
+ ✓ ../../../qa/unit/executions/EX-03/WorkflowExecutionsPreview.test.ts (5 tests) 543ms
+ ✓ ../../../qa/unit/executions/EX-01/WorkflowExecutionsSidebar.test.ts (1 test) 436ms
    ✓ CP-EX-01-05 · Carga incremental con más de 50 ejecuciones (1)
      ✓ infinite scroll sentinel (1)
-       ✓ should observe the sentinel when executions are present and more pages exist 359ms
- ✓ ../../../qa/unit/workflows/WF-01/useCanvasOperations.test.ts (13 tests) 348ms
- ✓ ../../../qa/unit/executions/EX-01/GlobalExecutionsListItem.test.ts (10 tests) 356ms
- ✓ ../../../qa/unit/credentials/CR-03/CredentialCard.test.ts (2 tests) 319ms
- ✓ ../../../qa/unit/core/CO-05/FolderCard.test.ts (1 test) 257ms
- ✓ ../../../qa/unit/executions/EX-03/GlobalExecutionsListItem.test.ts (2 tests) 307ms
- ✓ ../../../qa/unit/executions/EX-03/WorkflowExecutionsCard.test.ts (1 test) 272ms
- ✓ ../../../qa/unit/executions/EX-05/LogsViewRunData.test.ts (1 test) 297ms
- ✓ ../../../qa/unit/workflows/WF-04/WorkflowHistoryList.test.ts (1 test) 360ms
-   ✓ CP-WF-04-01 · Cada guardado genera una versión (1)
-     ✓ should render list and delegate preview event 357ms
- ✓ ../../../qa/unit/workflows/WF-03/WorkflowCard.test.ts (1 test) 285ms
- ✓ ../../../qa/unit/workflows/WF-03/WorkflowPublishModal.test.ts (3 tests) 261ms
- ✓ ../../../qa/unit/executions/EX-05/LogsOverviewPanel.test.ts (1 test) 290ms
- ✓ ../../../qa/unit/credentials/CR-03/ScopesNotice.test.ts (4 tests) 261ms
- ✓ ../../../qa/unit/executions/EX-04/StopManyExecutionsModal.test.ts (2 tests) 304ms
- ✓ ../../../qa/unit/workflows/WF-03/WorkflowHeaderDraftPublishActions.test.ts (3 tests) 207ms
- ✓ ../../../qa/unit/credentials/CR-03/CredentialConfig.test.ts (2 tests) 215ms
- ✓ ../../../qa/unit/core/CO-03/ImportCsvModal.test.ts (2 tests) 205ms
- ✓ ../../../qa/unit/core/CO-01/ColumnHeader.test.ts (2 tests) 222ms
- ✓ ../../../qa/unit/executions/EX-04/GlobalExecutionsListItem.test.ts (4 tests) 245ms
- ✓ ../../../qa/unit/executions/EX-04/NodeExecuteButton.test.ts (2 tests) 201ms
- ✓ ../../../qa/unit/credentials/CR-01/CredentialCard.test.ts (2 tests) 187ms
- ✓ ../../../qa/unit/credentials/CR-01/CredentialConfig.test.ts (1 test) 169ms
- ✓ ../../../qa/unit/workflows/WF-01/CanvasNodeToolbar.test.ts (1 test) 171ms
- ✓ ../../../qa/unit/core/CO-04/FolderBreadcrumbs.test.ts (2 tests) 156ms
- ✓ ../../../qa/unit/core/CO-03/DownloadDataTableModal.test.ts (2 tests) 139ms
- ✓ ../../../qa/unit/credentials/CR-01/CredentialsSelectModal.test.ts (3 tests) 134ms
- ✓ ../../../qa/unit/executions/EX-04/ExecutionStopAllText.test.ts (5 tests) 114ms
- ✓ ../../../qa/unit/workflows/WF-01/CanvasNodeDefault.test.ts (1 test) 98ms
- ✓ ../../../qa/unit/executions/EX-05/useLogsExecutionData.test.ts (1 test) 107ms
- ✓ ../../../qa/unit/workflows/WF-01/CanvasNodeStickyColorSelector.test.ts (1 test) 104ms
- ✓ ../../../qa/unit/executions/EX-03/ExecutionPreviewHost.test.ts (2 tests) 56ms
- ✓ ../../../qa/unit/core/CO-04/FolderCard.test.ts (1 test) 91ms
- ✓ ../../../qa/unit/credentials/CR-01/CredentialInputs.test.ts (1 test) 91ms
- ✓ ../../../qa/unit/workflows/WF-04/WorkflowVersionFormModal.test.ts (2 tests) 85ms
- ✓ ../../../qa/unit/workflows/WF-01/useHistoryHelper.test.ts (4 tests) 81ms
- ✓ ../../../qa/unit/executions/EX-04/ConcurrentExecutionsHeader.test.ts (1 test) 71ms
- ✓ ../../../qa/unit/credentials/CR-03/useCredentialOAuth.test.ts (3 tests) 72ms
- ✓ ../../../qa/unit/workflows/WF-05/useCanvasOperations.test.ts (1 test) 62ms
- ✓ ../../../qa/unit/executions/EX-01/executions.store.test.ts (7 tests) 58ms
- ✓ ../../../qa/unit/workflows/WF-03/WorkflowActivationConflictingWebhookModal.test.ts (1 test) 59ms
- ✓ ../../../qa/unit/workflows/WF-05/setupTemplate.store.test.ts (2 tests) 56ms
- ✓ ../../../qa/unit/executions/EX-04/useExecutionCommands.test.ts (1 test) 36ms
- ✓ ../../../qa/unit/executions/EX-03/useExecutionDebugging.test.ts (2 tests) 46ms
- ✓ ../../../qa/unit/credentials/CR-04/useNodeHelpers.test.ts (6 tests) 45ms
- ✓ ../../../qa/unit/workflows/WF-04/workflowHistory.store.test.ts (3 tests) 35ms
- ✓ ../../../qa/unit/workflows/WF-03/WorkflowActivationErrorMessage.test.ts (2 tests) 34ms
- ✓ ../../../qa/unit/executions/EX-03/executions.store.test.ts (2 tests) 32ms
- ✓ ../../../qa/unit/workflows/WF-05/templates.store.test.ts (4 tests) 31ms
- ✓ ../../../qa/unit/core/CO-04/folders.store.test.ts (5 tests) 26ms
- ✓ ../../../qa/unit/executions/EX-02/executionFilterToQueryFilter.test.ts (17 tests) 19ms
- ✓ ../../../qa/unit/core/CO-03/dataTable.store.test.ts (1 test) 16ms
- ✓ ../../../qa/unit/executions/EX-05/logs.utils.test.ts (4 tests) 20ms
+       ✓ should observe the sentinel when executions are present and more pages exist 431ms
+ ✓ ../../../qa/unit/workflows/WF-05/ImportWorkflowUrlModal.test.ts (3 tests) 421ms
+ ✓ ../../../qa/unit/workflows/WF-01/useCanvasOperations.test.ts (13 tests) 436ms
+ ✓ ../../../qa/unit/credentials/CR-04/CredentialPicker.test.ts (2 tests) 495ms
+   ✓ CP-CR-04-02 · Solo se listan credenciales compatibles (2)
+     ✓ should render all credentials of the specified type 359ms
+ ✓ ../../../qa/unit/workflows/WF-04/WorkflowHistory.test.ts (3 tests) 494ms
+ ✓ ../../../qa/unit/credentials/CR-05/CredentialSharing.ee.test.ts (2 tests) 501ms
+   ✓ CP-CR-05-04 · Compartir con un miembro (con licencia) (1)
+     ✓ IAM-1435: projects used in but not shared with (1)
+       ✓ shares the project when the Share action is clicked 462ms
+ ✓ ../../../qa/unit/credentials/CR-02/NodeCredentials.test.ts (1 test) 370ms
+   ✓ CP-CR-02-05 · Renombrar una credencial (1)
+     ✓ should refetch credentials when the dropdown opens so a rename from another tab shows up 366ms
+ ✓ ../../../qa/unit/core/CO-05/FolderCard.test.ts (1 test) 267ms
+ ✓ ../../../qa/unit/executions/EX-03/WorkflowExecutionsCard.test.ts (1 test) 294ms
+ ✓ ../../../qa/unit/executions/EX-05/LogsOverviewPanel.test.ts (1 test) 359ms
+   ✓ CP-EX-05-01 · Orden de los nodos en el árbol (1)
+     ✓ should render summary text and executed nodes if there is an execution 356ms
+ ✓ ../../../qa/unit/executions/EX-03/GlobalExecutionsListItem.test.ts (2 tests) 344ms
+ ✓ ../../../qa/unit/credentials/CR-03/CredentialCard.test.ts (2 tests) 339ms
+ ✓ ../../../qa/unit/executions/EX-05/LogsViewRunData.test.ts (1 test) 366ms
+   ✓ CP-EX-05-03 · Detalle de un nodo con error (1)
+     ✓ should display input data even when the root node finished with an error 363ms
+ ✓ ../../../qa/unit/executions/EX-04/StopManyExecutionsModal.test.ts (2 tests) 281ms
+ ✓ ../../../qa/unit/workflows/WF-03/WorkflowPublishModal.test.ts (3 tests) 277ms
+ ✓ ../../../qa/unit/workflows/WF-03/WorkflowCard.test.ts (1 test) 314ms
+   ✓ CP-WF-03-05 · Despublicar detiene el trigger (1)
+     ✓ Unpublish functionality (1)
+       ✓ should emit workflow:unpublished event when unpublish action is successful 310ms
+ ✓ ../../../qa/unit/credentials/CR-01/CredentialConfig.test.ts (1 test) 175ms
+ ✓ ../../../qa/unit/workflows/WF-03/WorkflowHeaderDraftPublishActions.test.ts (3 tests) 320ms
+ ✓ ../../../qa/unit/core/CO-01/ColumnHeader.test.ts (2 tests) 225ms
+ ✓ ../../../qa/unit/core/CO-03/ImportCsvModal.test.ts (2 tests) 222ms
+ ✓ ../../../qa/unit/workflows/WF-01/CanvasNodeToolbar.test.ts (1 test) 246ms
+ ✓ ../../../qa/unit/credentials/CR-03/CredentialConfig.test.ts (2 tests) 219ms
+ ✓ ../../../qa/unit/executions/EX-04/NodeExecuteButton.test.ts (2 tests) 235ms
+ ✓ ../../../qa/unit/executions/EX-04/GlobalExecutionsListItem.test.ts (4 tests) 205ms
+ ✓ ../../../qa/unit/core/CO-04/FolderBreadcrumbs.test.ts (2 tests) 177ms
+ ✓ ../../../qa/unit/credentials/CR-01/CredentialCard.test.ts (2 tests) 183ms
+ ✓ ../../../qa/unit/core/CO-03/DownloadDataTableModal.test.ts (2 tests) 178ms
+ ✓ ../../../qa/unit/credentials/CR-03/ScopesNotice.test.ts (3 tests) 135ms
+ ✓ ../../../qa/unit/executions/EX-05/useLogsExecutionData.test.ts (1 test) 120ms
+ ✓ ../../../qa/unit/executions/EX-04/ExecutionStopAllText.test.ts (5 tests) 164ms
+ ✓ ../../../qa/unit/workflows/WF-03/WorkflowActivationConflictingWebhookModal.test.ts (1 test) 64ms
+ ✓ ../../../qa/unit/workflows/WF-01/CanvasNodeStickyColorSelector.test.ts (1 test) 116ms
+ ✓ ../../../qa/unit/core/CO-04/FolderCard.test.ts (1 test) 112ms
+ ✓ ../../../qa/unit/credentials/CR-01/CredentialsSelectModal.test.ts (2 tests) 121ms
+ ✓ ../../../qa/unit/executions/EX-04/ConcurrentExecutionsHeader.test.ts (1 test) 75ms
+ ✓ ../../../qa/unit/workflows/WF-01/useHistoryHelper.test.ts (4 tests) 83ms
+ ✓ ../../../qa/unit/workflows/WF-04/WorkflowVersionFormModal.test.ts (2 tests) 108ms
+ ✓ ../../../qa/unit/workflows/WF-01/CanvasNodeDefault.test.ts (1 test) 106ms
+ ✓ ../../../qa/unit/credentials/CR-01/CredentialInputs.test.ts (1 test) 114ms
+ ✓ ../../../qa/unit/executions/EX-01/executions.store.test.ts (7 tests) 74ms
+ ✓ ../../../qa/unit/workflows/WF-05/useCanvasOperations.test.ts (1 test) 67ms
+ ✓ ../../../qa/unit/credentials/CR-03/useCredentialOAuth.test.ts (3 tests) 95ms
+ ✓ ../../../qa/unit/executions/EX-03/ExecutionPreviewHost.test.ts (2 tests) 51ms
+ ✓ ../../../qa/unit/workflows/WF-05/setupTemplate.store.test.ts (2 tests) 89ms
+ ✓ ../../../qa/unit/executions/EX-03/useExecutionDebugging.test.ts (2 tests) 62ms
+ ✓ ../../../qa/unit/credentials/CR-04/useNodeHelpers.test.ts (6 tests) 53ms
+ ✓ ../../../qa/unit/workflows/WF-04/workflowHistory.store.test.ts (3 tests) 39ms
+ ✓ ../../../qa/unit/executions/EX-03/executions.store.test.ts (2 tests) 35ms
+ ✓ ../../../qa/unit/executions/EX-04/useExecutionCommands.test.ts (1 test) 38ms
+ ✓ ../../../qa/unit/workflows/WF-03/WorkflowActivationErrorMessage.test.ts (2 tests) 36ms
+ ✓ ../../../qa/unit/workflows/WF-05/templates.store.test.ts (4 tests) 50ms
+ ✓ ../../../qa/unit/core/CO-04/folders.store.test.ts (5 tests) 32ms
+ ✓ ../../../qa/unit/executions/EX-05/logs.utils.test.ts (4 tests) 27ms
+ ✓ ../../../qa/unit/executions/EX-02/executionFilterToQueryFilter.test.ts (17 tests) 18ms
+ ✓ ../../../qa/unit/core/CO-05/folders.store.test.ts (1 test) 16ms
  ✓ ../../../qa/unit/core/CO-01/dataTable.store.columns.test.ts (2 tests) 19ms
- ✓ ../../../qa/unit/core/CO-01/dataTable.store.test.ts (1 test) 20ms
- ✓ ../../../qa/unit/workflows/WF-04/useWorkflowDiff.test.ts (3 tests) 16ms
- ✓ ../../../qa/unit/core/CO-05/folders.store.test.ts (1 test) 15ms
- ✓ ../../../qa/unit/executions/EX-04/useNodeExecution.test.ts (1 test) 15ms
- ✓ ../../../qa/unit/core/CO-04/useFolders.test.ts (2 tests) 11ms
- ✓ ../../../qa/unit/core/CO-02/dataTable.store.test.ts (1 test) 15ms
- ✓ ../../../qa/unit/core/CO-02/useDataTableOperations.test.ts (2 tests) 12ms
+ ✓ ../../../qa/unit/core/CO-02/dataTable.store.test.ts (1 test) 16ms
+ ✓ ../../../qa/unit/core/CO-05/useFolders.test.ts (1 test) 14ms
  ✓ ../../../qa/unit/core/CO-02/useDataTableColumnFilters.test.ts (2 tests) 12ms
- ✓ ../../../qa/unit/core/CO-05/useFolders.test.ts (1 test) 12ms
+ ✓ ../../../qa/unit/core/CO-03/dataTable.store.test.ts (1 test) 18ms
+ ✓ ../../../qa/unit/workflows/WF-04/useWorkflowDiff.test.ts (3 tests) 25ms
  ✓ ../../../qa/unit/core/CO-02/columnUtils.test.ts (4 tests) 10ms
- ✓ ../../../qa/unit/core/CO-02/useAgGrid.test.ts (1 test) 9ms
- ✓ ../../../qa/unit/executions/EX-03/executions.utils.test.ts (2 tests) 8ms
+ ✓ ../../../qa/unit/core/CO-02/useDataTableOperations.test.ts (2 tests) 13ms
+ ✓ ../../../qa/unit/core/CO-01/dataTable.store.test.ts (1 test) 19ms
+ ✓ ../../../qa/unit/executions/EX-04/useNodeExecution.test.ts (1 test) 23ms
+ ✓ ../../../qa/unit/core/CO-02/useAgGrid.test.ts (1 test) 12ms
+ ✓ ../../../qa/unit/core/CO-04/useFolders.test.ts (2 tests) 11ms
+ ✓ ../../../qa/unit/executions/EX-03/executions.utils.test.ts (2 tests) 9ms
  ✓ ../../../qa/unit/workflows/WF-03/useWorkflowActivate.test.ts (1 test) 9ms
- ✓ ../../../qa/unit/executions/EX-02/executions.utils.test.ts (1 test) 9ms
  ↓ ../../../qa/unit/core/sin-equivalente-unitario.test.ts (8 tests | 8 todo)
  ↓ ../../../qa/unit/credentials/sin-equivalente-unitario.test.ts (6 tests | 6 todo)
  ↓ ../../../qa/unit/executions/sin-equivalente-unitario.test.ts (2 tests | 2 todo)
+ ✓ ../../../qa/unit/executions/EX-02/executions.utils.test.ts (1 test) 12ms
  ↓ ../../../qa/unit/workflows/sin-equivalente-unitario.test.ts (4 tests | 4 todo)
 
  Test Files  91 passed | 4 skipped (95)
-      Tests  265 passed | 21 todo (286)
-   Start at  04:53:03
-   Duration  212.06s (import 51%, transform 19%, setup 10%, tests 10%, environment 9%, worker 1%)
+      Tests  263 passed | 21 todo (284)
+   Start at  17:04:54
+   Duration  238.24s (import 52%, transform 19%, setup 10%, tests 10%, environment 9%, worker 1%)
 
-     Import  3460 modules were evaluated 167058 times · 194.97s total, 51% of tracked time
-             ~93.66s faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+     Import  3357 modules were evaluated 159156 times · 221.36s total, 52% of tracked time
+             ~106.26s faster with isolate: false — shared modules are evaluated once per worker instead of once per file
              learn more: https://vitest.dev/guide/improving-performance#test-isolation
 
 JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/results.json
@@ -197,7 +211,7 @@ JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   51.69 |    38.81 |   51.03 |   52.63 |
+All files          |   51.46 |    38.59 |   50.95 |    52.4 |
  app/components    |   47.38 |    32.25 |   43.54 |   48.61 |
   ...uteButton.vue |   67.85 |    51.66 |   69.23 |      75 | ...16,129-132,153
   WorkflowCard.vue |   41.98 |    24.84 |   36.73 |   42.43 | ...74,680,788-800
@@ -209,8 +223,8 @@ All files          |   51.69 |    38.81 |   51.03 |   52.63 |
   ...eExecution.ts |   50.29 |    42.85 |   71.42 |   51.94 | ...79-384,400-456
   ...odeHelpers.ts |   46.53 |    33.96 |   45.45 |   47.41 | ...1070,1079-1090
   ...owActivate.ts |   31.25 |     3.89 |   21.42 |      32 | ...02-310,348-354
- app/views         |   39.97 |    27.43 |    30.6 |   41.55 |
-  ...flowsView.vue |   39.97 |    27.43 |    30.6 |   41.55 | ...2603-2609,2649
+ app/views         |   39.29 |    26.55 |   30.16 |   40.86 |
+  ...flowsView.vue |   39.29 |    26.55 |   30.16 |   40.86 | ...2529,2543,2583
  ...core/dataTable |   36.51 |    16.98 |   21.42 |    37.8 |
   ...able.store.ts |   36.51 |    16.98 |   21.42 |    37.8 | ...29-437,445-446
  ...ble/components |    59.4 |    34.23 |   45.45 |   62.68 |
@@ -235,24 +249,24 @@ All files          |   51.69 |    38.81 |   51.03 |   52.63 |
   ...lderModal.vue |   71.83 |    47.05 |   60.71 |   72.51 | ...41,450,569-662
  ...rs/composables |   55.38 |    49.05 |   72.72 |   63.15 |
   useFolders.ts    |   55.38 |    49.05 |   72.72 |   63.15 | ...87-102,117,153
- ...als/components |   53.75 |    40.24 |   54.07 |   54.71 |
+ ...als/components |   51.64 |    38.19 |   53.36 |   52.11 |
   ...ntialCard.vue |   61.44 |     56.6 |   62.96 |   61.53 | ...44-247,274-283
-  ...lectModal.vue |      80 |    69.44 |      75 |    82.6 | ...02,236,263,273
-  ...edentials.vue |   48.41 |    36.82 |   48.27 |   49.07 | ...1986,2038-2135
-  ScopesNotice.vue |     100 |       50 |     100 |     100 | 20-42
- ...CredentialEdit |   57.22 |    48.09 |   55.97 |    58.4 |
-  ...ialConfig.vue |   65.69 |    55.98 |   56.57 |   66.66 | ...21,735,777-801
-  ...ntialEdit.vue |   49.54 |     42.2 |   54.71 |   50.89 | ...1789,1888-1889
+  ...lectModal.vue |   81.81 |     62.5 |      80 |   80.95 | 33-34,69-99
+  ...edentials.vue |   46.69 |    35.71 |   48.14 |   47.02 | ...1858,1911-1992
+  ScopesNotice.vue |     100 |       75 |     100 |     100 | 20
+ ...CredentialEdit |   56.81 |    47.69 |    55.9 |   58.11 |
+  ...ialConfig.vue |   66.66 |    55.98 |   58.66 |   67.74 | ...20,734,776-800
+  ...ntialEdit.vue |   48.43 |    41.32 |   52.94 |      50 | ...1756,1849-1850
   ...ialInputs.vue |   94.44 |    78.43 |      75 |   94.44 | 78
   ...haring.ee.vue |   80.58 |    51.31 |    72.5 |   84.78 | ...81-312,322-330
   ...impleView.vue |   55.68 |    39.18 |   31.91 |      55 | ...23,275,292-438
   ...irmDialog.vue |   86.36 |       80 |   83.33 |   88.88 | 43,64
  ...edentialPicker |   42.85 |    20.37 |    40.9 |   42.16 |
   ...ialPicker.vue |   42.85 |    20.37 |    40.9 |   42.16 | ...11-214,260-279
- ...ls/composables |   37.31 |    27.51 |   33.33 |    38.5 |
-  ...ntialOAuth.ts |   37.31 |    27.51 |   33.33 |    38.5 | ...29,537,544-548
- ...dentials/views |   61.76 |    31.39 |   41.86 |    63.2 |
-  ...tialsView.vue |   61.76 |    31.39 |   41.86 |    63.2 | ...61-364,384-415
+ ...ls/composables |   37.68 |    28.67 |   33.33 |   38.91 |
+  ...ntialOAuth.ts |   37.68 |    28.67 |   33.33 |   38.91 | ...23,531,538-542
+ ...dentials/views |    60.9 |    30.48 |   40.47 |   62.29 |
+  ...tialsView.vue |    60.9 |    30.48 |   40.47 |   62.29 | ...54-357,377-408
  ...ion/executions |   51.12 |    36.09 |      50 |   51.19 |
   ...ions.store.ts |   68.83 |    57.53 |   55.26 |   68.96 | ...03-370,396-412
   ...ions.utils.ts |   33.75 |    24.24 |   41.66 |   33.78 | ...42-433,440-551
@@ -263,10 +277,10 @@ All files          |   51.69 |    38.81 |   51.03 |   52.63 |
  ...ponents/global |   61.29 |    64.28 |   59.01 |   61.32 |
   ...tionsList.vue |   46.45 |    42.46 |   43.58 |   46.77 | ...46,365,450-471
   ...sListItem.vue |   93.22 |    94.33 |   86.36 |   92.98 | 216,252-257,331
- ...nents/workflow |   63.38 |    41.82 |   58.03 |   62.79 |
+ ...nents/workflow |   63.73 |    42.78 |   58.92 |   63.17 |
   ...eviewHost.vue |   76.08 |    54.54 |   83.33 |      75 | ...,83,97-100,136
   ...tionsCard.vue |    82.5 |    35.29 |   70.83 |      80 | ...51,192,198-200
-  ...nsPreview.vue |   55.55 |    39.44 |      48 |   56.91 | ...92-444,470-483
+  ...nsPreview.vue |   56.29 |    41.28 |      50 |   57.72 | ...74,396-448,474
   ...nsSidebar.vue |   58.73 |    46.51 |   53.84 |   56.66 | ...59,168,192-224
  ...ns/composables |   63.95 |    51.42 |   56.25 |   64.63 |
   ...nDebugging.ts |   63.95 |    51.42 |   56.25 |   64.63 | ...64,187,205-220
@@ -293,7 +307,7 @@ All files          |   51.69 |    38.81 |   51.03 |   52.63 |
   ...hookModal.vue |   86.66 |       70 |   91.66 |   86.66 | 36,42,54,66
   ...lishModal.vue |   68.31 |    52.17 |    60.6 |   68.75 | ...09,326,331-343
  ...rkflowSettings |   70.73 |    56.13 |   59.91 |   71.93 |
-  ...wSettings.vue |   70.73 |    56.13 |   59.91 |   71.93 | ...1866-1921,1939
+  ...wSettings.vue |   70.73 |    56.13 |   59.91 |   71.93 | ...1859-1914,1932
  ...lows/templates |   44.15 |    28.57 |   33.87 |   44.92 |
   ...late.store.ts |    45.9 |    31.25 |   55.55 |    45.9 | ...50-167,177-228
   ...ates.store.ts |   43.62 |    27.94 |   30.18 |   44.61 | ...40-442,450-462
@@ -309,8 +323,8 @@ All files          |   51.69 |    38.81 |   51.03 |   52.63 |
 -------------------|---------|----------|---------|---------|-------------------
 
 =============================== Coverage summary ===============================
-Statements   : 51.69% ( 5687/11001 )
-Branches     : 38.81% ( 3081/7938 )
-Functions    : 51.03% ( 1431/2804 )
-Lines        : 52.63% ( 5426/10308 )
+Statements   : 51.46% ( 5604/10888 )
+Branches     : 38.59% ( 3020/7825 )
+Functions    : 50.95% ( 1411/2769 )
+Lines        : 52.4% ( 5349/10208 )
 ================================================================================

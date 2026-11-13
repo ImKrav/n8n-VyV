@@ -52,15 +52,15 @@ stderr | ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-03 · 
 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
 
  FAIL  ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > deshabilita «Create» con un nombre de solo espacios
-Error: [2mexpect([22m[31melement[39m[2m).toBeDisabled()[22m
+Error: expect(element).toBeDisabled()
 
 Received element is not disabled:
-  [31m<button
+  <button
   aria-live="polite"
   class="button button solid large"
   data-test-id="proceed-from-select-button"
   type="button"
-/>[39m
+/>
  ❯ ../../../qa/unit/core/CO-01/AddDataTableModal.test.ts:140:26
     138|
     139|   // Assert

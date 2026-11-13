@@ -1,83 +1,53 @@
 /**
- * CR-03 · Credenciales OAuth2 — scopes mostrados.
- * Origen: packages/frontend/editor-ui/src/features/credentials/components/ScopesNotice.test.ts (archivo movido completo: sus dos pruebas son de este caso)
+ * CR-03 · Credenciales OAuth2 — scopes mostrados (prueba nueva para n8n 2.47).
+ * La prueba original (ScopesNotice.test.ts) solo existe en n8n 2.48; en 2.47 el
+ * componente muestra un N8nNotice que se expande con la lista de scopes.
+ *
+ * Dobles de prueba:
+ * - Stub  store de credenciales (createTestingPinia): un tipo OAuth2 con nombre fijo.
  */
+import { createComponentRenderer } from '@/__tests__/render';
+import ScopesNotice from '@/features/credentials/components/ScopesNotice.vue';
+import { useCredentialsStore } from '@/features/credentials/credentials.store';
 import { createTestingPinia } from '@pinia/testing';
 import userEvent from '@testing-library/user-event';
-
-import { createComponentRenderer } from '@/__tests__/render';
-import { useCredentialsStore } from '@/features/credentials/credentials.store';
-import ScopesNotice from '@/features/credentials/components/ScopesNotice.vue';
 
 const renderComponent = createComponentRenderer(ScopesNotice);
 
 describe('CP-CR-03-04 · Scopes mostrados coinciden con los solicitados', () => {
-	describe.each([
-		{ scopeCount: '1 scope', scopes: ['read:items'] },
-		{ scopeCount: '2 scopes', scopes: ['read:items', 'write:items'] },
-	])('ScopesNotice ($scopeCount)', ({ scopeCount, scopes }) => {
-		beforeEach(() => {
-			createTestingPinia();
-			useCredentialsStore().state.credentialTypes = {
-				testOAuth2Api: {
-					name: 'testOAuth2Api',
-					displayName: 'Test OAuth2 API',
-					properties: [],
-				},
-			};
+	beforeEach(() => {
+		createTestingPinia();
+		useCredentialsStore().state.credentialTypes = {
+			testOAuth2Api: { name: 'testOAuth2Api', displayName: 'Test OAuth2 API', properties: [] },
+		};
+	});
+
+	it.each([
+		{ scopes: ['read:items'], summary: '1 scope available for Test credentials' },
+		{ scopes: ['read:items', 'write:items'], summary: '2 scopes available for Test credentials' },
+	])('resume $scopes.length scope(s) para el tipo de credencial', ({ scopes, summary }) => {
+		// Arrange / Act
+		const { container } = renderComponent({
+			props: { activeCredentialType: 'testOAuth2Api', scopes },
 		});
 
-		it('reveals the available scopes when clicking the scope count', async () => {
-			const { getByText, getByRole } = renderComponent({
-				props: {
-					activeCredentialType: 'testOAuth2Api',
-					scopes,
-				},
-			});
+		// Assert
+		expect(container).toHaveTextContent(summary);
+	});
 
-			expect(getByRole('region')).not.toHaveTextContent('read:items');
-			expect(getByRole('region')).not.toHaveTextContent('write:items');
-
-			await userEvent.click(getByText(scopeCount, { exact: false }));
-
-			for (const scope of scopes) {
-				expect(getByRole('region')).toHaveTextContent(scope);
-			}
-			expect(getByText('Show less')).toBeVisible();
-
-			await userEvent.click(getByText('Show less'));
-
-			for (const scope of scopes) {
-				expect(getByRole('region')).not.toHaveTextContent(scope);
-			}
-			expect(getByText(`${scopeCount} available`)).toBeVisible();
+	it('al expandir muestra cada scope solicitado (la última parte de una URL de scope)', async () => {
+		// Arrange
+		const scopes = ['https://www.googleapis.com/auth/drive.readonly', 'read:items'];
+		const { container } = renderComponent({
+			props: { activeCredentialType: 'testOAuth2Api', scopes },
 		});
 
-		// NODE-5622: Users expect the "scopes available" control to reveal the scope list.
-		it('reveals the available scopes when clicking the available label', async () => {
-			const { getByText, getByRole } = renderComponent({
-				props: {
-					activeCredentialType: 'testOAuth2Api',
-					scopes,
-				},
-			});
+		// Act
+		await userEvent.click(container.querySelector('a[data-key="toggle-expand"]')!);
 
-			expect(getByRole('region')).not.toHaveTextContent('read:items');
-			expect(getByRole('region')).not.toHaveTextContent('write:items');
-
-			await userEvent.click(getByText(/available/));
-
-			for (const scope of scopes) {
-				expect(getByRole('region')).toHaveTextContent(scope);
-			}
-			expect(getByText('Show less')).toBeVisible();
-
-			await userEvent.click(getByText(/available/));
-
-			for (const scope of scopes) {
-				expect(getByRole('region')).not.toHaveTextContent(scope);
-			}
-			expect(getByText(`${scopeCount} available`)).toBeVisible();
-		});
+		// Assert
+		expect(container).toHaveTextContent('drive.readonly');
+		expect(container).toHaveTextContent('read:items');
+		expect(container).not.toHaveTextContent('https://www.googleapis.com/auth/');
 	});
 });

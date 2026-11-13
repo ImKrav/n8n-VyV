@@ -1,40 +1,43 @@
-# QA · Pruebas unitarias y TDD · Módulos 1–4
+# QA · Suite unitaria del plan de pruebas · Módulos 1–4
 
-Alcance: las 5 funcionalidades de cada uno de estos módulos del documento *«n8n-VyV — Funcionalidades por módulo para QA»*:
+Esta carpeta contiene la suite unitaria que ejecuta el **plan de pruebas de n8n-VyV** (carpeta «Final VyV»: `PLAN DE PRUEBAS.docx`, `CASOS Y ESCENARIOS DE PRUEBAS.xlsx` y `MATRIZ DE TRAZABILIDAD.xlsx`). El sistema bajo prueba es **n8n 2.47.0 (commit `01bd57cdd`)**, la versión que congela el plan.
 
-| # | Módulo | Funcionalidades |
-| --- | --- | --- |
-| 1 | Workflows | WF-01 … WF-05 |
-| 2 | Ejecuciones | EX-01 … EX-05 |
-| 3 | Credenciales | CR-01 … CR-05 |
-| 4 | Core: Data tables y carpetas | CO-01 … CO-05 |
+**Resultado (n8n 2.47.0):** 91 archivos y **263 pruebas en verde**, más **21 `it.todo`** para los casos sin equivalente unitario. Los **142 casos** del plan (CP-WF-01-01 … CP-CO-05-08) aparecen en la suite: 122 con pruebas y 20 solo como `todo` con su motivo.
 
-**Resultado:** 50 archivos de prueba y **1090 pruebas, todas en verde**. 43 archivos (1055 pruebas) son pruebas del repo **reutilizadas tal cual**. 7 archivos (35 pruebas) son **nuevos** y cubren los componentes que no tenían ninguna prueba. La cobertura total del código seleccionado es **76,9 % de líneas**.
+| | Pruebas |
+| --- | ---: |
+| Movidas desde el repositorio (quitadas de su archivo original) | 169 |
+| Nuevas (no existían) | 94 |
+| `it.todo` (sin equivalente unitario) | 21 |
 
-## Contenido de la carpeta
+## Estructura
 
 ```
 qa/
 ├── README.md            este informe
-├── run-tests.sh         ejecuta la suite (nuevas + reutilizadas)
-├── vitest.config.mts    extiende la config de Vitest de editor-ui
-├── suite.mts            mapa funcionalidad → pruebas reutilizadas, y archivos medidos por la cobertura
-├── unit/                pruebas nuevas, una por hueco detectado
-│   ├── workflows/       WF-03, WF-05
-│   ├── executions/      EX-02 (TDD), EX-04
-│   ├── credentials/     CR-02
-│   └── core/            CO-01, CO-05
-└── evidence/            salidas reales de las ejecuciones
-    ├── tdd-1-red.log        fase RED
-    ├── tdd-2-green.log      fase GREEN
-    ├── tdd-3-refactor.log   fase REFACTOR
-    ├── full-run.log         suite completa con cobertura
-    └── coverage-summary.json
+├── run-tests.sh         ejecuta la suite
+├── vitest.config.mts    extiende la config de Vitest de editor-ui; incluye solo qa/unit
+├── suite.mts            módulos de producción medidos por la cobertura
+├── unit/
+│   ├── workflows/WF-01 … WF-05/        un archivo por archivo de origen, un describe por CP
+│   ├── executions/EX-01 … EX-05/
+│   ├── credentials/CR-01 … CR-05/
+│   ├── core/CO-01 … CO-05/
+│   └── <módulo>/sin-equivalente-unitario.test.ts   casos del plan que solo admiten E2E / integración
+└── evidence/            salidas reales: ciclos TDD, ejecución completa y cobertura
 ```
+
+Cada prueba está dentro de un `describe('CP-XX-NN-MM · <caso del plan>')`, así el informe de Vitest se lee como la matriz de trazabilidad.
+
+## Cómo se construyó
+
+- **Pruebas movidas.** Para cada caso se buscó la prueba de editor-ui que verifica la misma condición. Esa prueba se **movió** a `qa/` sin reescribirla, con la preparación que necesita (imports, `vi.mock`, `beforeEach` y helpers del archivo original), y se **borró de su archivo original**. La cabecera de cada archivo indica su origen (`Origen: …`). Dos archivos de origen quedaron vacíos y se borraron (`ScopesNotice.test.ts`, `StopManyExecutionsModal.test.ts`).
+- **Pruebas nuevas.** Donde no existía prueba se escribió una nueva, con AAA, FIRST, aserciones fluidas y dobles de prueba (mock, stub, fake, spy, dummy). En los archivos mixtos, las nuevas van después del comentario «Pruebas nuevas (no existían en el repositorio)».
+- **Sin equivalente unitario.** Rendimiento, reinicio del servidor, base de datos, OAuth con un proveedor real, permisos entre usuarios y análisis del CSV en el servidor quedan como `it.todo` con el motivo. Se cubren con las pruebas de sistema del plan.
 
 ## Cómo ejecutar
 
-Requisito: dependencias instaladas y paquetes de los que depende editor-ui compilados (`pnpm install` y `pnpm build`).
+Requisitos: `pnpm install` y compilar las dependencias de editor-ui (`pnpm --filter 'n8n-editor-ui^...' run build`).
 
 ```bash
 ./qa/run-tests.sh
@@ -48,247 +51,217 @@ Requisito: dependencias instaladas y paquetes de los que depende editor-ui compi
 ./qa/run-tests.sh CO-05
 ```
 
-- El script crea `qa/node_modules` como enlace a `packages/frontend/editor-ui/node_modules`. Así las pruebas de `qa/` resuelven los mismos paquetes que editor-ui. Git ignora ese enlace.
-- La raíz de Vitest es `packages/frontend/editor-ui`. Por eso se reutilizan su `setup.ts`, sus alias `@/…` y su entorno jsdom sin copiar nada.
-- El informe HTML de cobertura queda en `qa/coverage/index.html` (Git lo ignora; se regenera con el segundo comando).
-- El script sube el heap de Node a 8 GB porque `WorkflowSettings.test.ts` (reutilizada) agota el heap por defecto, también cuando se ejecuta con la config original del repo.
+El informe HTML de cobertura queda en `qa/coverage/index.html` (Git lo ignora). El script crea `qa/node_modules` como enlace a los paquetes de editor-ui y sube el heap de Node a 8 GB.
 
-## 1. Demostración de TDD · EX-02 Filtros de ejecuciones
+## TDD
 
-**Defecto.** En la lista de ejecuciones el usuario puede elegir una fecha de fin anterior a la de inicio: los dos `ElDatePicker` no lo impiden. `executionFilterToQueryFilter()` enviaba entonces `startedAfter > startedBefore` a la API, y la lista salía **siempre vacía**, sin ningún aviso. Es el caso «fin anterior al inicio» que el documento pide probar en EX-02.
+Se hicieron dos ciclos rojo → verde → refactor con evidencia en `evidence/`:
 
-**Mejora.** La función normaliza el rango: el extremo menor siempre va a `startedAfter`. Se corrige en la función compartida (la usa `executions.store.ts`), no en el componente.
-
-Prueba: [`unit/executions/EX-02.executionFilterToQueryFilter.test.ts`](unit/executions/EX-02.executionFilterToQueryFilter.test.ts)
-
-### 🔴 RED: la prueba falla antes de tocar el código
-
-```
-FAIL  EX-02 … > normaliza un rango invertido (fin anterior al inicio)
-AssertionError: expected '2026-01-31T23:59:59.000Z' to be '2026-01-01T00:00:00.000Z'
-FAIL  EX-02 … > normaliza un rango invertido cuando el date picker entrega objetos Date
-AssertionError: expected '2026-01-31T23:59:59.000Z' to be '2026-01-01T00:00:00.000Z'
-
-Tests  2 failed | 3 passed (5)
-```
-
-Fallan las 2 pruebas del comportamiento nuevo, por la razón esperada (el rango se envía invertido). Las 3 que pasan fijan el comportamiento que ya existía y que no se debe romper (rango válido, un solo extremo, sin fechas). Salida completa: [`evidence/tdd-1-red.log`](evidence/tdd-1-red.log).
-
-### 🟢 GREEN: el cambio mínimo que hace pasar la prueba
-
-```ts
-if (
-	filter.startDate &&
-	filter.endDate &&
-	new Date(filter.startDate).getTime() > new Date(filter.endDate).getTime()
-) {
-	queryFilter.startedAfter = filter.endDate;
-	queryFilter.startedBefore = filter.startDate;
-}
-```
-
-Se añadió debajo de las asignaciones existentes. Resultado: `68 passed (68)`: las 5 nuevas y las 63 de `executions.utils.test.ts`. Salida: [`evidence/tdd-2-green.log`](evidence/tdd-2-green.log).
-
-### 🔵 REFACTOR: sin asignar dos veces
-
-La versión GREEN asignaba las fechas y luego las sobrescribía. El refactor calcula el rango ordenado una sola vez:
-
-```diff
--	if (filter.startDate) {
--		queryFilter.startedAfter = filter.startDate;
-+	// The date pickers do not stop an end date before the start date, so swap an inverted range
-+	const [startedAfter, startedBefore] =
-+		filter.startDate && filter.endDate && new Date(filter.startDate) > new Date(filter.endDate)
-+			? [filter.endDate, filter.startDate]
-+			: [filter.startDate, filter.endDate];
-+
-+	if (startedAfter) {
-+		queryFilter.startedAfter = startedAfter;
- }
--	if (filter.endDate) {
--		queryFilter.startedBefore = filter.endDate;
-+	if (startedBefore) {
-+		queryFilter.startedBefore = startedBefore;
- }
-```
-
-Después del refactor siguen en verde las 5 pruebas nuevas, `executions.utils.test.ts` (63), `ExecutionsFilter.test.ts` (27) y `executions.store.test.ts` (17), que llama a la función. Salida: [`evidence/tdd-3-refactor.log`](evidence/tdd-3-refactor.log).
-
-Archivo cambiado: `packages/frontend/editor-ui/src/features/execution/executions/executions.utils.ts`. Es el único cambio fuera de `qa/`.
-
-## 2. Cómo se aplican AAA, FIRST, aserciones fluidas y Test Doubles
-
-### AAA (Arrange · Act · Assert)
-
-Cada prueba nueva marca las tres fases con comentarios. Cuando el «Act» es el propio render, se marca como `// Arrange / Act`. En CO-05 una prueba repite «Act / Assert» para mostrar que el botón sigue deshabilitado con un texto parecido y se habilita solo con el exacto.
-
-### FIRST
-
-| Principio | Cómo se cumple |
-| --- | --- |
-| **F**ast | Sin red, sin base de datos y sin backend. Las 35 pruebas nuevas tardan ≈ 2,4 s en total; la mayor parte es render de Vue. |
-| **I**ndependent | Cada prueba crea su propia Pinia (`createTestingPinia()`) y su propio render. Los mocks se limpian en `beforeEach` (`mockClear` / `mockReset`) y la config global usa `restoreMocks: true`. |
-| **R**epeatable | Fechas fijas (`2026-01-01…`), datos fijos y sin `Date.now()`. Las respuestas de la API vienen de stubs. |
-| **S**elf-validating | Solo aserciones `expect`. Nada de `console.log` ni revisión manual. |
-| **T**imely | EX-02 se escribió antes del código (ver §1). Las demás cubren huecos de código existente; se validaron por mutación (ver §5). |
-
-### Aserciones fluidas
-
-Se usan los matchers encadenables de Vitest y de `@testing-library/jest-dom`, que se leen como frases:
-
-```ts
-expect(confirmButton()).toBeDisabled();
-expect(query).not.toHaveProperty('startedAfter');
-expect(uiStore.openModal).toHaveBeenCalledExactlyOnceWith(STOP_MANY_EXECUTIONS_MODAL_KEY);
-expect(showMessage).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
-expect(container).toHaveTextContent('What should we do with the 2 folders and the 3 workflows in this folder?');
-```
-
-### Test Doubles
-
-| Tipo | Dónde | Qué hace |
-| --- | --- | --- |
-| **Mock** | `useTelemetry` (EX-04, WF-05, CO-01), `useToast` (WF-05, CO-01, CO-05), `useWorkflowSaving` (WF-05), `vue-router` (CO-01) | `vi.mock` reemplaza el módulo. La prueba **verifica la interacción**: argumentos y número de llamadas (`toHaveBeenCalledExactlyOnceWith`). |
-| **Stub** | Stores de Pinia con `createTestingPinia` (todas las de componentes) | Las acciones no ejecutan su lógica. Se les da una respuesta fija (`mockResolvedValue`, `mockRejectedValue`) para simular éxito, error 403 o nombre duplicado sin red. |
-| **Stub** | Componente `Modal` (WF-05, CO-01, CO-05), `useRoute` (CO-01, CO-05) | `Modal` solo expone sus slots, sin teleport ni animaciones. `useRoute` entrega un `projectId` fijo. |
-| **Fake** | `MoveToFolderDropdown` (CO-05) | Un botón que emite `location:selected` con la carpeta destino. Reemplaza un buscador real que necesitaría la API. |
-| **Spy** | `vi.spyOn(eventBus, 'emit')` (WF-05, CO-05), `emitted()` del componente (CR-02) | Usan el objeto real y registran las llamadas para verificarlas. |
-| **Dummy** | `execution(status)` en EX-04 | Ejecuciones mínimas: solo importa su `status`. |
-| **Sin dobles** | EX-02, WF-03 | Función pura y componente de presentación: no hace falta ningún doble. |
-
-## 3. Matriz de trazabilidad (20 funcionalidades)
-
-Se reutilizaron las pruebas que ya existían junto al código, sin copiarlas ni reescribirlas (lista en [`suite.mts`](suite.mts)). Solo se escribieron pruebas nuevas donde el componente indicado en el documento no tenía ninguna.
-
-| ID | Funcionalidad | Pruebas reutilizadas (`src/features/…`) | Pruebas nuevas (`qa/unit/…`) | Total |
-| --- | --- | --- | --- | --- |
-| WF-01 | Edición en el canvas | `Canvas` (94), `CanvasNode` (8), `CanvasEdgeToolbar` (9), `CanvasNodeStickyNote` (5) | — | 116 |
-| WF-02 | Configuración del workflow | `WorkflowSettings` (109) | — | 109 |
-| WF-03 | Publicar / activar | `WorkflowPublishModal` (11), `WorkflowActivationConflictingWebhookModal` (4) | `WF-03.WorkflowActivationErrorMessage` (2) | 17 |
-| WF-04 | Historial y diff | `workflowHistory/utils` (18), `useWorkflowHistoryVersionOptions` (2), `useWorkflowDiff` (20) | — | 40 |
-| WF-05 | Plantillas, importación y duplicado | `ImportWorkflowUrlModal` (6), `templateActions` (2), `templateTransforms` (8) | `WF-05.DuplicateWorkflowDialog` (5) | 21 |
-| EX-01 | Lista de ejecuciones | `GlobalExecutionsList` (5), `WorkflowExecutionsSidebar` (7) | — | 12 |
-| EX-02 | Filtros de ejecuciones | `ExecutionsFilter` (27), `executions.utils` (63) | `EX-02.executionFilterToQueryFilter` (5) · **TDD** | 95 |
-| EX-03 | Vista previa, reintento y borrado | `WorkflowExecutionsPreview` (30) | — | 30 |
-| EX-04 | Detener ejecuciones | `StopManyExecutionsModal` (2), `ConcurrentExecutionsHeader` (8) | `EX-04.ExecutionStopAllText` (5) | 15 |
-| EX-05 | Panel de logs | `LogsPanel` (30), `LogDetailsPanel` (19) | — | 49 |
-| CR-01 | Crear credencial | `CredentialTypeSelector` (5), `CredentialConfig` (52), `CredentialInputs` (10) | — | 67 |
-| CR-02 | Editar, renombrar y eliminar | `CredentialEdit` (83) | `CR-02.TypeToConfirmDialog` (6) | 89 |
-| CR-03 | OAuth2 | `ScopesNotice` (4), `useQuickConnect` (53) | — | 57 |
-| CR-04 | Uso desde un nodo | `NodeCredentials` (138), `CredentialsSelect` (21), `CredentialPicker` (5) | — | 164 |
-| CR-05 | Listado y compartir | `CredentialsView` (20), `CredentialCard` (36), `CredentialSharing.ee` (31) | — | 87 |
-| CO-01 | Crear data table y columnas | `AddColumnButton` (19), `ColumnHeader` (9) | `CO-01.AddDataTableModal` (5) | 33 |
-| CO-02 | Edición de filas | `DataTableTable` (11), `AddRowButton` (1) | — | 12 |
-| CO-03 | Importar y exportar CSV | `ImportCsvModal` (15), `DownloadDataTableModal` (4) | — | 19 |
-| CO-04 | Crear y navegar carpetas | `FolderCard` (10), `FolderBreadcrumbs` (6) | — | 16 |
-| CO-05 | Mover y eliminar carpetas | `MoveToFolderModal` (35) | `CO-05.DeleteFolderModal` (7) | 42 |
-| | **Total** | **43 archivos · 1055 pruebas** | **7 archivos · 35 pruebas** | **1090** |
-
-### Casos de las pruebas nuevas
-
-| Archivo | Casos |
-| --- | --- |
-| `EX-02` | rango válido sin cambios · rango invertido (strings) · rango invertido (`Date` del date picker) · solo fecha de fin · sin fechas |
-| `EX-04` | oculto si nada se puede detener · visible con `running`, `waiting` o `new` · el clic abre el modal y registra telemetría |
-| `CR-02` | botón deshabilitado sin texto · palabra con otras mayúsculas · palabra exacta con espacios · tecla Enter · sin confirmar mientras carga · cancelar |
-| `WF-03` | texto genérico + detalle del servidor · el HTML del servidor se escapa |
-| `WF-05` | propone un nombre único (nombre repetido) · rechaza nombre vacío o con solo espacios · duplica con el nombre recortado y webhooks nuevos · copia un workflow guardado sin `id`, `active` ni `parentFolder` · error 403 |
-| `CO-01` | «Create» deshabilitado con nombre vacío · crea desde cero y navega al detalle · crea con Enter · error del servidor (nombre duplicado) sin cerrar ni navegar · cancelar |
-| `CO-05` | título y conteo de contenido · deshabilitado sin elegir acción · texto «delete <nombre>» exacto · borrar y notificar a la lista · transferir a otra carpeta · transferir a la raíz del proyecto · error de la API |
-
-## 4. Resultados
-
-Ejecución final (`./qa/run-tests.sh --coverage.enabled --maxWorkers=2`, salida completa en [`evidence/full-run.log`](evidence/full-run.log)):
-
-```
-Test Files  50 passed (50)
-     Tests  1090 passed (1090)
-```
-
-## 5. Cobertura del código seleccionado
-
-El «código seleccionado» son los 38 archivos de producción que el documento indica para estas 20 funcionalidades (lista `selectedSources` en [`suite.mts`](suite.mts)). Proveedor: V8.
-
-| Total | Sentencias | Ramas | Funciones | Líneas |
-| --- | --- | --- | --- | --- |
-| **38 archivos** | **76,24 %** (3857/5059) | **68,93 %** (2434/3531) | **71,19 %** (1152/1618) | **76,89 %** (3625/4714) |
-
-### Archivos que cubren las pruebas nuevas (antes: sin ninguna prueba)
-
-| Archivo | Líneas | Ramas |
-| --- | --- | --- |
-| `execution/executions/components/ExecutionStopAllText.vue` | 100 % | 100 % |
-| `workflows/components/WorkflowActivationErrorMessage.vue` | 100 % | 100 % |
-| `core/folders/components/DeleteFolderModal.vue` | 93,3 % | 71,9 % |
-| `workflows/components/DuplicateWorkflowDialog.vue` | 89,4 % | 52,9 % |
-| `credentials/components/CredentialEdit/TypeToConfirmDialog.vue` | 88,9 % | 80,0 % |
-| `core/dataTable/components/AddDataTableModal.vue` | 46,8 % | 15,9 % |
-| `execution/executions/executions.utils.ts` (TDD; las pruebas recorren las dos ramas del bloque cambiado) | 78,4 % | 73,5 % |
-
-`AddDataTableModal.vue` queda bajo porque las pruebas nuevas cubren solo «crear desde cero» (CO-01). La rama «importar CSV» de ese modal pertenece a CO-03.
-
-### Detalle por archivo
-
-| Archivo (`src/features/…`) | Sent. % | Ramas % | Func. % | Líneas % |
-| --- | --- | --- | --- | --- |
-| workflows/canvas/components/Canvas.vue | 60,22 | 57,04 | 50,56 | 61,25 |
-| workflows/canvas/components/elements/nodes/CanvasNode.vue | 76,59 | 61,70 | 54,76 | 75,00 |
-| workflows/canvas/components/elements/edges/CanvasEdgeToolbar.vue | 93,33 | 100 | 83,33 | 92,85 |
-| workflows/canvas/components/elements/nodes/render-types/CanvasNodeStickyNote.vue | 78,26 | 37,50 | 66,66 | 80,00 |
-| workflows/components/WorkflowSettings/WorkflowSettings.vue | 80,86 | 76,29 | 72,68 | 80,83 |
-| workflows/components/WorkflowPublishModal.vue | 78,21 | 72,46 | 75,75 | 78,12 |
-| workflows/components/WorkflowActivationConflictingWebhookModal.vue | 96,66 | 100 | 91,66 | 96,66 |
-| workflows/components/WorkflowActivationErrorMessage.vue | 100 | 100 | 100 | 100 |
-| workflows/workflowHistory/utils.ts | 80,00 | 46,15 | 66,66 | 78,57 |
-| workflows/workflowDiff/useWorkflowDiff.ts | 97,91 | 90,62 | 100 | 98,92 |
-| workflows/components/ImportWorkflowUrlModal.vue | 90,00 | 83,33 | 88,88 | 90,00 |
-| workflows/components/DuplicateWorkflowDialog.vue | 89,39 | 52,94 | 61,53 | 89,39 |
-| execution/executions/components/global/GlobalExecutionsList.vue | 53,54 | 50,68 | 64,10 | 54,03 |
-| execution/executions/components/workflow/WorkflowExecutionsSidebar.vue | 60,31 | 55,81 | 57,69 | 58,33 |
-| execution/executions/components/ExecutionsFilter.vue | 86,72 | 92,30 | 77,19 | 86,11 |
-| execution/executions/executions.utils.ts | 79,61 | 73,48 | 91,66 | 78,37 |
-| execution/executions/components/workflow/WorkflowExecutionsPreview.vue | 69,62 | 62,38 | 70,00 | 71,54 |
-| execution/executions/components/StopManyExecutionsModal.vue | 66,00 | 51,72 | 77,77 | 66,00 |
-| execution/executions/components/ExecutionStopAllText.vue | 100 | 100 | 100 | 100 |
-| execution/logs/components/LogsPanel.vue | 83,87 | 54,28 | 66,66 | 82,75 |
-| execution/logs/components/LogDetailsPanel.vue | 87,14 | 90,47 | 78,04 | 85,48 |
-| credentials/components/CredentialEdit/CredentialTypeSelector.vue | 87,50 | 85,71 | 80,00 | 85,71 |
-| credentials/components/CredentialEdit/CredentialEdit.vue | 77,28 | 72,62 | 85,84 | 78,60 |
-| credentials/components/CredentialEdit/TypeToConfirmDialog.vue | 86,36 | 80,00 | 83,33 | 88,88 |
-| credentials/components/ScopesNotice.vue | 100 | 50,00 | 100 | 100 |
-| credentials/components/NodeCredentials.vue | 85,69 | 79,05 | 87,35 | 86,66 |
-| credentials/components/CredentialsSelect.vue | 86,20 | 78,00 | 78,57 | 85,71 |
-| credentials/views/CredentialsView.vue | 81,61 | 60,46 | 69,76 | 81,60 |
-| credentials/components/CredentialCard.vue | 86,74 | 81,13 | 92,59 | 87,17 |
-| core/dataTable/components/AddDataTableModal.vue | 42,78 | 15,87 | 24,52 | 46,78 |
-| core/dataTable/components/dataGrid/AddColumnButton.vue | 88,46 | 77,19 | 92,59 | 89,18 |
-| core/dataTable/components/dataGrid/DataTableTable.vue | 63,76 | 45,45 | 34,61 | 63,07 |
-| core/dataTable/components/ImportCsvModal.vue | 90,29 | 75,92 | 82,75 | 92,47 |
-| core/dataTable/components/DownloadDataTableModal.vue | 100 | 100 | 100 | 100 |
-| core/folders/components/FolderCard.vue | 72,28 | 50,98 | 77,14 | 72,15 |
-| core/folders/components/FolderBreadcrumbs.vue | 62,02 | 48,33 | 50,00 | 61,84 |
-| core/folders/components/MoveToFolderModal.vue | 95,40 | 83,82 | 91,07 | 95,32 |
-| core/folders/components/DeleteFolderModal.vue | 92,30 | 71,92 | 91,66 | 93,33 |
-
-### Las pruebas nuevas detectan fallos (prueba de mutación)
-
-Para comprobar que las pruebas escritas sobre código existente no pasan «por casualidad», se rompió el código a propósito y luego se revirtió:
-
-| Mutación en `DuplicateWorkflowDialog.vue` | Resultado |
-| --- | --- |
-| Quitar `.trim()` del nombre y poner `resetWebhookUrls: false` | 2 pruebas fallan: «rechaza un nombre vacío…» y «duplica con el nombre recortado…» |
-
-## 6. Hallazgos para el equipo
-
-| # | Funcionalidad | Hallazgo | Estado |
+| Caso | Defecto | Rojo | Verde / refactor |
 | --- | --- | --- | --- |
-| 1 | EX-02 | Un rango de fechas invertido devolvía siempre una lista vacía. | **Corregido con TDD** (§1). |
-| 2 | CO-01 | `AddDataTableModal` acepta un nombre con solo espacios: la guarda es `!dataTableName` y `"   "` no es vacío. No se probó si el backend lo rechaza. | Abierto. Candidato para el próximo ciclo TDD. |
-| 3 | CO-05 | `DeleteFolderModal` pone `data-test-id="delete-data-input"` en el `div` y también en el campo. `getByTestId` encuentra dos elementos. | Abierto. La prueba usa un selector CSS como solución. |
-| 4 | WF-02 | `WorkflowSettings.test.ts` (existente) agota el heap por defecto de Node a las ~95 de 109 pruebas, también con la config original. Con 8 GB pasan las 109. | Abierto. `run-tests.sh` sube el heap. |
+| CP-EX-02-03 | Un rango de fechas invertido (fin antes que inicio) devolvía siempre una lista vacía. | `tdd-1-red.log`: 2 fallan | `executions.utils.ts` ordena el rango (`tdd-2-green.log`, `tdd-3-refactor.log`) |
+| CP-CO-01-02 | Un nombre de data table con solo espacios habilitaba «Create» y Enter creaba la tabla. | `tdd-co01-1-red.log`: 2 fallan | `AddDataTableModal.vue` exige un nombre no vacío tras `trim()` (`tdd-co01-2-green.log`, `tdd-co01-3-refactor.log`) |
 
-## 7. Limitaciones
+Los logs de EX-02 se generaron cuando la prueba estaba en `qa/unit/executions/EX-02.executionFilterToQueryFilter.test.ts`; hoy está en `qa/unit/executions/EX-02/executionFilterToQueryFilter.test.ts`. En CO-01, la corrección final es la equivalente que también hizo MarioFer299 (`trimmedName`), y las pruebas la verifican.
 
-- Son pruebas unitarias y de componente (Vitest + jsdom). No sustituyen las E2E de `packages/quality/testing/playwright/`.
-- Las funciones 🔑 (compartir credenciales, filtros avanzados, etc.) se prueban con stores simulados, no con una licencia real.
-- La cobertura mide solo los 38 archivos seleccionados, no todo editor-ui.
+## Matriz: 142 casos del plan
+
+### 1. Workflows
+
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| --- | --- | ---: | ---: | --- | --- |
+| CP-WF-01-01 | Añadir un trigger y un nodo y conectarlos | 2 | 0 | ✅ | `workflows/WF-01/useCanvasOperations.test.ts` |
+| CP-WF-01-02 | Mover y eliminar nodos | 3 | 0 | ✅ | `workflows/WF-01/useCanvasOperations.test.ts` |
+| CP-WF-01-03 | Rechazar conexión entre tipos incompatibles | 3 | 0 | ✅ | `workflows/WF-01/useCanvasOperations.test.ts` |
+| CP-WF-01-04 | Nodo desactivado no se ejecuta | 3 | 0 | ✅ | `workflows/WF-01/CanvasNodeDefault.test.ts`, `workflows/WF-01/useCanvasOperations.test.ts` |
+| CP-WF-01-05 | Deshacer y rehacer una secuencia de 10 acciones | 4 | 0 | ✅ | `workflows/WF-01/useHistoryHelper.test.ts` |
+| CP-WF-01-06 | Copiar y pegar nodos entre workflows | 3 | 0 | ✅ | `workflows/WF-01/useCanvasOperations.test.ts` |
+| CP-WF-01-07 | Nota adhesiva con color persistente | 2 | 0 | ✅ | `workflows/WF-01/CanvasNodeStickyColorSelector.test.ts`, `workflows/WF-01/CanvasNodeToolbar.test.ts` |
+| CP-WF-01-08 | Rendimiento del lienzo con 100 nodos | 0 | 0 | ⏳ sin equivalente unitario | `workflows/sin-equivalente-unitario.test.ts` |
+| CP-WF-02-01 | No guardar ejecuciones exitosas de producción | 0 | 2 | ✅ | `workflows/WF-02/WorkflowSettings.test.ts` |
+| CP-WF-02-02 | No guardar ejecuciones manuales | 0 | 1 | ✅ | `workflows/WF-02/WorkflowSettings.test.ts` |
+| CP-WF-02-03 | Timeout en sus valores límite | 0 | 5 | ✅ | `workflows/WF-02/WorkflowSettings.test.ts` |
+| CP-WF-02-04 | Workflow de error se dispara ante un fallo | 2 | 0 | ✅ | `workflows/WF-02/WorkflowSettings.test.ts` |
+| CP-WF-02-05 | Zona horaria del workflow | 0 | 1 | ✅ | `workflows/WF-02/WorkflowSettings.test.ts` |
+| CP-WF-02-06 | Ajustes persisten tras recargar | 1 | 1 | ✅ | `workflows/WF-02/WorkflowSettings.test.ts` |
+| CP-WF-03-01 | Publicar sin nodo trigger | 3 | 0 | ✅ | `workflows/WF-03/WorkflowHeaderDraftPublishActions.test.ts`, `workflows/WF-03/WorkflowPublishModal.test.ts` |
+| CP-WF-03-02 | Publicar workflow con Webhook y responder en producción | 0 | 0 | ⏳ sin equivalente unitario | `workflows/sin-equivalente-unitario.test.ts` |
+| CP-WF-03-03 | Conflicto de webhook con otro workflow activo | 2 | 0 | ✅ | `workflows/WF-03/WorkflowActivationConflictingWebhookModal.test.ts`, `workflows/WF-03/WorkflowPublishModal.test.ts` |
+| CP-WF-03-04 | Mismo path con distinto método HTTP | 0 | 0 | ⏳ sin equivalente unitario | `workflows/sin-equivalente-unitario.test.ts` |
+| CP-WF-03-05 | Despublicar detiene el trigger | 2 | 0 | ✅ | `workflows/WF-03/WorkflowCard.test.ts`, `workflows/WF-03/useWorkflowActivate.test.ts` |
+| CP-WF-03-06 | Publicar con credencial inválida | 1 | 2 | ✅ | `workflows/WF-03/WorkflowActivationErrorMessage.test.ts`, `workflows/WF-03/WorkflowPublishModal.test.ts` |
+| CP-WF-03-07 | Cambios posteriores a la publicación | 1 | 0 | ✅ | `workflows/WF-03/WorkflowHeaderDraftPublishActions.test.ts` |
+| CP-WF-03-08 | Publicación persiste tras reiniciar la instancia | 0 | 0 | ⏳ sin equivalente unitario | `workflows/sin-equivalente-unitario.test.ts` |
+| CP-WF-04-01 | Cada guardado genera una versión | 2 | 0 | ✅ | `workflows/WF-04/WorkflowHistoryList.test.ts`, `workflows/WF-04/workflowHistory.store.test.ts` |
+| CP-WF-04-02 | Nombrar una versión | 4 | 0 | ✅ | `workflows/WF-04/WorkflowHistory.test.ts`, `workflows/WF-04/WorkflowVersionFormModal.test.ts`, `workflows/WF-04/workflowHistory.store.test.ts` |
+| CP-WF-04-03 | Restaurar una versión anterior | 1 | 0 | ✅ | `workflows/WF-04/workflowHistory.store.test.ts` |
+| CP-WF-04-04 | Clonar una versión a un workflow nuevo | 1 | 0 | ✅ | `workflows/WF-04/WorkflowHistory.test.ts` |
+| CP-WF-04-05 | Comparar dos versiones (diff) | 3 | 0 | ✅ | `workflows/WF-04/useWorkflowDiff.test.ts` |
+| CP-WF-04-06 | Descargar una versión como JSON importable | 1 | 0 | ✅ | `workflows/WF-04/WorkflowHistory.test.ts` |
+| CP-WF-05-01 | Buscar y filtrar plantillas | 0 | 4 | ✅ | `workflows/WF-05/templates.store.test.ts` |
+| CP-WF-05-02 | Configurar credenciales al usar una plantilla | 2 | 0 | ✅ | `workflows/WF-05/setupTemplate.store.test.ts` |
+| CP-WF-05-03 | Importar workflow desde URL válida | 2 | 0 | ✅ | `workflows/WF-05/ImportWorkflowUrlModal.test.ts` |
+| CP-WF-05-04 | Importar desde URL inválida o con JSON no válido | 2 | 0 | ✅ | `workflows/WF-05/ImportWorkflowUrlModal.test.ts`, `workflows/WF-05/useCanvasOperations.test.ts` |
+| CP-WF-05-05 | Duplicar con nombre vacío, repetido y muy largo | 0 | 4 | ✅ | `workflows/WF-05/DuplicateWorkflowDialog.test.ts` |
+| CP-WF-05-06 | El duplicado es independiente y conserva etiquetas | 0 | 2 | ✅ | `workflows/WF-05/DuplicateWorkflowDialog.test.ts` |
+
+### 2. Ejecuciones
+
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| --- | --- | ---: | ---: | --- | --- |
+| CP-EX-01-01 | Ejecución exitosa con estado y duración | 1 | 2 | ✅ | `executions/EX-01/GlobalExecutionsListItem.test.ts` |
+| CP-EX-01-02 | Ejecución fallida | 0 | 2 | ✅ | `executions/EX-01/GlobalExecutionsListItem.test.ts` |
+| CP-EX-01-03 | Ejecución en espera (Wait) | 1 | 1 | ✅ | `executions/EX-01/GlobalExecutionsListItem.test.ts` |
+| CP-EX-01-04 | Ejecución en curso | 2 | 1 | ✅ | `executions/EX-01/GlobalExecutionsListItem.test.ts` |
+| CP-EX-01-05 | Carga incremental con más de 50 ejecuciones | 5 | 0 | ✅ | `executions/EX-01/GlobalExecutionsList.test.ts`, `executions/EX-01/WorkflowExecutionsSidebar.test.ts`, `executions/EX-01/executions.store.test.ts` |
+| CP-EX-01-06 | Actualización automática de la lista | 1 | 2 | ✅ | `executions/EX-01/executions.store.test.ts` |
+| CP-EX-01-07 | Coherencia entre lista global y por workflow | 1 | 0 | ✅ | `executions/EX-01/executions.store.test.ts` |
+| CP-EX-01-08 | Rendimiento con más de 1 000 ejecuciones | 0 | 0 | ⏳ sin equivalente unitario | `executions/sin-equivalente-unitario.test.ts` |
+| CP-EX-02-01 | Filtrar por cada estado | 1 | 6 | ✅ | `executions/EX-02/executionFilterToQueryFilter.test.ts`, `executions/EX-02/executions.utils.test.ts` |
+| CP-EX-02-02 | Filtrar por workflow | 0 | 2 | ✅ | `executions/EX-02/executionFilterToQueryFilter.test.ts` |
+| CP-EX-02-03 | Rango de fechas: mismo día, invertido y futuro | 0 | 7 | ✅ | `executions/EX-02/executionFilterToQueryFilter.test.ts` |
+| CP-EX-02-04 | Combinación de filtros | 0 | 1 | ✅ | `executions/EX-02/executionFilterToQueryFilter.test.ts` |
+| CP-EX-02-05 | Limpiar filtros | 1 | 0 | ✅ | `executions/EX-02/ExecutionsFilter.test.ts` |
+| CP-EX-02-06 | Filtro de fechas con zona horaria distinta a UTC | 0 | 1 | ✅ | `executions/EX-02/executionFilterToQueryFilter.test.ts` |
+| CP-EX-03-01 | Vista previa de ejecución exitosa | 2 | 0 | ✅ | `executions/EX-03/ExecutionPreviewHost.test.ts` |
+| CP-EX-03-02 | Vista previa de ejecución fallida | 2 | 0 | ✅ | `executions/EX-03/executions.utils.test.ts` |
+| CP-EX-03-03 | Reintentar con la versión actual | 2 | 0 | ✅ | `executions/EX-03/GlobalExecutionsList.test.ts`, `executions/EX-03/GlobalExecutionsListItem.test.ts` |
+| CP-EX-03-04 | Reintentar con la versión original | 1 | 0 | ✅ | `executions/EX-03/WorkflowExecutionsCard.test.ts` |
+| CP-EX-03-05 | Eliminar una ejecución con confirmación | 1 | 2 | ✅ | `executions/EX-03/GlobalExecutionsList.test.ts`, `executions/EX-03/GlobalExecutionsListItem.test.ts` |
+| CP-EX-03-06 | Eliminar varias ejecuciones seleccionadas | 2 | 1 | ✅ | `executions/EX-03/GlobalExecutionsList.test.ts`, `executions/EX-03/executions.store.test.ts` |
+| CP-EX-03-07 | Depurar en el editor (con licencia) | 2 | 0 | ✅ | `executions/EX-03/useExecutionDebugging.test.ts` |
+| CP-EX-03-08 | Depurar en el editor sin licencia | 5 | 0 | ✅ | `executions/EX-03/WorkflowExecutionsPreview.test.ts` |
+| CP-EX-04-01 | Detener una ejecución desde el editor | 2 | 0 | ✅ | `executions/EX-04/NodeExecuteButton.test.ts`, `executions/EX-04/useExecutionCommands.test.ts` |
+| CP-EX-04-02 | Detener una ejecución desde la lista | 1 | 0 | ✅ | `executions/EX-04/GlobalExecutionsListItem.test.ts` |
+| CP-EX-04-03 | Detener una ejecución en espera | 0 | 2 | ✅ | `executions/EX-04/GlobalExecutionsListItem.test.ts` |
+| CP-EX-04-04 | Detener varias ejecuciones seleccionadas | 2 | 0 | ✅ | `executions/EX-04/StopManyExecutionsModal.test.ts` |
+| CP-EX-04-05 | Detener todas las ejecuciones en curso | 0 | 5 | ✅ | `executions/EX-04/ExecutionStopAllText.test.ts` |
+| CP-EX-04-06 | Detener la espera de un webhook de prueba | 2 | 0 | ✅ | `executions/EX-04/NodeExecuteButton.test.ts`, `executions/EX-04/useNodeExecution.test.ts` |
+| CP-EX-04-07 | Ejecuciones excedentes quedan en cola | 2 | 0 | ✅ | `executions/EX-04/ConcurrentExecutionsHeader.test.ts`, `executions/EX-04/GlobalExecutionsListItem.test.ts` |
+| CP-EX-04-08 | La cola se procesa al liberar capacidad | 0 | 0 | ⏳ sin equivalente unitario | `executions/sin-equivalente-unitario.test.ts` |
+| CP-EX-05-01 | Orden de los nodos en el árbol | 2 | 0 | ✅ | `executions/EX-05/LogsOverviewPanel.test.ts`, `executions/EX-05/logs.utils.test.ts` |
+| CP-EX-05-02 | Detalle de entrada y salida de un nodo | 2 | 0 | ✅ | `executions/EX-05/LogDetailsPanel.test.ts`, `executions/EX-05/LogsPanel.test.ts` |
+| CP-EX-05-03 | Detalle de un nodo con error | 2 | 0 | ✅ | `executions/EX-05/LogsViewRunData.test.ts`, `executions/EX-05/logs.utils.test.ts` |
+| CP-EX-05-04 | Abrir una sub-ejecución | 2 | 0 | ✅ | `executions/EX-05/logs.utils.test.ts`, `executions/EX-05/useLogsExecutionData.test.ts` |
+| CP-EX-05-05 | Atajos de teclado del panel | 2 | 0 | ✅ | `executions/EX-05/LogsPanel.test.ts` |
+| CP-EX-05-06 | Conteo de tokens con un nodo de IA | 1 | 0 | ✅ | `executions/EX-05/logs.utils.test.ts` |
+
+### 3. Credenciales
+
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| --- | --- | ---: | ---: | --- | --- |
+| CP-CR-01-01 | Crear credencial Header Auth válida | 1 | 0 | ✅ | `credentials/CR-01/CredentialEdit.test.ts` |
+| CP-CR-01-02 | Campo obligatorio vacío | 2 | 0 | ✅ | `credentials/CR-01/CredentialConfig.test.ts`, `credentials/CR-01/CredentialInputs.test.ts` |
+| CP-CR-01-03 | Prueba de conexión exitosa | 1 | 0 | ✅ | `credentials/CR-01/CredentialEdit.test.ts` |
+| CP-CR-01-04 | Prueba de conexión fallida | 1 | 0 | ✅ | `credentials/CR-01/CredentialEdit.test.ts` |
+| CP-CR-01-05 | Búsqueda de tipo sin resultados | 0 | 2 | ✅ | `credentials/CR-01/CredentialsSelectModal.test.ts` |
+| CP-CR-01-06 | Nombre de credencial duplicado | 0 | 2 | ✅ | `credentials/CR-04/useNodeHelpers.test.ts` |
+| CP-CR-01-07 | Secretos cifrados en la base de datos | 0 | 0 | ⏳ sin equivalente unitario | `credentials/sin-equivalente-unitario.test.ts` |
+| CP-CR-01-08 | Nombre con HTML no se ejecuta | 2 | 0 | ✅ | `credentials/CR-01/CredentialCard.test.ts` |
+| CP-CR-02-01 | Editar un valor sin romper los workflows | 1 | 0 | ✅ | `credentials/CR-02/CredentialEdit.test.ts` |
+| CP-CR-02-02 | Secretos no visibles al reabrir | 2 | 0 | ✅ | `credentials/CR-02/TemplatedAuthSimpleView.test.ts` |
+| CP-CR-02-03 | Secretos no expuestos por la API | 0 | 0 | ⏳ sin equivalente unitario | `credentials/sin-equivalente-unitario.test.ts` |
+| CP-CR-02-04 | Exportar un workflow no incluye secretos | 0 | 0 | ⏳ sin equivalente unitario | `credentials/sin-equivalente-unitario.test.ts` |
+| CP-CR-02-05 | Renombrar una credencial | 1 | 0 | ✅ | `credentials/CR-02/NodeCredentials.test.ts` |
+| CP-CR-02-06 | Eliminar con texto de confirmación incorrecto | 0 | 2 | ✅ | `credentials/CR-02/TypeToConfirmDialog.test.ts` |
+| CP-CR-02-07 | Eliminar con texto de confirmación correcto | 0 | 4 | ✅ | `credentials/CR-02/TypeToConfirmDialog.test.ts` |
+| CP-CR-02-08 | Eliminar una credencial en uso | 0 | 1 | ✅ | `credentials/CR-04/useNodeHelpers.test.ts` |
+| CP-CR-03-01 | URL de redirección correcta | 2 | 0 | ✅ | `credentials/CR-03/CredentialConfig.test.ts` |
+| CP-CR-03-02 | Autorización exitosa | 1 | 0 | ✅ | `credentials/CR-03/CredentialCard.test.ts` |
+| CP-CR-03-03 | Cancelar el consentimiento | 3 | 0 | ✅ | `credentials/CR-03/CredentialCard.test.ts`, `credentials/CR-03/useCredentialOAuth.test.ts` |
+| CP-CR-03-04 | Scopes mostrados coinciden con los solicitados | 0 | 3 | ✅ | `credentials/CR-03/ScopesNotice.test.ts` |
+| CP-CR-03-05 | Token revocado produce error al ejecutar | 0 | 0 | ⏳ sin equivalente unitario | `credentials/sin-equivalente-unitario.test.ts` |
+| CP-CR-03-06 | Reconectar tras revocación | 1 | 0 | ✅ | `credentials/CR-03/useCredentialOAuth.test.ts` |
+| CP-CR-04-01 | Seleccionar una credencial existente | 1 | 0 | ✅ | `credentials/CR-04/NodeCredentials.test.ts` |
+| CP-CR-04-02 | Solo se listan credenciales compatibles | 2 | 0 | ✅ | `credentials/CR-04/CredentialPicker.test.ts` |
+| CP-CR-04-03 | Crear credencial desde el nodo | 1 | 0 | ✅ | `credentials/CR-04/NodeCredentials.test.ts` |
+| CP-CR-04-04 | Asignación automática de la única credencial | 1 | 0 | ✅ | `credentials/CR-04/NodeCredentials.test.ts` |
+| CP-CR-04-05 | Importar workflow con credencial inexistente | 0 | 2 | ✅ | `credentials/CR-04/useNodeHelpers.test.ts` |
+| CP-CR-04-06 | Ejecutar un nodo sin credencial asignada | 1 | 0 | ✅ | `credentials/CR-04/useNodeHelpers.test.ts` |
+| CP-CR-04-07 | Cambiar la credencial de un nodo | 1 | 0 | ✅ | `credentials/CR-04/NodeCredentials.test.ts` |
+| CP-CR-04-08 | La ejecución usa la credencial nueva | 0 | 0 | ⏳ sin equivalente unitario | `credentials/sin-equivalente-unitario.test.ts` |
+| CP-CR-05-01 | Buscar credenciales por nombre | 0 | 2 | ✅ | `credentials/CR-05/CredentialsView.test.ts` |
+| CP-CR-05-02 | Ordenar por nombre y fecha | 0 | 1 | ✅ + ⏳ parcial | `credentials/CR-05/CredentialsView.test.ts` |
+| CP-CR-05-03 | Filtrar por tipo | 1 | 0 | ✅ | `credentials/CR-05/CredentialsView.test.ts` |
+| CP-CR-05-04 | Compartir con un miembro (con licencia) | 1 | 0 | ✅ | `credentials/CR-05/CredentialSharing.ee.test.ts` |
+| CP-CR-05-05 | Miembro no ve credenciales no compartidas | 0 | 0 | ⏳ sin equivalente unitario | `credentials/sin-equivalente-unitario.test.ts` |
+| CP-CR-05-06 | Aviso de pago al compartir sin licencia | 1 | 0 | ✅ | `credentials/CR-05/CredentialSharing.ee.test.ts` |
+
+### 4. Core: data tables y carpetas
+
+| CP | Caso del plan | Movidas | Nuevas | Estado | Archivos (`qa/unit/…`) |
+| --- | --- | ---: | ---: | --- | --- |
+| CP-CO-01-01 | Crear data table con nombre válido | 1 | 3 | ✅ | `core/CO-01/AddDataTableModal.test.ts`, `core/CO-01/dataTable.store.test.ts` |
+| CP-CO-01-02 | Nombre vacío o solo espacios | 0 | 3 | ✅ | `core/CO-01/AddDataTableModal.test.ts` |
+| CP-CO-01-03 | Nombre duplicado en el proyecto | 0 | 1 | ✅ | `core/CO-01/AddDataTableModal.test.ts` |
+| CP-CO-01-04 | Nombre en el límite de longitud | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+| CP-CO-01-05 | Añadir columnas de los cuatro tipos | 3 | 0 | ✅ | `core/CO-01/AddColumnButton.test.ts` |
+| CP-CO-01-06 | Nombre de columna duplicado | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+| CP-CO-01-07 | Nombre de columna con caracteres no permitidos | 2 | 0 | ✅ | `core/CO-01/AddColumnButton.test.ts` |
+| CP-CO-01-08 | Renombrar y eliminar una columna con datos | 4 | 0 | ✅ | `core/CO-01/ColumnHeader.test.ts`, `core/CO-01/dataTable.store.columns.test.ts` |
+| CP-CO-02-01 | Añadir fila con valores válidos | 2 | 0 | ✅ | `core/CO-02/dataTable.store.test.ts`, `core/CO-02/useDataTableOperations.test.ts` |
+| CP-CO-02-02 | Texto en una columna number | 1 | 0 | ✅ | `core/CO-02/useDataTableOperations.test.ts` |
+| CP-CO-02-03 | Fecha inválida | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+| CP-CO-02-04 | Nulo frente a cadena vacía | 2 | 0 | ✅ | `core/CO-02/columnUtils.test.ts` |
+| CP-CO-02-05 | Celda de más de 10 000 caracteres | 2 | 0 | ✅ | `core/CO-02/columnUtils.test.ts` |
+| CP-CO-02-06 | Ordenar por columna | 1 | 0 | ✅ | `core/CO-02/useAgGrid.test.ts` |
+| CP-CO-02-07 | Filtrar por columna | 2 | 0 | ✅ | `core/CO-02/useDataTableColumnFilters.test.ts` |
+| CP-CO-02-08 | Leer y escribir filas desde el nodo Data Table | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+| CP-CO-03-01 | Importar un CSV válido | 2 | 0 | ✅ | `core/CO-03/ImportCsvModal.test.ts`, `core/CO-03/dataTable.store.test.ts` |
+| CP-CO-03-02 | CSV con columnas desiguales | 1 | 0 | ✅ | `core/CO-03/ImportCsvModal.test.ts` |
+| CP-CO-03-03 | CSV con tipos incompatibles | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+| CP-CO-03-04 | CSV con BOM, separador ’;’ y tildes | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+| CP-CO-03-05 | Importar un archivo grande | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+| CP-CO-03-06 | Exportar y comparar con el origen | 2 | 0 | ✅ | `core/CO-03/DownloadDataTableModal.test.ts` |
+| CP-CO-04-01 | Crear carpeta en la raíz | 1 | 2 | ✅ | `core/CO-04/WorkflowsView.test.ts`, `core/CO-04/folders.store.test.ts` |
+| CP-CO-04-02 | Anidar carpetas en varios niveles | 2 | 0 | ✅ | `core/CO-04/FolderBreadcrumbs.test.ts`, `core/CO-04/folders.store.test.ts` |
+| CP-CO-04-03 | Nombre vacío o duplicado en el mismo nivel | 2 | 0 | ✅ | `core/CO-04/useFolders.test.ts` |
+| CP-CO-04-04 | Renombrar una carpeta | 0 | 2 | ✅ | `core/CO-04/folders.store.test.ts` |
+| CP-CO-04-05 | Navegar con las migas de pan | 2 | 0 | ✅ | `core/CO-04/FolderBreadcrumbs.test.ts`, `core/CO-04/FolderCard.test.ts` |
+| CP-CO-04-06 | Buscar workflows dentro de carpetas | 2 | 0 | ✅ | `core/CO-04/WorkflowsView.test.ts` |
+| CP-CO-05-01 | Mover un workflow a una carpeta | 1 | 0 | ✅ | `core/CO-05/MoveToFolderModal.test.ts` |
+| CP-CO-05-02 | Mover un workflow de vuelta a la raíz | 1 | 0 | ✅ | `core/CO-05/MoveToFolderModal.test.ts` |
+| CP-CO-05-03 | Mover una carpeta con contenido | 2 | 0 | ✅ | `core/CO-05/MoveToFolderModal.test.ts` |
+| CP-CO-05-04 | Impedir mover una carpeta dentro de sí misma o de una hija | 2 | 0 | ✅ | `core/CO-05/folders.store.test.ts`, `core/CO-05/useFolders.test.ts` |
+| CP-CO-05-05 | Eliminar una carpeta vacía | 1 | 0 | ✅ | `core/CO-05/FolderCard.test.ts` |
+| CP-CO-05-06 | Eliminar carpeta con contenido transfiriendo | 0 | 2 | ✅ | `core/CO-05/DeleteFolderModal.test.ts` |
+| CP-CO-05-07 | Eliminar carpeta con contenido borrando | 0 | 5 | ✅ | `core/CO-05/DeleteFolderModal.test.ts` |
+| CP-CO-05-08 | Sin workflows huérfanos tras eliminar | 0 | 0 | ⏳ sin equivalente unitario | `core/sin-equivalente-unitario.test.ts` |
+
+## Resultados
+
+```
+Test Files  91 passed | 4 skipped (95)     ← los 4 «skipped» solo tienen it.todo
+     Tests  263 passed | 21 todo (284)
+```
+
+Salida completa: [`evidence/full-run.log`](evidence/full-run.log). Los 64 archivos de origen de los que se movieron pruebas siguen en verde (2003 pruebas) y pasan ESLint.
+
+## Cobertura
+
+Cobertura V8 de los 74 módulos de producción que prueba la suite (lista en [`suite.mts`](suite.mts)). Es la cobertura que aporta **solo** esta suite: los archivos grandes (por ejemplo `useCanvasOperations.ts`) tienen muchas más funciones que las que el plan prueba.
+
+| Área (`src/…`) | Archivos | Líneas | Ramas | Funciones |
+| --- | ---: | ---: | ---: | ---: |
+| app/components | 3 | 50,1 % | 28,9 % | 45,3 % |
+| app/composables | 5 | 37,2 % | 29,5 % | 40,2 % |
+| app/views | 1 | 40,9 % | 26,6 % | 30,2 % |
+| features/core/dataTable | 10 | 49,4 % | 30,4 % | 41,8 % |
+| features/core/folders | 6 | 66,6 % | 48,8 % | 62,8 % |
+| features/credentials | 13 | 54,0 % | 41,5 % | 52,2 % |
+| features/execution/executions | 13 | 59,1 % | 46,8 % | 55,6 % |
+| features/execution/logs | 6 | 65,1 % | 51,6 % | 62,6 % |
+| features/shared | 1 | 54,1 % | 28,8 % | 43,5 % |
+| features/workflows | 16 | 64,6 % | 49,5 % | 57,8 % |
+| **Total** | **74** | **52,4 %** | **38,59 %** | **50,95 %** |
+
+## Hallazgos
+
+| # | Caso | Hallazgo | Estado |
+| --- | --- | --- | --- |
+| 1 | CP-EX-02-03 | Rango de fechas invertido = lista vacía. | Corregido (TDD). |
+| 2 | CP-CO-01-02 | Nombre de data table con solo espacios aceptado. | Corregido (TDD). |
+| 3 | CP-CO-01-02 | La misma guarda en el modo «importar CSV» (`isCreateDisabled`) no se cubrió con prueba. | Revisar. |
+| 4 | CP-CR-04-05 / CP-CR-02-08 | El aviso «la credencial no existe» solo aparece a usuarios sin permiso `credential:read`; un propietario o administrador no lo ve. | Verificar en E2E. |
+| 5 | CP-CO-05-07 | `DeleteFolderModal` usa el mismo `data-test-id` en dos elementos. | Abierto. |
+| 6 | CP-CR-05-02 | El orden con el desplegable de la vista de credenciales no se puede probar en jsdom. | `todo`, cubrir en E2E. |
