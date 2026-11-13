@@ -97,9 +97,14 @@ Regresiones: 0 · Corregidos: 3
 | CO-01 · Data tables (UI) CP-016-02 · el botón Create queda deshabilitado con nombre vacío | — | passed | cambió |
 | CO-01 · Data tables (UI) CP-016-04 · muestra los encabezados de las columnas de los 4 tipos | — | passed | cambió |
 | CO-01 · Data tables (UI) CP-016-05 · el popover de nueva columna no crea nombres inválidos | — | passed | cambió |
+| CO-02 · Nodo Data Table en un workflow (API) CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro | — | passed | cambió |
 | CO-02 · Edición de filas (UI) CP-017-01 · añade una fila y los valores persisten tras recargar | — | passed | cambió |
 | CO-02 · Edición de filas (UI) CP-017-06/07 · ordena y busca filas en la vista | — | passed | cambió |
 | CO-02 · Edición de filas (UI) Complementaria · elimina filas seleccionadas | — | passed | cambió |
+| CO-03 · CSV de Excel y archivo grande (API) CP-CO-03-05 · importa un CSV de 10 000 filas en menos de 30 s y carga todas las filas | — | passed | cambió |
+| CO-03 · CSV de Excel y archivo grande (API) CP-CO-03-04 · CSV exportado desde Excel en español (UTF-8 con BOM, «;», tildes) CP-CO-03-04 · el primer encabezado no incluye el BOM | — | passed | cambió |
+| CO-03 · CSV de Excel y archivo grande (API) CP-CO-03-04 · CSV exportado desde Excel en español (UTF-8 con BOM, «;», tildes) CP-CO-03-04 · las tildes y la ñ se conservan en los valores importados | — | passed | cambió |
+| CO-03 · CSV de Excel y archivo grande (API) CP-CO-03-04 · CSV exportado desde Excel en español (UTF-8 con BOM, «;», tildes) Hallazgo CP-CO-03-04 · el separador «;» separa las columnas o n8n informa que no lo admite | — | failed | cambió |
 | CO-04 Crear y navegar carpetas Las carpetas anidadas muestran su ruta | — | passed | cambió |
 | CO-04 Crear y navegar carpetas Rechazar nombres de carpeta inválidos (example #1) | — | passed | cambió |
 | CO-04 Crear y navegar carpetas Rechazar nombres de carpeta inválidos (example #2) | — | passed | cambió |

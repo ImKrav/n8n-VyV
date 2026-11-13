@@ -4,7 +4,7 @@
  * Uso: npm run evidence
  */
 import { readdirSync, statSync, mkdirSync, copyFileSync, writeFileSync, existsSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { join, basename, extname } from 'node:path';
 
 const ORIGEN = 'results/screenshots';
 const DESTINO = 'results/by-case';
@@ -20,6 +20,15 @@ const recorrer = (dir) => {
 };
 recorrer(ORIGEN);
 
+/** Los nombres de captura de pruebas fallidas incluyen todo el título; el sistema de archivos admite 255 bytes. */
+const nombreCorto = (nombre, max = 240) => {
+  if (Buffer.byteLength(nombre) <= max) return nombre;
+  const ext = extname(nombre);
+  let base = nombre.slice(0, -ext.length);
+  while (Buffer.byteLength(base + ext) > max) base = base.slice(0, -1);
+  return base + ext;
+};
+
 const indice = {};
 for (const a of archivos) {
   const ids = [...new Set((basename(a).match(/CP-(?:\d{3}|[A-Z]{2}-\d{2})-\d{2}/g) ?? []))];
@@ -30,7 +39,7 @@ for (const a of archivos) {
     const dir = join(DESTINO, cp);
     mkdirSync(dir, { recursive: true });
     const spec = basename(join(a, '..'));
-    const destino = join(dir, `${spec.replace(/\.cy\.js$/, '')}__${basename(a)}`);
+    const destino = join(dir, nombreCorto(`${spec.replace(/\.cy\.js$/, '')}__${basename(a)}`));
     copyFileSync(a, destino);
     (indice[cp] ??= []).push(destino.replace(/\\/g, '/'));
   }

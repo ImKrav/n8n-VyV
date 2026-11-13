@@ -68,15 +68,17 @@ CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' ./vyv/run-tests.sh all
 | `backend` | `*.vyv.test.ts` de `@n8n/backend-module-data-table`, `@n8n/api-types` y `n8n` | consola |
 | `e2e` | `npm run test:all` y `npm run report` en `e2e/` (n8n en `http://localhost:5678`, licencia community registrada) | `vyv/e2e/results/report/index.html` |
 
+Sin la licencia community, las carpetas se pueden activar con el modo de pruebas de n8n: arranque n8n con `E2E_TESTS=true` y ejecute `curl -X PATCH -H 'content-type: application/json' -d '{"feature":"feat:folders","enabled":true}' http://localhost:5678/rest/e2e/feature`. Ese modo no envía la cabecera anti-clickjacking, así que la prueba de seguridad (BUG-018-06) se ejecuta sin él.
+
 La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/después tienen sus propios comandos. Consulte las secciones 4 y 5 de [`e2e/README.md`](e2e/README.md).
 
 ## Resultados
 
 | Parte | Resultado | Fecha y versión |
 | --- | --- | --- |
-| `units` | 91 archivos, **263 pruebas en verde**, 21 `it.todo`; cobertura 52,4 % de líneas de los 74 módulos probados | 13/11/2026 · n8n 2.47.0 |
+| `units` | 91 archivos, **264 pruebas en verde**, 21 `it.todo`; cobertura 52,6 % de líneas de los 74 módulos probados | 13/11/2026 · n8n 2.47.0 |
 | `backend` | **64 pruebas en verde** (data-table 40, `folderNameSchema` 19, `FolderService.deleteFolder` 5) | 13/11/2026 · n8n 2.47.0 |
-| `e2e` | **89 pruebas: 88 aprobadas**, 0 fallidas, 1 pendiente (CP-017-08 necesita `npm run n8n:storage-limit`). Comparación con la línea base de regresión: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 13/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con la función Folders activada; navegador Electron |
+| `e2e` | **94 pruebas en Chromium: 92 aprobadas, 1 fallida (hallazgo CP-CO-03-04, separador «;»), 1 pendiente** (CP-017-08, que pasa aparte con el límite de 1 MB). Regresión frente a la línea base: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Seguridad sin modo E2E: BUG-018-06 se confirma (no hay `X-Frame-Options` ni `frame-ancestors`). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 13/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con Folders activada; Chromium 1243 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
 
 ## Equivalencia de IDs en el módulo Core

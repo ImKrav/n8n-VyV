@@ -2,12 +2,12 @@
 
 Esta carpeta contiene la suite unitaria que ejecuta el **plan de pruebas de n8n-VyV** (carpeta «Final VyV»: `PLAN DE PRUEBAS.docx`, `CASOS Y ESCENARIOS DE PRUEBAS.xlsx` y `MATRIZ DE TRAZABILIDAD.xlsx`). El sistema bajo prueba es **n8n 2.47.0 (commit `01bd57cdd`)**, la versión que congela el plan.
 
-**Resultado (n8n 2.47.0):** 91 archivos y **263 pruebas en verde**, más **21 `it.todo`** para los casos sin equivalente unitario. Los **142 casos** del plan (CP-WF-01-01 … CP-CO-05-08) aparecen en la suite: 122 con pruebas y 20 solo como `todo` con su motivo.
+**Resultado (n8n 2.47.0):** 91 archivos y **264 pruebas en verde**, más **21 `it.todo`** para los casos sin equivalente unitario. Los **142 casos** del plan (CP-WF-01-01 … CP-CO-05-08) aparecen en la suite: 122 con pruebas y 20 solo como `todo` con su motivo.
 
 | | Pruebas |
 | --- | ---: |
 | Movidas desde el repositorio (quitadas de su archivo original) | 169 |
-| Nuevas (no existían) | 94 |
+| Nuevas (no existían) | 95 |
 | `it.todo` (sin equivalente unitario) | 21 |
 
 ## Estructura
@@ -229,7 +229,7 @@ Los logs TDD se generaron cuando la suite estaba en `qa/` (antes de unirla con `
 
 ```
 Test Files  91 passed | 4 skipped (95)     ← los 4 «skipped» solo tienen it.todo
-     Tests  263 passed | 21 todo (284)
+     Tests  264 passed | 21 todo (285)
 ```
 
 Salida completa: [`vyv/evidence/units/full-run.log`](../evidence/units/full-run.log). Los 64 archivos de origen de los que se movieron pruebas siguen en verde (2003 pruebas) y pasan ESLint.
@@ -243,14 +243,14 @@ Cobertura V8 de los 74 módulos de producción que prueba la suite (lista en [`v
 | app/components | 3 | 50,1 % | 28,9 % | 45,3 % |
 | app/composables | 5 | 37,2 % | 29,5 % | 40,2 % |
 | app/views | 1 | 40,9 % | 26,6 % | 30,2 % |
-| features/core/dataTable | 10 | 49,4 % | 30,4 % | 41,8 % |
+| features/core/dataTable | 10 | 51,2 % | 34,7 % | 44,6 % |
 | features/core/folders | 6 | 66,6 % | 48,8 % | 62,8 % |
 | features/credentials | 13 | 54,0 % | 41,5 % | 52,2 % |
 | features/execution/executions | 13 | 59,1 % | 46,8 % | 55,6 % |
 | features/execution/logs | 6 | 65,1 % | 51,6 % | 62,6 % |
 | features/shared | 1 | 54,1 % | 28,8 % | 43,5 % |
 | features/workflows | 16 | 64,6 % | 49,5 % | 57,8 % |
-| **Total** | **74** | **52,4 %** | **38,59 %** | **50,95 %** |
+| **Total** | **74** | **52,6 %** | **38,9 %** | **51,2 %** |
 
 ## Hallazgos
 
