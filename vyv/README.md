@@ -19,13 +19,15 @@ vyv/
 │   ├── credentials/CR-01 … CR-05/
 │   ├── core/CO-01 … CO-05/                   *.api.cy.js, *.ui.cy.js, *.feature
 │   ├── core/security/ core/accessibility/ core/regression/
+│   ├── scenarios/                            escenarios extremo a extremo ES-01 … ES-06
 │   └── support/ screenplay/ fixtures/ scripts/
 ├── api/                 colección Postman de la API de los 4 módulos (Newman)
 ├── ai/                  Stagehand, DeepEval y generador de casos con IA
 └── evidence/
     ├── units/           ciclos TDD, ejecución completa y cobertura de la suite unitaria
     ├── e2e/             ejecuciones de Cypress «antes» (n8n 2.46.6) y «después» (2.47.0) y línea base de regresión
-    └── api/             última ejecución de Newman (JUnit y consola)
+    ├── api/             última ejecución de Newman (JUnit y consola)
+    └── static/          typecheck y lint del editor (pruebas estáticas)
 ```
 
 | Carpeta | Qué contiene | Módulos | Herramienta |
@@ -99,6 +101,8 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | `backend` | **64 pruebas en verde** (data-table 40, `folderNameSchema` 19, `FolderService.deleteFolder` 5) | 13/11/2026 · n8n 2.47.0 |
 | `e2e` | **182 pruebas en Chromium: 180 aprobadas, 2 fallidas, 0 pendientes.** Las 2 fallidas son hallazgos: CP-CO-03-04 (separador «;») y CP-WF-01-08 (carga del lienzo de 100 nodos: mediana 3,57 s; la acción más lenta de zoom, 1 037 ms). Las 44 specs corrieron juntas con `CYPRESS_dbPath` y `CYPRESS_restartCommand`; después se repitieron aparte CP-EX-04-08 y CP-017-08, cada uno con su configuración de n8n, y sus resultados reemplazan a los de la corrida conjunta. Regresión frente a la línea base: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Seguridad sin modo E2E: BUG-018-06 se confirma (no hay `X-Frame-Options` ni `frame-ancestors`). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 14/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con Folders activada; Chromium 1243 |
 | `e2e` (complemento) | **13 pruebas nuevas en Chromium, 13 aprobadas**: CP-WF-02-02, 03-07, CP-EX-01-05, 01-06, 04-01, 04-06, 05-05, CP-CR-02-02, 02-06, 04-03, 04-04 y CP-CO-05-02. Evidencia: [`evidence/e2e/after/complement/`](evidence/e2e/after/complement/) y las capturas en `by-case/` | 14/11/2026 · n8n 2.47.0, misma instancia |
+| `e2e` (escenarios y rendimiento) | **14 pruebas, 14 aprobadas**: ES-01 a ES-06 en 1366 × 768 y 1920 × 1080, la vista de una data table de 10 000 filas y el listado con 50 credenciales. Evidencia: [`evidence/e2e/after/scenarios/`](evidence/e2e/after/scenarios/) | 14/11/2026 · n8n 2.47.0, Chromium 1243 |
+| Estáticas | `vue-tsc` y lint (`oxlint` + `eslint`) del editor sin errores, después de quitar dos variables sin uso que dejó el traslado de pruebas a `units/`. Evidencia: [`evidence/static/`](evidence/static/) | 14/11/2026 |
 | `api` | **Newman: 40 peticiones y 62 aserciones, 0 fallidas.** Evidencia: [`evidence/api/`](evidence/api/) | 14/11/2026 · n8n 2.47.0 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
 
@@ -146,9 +150,47 @@ Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`cor
 | CP-CR-02-06 | `credentials/CR-02/credential-modal.ui.cy.js` | ℹ️ diferencia con el plan: en 2.47 el diálogo de eliminar no pide escribir un texto; pide confirmar con «Yes, delete». La prueba verifica que cancelar conserva la credencial |
 | BUG-018-06 | `core/security/owasp.cy.js` (sin modo E2E) | ❌ no hay `X-Frame-Options` ni `frame-ancestors` |
 
-**Casos sin prueba Cypress (12 de 142).** Todos tienen prueba unitaria en `units/`. Quedan fuera de Cypress porque necesitan algo que la instancia de pruebas no tiene: licencia (CP-EX-03-07, 03-08 depurar en el editor; CP-CR-05-04 compartir con un miembro), un proveedor real (CP-CR-03-02, 03-05, 03-06 OAuth2; CP-EX-05-06 tokens de un modelo de IA; CP-WF-05-02 plantilla con credenciales), otra zona horaria de la instancia (CP-EX-02-06), el portapapeles del sistema (CP-WF-01-06) un trigger que valide su credencial contra un servicio real al publicar (CP-WF-03-06) o arrastrar conexiones en el lienzo, que en Cypress no es estable (CP-WF-01-03 conexión IA incompatible).
+**Casos sin prueba Cypress (12 de 142).** Todos tienen prueba unitaria en `units/`. Quedan fuera de Cypress porque necesitan algo que la instancia de pruebas no tiene: licencia (CP-EX-03-07, 03-08 depurar en el editor; CP-CR-05-04 compartir con un miembro), un proveedor real (CP-CR-03-02, 03-05, 03-06 OAuth2; CP-EX-05-06 tokens de un modelo de IA; CP-WF-05-02 plantilla con credenciales), otra zona horaria de la instancia (CP-EX-02-06), el portapapeles del sistema (CP-WF-01-06), un trigger que valide su credencial contra un servicio real al publicar (CP-WF-03-06) o arrastrar conexiones en el lienzo, que en Cypress no es estable (CP-WF-01-03 conexión IA incompatible).
 
-**CP-CR-03-05 (manual).** Necesita una cuenta real de Google y la app OAuth2 de prueba, que no se pueden automatizar en el repositorio:
+## Escenarios extremo a extremo (ES-01 a ES-06)
+
+Los seis escenarios del plan (numeral 8.1) están en [`e2e/scenarios/`](e2e/scenarios/) y se ejecutan con `npm run test:scenarios` (también forman parte de `test:all`). Cada uno corre dos veces: en 1366 × 768 y en 1920 × 1080, con capturas de ese tamaño.
+
+| Escenario | Qué verifica | Funcionalidades | Resultado (14/11/2026) |
+| --- | --- | --- | --- |
+| ES-01 Ciclo de vida de una automatización | Crear el workflow, crear la credencial desde el nodo (UI), ajustes, publicar, ejecución en la lista y orden de los nodos | WF-01, CR-01, CR-04, WF-02, WF-03, EX-01, EX-05 | ✅ 2/2 |
+| ES-02 Diagnóstico de un fallo | Fallo en producción, workflow de error, filtro de fallidas, vista previa, corrección (versión nueva) y reintento con éxito | WF-02, EX-02, EX-03, WF-04 | ✅ 2/2 |
+| ES-03 Ejecución larga interrumpida | Wait de 5 min, detener, estado «canceled» y detalle por nodo | EX-04, EX-01, EX-05 | ✅ 2/2 |
+| ES-04 Datos internos | Data table desde CSV, escribir y leer con el nodo Data Table, exportar | CO-01, CO-03, CO-02, WF-01 | ✅ 2/2 |
+| ES-05 Organización y limpieza | Workflow desde una plantilla pública, carpetas anidadas, mover, eliminar transfiriendo; se conservan credencial y ejecuciones | WF-05, CO-04, CO-05, EX-01 | ✅ 2/2 |
+| ES-06 Rotación de credenciales | Una credencial usada por dos workflows cambia de valor y ambos usan el nuevo; la reconexión OAuth2 pide una URL nueva | CR-02, CR-03, EX-01 | ✅ 2/2 (la reconexión OAuth2 completa es manual, como CP-CR-03-05) |
+
+**Compatibilidad (numeral 8.2).** Las dos resoluciones del plan están cubiertas en Chromium. Firefox y Edge no están instalados en el entorno de ejecución: para cumplir esa parte, ejecute `npx cypress run --browser firefox --spec "scenarios/**/*.cy.js"` y `--browser edge` en un equipo que los tenga.
+
+**Rendimiento pendiente del numeral 8.2.**
+
+| Requisito | Spec (`e2e/…`) | Resultado (mediana de 3 recargas; límite 3 s) |
+| --- | --- | --- |
+| Data table de 10 000 filas | `core/CO-02/large-table.ui.cy.js` | ✅ carga 2,3–2,6 s; ir a la última página, 0,2 s |
+| 50 credenciales en el listado | `credentials/CR-05/many-credentials.ui.cy.js` | ⚠️ en el borde: 2,7–3,4 s según la corrida (2 de 5 superan el límite); búsqueda 0,6 s. Registrado en el issue #12 |
+
+## Registro de defectos
+
+Los hallazgos están registrados en GitHub Issues (numeral 13.3) con las etiquetas `defecto`, `severidad: …`, `prioridad: …` y `módulo: …`:
+
+| Issue | Caso | Defecto | Severidad |
+| --- | --- | --- | --- |
+| #6 | CP-CO-03-04 | La importación de CSV ignora el separador «;» | Media |
+| #7 | CP-WF-01-08 | El lienzo con 100 nodos tarda más de 3 s | Media |
+| #8 | BUG-018-06 | Sin `X-Frame-Options` ni `frame-ancestors` | Alta |
+| #9 | CP-EX-04 | Detener una ejecución terminada responde 500 | Baja |
+| #10 | CP-EX-03 | Una ejecución eliminada responde 200 con `{}` | Baja |
+| #11 | CP-CR-01-02 | La API guarda credenciales sin sus campos obligatorios | Baja |
+| #12 | RNF CR-05 | El listado con 50 credenciales tarda más de 3 s en algunas corridas | Baja |
+
+## Caso manual
+
+**CP-CR-03-05.** Necesita una cuenta real de Google y la app OAuth2 de prueba, que no se pueden automatizar en el repositorio:
 
 1. Cree una credencial Google Sheets OAuth2 y conéctela con la cuenta de prueba.
 2. En la cuenta de Google: *Seguridad → Acceso de terceros*, quite la app de prueba.
