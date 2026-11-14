@@ -1,0 +1,625 @@
+{
+  "stats": {
+    "suites": 8,
+    "tests": 14,
+    "passes": 14,
+    "pending": 0,
+    "failures": 0,
+    "testsRegistered": 14,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "start": "2026-11-14T20:12:19.788Z",
+    "end": "2026-11-14T20:14:59.259Z",
+    "duration": 159471
+  },
+  "results": [
+    {
+      "uuid": "783b4aba-be45-4246-b4bd-e0442bc674df",
+      "title": "",
+      "fullFile": "scenarios/ES-02-failure-diagnosis.e2e.cy.js",
+      "file": "scenarios/ES-02-failure-diagnosis.e2e.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "74099d97-ac01-4ae2-ac26-985972e9bdf8",
+          "title": "ES-02 · Diagnóstico de un fallo",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "ES-02 · fallo, workflow de error, filtro, vista previa, corrección y reintento (1366 × 768)",
+              "fullTitle": "ES-02 · Diagnóstico de un fallo ES-02 · fallo, workflow de error, filtro, vista previa, corrección y reintento (1366 × 768)",
+              "timedOut": null,
+              "duration": 8215,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es02\");\nlet manejador;\nlet wf;\nconst nodosError = [\n  { id: \"et\", name: \"Error Trigger\", type: \"n8n-nodes-base.errorTrigger\", typeVersion: 1, position: [0, 0], parameters: {} },\n  n8nApi.nodoCampos({ manejado: true })\n];\nn8nApi.crearWorkflowActivo(`VyV ES-02 manejador ${ancho}`, nodosError, n8nApi.cadena(\"Error Trigger\", \"Edit Fields\")).then((w) => {\n  manejador = w;\n  workflows.push(w.id);\n});\ncy.then(\n  () => n8nApi.req(\"POST\", \"/rest/workflows\", {\n    name: `VyV ES-02 principal ${ancho}`,\n    nodes: [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoFalla(\"fallo ES-02\")],\n    connections: n8nApi.cadena(\"Webhook\", \"Falla\"),\n    settings: { errorWorkflow: manejador.id },\n    active: false\n  }).then(n8nApi.ok)\n).then((w) => {\n  wf = w;\n  workflows.push(w.id);\n  return n8nApi.req(\"POST\", `/rest/workflows/${w.id}/activate`, { versionId: w.versionId });\n}).its(\"status\").should(\"eq\", 200);\nn8nApi.llamarWebhook(\"GET\", ruta).its(\"status\").should(\"eq\", 500);\ncy.then(() => n8nApi.esperarEjecuciones(manejador.id, 1, (e) => e.status === \"success\")).then(([e]) => {\n  expect(e.mode).to.eq(\"error\");\n});\ncy.then(() => n8nApi.esperarEjecuciones(wf.id, 1, (e) => e.status === \"error\"));\ncy.then(() => filtrar({ workflowId: wf.id, status: [\"error\"] })).then((fallidas) => {\n  expect(fallidas).to.have.length(1);\n  const fallida = fallidas[0];\n  n8nApi.detalleEjecucion(fallida.id).then((d) => {\n    expect(d.data.resultData.lastNodeExecuted).to.eq(\"Falla\");\n    expect(d.data.resultData.error.message).to.eq(\"fallo ES-02\");\n  });\n  cy.visitarN8n(`/workflow/${wf.id}/executions/${fallida.id}`);\n  cy.get(\"div.execution-card\", { timeout: 3e4 }).should(\"have.length\", 1).and(\"contain.text\", \"Error\");\n  cy.screenshot(`ES-02_${ancho}x${alto}_ejecucion-fallida`);\n  n8nApi.obtenerWorkflow(wf.id).then((actual) => {\n    const nodos = actual.nodes.map((n) => n.name === \"Falla\" ? n8nApi.nodoCampos({ corregido: true }, \"Falla\") : n);\n    n8nApi.req(\"PATCH\", `/rest/workflows/${wf.id}`, { versionId: actual.versionId, nodes: nodos, connections: actual.connections }).its(\"status\").should(\"eq\", 200);\n  });\n  n8nApi.req(\"GET\", `/rest/workflow-history/workflow/${wf.id}?take=10`).then(n8nApi.ok).its(\"length\").should(\"be.at.least\", 2);\n  n8nApi.req(\"POST\", `/rest/executions/${fallida.id}/retry`, { loadWorkflow: true }).then(n8nApi.ok).then((reintento) => {\n    cy.evidencia(`${ancho}\\xD7${alto}: ejecuci\\xF3n ${fallida.id} con error en \\xABFalla\\xBB \\xB7 workflow de error ejecutado \\xB7 correcci\\xF3n guardada \\xB7 reintento ${reintento.id} ${reintento.status}`);\n    expect(reintento).to.include({ retryOf: fallida.id, mode: \"retry\", status: \"success\" });\n  });\n});",
+              "err": {},
+              "uuid": "4340f203-a595-424c-a94f-9ded2b7e758e",
+              "parentUUID": "74099d97-ac01-4ae2-ac26-985972e9bdf8",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "ES-02 · fallo, workflow de error, filtro, vista previa, corrección y reintento (1920 × 1080)",
+              "fullTitle": "ES-02 · Diagnóstico de un fallo ES-02 · fallo, workflow de error, filtro, vista previa, corrección y reintento (1920 × 1080)",
+              "timedOut": null,
+              "duration": 6956,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es02\");\nlet manejador;\nlet wf;\nconst nodosError = [\n  { id: \"et\", name: \"Error Trigger\", type: \"n8n-nodes-base.errorTrigger\", typeVersion: 1, position: [0, 0], parameters: {} },\n  n8nApi.nodoCampos({ manejado: true })\n];\nn8nApi.crearWorkflowActivo(`VyV ES-02 manejador ${ancho}`, nodosError, n8nApi.cadena(\"Error Trigger\", \"Edit Fields\")).then((w) => {\n  manejador = w;\n  workflows.push(w.id);\n});\ncy.then(\n  () => n8nApi.req(\"POST\", \"/rest/workflows\", {\n    name: `VyV ES-02 principal ${ancho}`,\n    nodes: [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoFalla(\"fallo ES-02\")],\n    connections: n8nApi.cadena(\"Webhook\", \"Falla\"),\n    settings: { errorWorkflow: manejador.id },\n    active: false\n  }).then(n8nApi.ok)\n).then((w) => {\n  wf = w;\n  workflows.push(w.id);\n  return n8nApi.req(\"POST\", `/rest/workflows/${w.id}/activate`, { versionId: w.versionId });\n}).its(\"status\").should(\"eq\", 200);\nn8nApi.llamarWebhook(\"GET\", ruta).its(\"status\").should(\"eq\", 500);\ncy.then(() => n8nApi.esperarEjecuciones(manejador.id, 1, (e) => e.status === \"success\")).then(([e]) => {\n  expect(e.mode).to.eq(\"error\");\n});\ncy.then(() => n8nApi.esperarEjecuciones(wf.id, 1, (e) => e.status === \"error\"));\ncy.then(() => filtrar({ workflowId: wf.id, status: [\"error\"] })).then((fallidas) => {\n  expect(fallidas).to.have.length(1);\n  const fallida = fallidas[0];\n  n8nApi.detalleEjecucion(fallida.id).then((d) => {\n    expect(d.data.resultData.lastNodeExecuted).to.eq(\"Falla\");\n    expect(d.data.resultData.error.message).to.eq(\"fallo ES-02\");\n  });\n  cy.visitarN8n(`/workflow/${wf.id}/executions/${fallida.id}`);\n  cy.get(\"div.execution-card\", { timeout: 3e4 }).should(\"have.length\", 1).and(\"contain.text\", \"Error\");\n  cy.screenshot(`ES-02_${ancho}x${alto}_ejecucion-fallida`);\n  n8nApi.obtenerWorkflow(wf.id).then((actual) => {\n    const nodos = actual.nodes.map((n) => n.name === \"Falla\" ? n8nApi.nodoCampos({ corregido: true }, \"Falla\") : n);\n    n8nApi.req(\"PATCH\", `/rest/workflows/${wf.id}`, { versionId: actual.versionId, nodes: nodos, connections: actual.connections }).its(\"status\").should(\"eq\", 200);\n  });\n  n8nApi.req(\"GET\", `/rest/workflow-history/workflow/${wf.id}?take=10`).then(n8nApi.ok).its(\"length\").should(\"be.at.least\", 2);\n  n8nApi.req(\"POST\", `/rest/executions/${fallida.id}/retry`, { loadWorkflow: true }).then(n8nApi.ok).then((reintento) => {\n    cy.evidencia(`${ancho}\\xD7${alto}: ejecuci\\xF3n ${fallida.id} con error en \\xABFalla\\xBB \\xB7 workflow de error ejecutado \\xB7 correcci\\xF3n guardada \\xB7 reintento ${reintento.id} ${reintento.status}`);\n    expect(reintento).to.include({ retryOf: fallida.id, mode: \"retry\", status: \"success\" });\n  });\n});",
+              "err": {},
+              "uuid": "ac267999-e994-4d5c-ad86-fc9437cf55fc",
+              "parentUUID": "74099d97-ac01-4ae2-ac26-985972e9bdf8",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "4340f203-a595-424c-a94f-9ded2b7e758e",
+            "ac267999-e994-4d5c-ad86-fc9437cf55fc"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 15171,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "fb2673bd-dc65-4072-aa16-bf1953bf1ef4",
+      "title": "",
+      "fullFile": "scenarios/ES-03-interrupted-execution.e2e.cy.js",
+      "file": "scenarios/ES-03-interrupted-execution.e2e.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "6b0973f9-1ea2-4286-b8bc-adc2e2c9c574",
+          "title": "ES-03 · Ejecución larga interrumpida",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "ES-03 · Wait de 5 minutos, detener, estado final y detalle por nodo (1366 × 768)",
+              "fullTitle": "ES-03 · Ejecución larga interrumpida ES-03 · Wait de 5 minutos, detener, estado final y detalle por nodo (1366 × 768)",
+              "timedOut": null,
+              "duration": 8761,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es03\");\nconst nodos = [n8nApi.nodoWebhook(\"GET\", ruta, \"onReceived\"), n8nApi.nodoEspera(5, \"minutes\", \"Wait\"), n8nApi.nodoCampos({ fin: true }, \"Edit Fields\", [440, 0])];\nn8nApi.crearWorkflowActivo(`VyV ES-03 ${ancho}`, nodos, n8nApi.cadena(\"Webhook\", \"Wait\", \"Edit Fields\")).then((wf) => {\n  workflows.push(wf.id);\n  n8nApi.llamarWebhook(\"GET\", ruta).its(\"status\").should(\"eq\", 200);\n  n8nApi.esperarEjecuciones(wf.id, 1, (e) => e.status === \"waiting\").then(([e]) => {\n    expect(e.status).to.eq(\"waiting\");\n    n8nApi.req(\"POST\", `/rest/executions/${e.id}/stop`, {}).then(n8nApi.ok).its(\"status\").should(\"eq\", \"canceled\");\n    cy.wait(1500);\n    n8nApi.req(\"GET\", `/rest/executions/${e.id}`).then(n8nApi.ok).its(\"status\").should(\"eq\", \"canceled\");\n    n8nApi.detalleEjecucion(e.id).then((d) => {\n      const runData = d.data.resultData.runData;\n      cy.evidencia(`${ancho}\\xD7${alto}: ejecuci\\xF3n ${e.id} waiting \\u2192 canceled \\xB7 nodos con datos: ${Object.keys(runData).join(\", \")}`);\n      expect(runData).to.have.property(\"Webhook\");\n      expect(runData, \"el nodo siguiente no se ejecuta\").not.to.have.property(\"Edit Fields\");\n    });\n    cy.visitarN8n(`/workflow/${wf.id}/executions/${e.id}`);\n    cy.get(\"div.execution-card\", { timeout: 3e4 }).should(\"have.length\", 1).and(\"contain.text\", \"Cancel\");\n    cy.screenshot(`ES-03_${ancho}x${alto}_cancelada`);\n  });\n});",
+              "err": {},
+              "uuid": "93d51790-752f-487a-bcaf-1ee36fc88f85",
+              "parentUUID": "6b0973f9-1ea2-4286-b8bc-adc2e2c9c574",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "ES-03 · Wait de 5 minutos, detener, estado final y detalle por nodo (1920 × 1080)",
+              "fullTitle": "ES-03 · Ejecución larga interrumpida ES-03 · Wait de 5 minutos, detener, estado final y detalle por nodo (1920 × 1080)",
+              "timedOut": null,
+              "duration": 7197,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es03\");\nconst nodos = [n8nApi.nodoWebhook(\"GET\", ruta, \"onReceived\"), n8nApi.nodoEspera(5, \"minutes\", \"Wait\"), n8nApi.nodoCampos({ fin: true }, \"Edit Fields\", [440, 0])];\nn8nApi.crearWorkflowActivo(`VyV ES-03 ${ancho}`, nodos, n8nApi.cadena(\"Webhook\", \"Wait\", \"Edit Fields\")).then((wf) => {\n  workflows.push(wf.id);\n  n8nApi.llamarWebhook(\"GET\", ruta).its(\"status\").should(\"eq\", 200);\n  n8nApi.esperarEjecuciones(wf.id, 1, (e) => e.status === \"waiting\").then(([e]) => {\n    expect(e.status).to.eq(\"waiting\");\n    n8nApi.req(\"POST\", `/rest/executions/${e.id}/stop`, {}).then(n8nApi.ok).its(\"status\").should(\"eq\", \"canceled\");\n    cy.wait(1500);\n    n8nApi.req(\"GET\", `/rest/executions/${e.id}`).then(n8nApi.ok).its(\"status\").should(\"eq\", \"canceled\");\n    n8nApi.detalleEjecucion(e.id).then((d) => {\n      const runData = d.data.resultData.runData;\n      cy.evidencia(`${ancho}\\xD7${alto}: ejecuci\\xF3n ${e.id} waiting \\u2192 canceled \\xB7 nodos con datos: ${Object.keys(runData).join(\", \")}`);\n      expect(runData).to.have.property(\"Webhook\");\n      expect(runData, \"el nodo siguiente no se ejecuta\").not.to.have.property(\"Edit Fields\");\n    });\n    cy.visitarN8n(`/workflow/${wf.id}/executions/${e.id}`);\n    cy.get(\"div.execution-card\", { timeout: 3e4 }).should(\"have.length\", 1).and(\"contain.text\", \"Cancel\");\n    cy.screenshot(`ES-03_${ancho}x${alto}_cancelada`);\n  });\n});",
+              "err": {},
+              "uuid": "dcbb88aa-5735-4cbf-9ef8-063dd44cb1eb",
+              "parentUUID": "6b0973f9-1ea2-4286-b8bc-adc2e2c9c574",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "93d51790-752f-487a-bcaf-1ee36fc88f85",
+            "dcbb88aa-5735-4cbf-9ef8-063dd44cb1eb"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 15958,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "a551d204-7153-4f3c-9ab3-44c02f52b862",
+      "title": "",
+      "fullFile": "scenarios/ES-04-internal-data.e2e.cy.js",
+      "file": "scenarios/ES-04-internal-data.e2e.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "2834ae05-9c2d-4193-9c92-68793004ee96",
+          "title": "ES-04 · Datos internos",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "ES-04 · importar CSV, escribir y leer con el nodo Data Table y exportar (1366 × 768)",
+              "fullTitle": "ES-04 · Datos internos ES-04 · importar CSV, escribir y leer con el nodo Data Table y exportar (1366 × 768)",
+              "timedOut": null,
+              "duration": 6919,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nlet tabla;\nn8nApi.subirArchivo(\"csv/valido.csv\", \"valido.csv\").then((up) => {\n  expect(up.status).to.eq(200);\n  const meta = up.body.data ?? up.body;\n  return cy.nombreUnico(\"vyv_es04\").then(\n    (nombre) => n8nApi.req(\"POST\", n8nApi.dt(p), {\n      name: nombre,\n      fileId: meta.id,\n      hasHeaders: true,\n      columns: meta.columns.map((c) => ({ name: c.name, type: c.type, csvColumnName: c.name }))\n    }).then(n8nApi.ok)\n  );\n}).then((t) => {\n  tabla = t;\n  tablas.push(t.id);\n  n8nApi.filasOk(p, t.id).should(\"have.length\", 5);\n});\ncy.then(\n  () => publicarNodo(`VyV ES-04 insertar ${ancho}`, \"POST\", {\n    resource: \"row\",\n    operation: \"insert\",\n    dataTableId: { __rl: true, mode: \"id\", value: tabla.id },\n    columns: { mappingMode: \"defineBelow\", value: { nombre: \"Eva\", edad: 45 }, schema: [columna(\"nombre\", \"string\"), columna(\"edad\", \"number\")] },\n    options: {}\n  })\n).then((ruta) => n8nApi.llamarWebhook(\"POST\", ruta).its(\"status\").should(\"eq\", 200));\ncy.then(\n  () => publicarNodo(`VyV ES-04 leer ${ancho}`, \"GET\", {\n    resource: \"row\",\n    operation: \"get\",\n    dataTableId: { __rl: true, mode: \"id\", value: tabla.id },\n    matchType: \"allConditions\",\n    filters: { conditions: [{ keyName: \"edad\", condition: \"gt\", keyValue: 41 }] },\n    returnAll: true\n  })\n).then(\n  (ruta) => n8nApi.llamarWebhook(\"GET\", ruta).then((r) => {\n    expect(r.status).to.eq(200);\n    expect([].concat(r.body).map((f) => f.nombre)).to.deep.eq([\"Eva\"]);\n  })\n);\ncy.then(() => n8nApi.descargarCsv(p, tabla.id)).then((r) => {\n  expect(r.status).to.eq(200);\n  const lineas = (r.body.data ?? r.body).csvContent.trim().split(\"\\n\");\n  cy.evidencia(`${ancho}\\xD7${alto}: tabla ${tabla.id} importada con 5 filas \\xB7 el workflow escribe \\xABEva\\xBB y la lee con edad > 41 \\xB7 CSV exportado con ${lineas.length - 1} filas`);\n  expect(lineas[0]).to.contain(\"nombre\");\n  expect(lineas).to.have.length(7);\n  expect(lineas.join(\"\\n\")).to.contain(\"Eva\");\n});\ncy.then(() => cy.visitarN8n(`/projects/${p}/datatables/${tabla.id}`));\ncy.contains(\"Eva\", { timeout: 3e4 }).should(\"be.visible\");\ncy.screenshot(`ES-04_${ancho}x${alto}_tabla`);",
+              "err": {},
+              "uuid": "f0d74a8c-ae04-49c9-8df6-a6100a70fe95",
+              "parentUUID": "2834ae05-9c2d-4193-9c92-68793004ee96",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "ES-04 · importar CSV, escribir y leer con el nodo Data Table y exportar (1920 × 1080)",
+              "fullTitle": "ES-04 · Datos internos ES-04 · importar CSV, escribir y leer con el nodo Data Table y exportar (1920 × 1080)",
+              "timedOut": null,
+              "duration": 5687,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nlet tabla;\nn8nApi.subirArchivo(\"csv/valido.csv\", \"valido.csv\").then((up) => {\n  expect(up.status).to.eq(200);\n  const meta = up.body.data ?? up.body;\n  return cy.nombreUnico(\"vyv_es04\").then(\n    (nombre) => n8nApi.req(\"POST\", n8nApi.dt(p), {\n      name: nombre,\n      fileId: meta.id,\n      hasHeaders: true,\n      columns: meta.columns.map((c) => ({ name: c.name, type: c.type, csvColumnName: c.name }))\n    }).then(n8nApi.ok)\n  );\n}).then((t) => {\n  tabla = t;\n  tablas.push(t.id);\n  n8nApi.filasOk(p, t.id).should(\"have.length\", 5);\n});\ncy.then(\n  () => publicarNodo(`VyV ES-04 insertar ${ancho}`, \"POST\", {\n    resource: \"row\",\n    operation: \"insert\",\n    dataTableId: { __rl: true, mode: \"id\", value: tabla.id },\n    columns: { mappingMode: \"defineBelow\", value: { nombre: \"Eva\", edad: 45 }, schema: [columna(\"nombre\", \"string\"), columna(\"edad\", \"number\")] },\n    options: {}\n  })\n).then((ruta) => n8nApi.llamarWebhook(\"POST\", ruta).its(\"status\").should(\"eq\", 200));\ncy.then(\n  () => publicarNodo(`VyV ES-04 leer ${ancho}`, \"GET\", {\n    resource: \"row\",\n    operation: \"get\",\n    dataTableId: { __rl: true, mode: \"id\", value: tabla.id },\n    matchType: \"allConditions\",\n    filters: { conditions: [{ keyName: \"edad\", condition: \"gt\", keyValue: 41 }] },\n    returnAll: true\n  })\n).then(\n  (ruta) => n8nApi.llamarWebhook(\"GET\", ruta).then((r) => {\n    expect(r.status).to.eq(200);\n    expect([].concat(r.body).map((f) => f.nombre)).to.deep.eq([\"Eva\"]);\n  })\n);\ncy.then(() => n8nApi.descargarCsv(p, tabla.id)).then((r) => {\n  expect(r.status).to.eq(200);\n  const lineas = (r.body.data ?? r.body).csvContent.trim().split(\"\\n\");\n  cy.evidencia(`${ancho}\\xD7${alto}: tabla ${tabla.id} importada con 5 filas \\xB7 el workflow escribe \\xABEva\\xBB y la lee con edad > 41 \\xB7 CSV exportado con ${lineas.length - 1} filas`);\n  expect(lineas[0]).to.contain(\"nombre\");\n  expect(lineas).to.have.length(7);\n  expect(lineas.join(\"\\n\")).to.contain(\"Eva\");\n});\ncy.then(() => cy.visitarN8n(`/projects/${p}/datatables/${tabla.id}`));\ncy.contains(\"Eva\", { timeout: 3e4 }).should(\"be.visible\");\ncy.screenshot(`ES-04_${ancho}x${alto}_tabla`);",
+              "err": {},
+              "uuid": "9b388278-23af-40ed-97d1-19977d2dca54",
+              "parentUUID": "2834ae05-9c2d-4193-9c92-68793004ee96",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "f0d74a8c-ae04-49c9-8df6-a6100a70fe95",
+            "9b388278-23af-40ed-97d1-19977d2dca54"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 12606,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "65360083-6aef-4233-b00f-50dd063554a1",
+      "title": "",
+      "fullFile": "scenarios/ES-05-organize-cleanup.e2e.cy.js",
+      "file": "scenarios/ES-05-organize-cleanup.e2e.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "08e9aa5b-60d4-436d-9fd3-ec29474f1ebf",
+          "title": "ES-05 · Organización y limpieza",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "ES-05 · plantilla, carpetas anidadas, mover y eliminar transfiriendo (1366 × 768)",
+              "fullTitle": "ES-05 · Organización y limpieza ES-05 · plantilla, carpetas anidadas, mover y eliminar transfiriendo (1366 × 768)",
+              "timedOut": null,
+              "duration": 8418,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es05\");\nconst c = {};\nlet deLaPlantilla;\nlet conCredencial;\ncy.nombreUnico(\"VyV-A\").then((n) => n8nApi.crearCarpetaOk(p, n)).then((a) => {\n  c.A = a;\n});\ncy.nombreUnico(\"VyV-C\").then((n) => n8nApi.crearCarpetaOk(p, n)).then((x) => {\n  c.C = x;\n  carpetas.push(x.id);\n});\ncy.then(() => cy.nombreUnico(\"VyV-B\").then((n) => n8nApi.crearCarpetaOk(p, n, c.A.id))).then((b) => {\n  c.B = b;\n});\ncy.then(\n  () => n8nApi.req(\"POST\", \"/rest/workflows\", {\n    name: `${plantilla.name} (VyV ${ancho})`,\n    nodes: plantilla.nodes,\n    connections: plantilla.connections,\n    settings: {},\n    active: false,\n    parentFolderId: c.B.id,\n    projectId: p\n  }).then(n8nApi.ok)\n).then((w) => {\n  deLaPlantilla = w;\n  workflows.push(w.id);\n  expect(w.nodes.length, \"reproduce los nodos de la plantilla\").to.eq(plantilla.nodes.length);\n});\ncy.nombreUnico(\"VyV-ES05\").then((n) => n8nApi.crearCredencialHeader(n, \"X-Token\", \"es05\")).then((cred) => {\n  credenciales.push(cred.id);\n  return n8nApi.req(\"POST\", \"/rest/workflows\", {\n    name: `VyV ES-05 con credencial ${ancho}`,\n    nodes: [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoHttpCredencial(urlEco, cred)],\n    connections: n8nApi.cadena(\"Webhook\", \"HTTP Request\"),\n    settings: {},\n    active: false,\n    parentFolderId: c.B.id,\n    projectId: p\n  }).then(n8nApi.ok).then((w) => {\n    conCredencial = { ...w, cred };\n    workflows.push(w.id);\n    return n8nApi.req(\"POST\", `/rest/workflows/${w.id}/activate`, { versionId: w.versionId });\n  });\n}).its(\"status\").should(\"eq\", 200);\nn8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"es05\");\ncy.then(() => n8nApi.esperarEjecuciones(conCredencial.id, 1)).should(\"have.length\", 1);\ncy.then(() => n8nApi.arbol(p, c.B.id)).then((arbol) => {\n  expect(JSON.stringify(arbol), \"B est\\xE1 dentro de A\").to.contain(c.A.id);\n});\ncy.then(() => [deLaPlantilla, conCredencial].forEach((w) => n8nApi.obtenerWorkflow(w.id).then((actual) => n8nApi.moverWorkflow(actual, c.A.id)).its(\"status\").should(\"eq\", 200)));\ncy.then(() => n8nApi.contenido(p, c.A.id)).should(\"deep.include\", { totalWorkflows: 2, totalSubFolders: 1 });\ncy.then(() => n8nApi.borrarCarpeta(p, c.A.id, c.C.id)).its(\"status\").should(\"eq\", 200);\ncy.then(() => n8nApi.contenido(p, c.C.id)).should(\"deep.include\", { totalWorkflows: 2, totalSubFolders: 1 });\ncy.then(() => n8nApi.obtenerWorkflow(deLaPlantilla.id)).then((w) => {\n  expect(w.parentFolder?.id).to.eq(c.C.id);\n  expect(w.nodes).to.have.length(plantilla.nodes.length);\n});\ncy.then(() => n8nApi.obtenerWorkflow(conCredencial.id)).then((w) => {\n  expect(w.parentFolder?.id).to.eq(c.C.id);\n  expect(w.nodes.find((n) => n.name === \"HTTP Request\").credentials.httpHeaderAuth.id).to.eq(conCredencial.cred.id);\n});\ncy.then(() => n8nApi.ejecuciones(conCredencial.id)).should(\"have.length\", 1);\nn8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"es05\");\ncy.then(() => cy.visitarN8n(`/projects/${p}/folders/${c.C.id}/workflows`));\ncy.contains(`VyV ES-05 con credencial ${ancho}`, { timeout: 3e4 }).should(\"be.visible\");\ncy.contains(`(VyV ${ancho})`).should(\"be.visible\");\ncy.screenshot(`ES-05_${ancho}x${alto}_carpeta-destino`);\ncy.then(() => cy.evidencia(`${ancho}\\xD7${alto}: plantilla ${plantilla.id} \\xAB${plantilla.name}\\xBB (${plantilla.nodes.length} nodos) \\xB7 A/B \\u2192 mover a A \\u2192 eliminar A transfiriendo a C \\xB7 C tiene 2 workflows y la subcarpeta B \\xB7 credencial y ejecuci\\xF3n conservadas`));",
+              "err": {},
+              "uuid": "4429da89-4fa7-4534-b813-f725342f3c45",
+              "parentUUID": "08e9aa5b-60d4-436d-9fd3-ec29474f1ebf",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "ES-05 · plantilla, carpetas anidadas, mover y eliminar transfiriendo (1920 × 1080)",
+              "fullTitle": "ES-05 · Organización y limpieza ES-05 · plantilla, carpetas anidadas, mover y eliminar transfiriendo (1920 × 1080)",
+              "timedOut": null,
+              "duration": 5327,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es05\");\nconst c = {};\nlet deLaPlantilla;\nlet conCredencial;\ncy.nombreUnico(\"VyV-A\").then((n) => n8nApi.crearCarpetaOk(p, n)).then((a) => {\n  c.A = a;\n});\ncy.nombreUnico(\"VyV-C\").then((n) => n8nApi.crearCarpetaOk(p, n)).then((x) => {\n  c.C = x;\n  carpetas.push(x.id);\n});\ncy.then(() => cy.nombreUnico(\"VyV-B\").then((n) => n8nApi.crearCarpetaOk(p, n, c.A.id))).then((b) => {\n  c.B = b;\n});\ncy.then(\n  () => n8nApi.req(\"POST\", \"/rest/workflows\", {\n    name: `${plantilla.name} (VyV ${ancho})`,\n    nodes: plantilla.nodes,\n    connections: plantilla.connections,\n    settings: {},\n    active: false,\n    parentFolderId: c.B.id,\n    projectId: p\n  }).then(n8nApi.ok)\n).then((w) => {\n  deLaPlantilla = w;\n  workflows.push(w.id);\n  expect(w.nodes.length, \"reproduce los nodos de la plantilla\").to.eq(plantilla.nodes.length);\n});\ncy.nombreUnico(\"VyV-ES05\").then((n) => n8nApi.crearCredencialHeader(n, \"X-Token\", \"es05\")).then((cred) => {\n  credenciales.push(cred.id);\n  return n8nApi.req(\"POST\", \"/rest/workflows\", {\n    name: `VyV ES-05 con credencial ${ancho}`,\n    nodes: [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoHttpCredencial(urlEco, cred)],\n    connections: n8nApi.cadena(\"Webhook\", \"HTTP Request\"),\n    settings: {},\n    active: false,\n    parentFolderId: c.B.id,\n    projectId: p\n  }).then(n8nApi.ok).then((w) => {\n    conCredencial = { ...w, cred };\n    workflows.push(w.id);\n    return n8nApi.req(\"POST\", `/rest/workflows/${w.id}/activate`, { versionId: w.versionId });\n  });\n}).its(\"status\").should(\"eq\", 200);\nn8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"es05\");\ncy.then(() => n8nApi.esperarEjecuciones(conCredencial.id, 1)).should(\"have.length\", 1);\ncy.then(() => n8nApi.arbol(p, c.B.id)).then((arbol) => {\n  expect(JSON.stringify(arbol), \"B est\\xE1 dentro de A\").to.contain(c.A.id);\n});\ncy.then(() => [deLaPlantilla, conCredencial].forEach((w) => n8nApi.obtenerWorkflow(w.id).then((actual) => n8nApi.moverWorkflow(actual, c.A.id)).its(\"status\").should(\"eq\", 200)));\ncy.then(() => n8nApi.contenido(p, c.A.id)).should(\"deep.include\", { totalWorkflows: 2, totalSubFolders: 1 });\ncy.then(() => n8nApi.borrarCarpeta(p, c.A.id, c.C.id)).its(\"status\").should(\"eq\", 200);\ncy.then(() => n8nApi.contenido(p, c.C.id)).should(\"deep.include\", { totalWorkflows: 2, totalSubFolders: 1 });\ncy.then(() => n8nApi.obtenerWorkflow(deLaPlantilla.id)).then((w) => {\n  expect(w.parentFolder?.id).to.eq(c.C.id);\n  expect(w.nodes).to.have.length(plantilla.nodes.length);\n});\ncy.then(() => n8nApi.obtenerWorkflow(conCredencial.id)).then((w) => {\n  expect(w.parentFolder?.id).to.eq(c.C.id);\n  expect(w.nodes.find((n) => n.name === \"HTTP Request\").credentials.httpHeaderAuth.id).to.eq(conCredencial.cred.id);\n});\ncy.then(() => n8nApi.ejecuciones(conCredencial.id)).should(\"have.length\", 1);\nn8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"es05\");\ncy.then(() => cy.visitarN8n(`/projects/${p}/folders/${c.C.id}/workflows`));\ncy.contains(`VyV ES-05 con credencial ${ancho}`, { timeout: 3e4 }).should(\"be.visible\");\ncy.contains(`(VyV ${ancho})`).should(\"be.visible\");\ncy.screenshot(`ES-05_${ancho}x${alto}_carpeta-destino`);\ncy.then(() => cy.evidencia(`${ancho}\\xD7${alto}: plantilla ${plantilla.id} \\xAB${plantilla.name}\\xBB (${plantilla.nodes.length} nodos) \\xB7 A/B \\u2192 mover a A \\u2192 eliminar A transfiriendo a C \\xB7 C tiene 2 workflows y la subcarpeta B \\xB7 credencial y ejecuci\\xF3n conservadas`));",
+              "err": {},
+              "uuid": "7be9c594-007a-4494-abad-5d9e0fdd4f6d",
+              "parentUUID": "08e9aa5b-60d4-436d-9fd3-ec29474f1ebf",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "4429da89-4fa7-4534-b813-f725342f3c45",
+            "7be9c594-007a-4494-abad-5d9e0fdd4f6d"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 13745,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "089ce7cd-a441-4fd6-bb6a-76948d80832f",
+      "title": "",
+      "fullFile": "scenarios/ES-06-credential-rotation.e2e.cy.js",
+      "file": "scenarios/ES-06-credential-rotation.e2e.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "159c1229-b964-4685-a78e-6dd79aad23b7",
+          "title": "ES-06 · Rotación de credenciales",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "ES-06 · rotar una credencial usada por dos workflows y reconectar OAuth2 (1366 × 768)",
+              "fullTitle": "ES-06 · Rotación de credenciales ES-06 · rotar una credencial usada por dos workflows y reconectar OAuth2 (1366 × 768)",
+              "timedOut": null,
+              "duration": 8367,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst rutas = [n8nApi.rutaUnica(\"vyv-es06a\"), n8nApi.rutaUnica(\"vyv-es06b\")];\nlet cred;\ncy.nombreUnico(`VyV-ES06-${ancho}`).then((n) => n8nApi.crearCredencialHeader(n, \"X-Token\", \"antes\")).then((c) => {\n  cred = c;\n  credenciales.push(c.id);\n  rutas.forEach((ruta, i) => n8nApi.crearWorkflowActivo(`VyV ES-06 ${i + 1} ${ancho}`, [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoHttpCredencial(urlEco, c)], n8nApi.cadena(\"Webhook\", \"HTTP Request\")).then((w) => workflows.push(w.id)));\n});\ncy.then(() => rutas.forEach((ruta) => n8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"antes\")));\ncy.then(\n  () => n8nApi.req(\"PATCH\", `/rest/credentials/${cred.id}`, { name: cred.name, type: \"httpHeaderAuth\", data: { name: \"X-Token\", value: \"despues\" } })\n).its(\"status\").should(\"eq\", 200);\ncy.then(() => rutas.forEach((ruta) => n8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"despues\")));\ncy.then(() => workflows.slice(-2).forEach((id) => n8nApi.ejecuciones(id).then((l) => {\n  expect(l.map((e) => e.status)).to.deep.eq([\"success\", \"success\"]);\n})));\nn8nApi.req(\"POST\", \"/rest/credentials\", { name: `VyV ES-06 OAuth2 ${ancho}`, type: \"oAuth2Api\", data: datosOAuth }).then(n8nApi.ok).then((o) => {\n  credenciales.push(o.id);\n  const auth = () => n8nApi.req(\"GET\", `/rest/oauth2-credential/auth?id=${o.id}`).then(n8nApi.ok).then((u) => new URL(u));\n  auth().then((primera) => auth().then((segunda) => {\n    expect(segunda.searchParams.get(\"redirect_uri\")).to.eq(primera.searchParams.get(\"redirect_uri\"));\n    expect(segunda.searchParams.get(\"state\"), \"state nuevo en cada conexi\\xF3n\").not.to.eq(primera.searchParams.get(\"state\"));\n    cy.evidencia(`${ancho}\\xD7${alto}: credencial ${cred.id} rotada (antes \\u2192 despues) en 2 workflows con \\xE9xito \\xB7 OAuth2: 2 URLs de autorizaci\\xF3n con state distinto y redirect_uri ${segunda.searchParams.get(\"redirect_uri\")}`);\n  }));\n});\ncy.then(() => {\n  cy.visitarN8n(\"/home/credentials\");\n  cy.get('input[data-test-id=\"resources-list-search\"], [data-test-id=\"resources-list-search\"] input').first().type(cred.name);\n  cy.get('[data-test-id=\"resources-list-item\"]', { timeout: 3e4 }).should(\"have.length\", 1).first().click();\n  cy.get('[data-test-id=\"parameter-input-value\"] input', { timeout: 15e3 }).invoke(\"val\").should(\"not.eq\", \"despues\");\n  cy.screenshot(`ES-06_${ancho}x${alto}_credencial-rotada`);\n});",
+              "err": {},
+              "uuid": "72ba7e51-bfc2-4d25-a5e3-1ee52bfd18d9",
+              "parentUUID": "159c1229-b964-4685-a78e-6dd79aad23b7",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "ES-06 · rotar una credencial usada por dos workflows y reconectar OAuth2 (1920 × 1080)",
+              "fullTitle": "ES-06 · Rotación de credenciales ES-06 · rotar una credencial usada por dos workflows y reconectar OAuth2 (1920 × 1080)",
+              "timedOut": null,
+              "duration": 6022,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst rutas = [n8nApi.rutaUnica(\"vyv-es06a\"), n8nApi.rutaUnica(\"vyv-es06b\")];\nlet cred;\ncy.nombreUnico(`VyV-ES06-${ancho}`).then((n) => n8nApi.crearCredencialHeader(n, \"X-Token\", \"antes\")).then((c) => {\n  cred = c;\n  credenciales.push(c.id);\n  rutas.forEach((ruta, i) => n8nApi.crearWorkflowActivo(`VyV ES-06 ${i + 1} ${ancho}`, [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoHttpCredencial(urlEco, c)], n8nApi.cadena(\"Webhook\", \"HTTP Request\")).then((w) => workflows.push(w.id)));\n});\ncy.then(() => rutas.forEach((ruta) => n8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"antes\")));\ncy.then(\n  () => n8nApi.req(\"PATCH\", `/rest/credentials/${cred.id}`, { name: cred.name, type: \"httpHeaderAuth\", data: { name: \"X-Token\", value: \"despues\" } })\n).its(\"status\").should(\"eq\", 200);\ncy.then(() => rutas.forEach((ruta) => n8nApi.llamarWebhook(\"GET\", ruta).its(\"body.headers.x-token\").should(\"eq\", \"despues\")));\ncy.then(() => workflows.slice(-2).forEach((id) => n8nApi.ejecuciones(id).then((l) => {\n  expect(l.map((e) => e.status)).to.deep.eq([\"success\", \"success\"]);\n})));\nn8nApi.req(\"POST\", \"/rest/credentials\", { name: `VyV ES-06 OAuth2 ${ancho}`, type: \"oAuth2Api\", data: datosOAuth }).then(n8nApi.ok).then((o) => {\n  credenciales.push(o.id);\n  const auth = () => n8nApi.req(\"GET\", `/rest/oauth2-credential/auth?id=${o.id}`).then(n8nApi.ok).then((u) => new URL(u));\n  auth().then((primera) => auth().then((segunda) => {\n    expect(segunda.searchParams.get(\"redirect_uri\")).to.eq(primera.searchParams.get(\"redirect_uri\"));\n    expect(segunda.searchParams.get(\"state\"), \"state nuevo en cada conexi\\xF3n\").not.to.eq(primera.searchParams.get(\"state\"));\n    cy.evidencia(`${ancho}\\xD7${alto}: credencial ${cred.id} rotada (antes \\u2192 despues) en 2 workflows con \\xE9xito \\xB7 OAuth2: 2 URLs de autorizaci\\xF3n con state distinto y redirect_uri ${segunda.searchParams.get(\"redirect_uri\")}`);\n  }));\n});\ncy.then(() => {\n  cy.visitarN8n(\"/home/credentials\");\n  cy.get('input[data-test-id=\"resources-list-search\"], [data-test-id=\"resources-list-search\"] input').first().type(cred.name);\n  cy.get('[data-test-id=\"resources-list-item\"]', { timeout: 3e4 }).should(\"have.length\", 1).first().click();\n  cy.get('[data-test-id=\"parameter-input-value\"] input', { timeout: 15e3 }).invoke(\"val\").should(\"not.eq\", \"despues\");\n  cy.screenshot(`ES-06_${ancho}x${alto}_credencial-rotada`);\n});",
+              "err": {},
+              "uuid": "09cdcf86-1ed9-43d7-9750-f7bb5092608c",
+              "parentUUID": "159c1229-b964-4685-a78e-6dd79aad23b7",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "72ba7e51-bfc2-4d25-a5e3-1ee52bfd18d9",
+            "09cdcf86-1ed9-43d7-9750-f7bb5092608c"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 14389,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "5c5c2add-76fd-4b86-968d-5e40510c3640",
+      "title": "",
+      "fullFile": "core/CO-02/large-table.ui.cy.js",
+      "file": "core/CO-02/large-table.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "cdf2887b-7144-4eae-99de-0d819b9935a2",
+          "title": "CO-02 · Data table de 10 000 filas (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CO-02 · RNF · la vista de una tabla de 10 000 filas carga en menos de 3 s y pagina hasta el final",
+              "fullTitle": "CO-02 · Data table de 10 000 filas (UI) CO-02 · RNF · la vista de una tabla de 10 000 filas carga en menos de 3 s y pagina hasta el final",
+              "timedOut": null,
+              "duration": 13980,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "n8nApi.filas(p, tabla.id, { take: \"1\" }).then((r) => {\n  expect((r.body.data ?? r.body).count, \"filas en la tabla\").to.eq(FILAS);\n});\ncy.visitarN8n(`/projects/${p}/datatables/${tabla.id}`);\ncy.get(GRID, { timeout: 3e4 }).should(\"have.length.greaterThan\", 0);\nconst cargas = [];\nfor (let i = 0; i < 3; i++) {\n  let t0;\n  cy.then(() => {\n    t0 = performance.now();\n  });\n  cy.reload();\n  cy.get(GRID, { timeout: 3e4 }).should(\"have.length.greaterThan\", 0);\n  cy.get(TOTAL, { timeout: 3e4 }).invoke(\"text\").should(\"match\", /10[.,\\s]?000/).then(() => cargas.push(Math.round(performance.now() - t0)));\n}\nlet ultima;\ncy.then(() => {\n  ultima = performance.now();\n});\ncy.get('[data-test-id=\"data-table-content-pagination\"] [data-test-id=\"pagination-item\"]').last().click();\ncy.contains(`${GRID}`, \"fila-10000\", { timeout: 3e4 }).should(\"exist\").then(() => {\n  ultima = Math.round(performance.now() - ultima);\n});\ncy.screenshot(\"CO-02_10000-filas_ultima-pagina\");\ncy.then(() => {\n  cy.evidencia(`Tabla de ${FILAS} filas \\xB7 carga: ${cargas.join(\" / \")} ms (mediana ${mediana(cargas)} ms) \\xB7 \\xFAltima p\\xE1gina: ${ultima} ms`);\n  expect(mediana(cargas), \"mediana de carga de la vista (ms)\").to.be.lessThan(3e3);\n  expect(ultima, \"pasar a la \\xFAltima p\\xE1gina (ms)\").to.be.lessThan(3e3);\n});",
+              "err": {},
+              "uuid": "6d940bee-3497-4547-bc8b-e8e690f484fa",
+              "parentUUID": "cdf2887b-7144-4eae-99de-0d819b9935a2",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "6d940bee-3497-4547-bc8b-e8e690f484fa"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 13980,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "11ca9269-6c3c-44c2-87d2-e803297f8b33",
+      "title": "",
+      "fullFile": "credentials/CR-05/many-credentials.ui.cy.js",
+      "file": "credentials/CR-05/many-credentials.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c8c0499d-49c3-4639-a4bc-7e80a9e2f8b4",
+          "title": "CR-05 · Listado con 50 credenciales (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CR-05 · RNF · el listado con 50 credenciales carga en menos de 3 s y la búsqueda las filtra",
+              "fullTitle": "CR-05 · Listado con 50 credenciales (UI) CR-05 · RNF · el listado con 50 credenciales carga en menos de 3 s y la búsqueda las filtra",
+              "timedOut": null,
+              "duration": 18093,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "expect(creadas).to.have.length(N);\nconst ultima = `${prefijo} ${String(N).padStart(2, \"0\")}`;\nconst primera = `${prefijo} 01`;\ncy.visitarN8n(\"/home/credentials\");\ncy.get(ITEMS, { timeout: 3e4 }).should(\"have.length.greaterThan\", 0);\nlet busqueda;\ncy.then(() => {\n  busqueda = performance.now();\n});\ncy.get(BUSCAR).first().type(prefijo);\ncy.get(ITEMS, { timeout: 3e4 }).first().should(\"contain.text\", ultima).then(() => {\n  busqueda = Math.round(performance.now() - busqueda);\n});\nconst cargas = [];\nfor (let i = 0; i < 3; i++) {\n  let t0;\n  cy.then(() => {\n    t0 = performance.now();\n  });\n  cy.reload();\n  cy.get(ITEMS, { timeout: 3e4 }).first().should(\"contain.text\", ultima).then(() => cargas.push(Math.round(performance.now() - t0)));\n}\nconst bajar = (restantes = 15) => cy.get(ITEMS).then(($i) => {\n  if ([...$i].some((el) => el.textContent.includes(primera)) || restantes <= 0) return;\n  cy.wrap($i.last()).scrollIntoView();\n  cy.wait(300).then(() => bajar(restantes - 1));\n});\nbajar();\ncy.contains(ITEMS, primera).should(\"exist\");\ncy.get(ITEMS).each(($i) => expect($i.text()).to.contain(prefijo));\ncy.screenshot(\"CR-05_50-credenciales\");\ncy.then(() => {\n  cy.evidencia(`Listado con ${N} credenciales nuevas \\xB7 b\\xFAsqueda: ${busqueda} ms \\xB7 carga filtrada: ${cargas.join(\" / \")} ms (mediana ${mediana(cargas)} ms) \\xB7 desplazamiento hasta \\xAB${primera}\\xBB`);\n  expect(mediana(cargas), \"mediana de carga del listado (ms)\").to.be.lessThan(3e3);\n  expect(busqueda, \"b\\xFAsqueda (ms)\").to.be.lessThan(3e3);\n});",
+              "err": {},
+              "uuid": "83fb230c-dbc5-477f-b5f1-cadb2b0b78b5",
+              "parentUUID": "c8c0499d-49c3-4639-a4bc-7e80a9e2f8b4",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "83fb230c-dbc5-477f-b5f1-cadb2b0b78b5"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 18093,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "f155cc42-0d00-4169-ab07-812ac4314442",
+      "title": "",
+      "fullFile": "scenarios/ES-01-lifecycle.e2e.cy.js",
+      "file": "scenarios/ES-01-lifecycle.e2e.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c7a56310-039d-4296-bcca-39e4242d7485",
+          "title": "ES-01 · Ciclo de vida de una automatización",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "ES-01 · crear, credencial desde el nodo, ajustes, publicar, ejecuciones y logs (1366 × 768)",
+              "fullTitle": "ES-01 · Ciclo de vida de una automatización ES-01 · crear, credencial desde el nodo, ajustes, publicar, ejecuciones y logs (1366 × 768)",
+              "timedOut": null,
+              "duration": 19543,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es01\");\nconst nombreCred = `VyV-ES01 ${ancho} ${Date.now() % 1e5}`;\nlet wf;\nn8nApi.req(\"POST\", \"/rest/workflows\", {\n  name: `VyV ES-01 ${ancho}`,\n  nodes: [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoHttpCredencial(urlEco, void 0)],\n  connections: n8nApi.cadena(\"Webhook\", \"HTTP Request\"),\n  settings: {},\n  active: false\n}).then(n8nApi.ok).then((w) => {\n  wf = w;\n  workflows.push(w.id);\n});\ncy.then(() => cy.visitarN8n(`/workflow/${wf.id}`));\ncy.get('[data-test-id=\"canvas-node\"][data-node-name=\"HTTP Request\"]', { timeout: 3e4 }).dblclick();\ncy.get(selector, { timeout: 15e3 }).click();\ncy.contains(\"Create new credential\").filter(\":visible\").first().click();\ncy.get('[data-test-id=\"editCredential-modal\"]', { timeout: 15e3 }).should(\"be.visible\");\ncy.get('[data-test-id=\"credential-name\"]').click();\ncy.get('[data-test-id=\"credential-name\"] input').clear().type(`${nombreCred}{enter}`);\ncy.get('[data-test-id=\"parameter-input-name\"] input').type(\"X-Token\");\ncy.get('[data-test-id=\"parameter-input-value\"] input').click().type(\"es01\", { delay: 120 });\ncy.get('[data-test-id=\"parameter-input-value\"] input').should(\"have.value\", \"es01\").blur();\ncy.wait(1e3);\ncy.get('[data-test-id=\"credential-save-button\"]').click();\ncy.get('[data-test-id=\"editCredential-modal\"]', { timeout: 15e3 }).should(\"not.exist\");\ncy.get(selector).should(\"have.value\", nombreCred);\ncy.screenshot(`ES-01_${ancho}x${alto}_credencial`);\ncy.get(\"body\").type(\"{esc}\");\nconst leer = (restantes = 30) => n8nApi.obtenerWorkflow(wf.id).then((w) => w.nodes.find((n) => n.name === \"HTTP Request\").credentials?.httpHeaderAuth?.name === nombreCred || restantes <= 1 ? w : cy.wait(500).then(() => leer(restantes - 1)));\ncy.then(() => leer()).then((w) => {\n  const cred = w.nodes.find((n) => n.name === \"HTTP Request\").credentials.httpHeaderAuth;\n  expect(cred.name).to.eq(nombreCred);\n  credenciales.push(cred.id);\n  return n8nApi.req(\"PATCH\", `/rest/workflows/${wf.id}`, { versionId: w.versionId, settings: { timezone: \"America/Bogota\", saveDataSuccessExecution: \"all\", executionTimeout: 60 } });\n}).then(n8nApi.ok).then((w) => n8nApi.req(\"POST\", `/rest/workflows/${wf.id}/activate`, { versionId: w.versionId })).its(\"status\").should(\"eq\", 200);\nn8nApi.llamarWebhook(\"GET\", ruta).then((r) => {\n  expect(r.status).to.eq(200);\n  expect(r.body.headers[\"x-token\"]).to.eq(\"es01\");\n});\ncy.then(() => n8nApi.esperarEjecuciones(wf.id, 1, (e) => e.status === \"success\")).then(([e]) => {\n  cy.visitarN8n(`/workflow/${wf.id}/executions`);\n  cy.get(\"div.execution-card\", { timeout: 3e4 }).should(\"have.length\", 1);\n  cy.screenshot(`ES-01_${ancho}x${alto}_ejecuciones`);\n  n8nApi.detalleEjecucion(e.id).then((d) => {\n    const orden = Object.keys(d.data.resultData.runData);\n    cy.evidencia(`${ancho}\\xD7${alto}: credencial \\xAB${nombreCred}\\xBB creada desde el nodo \\xB7 ajustes guardados \\xB7 publicado \\xB7 ejecuci\\xF3n ${e.id} ${e.status} \\xB7 logs: ${orden.join(\" \\u2192 \")}`);\n    expect(orden).to.deep.eq([\"Webhook\", \"HTTP Request\"]);\n  });\n});",
+              "err": {},
+              "uuid": "720d6206-0215-4653-9583-6b41de35e13b",
+              "parentUUID": "c7a56310-039d-4296-bcca-39e4242d7485",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "ES-01 · crear, credencial desde el nodo, ajustes, publicar, ejecuciones y logs (1920 × 1080)",
+              "fullTitle": "ES-01 · Ciclo de vida de una automatización ES-01 · crear, credencial desde el nodo, ajustes, publicar, ejecuciones y logs (1920 × 1080)",
+              "timedOut": null,
+              "duration": 13310,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.viewport(ancho, alto);\nconst ruta = n8nApi.rutaUnica(\"vyv-es01\");\nconst nombreCred = `VyV-ES01 ${ancho} ${Date.now() % 1e5}`;\nlet wf;\nn8nApi.req(\"POST\", \"/rest/workflows\", {\n  name: `VyV ES-01 ${ancho}`,\n  nodes: [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoHttpCredencial(urlEco, void 0)],\n  connections: n8nApi.cadena(\"Webhook\", \"HTTP Request\"),\n  settings: {},\n  active: false\n}).then(n8nApi.ok).then((w) => {\n  wf = w;\n  workflows.push(w.id);\n});\ncy.then(() => cy.visitarN8n(`/workflow/${wf.id}`));\ncy.get('[data-test-id=\"canvas-node\"][data-node-name=\"HTTP Request\"]', { timeout: 3e4 }).dblclick();\ncy.get(selector, { timeout: 15e3 }).click();\ncy.contains(\"Create new credential\").filter(\":visible\").first().click();\ncy.get('[data-test-id=\"editCredential-modal\"]', { timeout: 15e3 }).should(\"be.visible\");\ncy.get('[data-test-id=\"credential-name\"]').click();\ncy.get('[data-test-id=\"credential-name\"] input').clear().type(`${nombreCred}{enter}`);\ncy.get('[data-test-id=\"parameter-input-name\"] input').type(\"X-Token\");\ncy.get('[data-test-id=\"parameter-input-value\"] input').click().type(\"es01\", { delay: 120 });\ncy.get('[data-test-id=\"parameter-input-value\"] input').should(\"have.value\", \"es01\").blur();\ncy.wait(1e3);\ncy.get('[data-test-id=\"credential-save-button\"]').click();\ncy.get('[data-test-id=\"editCredential-modal\"]', { timeout: 15e3 }).should(\"not.exist\");\ncy.get(selector).should(\"have.value\", nombreCred);\ncy.screenshot(`ES-01_${ancho}x${alto}_credencial`);\ncy.get(\"body\").type(\"{esc}\");\nconst leer = (restantes = 30) => n8nApi.obtenerWorkflow(wf.id).then((w) => w.nodes.find((n) => n.name === \"HTTP Request\").credentials?.httpHeaderAuth?.name === nombreCred || restantes <= 1 ? w : cy.wait(500).then(() => leer(restantes - 1)));\ncy.then(() => leer()).then((w) => {\n  const cred = w.nodes.find((n) => n.name === \"HTTP Request\").credentials.httpHeaderAuth;\n  expect(cred.name).to.eq(nombreCred);\n  credenciales.push(cred.id);\n  return n8nApi.req(\"PATCH\", `/rest/workflows/${wf.id}`, { versionId: w.versionId, settings: { timezone: \"America/Bogota\", saveDataSuccessExecution: \"all\", executionTimeout: 60 } });\n}).then(n8nApi.ok).then((w) => n8nApi.req(\"POST\", `/rest/workflows/${wf.id}/activate`, { versionId: w.versionId })).its(\"status\").should(\"eq\", 200);\nn8nApi.llamarWebhook(\"GET\", ruta).then((r) => {\n  expect(r.status).to.eq(200);\n  expect(r.body.headers[\"x-token\"]).to.eq(\"es01\");\n});\ncy.then(() => n8nApi.esperarEjecuciones(wf.id, 1, (e) => e.status === \"success\")).then(([e]) => {\n  cy.visitarN8n(`/workflow/${wf.id}/executions`);\n  cy.get(\"div.execution-card\", { timeout: 3e4 }).should(\"have.length\", 1);\n  cy.screenshot(`ES-01_${ancho}x${alto}_ejecuciones`);\n  n8nApi.detalleEjecucion(e.id).then((d) => {\n    const orden = Object.keys(d.data.resultData.runData);\n    cy.evidencia(`${ancho}\\xD7${alto}: credencial \\xAB${nombreCred}\\xBB creada desde el nodo \\xB7 ajustes guardados \\xB7 publicado \\xB7 ejecuci\\xF3n ${e.id} ${e.status} \\xB7 logs: ${orden.join(\" \\u2192 \")}`);\n    expect(orden).to.deep.eq([\"Webhook\", \"HTTP Request\"]);\n  });\n});",
+              "err": {},
+              "uuid": "40c2d448-0b39-44ff-ba6e-5121ce67274f",
+              "parentUUID": "c7a56310-039d-4296-bcca-39e4242d7485",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "720d6206-0215-4653-9583-6b41de35e13b",
+            "40c2d448-0b39-44ff-ba6e-5121ce67274f"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 32853,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "results/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}

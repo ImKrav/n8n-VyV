@@ -15,6 +15,7 @@ Una spec por funcionalidad, con escenarios de éxito, alternativos y de error. L
 | `CR-04/` | `create-from-node.ui.cy.js` | CP-CR-04-03 · crear la credencial desde el selector del nodo · CP-CR-04-04 · la única credencial compatible se asigna sola |
 | `CR-04/` | `credential-switch.api.cy.js` | CP-CR-04-08 · la ejecución usa la credencial nueva |
 | `CR-05/` | `search-share.api.cy.js` | CP-CR-05-01 búsqueda · 05-03 filtro por tipo · 05-06 compartir sin licencia |
+| `CR-05/` | `many-credentials.ui.cy.js` | Rendimiento (numeral 8.2) · listado y búsqueda con 50 credenciales |
 | `CR-05/` | `isolation.api.cy.js`, `sort.ui.cy.js` | CP-CR-05-05 · aislamiento entre usuarios · CP-CR-05-02 · orden del listado |
 
 CP-CR-03-02 y 03-06 (conectar y reconectar con un proveedor real) tienen prueba unitaria con dobles de prueba en `../../units/credentials/CR-03/`. CP-CR-03-05 (revocar el acceso en la cuenta del proveedor) es manual: ver [`../../README.md`](../../README.md).

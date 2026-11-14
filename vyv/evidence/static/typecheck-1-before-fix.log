@@ -1,0 +1,23 @@
+$ cross-env NODE_OPTIONS="--max-old-space-size=8192" vue-tsc --noEmit
+src/features/core/folders/components/FolderBreadcrumbs.test.ts:46:7 - error TS6133: 'TEST_ACTIONS' is declared but its value is never read.
+
+46 const TEST_ACTIONS: Array<UserAction<IUser>> = [
+         ~~~~~~~~~~~~
+
+src/features/credentials/components/CredentialEdit/CredentialSharing.ee.test.ts:114:6 - error TS6133: 'isEnterpriseFeatureEnabledSpy' is declared but its value is never read.
+
+114  let isEnterpriseFeatureEnabledSpy: ReturnType<typeof vi.spyOn>;
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Found 2 errors in 2 files.
+
+Errors  Files
+     1  src/features/core/folders/components/FolderBreadcrumbs.test.ts:46
+     1  src/features/credentials/components/CredentialEdit/CredentialSharing.ee.test.ts:114
+[ELIFECYCLE] Command failed with exit code 2.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in /home/user/n8n-VyV/packages/frontend/
+  │ editor-ui
+

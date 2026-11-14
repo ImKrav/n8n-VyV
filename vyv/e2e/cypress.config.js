@@ -39,6 +39,13 @@ export default defineConfig({
     async setupNodeEvents(on, config) {
       await addCucumberPreprocessorPlugin(on, config);
       on('file:preprocessor', createBundler({ plugins: [createEsbuildPlugin(config)] }));
+      // The headless window is 1280 × 720 by default and screenshots are cropped to it; the plan's
+      // compatibility scenarios need captures up to 1920 × 1080.
+      on('before:browser:launch', (browser, launchOptions) => {
+        if (browser.family === 'chromium' && browser.name !== 'electron') launchOptions.args.push('--window-size=1920,1200');
+        if (browser.name === 'electron') Object.assign(launchOptions.preferences, { width: 1920, height: 1200 });
+        return launchOptions;
+      });
       on('task', {
         log(msg) { console.log(msg); return null; },
         table(rows) { console.table(rows); return null; },
