@@ -24,7 +24,7 @@ Los IDs de las pruebas son los mismos de la matriz de casos y de la RTM (que van
 | 5. Caja blanca / caja negra | Pruebas unitarias en `packages/…/__tests__/*.vyv.test.ts` · pruebas de API Cypress (particiones y valores límite) | Grafos, V(G) y caminos independientes |
 | 6. TDD, AAA, FIRST, mocks | Pruebas unitarias + **commits rojo → verde → refactor** | Explicación del ciclo y cobertura |
 | 7. Cypress (UI + API) | `core/CO-0x/*.ui.cy.js`, `core/CO-0x/*.api.cy.js` | Resultados por caso |
-| 8. Gherkin + Screenplay | `core/CO-0x/*.feature`, `screenplay/` | — |
+| 8. Gherkin + Screenplay | Un `*.feature` por funcionalidad en `workflows/`, `executions/`, `credentials/` y `core/`; `screenplay/` y `support/step_definitions/` | — |
 | 9. Jenkins, Docker, SonarQube | — (a cargo de otro integrante; ver sección 8) | — |
 | 10. Regresión | `core/regression/`, `scripts/compare-regression.mjs` | Comparación antes / después |
 | 11. Accesibilidad | `core/accessibility/` (axe-core + teclado) | Hallazgos WCAG y revisión manual |
@@ -39,7 +39,7 @@ Los IDs de las pruebas son los mismos de la matriz de casos y de la RTM (que van
 
 ```
 vyv/e2e/                    ← pruebas funcionales (esta carpeta)
-  workflows/ executions/ credentials/   módulos 1–3: casos que necesitan servidor, base de datos o navegador (ver su README)
+  workflows/ executions/ credentials/   módulos 1–3: casos que necesitan servidor, base de datos o navegador, y un *.feature por funcionalidad (ver su README)
   core/
     CO-01/ … CO-05/         una carpeta por funcionalidad del plan:
                               *.api.cy.js  por API (caja negra)
@@ -48,8 +48,8 @@ vyv/e2e/                    ← pruebas funcionales (esta carpeta)
     security/               OWASP Top 10
     accessibility/          WCAG 2.1 AA con axe-core
     regression/             suite de regresión
-  screenplay/               Actor, habilidades, interacciones, tareas, preguntas
-  support/                  comandos, cliente de la API de n8n, pasos de Gherkin
+  screenplay/               Actor, escena (Stage), habilidades, interacciones, tareas y preguntas de los 4 módulos
+  support/                  comandos, cliente de la API de n8n, pasos de Gherkin por módulo (step_definitions/)
   fixtures/                 CSV y usuarios de prueba
   scripts/                  reportes, comparación de regresión, evidencias por caso
   results/                  salida de cada ejecución (Git la ignora)

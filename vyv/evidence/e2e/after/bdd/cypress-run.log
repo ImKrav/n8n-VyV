@@ -1,0 +1,818 @@
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Custom Chrome for Testing 153 (headless)                                       │
+  │ Node Version:   v22.23.4 (/opt/node22/bin/node)                                                │
+  │ Specs:          20 found (core/CO-01/create-data-table.feature, core/CO-02/row-editing.feature │
+  │                 , core/CO-03/csv.feature, core/CO-04/folders.feature, core/CO-05/folders.featu │
+  │                 re, workflows/WF-01/canvas-edit.feature, workflows/WF-02/settings.feature, wor │
+  │                 kflows/WF-03/publish.fe...)                                                    │
+  │ Searched:       {workflows,executions,credentials,core}/**/*.feature                           │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core/CO-01/create-data-table.feature                                           (1 of 20)
+
+
+  CO-01 Crear data table y columnas
+    ✓ Crear una data table con nombre válido desde la interfaz (9801ms)
+    ✓ Rechazar un nombre de tabla duplicado
+    ✓ Validar nombres de columna (example #1)
+    ✓ Validar nombres de columna (example #2)
+    ✓ Validar nombres de columna (example #3)
+    ✓ Validar nombres de columna (example #4)
+
+
+  6 passing (12s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_076.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        6                                                                                │
+  │ Passing:      6                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     11 seconds                                                                       │
+  │ Spec Ran:     core/CO-01/create-data-table.feature                                             │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/core/CO-01/create-data-table.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core/CO-02/row-editing.feature                                                 (2 of 20)
+
+
+  CO-02 Edición de filas
+    ✓ Añadir una fila con valores válidos
+    ✓ Rechazar un valor que no coincide con el tipo de la columna
+    ✓ Filtrar filas con un valor límite
+
+
+  3 passing (1s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_077.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        3                                                                                │
+  │ Passing:      3                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 second                                                                         │
+  │ Spec Ran:     core/CO-02/row-editing.feature                                                   │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/core/CO-02/row-editing.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core/CO-03/csv.feature                                                         (3 of 20)
+
+
+  CO-03 Importar y exportar CSV
+    ✓ Importar un CSV válido infiere los tipos
+    ✓ Un CSV sin fila de encabezados recibe nombres de columna genéricos
+    ✓ Rechazar un archivo que no es CSV
+
+
+  3 passing (779ms)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_078.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        3                                                                                │
+  │ Passing:      3                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     0 seconds                                                                        │
+  │ Spec Ran:     core/CO-03/csv.feature                                                           │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/core/CO-03/csv.feature (4).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core/CO-04/folders.feature                                                     (4 of 20)
+
+
+  CO-04 Crear y navegar carpetas
+    ✓ Las carpetas anidadas muestran su ruta
+    ✓ Renombrar una carpeta cambia la ruta de sus subcarpetas
+    ✓ Rechazar nombres de carpeta inválidos (example #1)
+    ✓ Rechazar nombres de carpeta inválidos (example #2)
+    ✓ Rechazar nombres de carpeta inválidos (example #3)
+
+
+  5 passing (3s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_079.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      5                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     3 seconds                                                                        │
+  │ Spec Ran:     core/CO-04/folders.feature                                                       │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/core/CO-04/folders.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core/CO-05/folders.feature                                                     (5 of 20)
+
+
+  CO-05 Mover y eliminar carpetas
+    ✓ Impedir mover una carpeta dentro de su descendiente
+    ✓ Eliminar una carpeta vacía
+    ✓ Eliminar una carpeta transfiriendo su contenido
+
+
+  3 passing (2s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_080.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        3                                                                                │
+  │ Passing:      3                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     2 seconds                                                                        │
+  │ Spec Ran:     core/CO-05/folders.feature                                                       │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/core/CO-05/folders.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  workflows/WF-01/canvas-edit.feature                                            (6 of 20)
+
+
+  WF-01 Crear y editar workflows en el lienzo
+    ✓ Un Manual Trigger conectado a un Edit Fields se muestra en el lienzo (5686ms)
+    ✓ Eliminar un nodo quita su conexión y deshacer lo restaura
+    ✓ Un nodo desactivado no transforma los datos y se ve desactivado
+    ✓ Abrir un workflow que no existe muestra un aviso y ningún lienzo
+
+
+  4 passing (19s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_081.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     19 seconds                                                                       │
+  │ Spec Ran:     workflows/WF-01/canvas-edit.feature                                              │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/workflows/WF-01/canvas-edit.feature (2).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  workflows/WF-02/settings.feature                                               (7 of 20)
+
+
+  WF-02 Ajustes del workflow
+    ✓ Los ajustes guardados persisten al volver a leer el workflow
+    ✓ Con «no guardar ejecuciones exitosas» la ejecución no queda registrada
+    ✓ Una ejecución más larga que el timeout se cancela
+    ✓ El workflow de error se ejecuta cuando el workflow principal falla
+
+
+  4 passing (7s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_082.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     workflows/WF-02/settings.feature                                                 │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/workflows/WF-02/settings.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  workflows/WF-03/publish.feature                                                (8 of 20)
+
+
+  WF-03 Publicar workflows
+    ✓ Un workflow publicado responde en su URL de producción (6220ms)
+    ✓ Despublicar el workflow detiene su webhook de producción
+    ✓ No se puede publicar un workflow sin nodo trigger
+    ✓ Un segundo workflow con la misma ruta y método no se publica
+
+
+  4 passing (9s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_083.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     9 seconds                                                                        │
+  │ Spec Ran:     workflows/WF-03/publish.feature                                                  │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/workflows/WF-03/publish.feature (2).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  workflows/WF-04/version-history.feature                                        (9 of 20)
+
+
+  WF-04 Historial de versiones
+    ✓ Cada cambio guardado crea una versión nueva
+    ✓ Restaurar la primera versión recupera sus nodos y crea una versión nueva
+    ✓ Una versión inexistente responde 404
+    ✓ Nombrar una versión sin licencia se rechaza
+
+
+  4 passing (2s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_084.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 second                                                                         │
+  │ Spec Ran:     workflows/WF-04/version-history.feature                                          │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/workflows/WF-04/version-history.feature (2).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  workflows/WF-05/import-duplicate.feature                                      (10 of 20)
+
+
+  WF-05 Importar y duplicar workflows
+    ✓ El duplicado conserva la etiqueta y sus cambios no afectan al original
+    ✓ Validar la longitud del nombre del workflow (example #1)
+    ✓ Validar la longitud del nombre del workflow (example #2)
+    ✓ Validar la longitud del nombre del workflow (example #3)
+    ✓ Validar la longitud del nombre del workflow (example #4)
+    ✓ Rechazar una URL de importación no válida (example #1)
+    ✓ Rechazar una URL de importación no válida (example #2)
+    ✓ Rechazar una URL de importación no válida (example #3)
+
+
+  8 passing (3s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_085.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        8                                                                                │
+  │ Passing:      8                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     2 seconds                                                                        │
+  │ Spec Ran:     workflows/WF-05/import-duplicate.feature                                         │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/workflows/WF-05/import-duplicate.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  executions/EX-01/execution-list.feature                                       (11 of 20)
+
+
+  EX-01 Lista de ejecuciones
+    ✓ Una ejecución exitosa aparece en la lista con el estado «success» (6179ms)
+    ✓ Mientras dura un nodo Wait la ejecución aparece «waiting»
+    ✓ Una ejecución cuyo nodo falla aparece con el estado «error»
+
+
+  3 passing (13s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_086.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        3                                                                                │
+  │ Passing:      3                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     13 seconds                                                                       │
+  │ Spec Ran:     executions/EX-01/execution-list.feature                                          │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/executions/EX-01/execution-list.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  executions/EX-02/filters.feature                                              (12 of 20)
+
+
+  EX-02 Filtros de la lista de ejecuciones
+    ✓ El filtro de estado muestra solo ejecuciones con ese estado
+    ✓ El filtro por workflow muestra solo las ejecuciones de ese workflow
+    ✓ Combinar filtros que no coinciden devuelve una lista vacía
+    ✓ Rechazar parámetros de consulta no válidos (example #1)
+    ✓ Rechazar parámetros de consulta no válidos (example #2)
+
+
+  5 passing (10s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_087.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      5                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     10 seconds                                                                       │
+  │ Spec Ran:     executions/EX-02/filters.feature                                                 │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/executions/EX-02/filters.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  executions/EX-03/preview-retry-delete.feature                                 (13 of 20)
+
+
+  EX-03 Vista previa, reintento y eliminación de ejecuciones
+    ✓ La vista previa muestra por nodo los mismos datos que devolvió la ejecución
+    ✓ Reintentar con la versión corregida termina con éxito
+    ✓ Reintentar con la versión original vuelve a fallar
+    ✓ Eliminar una ejecución la quita de la lista
+    ✓ La ejecución fallida identifica el nodo con error y su mensaje
+
+
+  5 passing (5s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_088.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      5                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     executions/EX-03/preview-retry-delete.feature                                    │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/executions/EX-03/preview-retry-delete.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  executions/EX-04/stop.feature                                                 (14 of 20)
+
+
+  EX-04 Detener ejecuciones
+    ✓ Detener una ejecución en un nodo Wait la deja cancelada
+    ✓ Detener en bloque solo afecta a las ejecuciones seleccionadas
+    ✓ Detener una ejecución ya terminada se rechaza y no la modifica
+
+
+  3 passing (4s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_089.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        3                                                                                │
+  │ Passing:      3                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     4 seconds                                                                        │
+  │ Spec Ran:     executions/EX-04/stop.feature                                                    │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/executions/EX-04/stop.feature (4).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  executions/EX-05/execution-log.feature                                        (15 of 20)
+
+
+  EX-05 Panel de logs de la ejecución
+    ✓ El registro sigue la rama que tomó la bifurcación If (example #1)
+    ✓ El registro sigue la rama que tomó la bifurcación If (example #2)
+    ✓ La ejecución de Execute Workflow enlaza con la ejecución hija
+    ✓ El nodo que falla queda marcado con error en el registro
+
+
+  4 passing (5s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_090.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     executions/EX-05/execution-log.feature                                           │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/executions/EX-05/execution-log.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-01/create.feature                                              (16 of 20)
+
+
+  CR-01 Crear y probar credenciales
+    ✓ Una credencial Header Auth completa se guarda y aparece en el listado
+    ✓ Dos credenciales con el mismo nombre se permiten y se distinguen por su ID
+    ✓ La credencial «n8n API» con una clave incorrecta informa el error
+    ✓ Un tipo de credencial inexistente se rechaza
+
+
+  4 passing (5s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_091.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     credentials/CR-01/create.feature                                                 │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/credentials/CR-01/create.feature (3).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-02/edit-delete.feature                                         (17 of 20)
+
+
+  CR-02 Editar y eliminar credenciales
+    ✓ Al cambiar el valor de una credencial en uso, el workflow envía el valor nuevo
+    ✓ Al reabrir la credencial en el editor el secreto aparece enmascarado
+    ✓ Eliminar una credencial sin uso la quita de la instancia
+    ✓ Eliminar una credencial en uso hace que la ejecución informe el problema
+
+
+  4 passing (10s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_092.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     9 seconds                                                                        │
+  │ Spec Ran:     credentials/CR-02/edit-delete.feature                                            │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/credentials/CR-02/edit-delete.feature (4).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-03/oauth2.feature                                              (18 of 20)
+
+
+  CR-03 Credenciales OAuth2
+    ✓ La URL de autorización apunta al proveedor y vuelve al callback de la instancia
+    ✓ Los scopes de la URL coinciden con los de la credencial
+    ✓ Si la persona cancela en el proveedor, no se guarda ningún token
+    ✓ Pedir la URL de autorización de una credencial inexistente responde 404
+
+
+  4 passing (1s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_093.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 second                                                                         │
+  │ Spec Ran:     credentials/CR-03/oauth2.feature                                                 │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/credentials/CR-03/oauth2.feature (4).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-04/node-credentials.feature                                    (19 of 20)
+
+
+  CR-04 Credenciales en los nodos
+    ✓ El nodo HTTP Request usa la credencial asignada al ejecutar
+    ✓ Sustituir la credencial del nodo se conserva al guardar
+    ✓ Al filtrar por el tipo requerido solo aparecen credenciales de ese tipo
+    ✓ Un workflow con una credencial que no existe no se publica
+    ✓ Un nodo que requiere credencial y no tiene ninguna falla al ejecutar
+
+
+  5 passing (8s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_094.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        5                                                                                │
+  │ Passing:      5                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     credentials/CR-04/node-credentials.feature                                       │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/credentials/CR-04/node-credentials.feature (4).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-05/list-permissions.feature                                    (20 of 20)
+
+
+  CR-05 Listado y permisos de credenciales
+    ✓ Un término parcial devuelve solo las credenciales que coinciden
+    ✓ El filtro por tipo solo muestra las credenciales de ese tipo
+    ✓ Un término inexistente devuelve un listado vacío
+    ✓ Compartir una credencial sin licencia se rechaza
+
+
+  4 passing (6s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_095.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        4                                                                                │
+  │ Passing:      4                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     credentials/CR-05/list-permissions.feature                                       │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/credentials/CR-05/list-permissions.feature (3).mp4
+
+
+resize:  can't open terminal /dev/tty
+================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✔  core/CO-01/create-data-table.featur      00:11        6        6        -        -        - │
+  │    e                                                                                           │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  core/CO-02/row-editing.feature           00:01        3        3        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  core/CO-03/csv.feature                   784ms        3        3        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  core/CO-04/folders.feature               00:03        5        5        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  core/CO-05/folders.feature               00:02        3        3        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  workflows/WF-01/canvas-edit.feature      00:19        4        4        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  workflows/WF-02/settings.feature         00:07        4        4        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  workflows/WF-03/publish.feature          00:09        4        4        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  workflows/WF-04/version-history.fea      00:01        4        4        -        -        - │
+  │    ture                                                                                        │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  workflows/WF-05/import-duplicate.fe      00:02        8        8        -        -        - │
+  │    ature                                                                                       │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  executions/EX-01/execution-list.fea      00:13        3        3        -        -        - │
+  │    ture                                                                                        │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  executions/EX-02/filters.feature         00:10        5        5        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  executions/EX-03/preview-retry-dele      00:05        5        5        -        -        - │
+  │    te.feature                                                                                  │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  executions/EX-04/stop.feature            00:04        3        3        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  executions/EX-05/execution-log.feat      00:05        4        4        -        -        - │
+  │    ure                                                                                         │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-01/create.feature         00:05        4        4        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-02/edit-delete.featu      00:09        4        4        -        -        - │
+  │    re                                                                                          │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-03/oauth2.feature         00:01        4        4        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-04/node-credentials.      00:07        5        5        -        -        - │
+  │    feature                                                                                     │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-05/list-permissions.      00:05        4        4        -        -        - │
+  │    feature                                                                                     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✔  All specs passed!                        02:06       85       85        -        -        -  
+

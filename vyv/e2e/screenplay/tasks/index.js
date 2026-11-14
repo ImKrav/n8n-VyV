@@ -48,6 +48,22 @@ export const ImportCsv = {
       const { api } = actor.abilityTo(CallAnApi);
       api.subirArchivo(`csv/${fixture}`, fixture).then((r) => actor.remember('ultimaRespuesta', r));
     }),
+  withoutHeaders: (fixture) =>
+    actividad(`subir el archivo ${fixture} sin fila de encabezados`, (actor) => {
+      const { api } = actor.abilityTo(CallAnApi);
+      api.subirArchivo(`csv/${fixture}`, fixture, false).then((r) => actor.remember('ultimaRespuesta', r));
+    }),
+};
+
+export const RenameFolder = {
+  named: (nombre) => ({
+    to: (nuevo) =>
+      actividad(`renombrar la carpeta "${nombre}" a "${nuevo}"`, (actor) => {
+        const { api } = actor.abilityTo(CallAnApi);
+        api.actualizarCarpeta(actor.recall('proyecto'), actor.recall(`carpeta:${nombre}`).id, { name: nuevo })
+          .then((r) => actor.remember('ultimaRespuesta', r));
+      }),
+  }),
 };
 
 export const CreateFolder = {
@@ -108,3 +124,8 @@ export const OpenFolder = {
 };
 
 export { Click };
+
+// Tareas de los módulos 1 a 3 (los pasos de Core usan las de arriba).
+export * from './workflows.js';
+export * from './executions.js';
+export * from './credentials.js';
