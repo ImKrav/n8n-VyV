@@ -36,3 +36,8 @@ export const FolderContent = {
     pregunta(`el contenido de "${nombre}"`, (a) =>
       a.abilityTo(CallAnApi).api.contenido(a.recall('proyecto'), a.recall(`carpeta:${nombre}`).id)),
 };
+
+// Preguntas de los módulos 1 a 3.
+export * from './workflows.js';
+export * from './executions.js';
+export * from './credentials.js';

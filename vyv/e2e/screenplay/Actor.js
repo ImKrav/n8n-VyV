@@ -30,11 +30,15 @@ export class Actor {
     return h;
   }
 
-  /** Ejecuta tareas o interacciones en orden (cada una expone performAs(actor)). */
+  /**
+   * Ejecuta tareas o interacciones en orden (cada una expone performAs(actor)).
+   * Cada actividad empieza cuando terminan los comandos de la anterior, así puede leer de la
+   * memoria lo que la anterior guardó (p. ej. publicar un workflow y después llamar a su webhook).
+   */
   attemptsTo(...actividades) {
     actividades.forEach((a) => {
       cy.log(`🎭 ${this.nombre} intenta: ${a.toString()}`);
-      a.performAs(this);
+      cy.then(() => { a.performAs(this); });
     });
     return this;
   }
