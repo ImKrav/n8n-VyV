@@ -9,7 +9,7 @@ export default defineConfig({
   e2e: {
     baseUrl: process.env.N8N_URL ?? 'http://localhost:5678',
     // One folder for each plan module and one subfolder for each feature (core/CO-01 …).
-    specPattern: ['{workflows,executions,credentials,core}/**/*.cy.js', '{workflows,executions,credentials,core}/**/*.feature'],
+    specPattern: ['{workflows,executions,credentials,core,scenarios}/**/*.cy.js', '{workflows,executions,credentials,core}/**/*.feature'],
     fixturesFolder: 'fixtures',
     supportFile: 'support/e2e.js',
     viewportWidth: 1440,

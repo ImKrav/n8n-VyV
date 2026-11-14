@@ -1,5 +1,4 @@
 import { createComponentRenderer } from '@/__tests__/render';
-import type { UserAction } from '@/Interface';
 import type { FolderShortInfo } from '../folders.types';
 import FolderBreadcrumbs from './FolderBreadcrumbs.vue';
 import { setActivePinia } from 'pinia';
@@ -10,7 +9,6 @@ import { mockedStore } from '@/__tests__/utils';
 import { useProjectsStore } from '@/features/collaboration/projects/projects.store';
 import { ProjectTypes, type Project } from '@/features/collaboration/projects/projects.types';
 import { useFoldersStore } from '../folders.store';
-import type { IUser } from 'n8n-workflow';
 
 vi.mock('vue-router', async (importOriginal) => ({
 	...(await importOriginal()),
@@ -42,11 +40,6 @@ const TEST_FOLDER_CHILD: FolderShortInfo = {
 	name: 'Test Folder Child',
 	parentFolder: TEST_FOLDER.id,
 };
-
-const TEST_ACTIONS: Array<UserAction<IUser>> = [
-	{ label: 'Action 1', value: 'action1', disabled: false },
-	{ label: 'Action 2', value: 'action2', disabled: true },
-];
 
 const renderComponent = createComponentRenderer(FolderBreadcrumbs, {});
 

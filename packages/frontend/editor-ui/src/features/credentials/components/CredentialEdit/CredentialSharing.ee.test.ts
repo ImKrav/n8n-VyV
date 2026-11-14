@@ -111,7 +111,6 @@ describe('CredentialSharing.ee', () => {
 	let projectsStore: ReturnType<typeof useProjectsStore>;
 	let settingsStore: ReturnType<typeof useSettingsStore>;
 	let rolesStore: ReturnType<typeof useRolesStore>;
-	let isEnterpriseFeatureEnabledSpy: ReturnType<typeof vi.spyOn>;
 
 	beforeEach(() => {
 		const pinia = createTestingPinia();
@@ -148,40 +147,38 @@ describe('CredentialSharing.ee', () => {
 				licensed: true,
 			},
 		]);
-		isEnterpriseFeatureEnabledSpy = vi
-			.spyOn(settingsStore, 'isEnterpriseFeatureEnabled', 'get')
-			.mockReturnValue({
-				sharing: true,
-				ldap: false,
-				saml: false,
-				oidc: false,
-				mfaEnforcement: false,
-				logStreaming: false,
-				advancedExecutionFilters: false,
-				variables: false,
-				sourceControl: false,
-				externalSecrets: false,
-				auditLogs: false,
-				debugInEditor: false,
-				binaryDataS3: false,
-				workerView: false,
-				advancedPermissions: false,
+		vi.spyOn(settingsStore, 'isEnterpriseFeatureEnabled', 'get').mockReturnValue({
+			sharing: true,
+			ldap: false,
+			saml: false,
+			oidc: false,
+			mfaEnforcement: false,
+			logStreaming: false,
+			advancedExecutionFilters: false,
+			variables: false,
+			sourceControl: false,
+			externalSecrets: false,
+			auditLogs: false,
+			debugInEditor: false,
+			binaryDataS3: false,
+			workerView: false,
+			advancedPermissions: false,
 
-				workflowDiffs: false,
-				namedVersions: false,
-				provisioning: true,
-				showNonProdBanner: false,
-				projects: {
-					team: {
-						limit: -1,
-					},
+			workflowDiffs: false,
+			namedVersions: false,
+			provisioning: true,
+			showNonProdBanner: false,
+			projects: {
+				team: {
+					limit: -1,
 				},
-				customRoles: false,
-				personalSpacePolicy: false,
-				dataRedaction: false,
-				otelCustomSpanAttributes: false,
-				workflowReviews: false,
-			});
+			},
+			customRoles: false,
+			personalSpacePolicy: false,
+			dataRedaction: false,
+			otelCustomSpanAttributes: false,
+			workflowReviews: false,
+		});
 	});
 
 	it('should render ProjectSharing component when sharing is enabled', async () => {
