@@ -1,25 +1,14 @@
 /// <reference types="cypress" />
 /**
  * WF-03 · Publicar workflows y disparadores · URL de producción del Webhook (caja negra).
- * Trazabilidad: CP-WF-03-02, CP-WF-03-04 y CP-WF-03-08.
+ * Trazabilidad: CP-WF-03-01, 03-02, 03-03, 03-04, 03-05 y 03-08.
+ * Éxito: 03-02, 03-04 · alternativo: 03-05, 03-08 · error: 03-01, 03-03.
  * CP-WF-03-08 reinicia n8n con el comando de CYPRESS_restartCommand; sin esa variable se omite.
  */
 import { n8nApi } from '../../support/api.js';
 
-/** Nodo Edit Fields (Set) que devuelve los campos dados. */
-const nodoCampos = (campos) => ({
-  id: 'set', name: 'Edit Fields', type: 'n8n-nodes-base.set', typeVersion: 3.4, position: [220, 0],
-  parameters: {
-    mode: 'manual',
-    assignments: {
-      assignments: Object.entries(campos).map(([name, value], i) => ({
-        id: String(i), name, value, type: typeof value === 'boolean' ? 'boolean' : 'string',
-      })),
-    },
-    options: {},
-  },
-});
-const conexion = { Webhook: { main: [[{ node: 'Edit Fields', type: 'main', index: 0 }]] } };
+const nodoCampos = (campos) => n8nApi.nodoCampos(campos);
+const conexion = n8nApi.cadena('Webhook', 'Edit Fields');
 
 describe('WF-03 · Webhook de producción (API)', () => {
   let p;
@@ -60,6 +49,58 @@ describe('WF-03 · Webhook de producción (API)', () => {
         n8nApi.ejecuciones(a.id).should('have.length', 1);
         n8nApi.ejecuciones(b.id).should('have.length', 1);
         cy.evidencia(`GET y POST /webhook/${ruta} → A y B (una ejecución cada uno)`);
+      });
+    });
+  });
+
+  it('CP-WF-03-01 · (error) no se puede publicar un workflow sin nodo trigger', () => {
+    n8nApi
+      .req('POST', '/rest/workflows', { name: 'VyV sin trigger', nodes: [nodoCampos({ ok: true })], connections: {}, settings: {}, active: false, projectId: p })
+      .then(n8nApi.ok)
+      .then((wf) => {
+        workflows.push(wf.id);
+        n8nApi.req('POST', `/rest/workflows/${wf.id}/activate`, { versionId: wf.versionId }).then((r) => {
+          cy.evidencia(`Publicar sin trigger → HTTP ${r.status}: ${r.body.message}`);
+          expect(r.status).to.eq(400);
+          expect(r.body.message).to.match(/no trigger node/i);
+        });
+        n8nApi.obtenerWorkflow(wf.id).its('active').should('eq', false);
+      });
+  });
+
+  it('CP-WF-03-03 · (error) un segundo workflow con la misma ruta y método no se publica', () => {
+    const ruta = n8nApi.rutaUnica('vyv-conflicto');
+    publicar('VyV conflicto A', 'GET', ruta, { workflow: 'A' });
+    n8nApi
+      .req('POST', '/rest/workflows', {
+        name: 'VyV conflicto B', nodes: [n8nApi.nodoWebhook('GET', ruta), nodoCampos({ workflow: 'B' })], connections: conexion, settings: {}, active: false, projectId: p,
+      })
+      .then(n8nApi.ok)
+      .then((b) => {
+        workflows.push(b.id);
+        n8nApi.req('POST', `/rest/workflows/${b.id}/activate`, { versionId: b.versionId }).then((r) => {
+          cy.evidencia(`Publicar B con la misma ruta → HTTP ${r.status}: ${r.body.message}`);
+          expect(r.status).to.eq(409);
+          expect(r.body.message).to.match(/conflict with one of the webhooks/i);
+        });
+      });
+    // El workflow A sigue respondiendo.
+    n8nApi.llamarWebhook('GET', ruta).its('body').should('deep.include', { workflow: 'A' });
+  });
+
+  it('CP-WF-03-05 · (alternativo) despublicar el workflow detiene su webhook de producción', () => {
+    const ruta = n8nApi.rutaUnica('vyv-despublicar');
+    publicar('VyV despublicar', 'GET', ruta, { ok: true }).then((wf) => {
+      n8nApi.llamarWebhook('GET', ruta).its('status').should('eq', 200);
+      n8nApi.desactivarWorkflow(wf.id).its('status').should('eq', 200);
+      // n8n quita el webhook poco después de responder: se reintenta hasta 5 s mientras siga en 200.
+      const hasta404 = (restantes = 10) =>
+        cy.request({ url: `/webhook/${ruta}`, failOnStatusCode: false }).then((r) =>
+          r.status === 404 || restantes <= 1 ? r : cy.wait(500).then(() => hasta404(restantes - 1)),
+        );
+      hasta404().then((r) => {
+        cy.evidencia(`Después de despublicar: GET /webhook/${ruta} → ${r.status}`);
+        expect(r.status, 'el webhook ya no está registrado').to.eq(404);
       });
     });
   });

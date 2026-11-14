@@ -1,0 +1,1267 @@
+{
+	"info": {
+		"name": "n8n-VyV · API de los 4 módulos",
+		"description": "Pruebas de API (Newman) del plan de pruebas de n8n-VyV: Workflows, Ejecuciones, Credenciales y Core (data tables y carpetas). Cada petición indica el caso del plan y el tipo de escenario. Ejecutar con `npm run test:newman` desde vyv/e2e con n8n en {{baseUrl}}.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "filtro",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "0 · Sesión",
+			"item": [
+				{
+					"name": "Iniciar sesión como propietario",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Datos únicos por corrida: las pruebas son repetibles (FIRST).",
+									"const s = Date.now().toString(36);",
+									"pm.collectionVariables.set('sufijo', s);",
+									"pm.collectionVariables.set('ruta', 'vyv-newman-' + s);",
+									"pm.collectionVariables.set('webhookId', require('uuid').v4());"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.test('sesión del propietario', () => pm.expect(pm.response.json().data.email).to.eql(pm.environment.get('ownerEmail')));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"emailOrLdapLoginId\": \"{{ownerEmail}}\",\n  \"password\": \"{{ownerPassword}}\"\n}"
+						},
+						"url": "{{baseUrl}}/rest/login"
+					}
+				},
+				{
+					"name": "Proyecto personal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.collectionVariables.set('projectId', pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/projects/personal"
+					}
+				}
+			]
+		},
+		{
+			"name": "1 · Workflows",
+			"item": [
+				{
+					"name": "CP-WF-05-05 · (error) nombre vacío → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+									"pm.test('mensaje', () => pm.expect(pm.response.json().message).to.match(/name is required/i));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"\",\n  \"nodes\": [],\n  \"connections\": {},\n  \"settings\": {},\n  \"active\": false\n}"
+						},
+						"url": "{{baseUrl}}/rest/workflows"
+					}
+				},
+				{
+					"name": "CP-WF-05-05 · (error) nombre de 129 caracteres → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+									"pm.test('mensaje', () => pm.expect(pm.response.json().message).to.match(/128 characters or less/i));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n  \"nodes\": [],\n  \"connections\": {},\n  \"settings\": {},\n  \"active\": false\n}"
+						},
+						"url": "{{baseUrl}}/rest/workflows"
+					}
+				},
+				{
+					"name": "CP-WF-03-01 · crear workflow sin trigger",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const d = pm.response.json().data;",
+									"pm.collectionVariables.set('wfSinTrigger', d.id);",
+									"pm.collectionVariables.set('versionSinTrigger', d.versionId);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"VyV Newman sin trigger\",\n  \"nodes\": [\n    {\n      \"id\": \"set\",\n      \"name\": \"Edit Fields\",\n      \"type\": \"n8n-nodes-base.set\",\n      \"typeVersion\": 3.4,\n      \"position\": [\n        220,\n        0\n      ],\n      \"parameters\": {\n        \"mode\": \"manual\",\n        \"assignments\": {\n          \"assignments\": [\n            {\n              \"id\": \"0\",\n              \"name\": \"ok\",\n              \"value\": true,\n              \"type\": \"boolean\"\n            }\n          ]\n        },\n        \"options\": {}\n      }\n    }\n  ],\n  \"connections\": {},\n  \"settings\": {},\n  \"active\": false\n}"
+						},
+						"url": "{{baseUrl}}/rest/workflows"
+					}
+				},
+				{
+					"name": "CP-WF-03-01 · (error) publicar sin trigger → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+									"pm.test('pide un trigger', () => pm.expect(pm.response.json().message).to.match(/no trigger node/i));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"versionId\": \"{{versionSinTrigger}}\"\n}"
+						},
+						"url": "{{baseUrl}}/rest/workflows/{{wfSinTrigger}}/activate"
+					}
+				},
+				{
+					"name": "CP-WF-01-01 · crear workflow Webhook → Edit Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const d = pm.response.json().data;",
+									"pm.test('2 nodos conectados', () => {",
+									"  pm.expect(d.nodes).to.have.length(2);",
+									"  pm.expect(d.connections.Webhook.main[0][0].node).to.eql('Edit Fields');",
+									"});",
+									"pm.collectionVariables.set('wfId', d.id);",
+									"pm.collectionVariables.set('versionId', d.versionId);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"VyV Newman webhook\",\n  \"nodes\": [\n    {\n      \"id\": \"mt\",\n      \"name\": \"Webhook\",\n      \"type\": \"n8n-nodes-base.webhook\",\n      \"typeVersion\": 2,\n      \"position\": [\n        0,\n        0\n      ],\n      \"webhookId\": \"{{webhookId}}\",\n      \"parameters\": {\n        \"httpMethod\": \"GET\",\n        \"path\": \"{{ruta}}\",\n        \"responseMode\": \"lastNode\",\n        \"options\": {}\n      }\n    },\n    {\n      \"id\": \"set\",\n      \"name\": \"Edit Fields\",\n      \"type\": \"n8n-nodes-base.set\",\n      \"typeVersion\": 3.4,\n      \"position\": [\n        220,\n        0\n      ],\n      \"parameters\": {\n        \"mode\": \"manual\",\n        \"assignments\": {\n          \"assignments\": [\n            {\n              \"id\": \"0\",\n              \"name\": \"ok\",\n              \"value\": true,\n              \"type\": \"boolean\"\n            }\n          ]\n        },\n        \"options\": {}\n      }\n    }\n  ],\n  \"connections\": {\n    \"Webhook\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Edit Fields\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    }\n  },\n  \"settings\": {},\n  \"active\": false\n}"
+						},
+						"url": "{{baseUrl}}/rest/workflows"
+					}
+				},
+				{
+					"name": "CP-WF-03-02 · publicar el workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.test('queda publicado', () => pm.expect(pm.response.json().data.active).to.eql(true));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"versionId\": \"{{versionId}}\"\n}"
+						},
+						"url": "{{baseUrl}}/rest/workflows/{{wfId}}/activate"
+					}
+				},
+				{
+					"name": "CP-WF-03-02 · llamar el webhook de producción",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"setTimeout(() => {}, 1500);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.test('responde la salida del último nodo', () => pm.expect(pm.response.json()).to.eql({ ok: true }));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/webhook/{{ruta}}"
+					}
+				},
+				{
+					"name": "CP-WF-04-01 · historial de versiones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const versiones = pm.response.json().data;",
+									"pm.test('al menos una versión', () => pm.expect(versiones.length).to.be.at.least(1));",
+									"pm.collectionVariables.set('primeraVersion', versiones[versiones.length - 1].versionId);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/workflow-history/workflow/{{wfId}}?take=10"
+					}
+				},
+				{
+					"name": "CP-WF-04-02 · (error) nombrar una versión sin licencia → 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+									"pm.test('pide licencia', () => pm.expect(pm.response.json().message).to.match(/license/i));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Versión estable\"\n}"
+						},
+						"url": "{{baseUrl}}/rest/workflow-history/workflow/{{wfId}}/versions/{{primeraVersion}}"
+					}
+				},
+				{
+					"name": "CP-WF-05-04 · (error) importar desde una URL inválida → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+									"pm.test('URL inválida', () => pm.expect(pm.response.json().message).to.match(/invalid url/i));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/workflows/from-url?url=no-es-una-url&projectId={{projectId}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "2 · Ejecuciones",
+			"item": [
+				{
+					"name": "CP-EX-01-01 · la ejecución del webhook aparece como exitosa",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set('filtro', encodeURIComponent(JSON.stringify({ workflowId: pm.collectionVariables.get('wfId') })));",
+									"setTimeout(() => {}, 1000);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const [e] = pm.response.json().data.results;",
+									"pm.test('success en modo webhook', () => pm.expect(e).to.include({ status: 'success', mode: 'webhook' }));",
+									"pm.collectionVariables.set('execId', e.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/executions?filter={{filtro}}&limit=10"
+					}
+				},
+				{
+					"name": "CP-EX-02-01 · (alternativo) filtro de estado sin coincidencias",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set('filtro', encodeURIComponent(JSON.stringify({ workflowId: pm.collectionVariables.get('wfId'), status: ['error'] })));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.test('lista vacía', () => pm.expect(pm.response.json().data.results).to.have.length(0));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/executions?filter={{filtro}}&limit=10"
+					}
+				},
+				{
+					"name": "CP-EX-03-01 · detalle de la ejecución",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const d = pm.response.json().data;",
+									"pm.test('mismo workflow y estado', () => pm.expect(d).to.include({ workflowId: pm.collectionVariables.get('wfId'), status: 'success' }));",
+									"pm.test('incluye los datos de la ejecución', () => pm.expect(d.data).to.be.a('string').and.to.include('Edit Fields'));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/executions/{{execId}}"
+					}
+				},
+				{
+					"name": "CP-EX-02 · (error) filtro mal formado → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/executions?filter=%7Bno-json"
+					}
+				},
+				{
+					"name": "CP-EX-02 · (error) límite fuera de rango → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+									"pm.test('mensaje', () => pm.expect(pm.response.json().message).to.match(/between 1 and 100/));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/executions?limit=500"
+					}
+				},
+				{
+					"name": "CP-EX-04 · (error, hallazgo) detener una ejecución terminada",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Hallazgo: responde 500; lo esperado es un 4xx.",
+									"pm.test('se rechaza', () => pm.expect(pm.response.code).to.be.at.least(400));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": "{{baseUrl}}/rest/executions/{{execId}}/stop"
+					}
+				},
+				{
+					"name": "CP-EX-03-05 · eliminar la ejecución",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ids\": [\n    \"{{execId}}\"\n  ]\n}"
+						},
+						"url": "{{baseUrl}}/rest/executions/delete"
+					}
+				},
+				{
+					"name": "CP-EX-03 · (error, hallazgo) consultar la ejecución eliminada",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Hallazgo: responde 200 {} en lugar de 404.",
+									"pm.test('no devuelve datos', () => pm.expect(pm.response.json().data ?? {}).to.eql({}));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/executions/{{execId}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "3 · Credenciales",
+			"item": [
+				{
+					"name": "CP-CR-01-01 · crear credencial Header Auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const d = pm.response.json().data;",
+									"pm.test('tipo y nombre', () => pm.expect(d).to.include({ type: 'httpHeaderAuth', name: 'VyV Newman ' + pm.collectionVariables.get('sufijo') }));",
+									"pm.collectionVariables.set('credId', d.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"VyV Newman {{sufijo}}\",\n  \"type\": \"httpHeaderAuth\",\n  \"data\": {\n    \"name\": \"X-API-Key\",\n    \"value\": \"secreto-newman-{{sufijo}}\"\n  }\n}"
+						},
+						"url": "{{baseUrl}}/rest/credentials"
+					}
+				},
+				{
+					"name": "CP-CR-02-03 · la respuesta no expone el secreto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.test('sin el secreto en texto plano', () => pm.expect(pm.response.text()).not.to.include('secreto-newman-' + pm.collectionVariables.get('sufijo')));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/credentials/{{credId}}"
+					}
+				},
+				{
+					"name": "CP-CR-05-01 · buscar por nombre",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set('filtro', encodeURIComponent(JSON.stringify({ name: 'VyV Newman ' + pm.collectionVariables.get('sufijo') })));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.test('una coincidencia', () => pm.expect(pm.response.json().data.map((c) => c.id)).to.eql([pm.collectionVariables.get('credId')]));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/credentials?filter={{filtro}}"
+					}
+				},
+				{
+					"name": "CP-CR-01-05 · (error) tipo de credencial inexistente → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"VyV tipo inexistente\",\n  \"type\": \"tipoNoExisteVyv\",\n  \"data\": {}\n}"
+						},
+						"url": "{{baseUrl}}/rest/credentials"
+					}
+				},
+				{
+					"name": "CP-CR-05-06 · (error) compartir sin licencia → 403",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+									"pm.test('pide licencia', () => pm.expect(pm.response.json().message).to.match(/license/i));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"shareWithIds\": []\n}"
+						},
+						"url": "{{baseUrl}}/rest/credentials/{{credId}}/share"
+					}
+				},
+				{
+					"name": "CP-CR-02-07 · eliminar la credencial",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/credentials/{{credId}}"
+					}
+				},
+				{
+					"name": "CP-CR-02 · (error) eliminar una credencial inexistente → 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 404', () => pm.response.to.have.status(404));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/credentials/{{credId}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "4 · Core (data tables y carpetas)",
+			"item": [
+				{
+					"name": "CP-CO-01-01 / CP-CO-01-05 · crear data table con columnas string y number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.collectionVariables.set('dtId', pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"vyv_newman_{{sufijo}}\",\n  \"columns\": [\n    {\n      \"name\": \"nombre\",\n      \"type\": \"string\"\n    },\n    {\n      \"name\": \"edad\",\n      \"type\": \"number\"\n    }\n  ]\n}"
+						},
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/data-tables"
+					}
+				},
+				{
+					"name": "CP-CO-01-03 · (error) nombre de data table repetido → 409",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 409', () => pm.response.to.have.status(409));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"vyv_newman_{{sufijo}}\",\n  \"columns\": []\n}"
+						},
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/data-tables"
+					}
+				},
+				{
+					"name": "CP-CO-02-01 · insertar una fila válida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": [\n    {\n      \"nombre\": \"Ana\",\n      \"edad\": 30\n    }\n  ],\n  \"returnType\": \"all\"\n}"
+						},
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/data-tables/{{dtId}}/insert"
+					}
+				},
+				{
+					"name": "CP-CO-02-02 · (error) texto en una columna number → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": [\n    {\n      \"nombre\": \"Luis\",\n      \"edad\": \"no-es-numero\"\n    }\n  ],\n  \"returnType\": \"all\"\n}"
+						},
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/data-tables/{{dtId}}/insert"
+					}
+				},
+				{
+					"name": "CP-CO-02-01 · (alternativo) solo se guarda la fila válida",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const d = pm.response.json().data;",
+									"const filas = d.data ?? d;",
+									"pm.test('solo la fila válida', () => {",
+									"  pm.expect(filas).to.have.length(1);",
+									"  pm.expect(filas[0]).to.include({ nombre: 'Ana', edad: 30 });",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/data-tables/{{dtId}}/rows?take=10"
+					}
+				},
+				{
+					"name": "CP-CO-03-06 · exportar la tabla a CSV",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"",
+									"const csv = (pm.response.json().data ?? pm.response.json()).csvContent;",
+									"pm.test('encabezado y fila', () => {",
+									"  pm.expect(csv.split('\\n')[0]).to.include('nombre').and.to.include('edad');",
+									"  pm.expect(csv).to.include('Ana');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/data-tables/{{dtId}}/download-csv?includeSystemColumns=false"
+					}
+				},
+				{
+					"name": "CP-CO-04-01 · crear carpeta en el nivel superior",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+									"pm.collectionVariables.set('folderId', pm.response.json().data.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"VyV Newman {{sufijo}}\"\n}"
+						},
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/folders"
+					}
+				},
+				{
+					"name": "CP-CO-04-03 · (error) carpeta con nombre vacío → 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+									"pm.test('mensaje', () => pm.expect(pm.response.json().message).to.match(/cannot be empty/));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"   \"\n}"
+						},
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/folders"
+					}
+				},
+				{
+					"name": "CP-CO-05-05 · eliminar la carpeta sin contenido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/folders/{{folderId}}"
+					}
+				},
+				{
+					"name": "CP-CO-01 · eliminar la data table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/projects/{{projectId}}/data-tables/{{dtId}}"
+					}
+				}
+			]
+		},
+		{
+			"name": "5 · Limpieza",
+			"item": [
+				{
+					"name": "Despublicar el workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/workflows/{{wfId}}/deactivate"
+					}
+				},
+				{
+					"name": "Archivar el workflow del webhook",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/workflows/{{wfId}}/archive"
+					}
+				},
+				{
+					"name": "Archivar el workflow sin trigger",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "browser-id",
+								"value": "{{browserId}}"
+							}
+						],
+						"url": "{{baseUrl}}/rest/workflows/{{wfSinTrigger}}/archive"
+					}
+				}
+			]
+		}
+	]
+}

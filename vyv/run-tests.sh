@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Runs the n8n-VyV test plan (modules 1–4) from vyv/.
 #
-# Usage: ./vyv/run-tests.sh [units|backend|e2e|all] [Vitest arguments for units]
+# Usage: ./vyv/run-tests.sh [units|backend|e2e|api|all] [Vitest arguments for units]
 #   units    editor unit suite (vyv/units); no arguments: full run with coverage; `units CO-05` runs a subset
 #   backend  backend unit tests *.vyv.test.ts of data tables and folders
 #   e2e      Cypress suite (vyv/e2e); needs n8n on http://localhost:5678
-#   all      the three parts in sequence
+#   api      Newman API collection (vyv/api); needs n8n on http://localhost:5678
+#   all      the four parts in sequence
 # Without an argument it runs units and backend, which do not need a running n8n.
 set -euo pipefail
 VYV="$(cd "$(dirname "$0")" && pwd)"
@@ -43,13 +44,20 @@ e2e() {
 	return "$status"
 }
 
+api() {
+	cd "$VYV/e2e"
+	[ -d node_modules ] || npm install
+	npm run test:newman
+}
+
 part="${1:-}"
 [ $# -gt 0 ] && shift
 case "$part" in
 	units) units "$@" ;;
 	backend) backend ;;
 	e2e) e2e ;;
-	all) (units) && (backend) && e2e ;;
+	api) api ;;
+	all) (units) && (backend) && (e2e) && api ;;
 	'') (units) && backend ;;
-	*) sed -n '4,9p' "$0" >&2; exit 2 ;;
+	*) sed -n '4,10p' "$0" >&2; exit 2 ;;
 esac

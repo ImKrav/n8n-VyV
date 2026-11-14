@@ -16,6 +16,7 @@
     "test:regression": "cypress run --spec \"core/regression/**/*.cy.js\"",
     "test:storage-limit": "cypress run --spec \"core/CO-02/storage-limit.api.cy.js\" --env limite=true",
     "test:all": "cypress run --browser chrome --spec \"{workflows,executions,credentials,core}/**/*.{api.cy.js,ui.cy.js,feature},core/{security,accessibility}/**/*.cy.js\"",
+    "test:newman": "newman run ../api/n8n-vyv.postman_collection.json -e ../api/local.postman_environment.json --reporters cli,junit,json --reporter-junit-export results/newman/junit.xml --reporter-json-export results/newman/report.json",
     "report": "node scripts/merge-reports.mjs",
     "regression:compare": "node scripts/compare-regression.mjs",
     "audit": "npm audit --omit=dev --json > results/npm-audit.json || exit 0",
@@ -30,9 +31,11 @@
     "cypress": "^14.3.2",
     "cypress-axe": "^1.6.0",
     "esbuild": "^0.25.2",
+    "flatted": "^3.4.2",
     "mochawesome": "^7.1.3",
     "mochawesome-merge": "^5.0.0",
-    "mochawesome-report-generator": "^6.2.0"
+    "mochawesome-report-generator": "^6.2.0",
+    "newman": "^6.2.3"
   },
   "cypress-cucumber-preprocessor": {
     "stepDefinitions": "support/step_definitions/**/*.js",
