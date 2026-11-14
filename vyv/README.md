@@ -98,6 +98,7 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | `units` | 91 archivos, **264 pruebas en verde**, 21 `it.todo`; cobertura 52,6 % de líneas de los 74 módulos probados | 13/11/2026 · n8n 2.47.0 |
 | `backend` | **64 pruebas en verde** (data-table 40, `folderNameSchema` 19, `FolderService.deleteFolder` 5) | 13/11/2026 · n8n 2.47.0 |
 | `e2e` | **182 pruebas en Chromium: 180 aprobadas, 2 fallidas, 0 pendientes.** Las 2 fallidas son hallazgos: CP-CO-03-04 (separador «;») y CP-WF-01-08 (carga del lienzo de 100 nodos: mediana 3,57 s; la acción más lenta de zoom, 1 037 ms). Las 44 specs corrieron juntas con `CYPRESS_dbPath` y `CYPRESS_restartCommand`; después se repitieron aparte CP-EX-04-08 y CP-017-08, cada uno con su configuración de n8n, y sus resultados reemplazan a los de la corrida conjunta. Regresión frente a la línea base: 0 regresiones, 3 corregidas (CP-018-07, CP-018-08, BUG-018-05). Seguridad sin modo E2E: BUG-018-06 se confirma (no hay `X-Frame-Options` ni `frame-ancestors`). Evidencia: [`evidence/e2e/after/`](evidence/e2e/after/) | 14/11/2026 · n8n 2.47.0 desde esta rama, en modo `E2E_TESTS` con Folders activada; Chromium 1243 |
+| `e2e` (complemento) | **13 pruebas nuevas en Chromium, 13 aprobadas**: CP-WF-02-02, 03-07, CP-EX-01-05, 01-06, 04-01, 04-06, 05-05, CP-CR-02-02, 02-06, 04-03, 04-04 y CP-CO-05-02. Evidencia: [`evidence/e2e/after/complement/`](evidence/e2e/after/complement/) y las capturas en `by-case/` | 14/11/2026 · n8n 2.47.0, misma instancia |
 | `api` | **Newman: 40 peticiones y 62 aserciones, 0 fallidas.** Evidencia: [`evidence/api/`](evidence/api/) | 14/11/2026 · n8n 2.47.0 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
 
@@ -108,25 +109,25 @@ Cada una de las 20 funcionalidades del plan tiene pruebas Cypress con escenarios
 | Funcionalidad | Éxito | Alternativo | Error | Specs (`e2e/…`) | Newman |
 | --- | --- | --- | --- | --- | --- |
 | WF-01 Crear y editar | CP-WF-01-01, 01-07 | 01-02/01-05 eliminar y deshacer, 01-04 nodo desactivado, 01-08 100 nodos | workflow inexistente | `workflows/WF-01/canvas-edit.ui`, `large-workflow.ui` | 01-01 |
-| WF-02 Ajustes | CP-WF-02-05/02-06 | 02-01 no guardar éxitos | 02-03 timeout, 02-04 workflow de error | `workflows/WF-02/settings.api` | — |
-| WF-03 Publicar | CP-WF-03-02, 03-04 | 03-05 despublicar, 03-08 reinicio | 03-01 sin trigger, 03-03 ruta en conflicto | `workflows/WF-03/webhook-publish.api` | 03-01, 03-02 |
+| WF-02 Ajustes | CP-WF-02-05/02-06, 02-02 no guardar manuales | 02-01 no guardar éxitos | 02-03 timeout, 02-04 workflow de error | `workflows/WF-02/settings.api`, `manual-executions.ui` | — |
+| WF-03 Publicar | CP-WF-03-02, 03-04 | 03-05 despublicar, 03-07 cambios sin publicar, 03-08 reinicio | 03-01 sin trigger, 03-03 ruta en conflicto | `workflows/WF-03/webhook-publish.api`, `unpublished-changes.ui` | 03-01, 03-02 |
 | WF-04 Historial | CP-WF-04-01, 04-03, 04-04/04-06 | 04-05 comparar versiones | 04-02 sin licencia (403), versión inexistente (404) | `workflows/WF-04/version-history.api` | 04-01, 04-02 |
 | WF-05 Plantillas, importar y duplicar | CP-WF-05-03, 05-06 | 05-01 plantillas, 05-05 nombre de 128 y repetido | 05-04 URL inválida, 05-05 nombre vacío y de 129 | `workflows/WF-05/import-duplicate.api` | 05-04, 05-05 |
-| EX-01 Lista de ejecuciones | CP-EX-01-01, 01-07 | 01-03 en espera, 01-04 en ejecución, 01-08 más de 1 000 | 01-02 nodo que falla | `executions/EX-01/execution-states.api`, `many-executions.api` | 01-01 |
+| EX-01 Lista de ejecuciones | CP-EX-01-01, 01-05 60 ejecuciones, 01-07 | 01-03 en espera, 01-04 en ejecución, 01-06 en vivo, 01-08 más de 1 000 | 01-02 nodo que falla | `executions/EX-01/execution-states.api`, `list-paging-live.ui`, `many-executions.api` | 01-01 |
 | EX-02 Filtros | CP-EX-02-01, 02-02, 02-05 | 02-03 fechas límite, 02-04 filtros combinados | filtro mal formado, límite fuera de rango (400) | `executions/EX-02/filters.api` | 02-01 y errores |
 | EX-03 Vista previa, reintento y eliminación | CP-EX-03-01, 03-03, 03-05 | 03-04 reintento original, 03-06 eliminar varias | 03-02 nodo con error, consultar una eliminada (hallazgo) | `executions/EX-03/preview-retry-delete.api` | 03-01, 03-05 |
-| EX-04 Detener | CP-EX-04-02, 04-03 | 04-04 seleccionadas, 04-05 todas, 04-07/04-08 cola | detener una terminada (hallazgo) | `executions/EX-04/stop.api`, `concurrency-queue.api` | hallazgo |
-| EX-05 Panel de logs | CP-EX-05-01, 05-02 | 05-04 ejecución hija | 05-03 nodo con error | `executions/EX-05/execution-log.api` | — |
+| EX-04 Detener | CP-EX-04-01 desde el editor, 04-02, 04-03 | 04-04 seleccionadas, 04-05 todas, 04-06 webhook de prueba, 04-07/04-08 cola | detener una terminada (hallazgo) | `executions/EX-04/stop.api`, `editor-stop.ui`, `concurrency-queue.api` | hallazgo |
+| EX-05 Panel de logs | CP-EX-05-01, 05-02 | 05-04 ejecución hija, 05-05 teclado | 05-03 nodo con error | `executions/EX-05/execution-log.api`, `logs-keyboard.ui` | — |
 | CR-01 Crear y probar | CP-CR-01-01, 01-03, 01-07 cifrado | 01-02 sin dato obligatorio, 01-06 nombre repetido | 01-04 clave incorrecta, 01-05 tipo inexistente, 01-08 nombre con HTML | `credentials/CR-01/create.api`, `html-name.ui`, `encryption-at-rest.api` | 01-01, 01-05 |
-| CR-02 Editar y eliminar | CP-CR-02-01, 02-03/02-04, 02-05 | 02-07 eliminar sin uso | 02-08 eliminar en uso, credencial inexistente (404) | `credentials/CR-02/edit-delete.api`, `secret-exposure.api` | 02-03, 02-07 |
+| CR-02 Editar y eliminar | CP-CR-02-01, 02-02 enmascarado, 02-03/02-04, 02-05 | 02-06 cancelar la eliminación, 02-07 eliminar sin uso | 02-08 eliminar en uso, credencial inexistente (404) | `credentials/CR-02/edit-delete.api`, `credential-modal.ui`, `secret-exposure.api` | 02-03, 02-07 |
 | CR-03 OAuth2 | CP-CR-03-01 | 03-04 scopes | 03-03 cancelar en el proveedor, credencial inexistente (404) | `credentials/CR-03/oauth2.api` | — |
-| CR-04 Credenciales en nodos | CP-CR-04-01, 04-07, 04-08 | 04-02 solo el tipo requerido | 04-05 credencial inexistente, 04-06 sin credencial | `credentials/CR-04/node-credentials.api`, `credential-switch.api` | — |
+| CR-04 Credenciales en nodos | CP-CR-04-01, 04-03 crear desde el nodo, 04-07, 04-08 | 04-02 solo el tipo requerido, 04-04 asignación automática | 04-05 credencial inexistente, 04-06 sin credencial | `credentials/CR-04/node-credentials.api`, `create-from-node.ui`, `credential-switch.api` | — |
 | CR-05 Listado y permisos | CP-CR-05-01, 05-02, 05-03 | 05-01 término inexistente | 05-05 aislamiento (403), 05-06 sin licencia (403) | `credentials/CR-05/search-share.api`, `sort.ui`, `isolation.api` | 05-01, 05-06 |
 | CO-01 Data tables | CP-016-01, 016-04, 016-06/07 | longitud 1 / 128, 016-05 nombres de columna válidos | 016-02 nombre vacío, 016-03 repetido (409), 129 caracteres, columna repetida | `core/CO-01/data-table-columns.api`, `data-tables.ui`, `create-data-table.feature` | CO-01-01, 01-03 |
 | CO-02 Filas | CP-017-01, 017-06, 017-07, CO-02-08 nodo Data Table | 017-03 fechas ISO, 017-04 nulos | 017-02 tipo incompatible, 017-08 límite de almacenamiento | `core/CO-02/row-editing.api`, `data-table-rows.ui`, `data-table-node.api`, `storage-limit.api`, `row-editing.feature` | CO-02-01, 02-02 |
 | CO-03 CSV | CP-018-01, 018-06, CO-03-05 10 000 filas | CO-03-04 BOM y tildes, sin encabezados | 018-02 no es CSV, 018-03 malformado, 018-04 tipos, 018-05 columnas, CO-03-04 «;» (hallazgo) | `core/CO-03/csv-import-export.api`, `csv-encoding-size.api`, `csv.ui`, `csv.feature` | CO-03-06 |
 | CO-04 Carpetas | CP-019-01, 019-03, 019-04 | 019-05 migas de pan, 019-06 conteos | 019-02 nombres inválidos, 129 caracteres | `core/CO-04/folders-create-navigate.api`, `folders.ui`, `folders.feature` | CO-04-01, 04-03 |
-| CO-05 Mover y eliminar | CP-020-01, 020-02, 020-04 | 020-05 eliminar sin transferir, carpeta vacía | 020-03 su propio padre, mover a un descendiente, transferir a sí misma | `core/CO-05/folders-move-delete.api`, `folders.ui`, `folders.feature` | CO-05-05 |
+| CO-05 Mover y eliminar | CP-020-01, CO-05-02 a la raíz, 020-02, 020-04 | 020-05 eliminar sin transferir, carpeta vacía | 020-03 su propio padre, mover a un descendiente, transferir a sí misma | `core/CO-05/folders-move-delete.api`, `move-to-root.api`, `folders.ui`, `folders.feature` | CO-05-05 |
 
 Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`core/accessibility/wcag.cy.js`) y regresión (`core/regression/regression-suite.cy.js`).
 
@@ -140,7 +141,10 @@ Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`cor
 | CP-EX-03 | `executions/EX-03/preview-retry-delete.api.cy.js` | ⚠️ una ejecución eliminada o inexistente responde 200 con `{}`; lo esperado es 404 |
 | CP-CR-01-02 | `credentials/CR-01/create.api.cy.js` | ℹ️ la API guarda una credencial sin sus campos obligatorios; solo el formulario los valida |
 | CP-CR-02-08 | `credentials/CR-02/edit-delete.api.cy.js` | ✅ tras eliminar una credencial en uso, la ejecución falla con `CredentialNotFoundError` y n8n oculta el detalle (`credential_inaccessible`) |
+| CP-CR-02-06 | `credentials/CR-02/credential-modal.ui.cy.js` | ℹ️ diferencia con el plan: en 2.47 el diálogo de eliminar no pide escribir un texto; pide confirmar con «Yes, delete». La prueba verifica que cancelar conserva la credencial |
 | BUG-018-06 | `core/security/owasp.cy.js` (sin modo E2E) | ❌ no hay `X-Frame-Options` ni `frame-ancestors` |
+
+**Casos sin prueba Cypress (12 de 142).** Todos tienen prueba unitaria en `units/`. Quedan fuera de Cypress porque necesitan algo que la instancia de pruebas no tiene: licencia (CP-EX-03-07, 03-08 depurar en el editor; CP-CR-05-04 compartir con un miembro), un proveedor real (CP-CR-03-02, 03-05, 03-06 OAuth2; CP-EX-05-06 tokens de un modelo de IA; CP-WF-05-02 plantilla con credenciales), otra zona horaria de la instancia (CP-EX-02-06), el portapapeles del sistema (CP-WF-01-06) un trigger que valide su credencial contra un servicio real al publicar (CP-WF-03-06) o arrastrar conexiones en el lienzo, que en Cypress no es estable (CP-WF-01-03 conexión IA incompatible).
 
 **CP-CR-03-05 (manual).** Necesita una cuenta real de Google y la app OAuth2 de prueba, que no se pueden automatizar en el repositorio:
 

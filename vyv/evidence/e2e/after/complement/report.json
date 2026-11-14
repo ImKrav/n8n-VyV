@@ -1,0 +1,606 @@
+{
+  "stats": {
+    "suites": 8,
+    "tests": 13,
+    "passes": 13,
+    "pending": 0,
+    "failures": 0,
+    "testsRegistered": 13,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "start": "2026-11-14T05:13:25.103Z",
+    "end": "2026-11-14T05:15:28.639Z",
+    "duration": 123536
+  },
+  "results": [
+    {
+      "uuid": "68d4484b-9bb3-4f6a-94ab-db940704f03c",
+      "title": "",
+      "fullFile": "workflows/WF-03/unpublished-changes.ui.cy.js",
+      "file": "workflows/WF-03/unpublished-changes.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "af6a0b89-436f-4282-b7d7-2dfccd736c7d",
+          "title": "WF-03 · Cambios sin publicar (API y UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados",
+              "fullTitle": "WF-03 · Cambios sin publicar (API y UI) CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados",
+              "timedOut": null,
+              "duration": 14018,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const ruta = n8nApi.rutaUnica(\"vyv-ver\");\nconst nodos = (v) => [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoCampos({ v })];\nn8nApi.crearWorkflowActivo(\"VyV versi\\xF3n publicada\", nodos(1), n8nApi.cadena(\"Webhook\", \"Edit Fields\")).then((publicado) => {\n  wf = publicado;\n  n8nApi.llamarWebhook(\"GET\", ruta).its(\"body\").should(\"deep.eq\", { v: 1 });\n  cy.visitarN8n(`/workflow/${wf.id}`);\n  cy.get(indicador, { timeout: 3e4 }).should(\"have.attr\", \"class\").and(\"match\", /indicatorPublished/);\n  n8nApi.req(\"PATCH\", `/rest/workflows/${wf.id}`, { versionId: wf.versionId, nodes: nodos(2), connections: wf.connections }).then(n8nApi.ok).then((guardado) => {\n    n8nApi.llamarWebhook(\"GET\", ruta).then((r) => {\n      cy.evidencia(`Tras guardar v=2 sin publicar, producci\\xF3n responde ${JSON.stringify(r.body)}`);\n      expect(r.body, \"producci\\xF3n sigue en la versi\\xF3n publicada\").to.deep.eq({ v: 1 });\n    });\n    cy.reload();\n    cy.get(indicador, { timeout: 3e4 }).should(\"have.attr\", \"class\").and(\"match\", /indicatorChanges/);\n    cy.screenshot(\"CP-WF-03-07_cambios-sin-publicar\");\n    n8nApi.req(\"POST\", `/rest/workflows/${wf.id}/activate`, { versionId: guardado.versionId }).its(\"status\").should(\"eq\", 200);\n    const hastaV2 = (restantes = 20) => n8nApi.llamarWebhook(\"GET\", ruta).then((r) => r.body?.v === 2 || restantes <= 1 ? r : cy.wait(500).then(() => hastaV2(restantes - 1)));\n    hastaV2().then((r) => {\n      cy.evidencia(`Tras publicar, producci\\xF3n responde ${JSON.stringify(r.body)}`);\n      expect(r.body).to.deep.eq({ v: 2 });\n    });\n    cy.reload();\n    cy.get(indicador, { timeout: 3e4 }).should(\"have.attr\", \"class\").and(\"match\", /indicatorPublished/);\n  });\n});",
+              "err": {},
+              "uuid": "a5bb1081-3045-42db-bfd8-17efefbb560a",
+              "parentUUID": "af6a0b89-436f-4282-b7d7-2dfccd736c7d",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "a5bb1081-3045-42db-bfd8-17efefbb560a"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 14018,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "855e16b4-1a9d-45f6-a397-f97628f37e19",
+      "title": "",
+      "fullFile": "executions/EX-01/list-paging-live.ui.cy.js",
+      "file": "executions/EX-01/list-paging-live.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "071efa70-c378-4c52-8a28-935d323d8892",
+          "title": "EX-01 · Paginación y actualización de la lista (API y UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-EX-01-05 · las 60 ejecuciones se recorren completas, sin omisiones ni repetidas",
+              "fullTitle": "EX-01 · Paginación y actualización de la lista (API y UI) CP-EX-01-05 · las 60 ejecuciones se recorren completas, sin omisiones ni repetidas",
+              "timedOut": null,
+              "duration": 15488,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "publicar(\"VyV 60 ejecuciones\").then(({ wf, ruta }) => {\n  n8nApi.llamarWebhook(\"GET\", ruta).its(\"status\").should(\"eq\", 200);\n  Cypress._.times(59, () => cy.request({ url: `/webhook/${ruta}`, log: false }));\n  n8nApi.esperarEjecuciones(wf.id, 60).should(\"have.length\", 60);\n  todasLasPaginas(wf.id).then((ids) => {\n    cy.evidencia(`API en p\\xE1ginas de 20: ${ids.length} IDs, ${new Set(ids).size} distintos`);\n    expect(ids).to.have.length(60);\n    expect(new Set(ids).size, \"sin repetidos\").to.eq(60);\n  });\n  cy.visitarN8n(`/workflow/${wf.id}/executions`);\n  cy.get(tarjetas, { timeout: 3e4 }).should(\"have.length.at.least\", 10);\n  const desplazar = (restantes = 15) => cy.get(tarjetas).then(($t) => {\n    if ($t.length >= 60 || restantes <= 0) return;\n    cy.get('[data-test-id=\"current-executions-list\"]').scrollTo(\"bottom\", { ensureScrollable: false });\n    cy.wait(700).then(() => desplazar(restantes - 1));\n  });\n  desplazar();\n  cy.get(tarjetas).should(\"have.length\", 60).then(($t) => {\n    const enPantalla = [...$t].map((el) => el.querySelector(\"a\")?.getAttribute(\"href\") ?? el.textContent);\n    cy.evidencia(`Lista del workflow tras desplazarse: ${$t.length} tarjetas, ${new Set(enPantalla).size} distintas`);\n    expect(new Set(enPantalla).size).to.eq(60);\n  });\n  cy.screenshot(\"CP-EX-01-05_lista-completa\");\n});",
+              "err": {},
+              "uuid": "d4a21b10-bc26-47b2-ac38-4ce89932c804",
+              "parentUUID": "071efa70-c378-4c52-8a28-935d323d8892",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-EX-01-06 · (alternativo) con la lista abierta, las ejecuciones nuevas aparecen sin recargar",
+              "fullTitle": "EX-01 · Paginación y actualización de la lista (API y UI) CP-EX-01-06 · (alternativo) con la lista abierta, las ejecuciones nuevas aparecen sin recargar",
+              "timedOut": null,
+              "duration": 8973,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "publicar(\"VyV lista en vivo\").then(({ wf, ruta }) => {\n  n8nApi.llamarWebhook(\"GET\", ruta).its(\"status\").should(\"eq\", 200);\n  cy.visitarN8n(`/workflow/${wf.id}/executions`);\n  cy.get(tarjetas, { timeout: 3e4 }).should(\"have.length\", 1);\n  cy.window().then((win) => {\n    win.__vyvSinRecarga = true;\n  });\n  Cypress._.times(3, () => cy.request(`/webhook/${ruta}`));\n  cy.get(tarjetas, { timeout: 3e4 }).should(\"have.length\", 4);\n  cy.window().its(\"__vyvSinRecarga\").should(\"eq\", true);\n  cy.screenshot(\"CP-EX-01-06_lista-en-vivo\");\n  cy.evidencia(\"Las 3 ejecuciones nuevas aparecen en la lista abierta y la p\\xE1gina no se recarg\\xF3\");\n});",
+              "err": {},
+              "uuid": "9bd0d60e-ed8a-4ba3-b4cc-6228324f1b58",
+              "parentUUID": "071efa70-c378-4c52-8a28-935d323d8892",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "d4a21b10-bc26-47b2-ac38-4ce89932c804",
+            "9bd0d60e-ed8a-4ba3-b4cc-6228324f1b58"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 24461,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "c8d9fd1b-dc47-4c76-a939-cd7259b53a7a",
+      "title": "",
+      "fullFile": "executions/EX-04/editor-stop.ui.cy.js",
+      "file": "executions/EX-04/editor-stop.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "4bcf621a-4837-4577-8dc0-2c2e786a3228",
+          "title": "EX-04 · Detener desde el editor (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-EX-04-01 · detener una ejecución manual larga la deja «canceled» y el nodo siguiente no se ejecuta",
+              "fullTitle": "EX-04 · Detener desde el editor (UI) CP-EX-04-01 · detener una ejecución manual larga la deja «canceled» y el nodo siguiente no se ejecuta",
+              "timedOut": null,
+              "duration": 9551,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const nodos = [disparador, n8nApi.nodoEspera(20, \"seconds\", \"Wait\", [220, 0]), n8nApi.nodoCampos({ fin: true }, \"Edit Fields\", [440, 0])];\ncrear(\"VyV detener manual\", nodos, n8nApi.cadena(\"Manual Trigger\", \"Wait\", \"Edit Fields\")).then((wf) => {\n  cy.visitarN8n(`/workflow/${wf.id}`);\n  cy.get('[data-test-id=\"execute-workflow-button\"]', { timeout: 3e4 }).click();\n  cy.get('[data-test-id=\"stop-execution-button\"]', { timeout: 3e4 }).should(\"be.visible\");\n  cy.wait(3e3);\n  cy.get('[data-test-id=\"stop-execution-button\"]').click();\n  cy.get('[data-test-id=\"stop-execution-button\"]', { timeout: 3e4 }).should(\"not.exist\");\n  cy.screenshot(\"CP-EX-04-01_detenida\");\n  n8nApi.esperarEjecuciones(wf.id, 1, (e) => ![\"new\", \"running\", \"waiting\"].includes(e.status)).then(\n    ([e]) => n8nApi.detalleEjecucion(e.id).then((d) => {\n      const nodos2 = Object.keys(d.data.resultData.runData);\n      cy.evidencia(`Ejecuci\\xF3n ${e.id}: ${e.mode}/${e.status} \\xB7 nodos ejecutados: ${nodos2.join(\", \")}`);\n      expect(e).to.include({ mode: \"manual\", status: \"canceled\" });\n      expect(nodos2, \"Edit Fields no se ejecuta\").not.to.include(\"Edit Fields\");\n    })\n  );\n});",
+              "err": {},
+              "uuid": "84b83ecd-9982-4a54-a9a1-784e17e4b3b2",
+              "parentUUID": "4bcf621a-4837-4577-8dc0-2c2e786a3228",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-EX-04-06 · (alternativo) al dejar de escuchar el webhook de prueba, su URL ya no dispara la ejecución",
+              "fullTitle": "EX-04 · Detener desde el editor (UI) CP-EX-04-06 · (alternativo) al dejar de escuchar el webhook de prueba, su URL ya no dispara la ejecución",
+              "timedOut": null,
+              "duration": 5631,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const ruta = n8nApi.rutaUnica(\"vyv-test\");\ncrear(\"VyV escucha de prueba\", [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoCampos({ ok: true })], n8nApi.cadena(\"Webhook\", \"Edit Fields\")).then((wf) => {\n  cy.visitarN8n(`/workflow/${wf.id}`);\n  cy.get('[data-test-id=\"execute-workflow-button\"]', { timeout: 3e4 }).click();\n  cy.contains(\"Waiting for trigger event\", { timeout: 3e4 }).should(\"be.visible\");\n  cy.get('[data-test-id=\"stop-execution-waiting-for-webhook-button\"]').should(\"be.visible\").click();\n  cy.get('[data-test-id=\"stop-execution-waiting-for-webhook-button\"]', { timeout: 3e4 }).should(\"not.exist\");\n  cy.contains(\"Waiting for trigger event\").should(\"not.exist\");\n  cy.screenshot(\"CP-EX-04-06_escucha-detenida\");\n  cy.request({ url: `/webhook-test/${ruta}`, failOnStatusCode: false }).then((r) => {\n    cy.evidencia(`GET /webhook-test/${ruta} tras detener la escucha \\u2192 HTTP ${r.status}`);\n    expect(r.status).to.eq(404);\n  });\n  cy.wait(1e3);\n  n8nApi.ejecuciones(wf.id).should(\"have.length\", 0);\n});",
+              "err": {},
+              "uuid": "cac0bf46-450b-443e-bd4f-81637b937094",
+              "parentUUID": "4bcf621a-4837-4577-8dc0-2c2e786a3228",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "84b83ecd-9982-4a54-a9a1-784e17e4b3b2",
+            "cac0bf46-450b-443e-bd4f-81637b937094"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 15182,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "2eaf0bf2-eb87-44a9-becc-90e3ddab49a7",
+      "title": "",
+      "fullFile": "executions/EX-05/logs-keyboard.ui.cy.js",
+      "file": "executions/EX-05/logs-keyboard.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "69a721fd-de80-43a6-8196-18051ed95d26",
+          "title": "EX-05 · Panel de logs con el teclado (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-EX-05-05 · los atajos abren, recorren y cierran el panel de logs",
+              "fullTitle": "EX-05 · Panel de logs con el teclado (UI) CP-EX-05-05 · los atajos abren, recorren y cierran el panel de logs",
+              "timedOut": null,
+              "duration": 7647,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const nodos = [disparador, n8nApi.nodoCampos({ a: 1 }, \"Paso A\", [220, 0]), n8nApi.nodoCampos({ b: 2 }, \"Paso B\", [440, 0])];\nn8nApi.req(\"POST\", \"/rest/workflows\", { name: \"VyV logs con teclado\", nodes: nodos, connections: n8nApi.cadena(\"Manual Trigger\", \"Paso A\", \"Paso B\"), settings: {}, active: false }).then(n8nApi.ok).then((w) => {\n  wf = w;\n  cy.visitarN8n(`/workflow/${wf.id}`);\n  cy.get('[data-test-id=\"execute-workflow-button\"]', { timeout: 3e4 }).click();\n  cy.get('[data-test-id=\"canvas-node\"][data-node-name=\"Paso B\"] [data-test-id=\"canvas-node-status-success\"]', { timeout: 3e4 }).should(\"exist\");\n  const alternar = () => cy.get('[data-test-id=\"canvas\"]').click(\"topLeft\", { force: true }).type(\"l\");\n  cy.get(\"body\").then(($b) => {\n    if ($b.find(cuerpo).length) alternar();\n  });\n  cy.get(cuerpo).should(\"not.exist\");\n  alternar();\n  cy.get(filas, { timeout: 1e4 }).should(\"have.length\", 3);\n  cy.get(filas).first().click();\n  cy.get(seleccionada).should(\"contain.text\", \"Manual Trigger\");\n  cy.focused().type(\"{downArrow}\");\n  cy.get(seleccionada).should(\"contain.text\", \"Paso A\");\n  cy.focused().type(\"{downArrow}\");\n  cy.get(seleccionada).should(\"contain.text\", \"Paso B\");\n  cy.focused().type(\"{upArrow}\");\n  cy.get(seleccionada).should(\"contain.text\", \"Paso A\");\n  cy.screenshot(\"CP-EX-05-05_seleccion-con-flechas\");\n  cy.focused().type(\"{esc}\");\n  cy.get(seleccionada).should(\"not.exist\");\n  alternar();\n  cy.get(cuerpo).should(\"not.exist\");\n  cy.evidencia(\"\\xABl\\xBB abre el panel, \\u2193/\\u2191 recorren Manual Trigger \\u2192 Paso A \\u2192 Paso B \\u2192 Paso A, Esc quita la selecci\\xF3n y \\xABl\\xBB cierra\");\n});",
+              "err": {},
+              "uuid": "b829d27f-0700-4e1c-8172-cd76298cb6ac",
+              "parentUUID": "69a721fd-de80-43a6-8196-18051ed95d26",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "b829d27f-0700-4e1c-8172-cd76298cb6ac"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 7647,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "c1ea1266-aea9-4720-bb43-48762f29f22a",
+      "title": "",
+      "fullFile": "credentials/CR-02/credential-modal.ui.cy.js",
+      "file": "credentials/CR-02/credential-modal.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c1773580-b288-49c7-bd3c-39c685ed672e",
+          "title": "CR-02 · Formulario y eliminación de credenciales (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM",
+              "fullTitle": "CR-02 · Formulario y eliminación de credenciales (UI) CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM",
+              "timedOut": null,
+              "duration": 6094,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "abrirListado();\ncy.get('[data-test-id=\"resources-list-item\"]').first().click();\ncy.get('[data-test-id=\"editCredential-modal\"]', { timeout: 3e4 }).should(\"be.visible\");\ncy.get('[data-test-id=\"parameter-input-value\"] input').should(\"exist\").invoke(\"val\").then((valor) => {\n  cy.evidencia(`Campo Value al reabrir: \\xAB${String(valor).slice(0, 30)}\\xBB`);\n  expect(valor, \"no muestra el secreto\").not.to.eq(secreto);\n});\ncy.document().then((doc) => {\n  expect(doc.documentElement.outerHTML.includes(secreto), \"el secreto no est\\xE1 en el DOM\").to.eq(false);\n});\ncy.screenshot(\"CP-CR-02-02_enmascarado\");",
+              "err": {},
+              "uuid": "ad1c2bea-aabd-4c61-aef5-fe9e14f42a86",
+              "parentUUID": "c1773580-b288-49c7-bd3c-39c685ed672e",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial",
+              "fullTitle": "CR-02 · Formulario y eliminación de credenciales (UI) CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial",
+              "timedOut": null,
+              "duration": 5262,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "abrirListado();\ncy.get('[data-test-id=\"credential-card-actions\"]').first().click();\ncy.get('[data-test-id=\"action-delete\"]:visible, .el-dropdown-menu__item:visible').contains(/delete/i).click();\ncy.get(\".el-message-box\", { timeout: 1e4 }).should(\"be.visible\").within(() => {\n  cy.contains(\"Delete Credential?\").should(\"be.visible\");\n  cy.contains(`${prefijo} Header`).should(\"be.visible\");\n  cy.get(\"input:visible\").should(\"not.exist\");\n  cy.contains(\"button\", \"Yes, delete\").should(\"be.enabled\");\n});\ncy.screenshot(\"CP-CR-02-06_dialogo\");\ncy.get(\".el-message-box\").contains(\"button\", \"Cancel\").click();\ncy.get(\".el-message-box\").should(\"not.be.visible\");\ncy.get('[data-test-id=\"resources-list-item\"]').should(\"have.length\", 1);\nn8nApi.req(\"GET\", `/rest/credentials/${cred.id}`).its(\"status\").should(\"eq\", 200);\ncy.evidencia(\"El di\\xE1logo pide confirmar con \\xABYes, delete\\xBB (sin texto que escribir); al cancelar, la credencial sigue en el listado\");",
+              "err": {},
+              "uuid": "289e2865-7eb3-4631-916f-c781da62478e",
+              "parentUUID": "c1773580-b288-49c7-bd3c-39c685ed672e",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "ad1c2bea-aabd-4c61-aef5-fe9e14f42a86",
+            "289e2865-7eb3-4631-916f-c781da62478e"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 11356,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "05270db8-67a5-4cae-952e-9ee37fbd3794",
+      "title": "",
+      "fullFile": "credentials/CR-04/create-from-node.ui.cy.js",
+      "file": "credentials/CR-04/create-from-node.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c006fec5-1e2a-47fe-9ea6-5635bcd0885e",
+          "title": "CR-04 · Crear credencial desde el nodo (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-CR-04-03 · la credencial creada desde el selector del nodo queda seleccionada en el nodo",
+              "fullTitle": "CR-04 · Crear credencial desde el nodo (UI) CP-CR-04-03 · la credencial creada desde el selector del nodo queda seleccionada en el nodo",
+              "timedOut": null,
+              "duration": 8486,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const http = n8nApi.nodoHttpCredencial(\"https://example.com\", void 0);\nn8nApi.req(\"POST\", \"/rest/workflows\", { name: \"VyV credencial desde el nodo\", nodes: [disparador, http], connections: n8nApi.cadena(\"Manual Trigger\", \"HTTP Request\"), settings: {}, active: false }).then(n8nApi.ok).then((w) => {\n  wf = w;\n  cy.visitarN8n(`/workflow/${wf.id}`);\n  cy.get('[data-test-id=\"canvas-node\"][data-node-name=\"HTTP Request\"]', { timeout: 3e4 }).dblclick();\n  cy.get(selector, { timeout: 15e3 }).click();\n  cy.contains(\"Create new credential\").filter(\":visible\").first().click();\n  cy.get('[data-test-id=\"editCredential-modal\"]', { timeout: 15e3 }).should(\"be.visible\");\n  cy.get('[data-test-id=\"credential-name\"]').click();\n  cy.get('[data-test-id=\"credential-name\"] input').clear().type(`${nombre}{enter}`);\n  cy.get('[data-test-id=\"parameter-input-name\"] input').type(\"X-Token\");\n  cy.get('[data-test-id=\"parameter-input-value\"] input').type(\"abc\");\n  cy.get('[data-test-id=\"credential-save-button\"]').click();\n  cy.get('[data-test-id=\"editCredential-modal\"]', { timeout: 15e3 }).should(\"not.exist\");\n  cy.get(selector).should(\"have.value\", nombre);\n  cy.screenshot(\"CP-CR-04-03_seleccionada\");\n  n8nApi.req(\"GET\", `/rest/credentials?filter=${encodeURIComponent(JSON.stringify({ name: nombre }))}`).then(n8nApi.ok).then((lista) => {\n    cy.evidencia(`Credencial \\xAB${nombre}\\xBB creada (${lista.map((c) => c.type)}) y seleccionada en el nodo HTTP Request`);\n    expect(lista).to.have.length(1);\n    expect(lista[0].type).to.eq(\"httpHeaderAuth\");\n  });\n});",
+              "err": {},
+              "uuid": "63e054bc-0833-41f9-9a7c-7974c0958ecd",
+              "parentUUID": "c006fec5-1e2a-47fe-9ea6-5635bcd0885e",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-CR-04-04 · (alternativo) con una sola credencial compatible, el nodo la toma sin intervención",
+              "fullTitle": "CR-04 · Crear credencial desde el nodo (UI) CP-CR-04-04 · (alternativo) con una sola credencial compatible, el nodo la toma sin intervención",
+              "timedOut": null,
+              "duration": 6146,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const tipo = \"httpQueryAuth\";\nconst unica = `VyV-Unica ${Date.now() % 1e5}`;\nconst delTipo = () => n8nApi.req(\"GET\", `/rest/credentials?filter=${encodeURIComponent(JSON.stringify({ type: tipo }))}`).then(n8nApi.ok);\ndelTipo().then((previas) => previas.filter((c) => c.name.startsWith(\"VyV-Unica\")).forEach((c) => n8nApi.borrarCredencial(c.id)));\ndelTipo().should(\"have.length\", 0);\nn8nApi.req(\"POST\", \"/rest/credentials\", { name: unica, type: tipo, data: { name: \"token\", value: \"q\" } }).then(n8nApi.ok).then((cred) => {\n  const http = { ...n8nApi.nodoHttpCredencial(\"https://example.com\", void 0), parameters: { url: \"https://example.com\", authentication: \"genericCredentialType\", genericAuthType: tipo, options: {} } };\n  n8nApi.req(\"POST\", \"/rest/workflows\", { name: \"VyV credencial \\xFAnica\", nodes: [disparador, http], connections: n8nApi.cadena(\"Manual Trigger\", \"HTTP Request\"), settings: {}, active: false }).then(n8nApi.ok).then((w) => {\n    cy.visitarN8n(`/workflow/${w.id}`);\n    cy.get('[data-test-id=\"canvas-node\"][data-node-name=\"HTTP Request\"]', { timeout: 3e4 }).dblclick();\n    cy.get(selector, { timeout: 15e3 }).should(\"have.value\", unica);\n    cy.screenshot(\"CP-CR-04-04_asignada\");\n    cy.get(\"body\").type(\"{esc}\");\n    const leerAsignada = (restantes = 20) => n8nApi.obtenerWorkflow(w.id).then((leido) => {\n      const a = leido.nodes.find((n) => n.name === \"HTTP Request\").credentials?.[tipo];\n      return a || restantes <= 1 ? a : cy.wait(500).then(() => leerAsignada(restantes - 1));\n    });\n    leerAsignada().then((asignada) => {\n      cy.evidencia(`El nodo toma la \\xFAnica credencial ${tipo}: ${asignada?.name} (${asignada?.id})`);\n      expect(asignada).to.deep.eq({ id: cred.id, name: unica });\n    });\n    n8nApi.req(\"DELETE\", `/rest/workflows/${w.id}`);\n  });\n  cy.then(() => n8nApi.borrarCredencial(cred.id));\n});",
+              "err": {},
+              "uuid": "45a1e7b9-da8b-45ad-a8aa-dbac2d9ea930",
+              "parentUUID": "c006fec5-1e2a-47fe-9ea6-5635bcd0885e",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "63e054bc-0833-41f9-9a7c-7974c0958ecd",
+            "45a1e7b9-da8b-45ad-a8aa-dbac2d9ea930"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 14632,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "89745f2a-3350-4829-aacb-bc8523a4cfbe",
+      "title": "",
+      "fullFile": "core/CO-05/move-to-root.api.cy.js",
+      "file": "core/CO-05/move-to-root.api.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "a0f8f9c4-feca-40f9-b23b-9ef409fff949",
+          "title": "CO-05 · Mover un workflow a la raíz (API)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones",
+              "fullTitle": "CO-05 · Mover un workflow a la raíz (API) CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones",
+              "timedOut": null,
+              "duration": 1366,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const ruta = n8nApi.rutaUnica(\"vyv-co05\");\ncy.nombreUnico(\"VyV-raiz\").then((nombre) => n8nApi.crearCarpetaOk(p, nombre)).then((c) => {\n  carpeta = c;\n  return n8nApi.req(\"POST\", \"/rest/workflows\", {\n    name: \"VyV-basico\",\n    nodes: [n8nApi.nodoWebhook(\"GET\", ruta), n8nApi.nodoCampos({ ok: true })],\n    connections: n8nApi.cadena(\"Webhook\", \"Edit Fields\"),\n    settings: {},\n    active: false,\n    parentFolderId: c.id,\n    projectId: p\n  }).then(n8nApi.ok);\n}).then((creado) => {\n  wf = creado;\n  expect(creado.parentFolder?.id, \"empieza dentro de la carpeta\").to.eq(carpeta.id);\n  n8nApi.req(\"POST\", `/rest/workflows/${wf.id}/activate`, { versionId: wf.versionId }).its(\"status\").should(\"eq\", 200);\n  n8nApi.llamarWebhook(\"GET\", ruta).its(\"status\").should(\"eq\", 200);\n  n8nApi.esperarEjecuciones(wf.id, 1).should(\"have.length\", 1);\n  n8nApi.obtenerWorkflow(wf.id).then((actual) => n8nApi.moverWorkflow(actual, \"0\")).its(\"status\").should(\"eq\", 200);\n  n8nApi.obtenerWorkflow(wf.id).then((movido) => {\n    cy.evidencia(`Tras mover a la ra\\xEDz: parentFolder=${JSON.stringify(movido.parentFolder)}`);\n    expect(movido.parentFolder ?? null, \"est\\xE1 en la ra\\xEDz\").to.eq(null);\n  });\n  n8nApi.contenido(p, carpeta.id).then((c) => {\n    cy.evidencia(`Contenido de la carpeta: ${JSON.stringify(c)}`);\n    expect(c.totalWorkflows ?? c.workflows?.length ?? 0, \"la carpeta queda sin el workflow\").to.eq(0);\n  });\n  n8nApi.ejecuciones(wf.id).then((lista) => {\n    cy.evidencia(`Ejecuciones conservadas: ${lista.length}`);\n    expect(lista).to.have.length(1);\n  });\n});",
+              "err": {},
+              "uuid": "547b210b-111d-493b-88c9-b14144cf2e08",
+              "parentUUID": "a0f8f9c4-feca-40f9-b23b-9ef409fff949",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "547b210b-111d-493b-88c9-b14144cf2e08"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1366,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    },
+    {
+      "uuid": "ce1c01e0-8f3f-4e0a-8f9a-e7e19194809d",
+      "title": "",
+      "fullFile": "workflows/WF-02/manual-executions.ui.cy.js",
+      "file": "workflows/WF-02/manual-executions.ui.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "2ee21a3e-b68b-4476-a565-c24a712d41c8",
+          "title": "WF-02 · Ejecuciones manuales sin guardar (UI)",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "CP-WF-02-02 · con «no guardar ejecuciones manuales» la ejecución desde el editor no queda registrada",
+              "fullTitle": "WF-02 · Ejecuciones manuales sin guardar (UI) CP-WF-02-02 · con «no guardar ejecuciones manuales» la ejecución desde el editor no queda registrada",
+              "timedOut": null,
+              "duration": 8511,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "ejecutarDesdeEditor(\"VyV manual sin guardar\", { saveManualExecutions: false }).then((lista) => {\n  cy.screenshot(\"CP-WF-02-02_editor\");\n  cy.evidencia(`Ejecuciones registradas con saveManualExecutions=false: ${lista.length}`);\n  expect(lista, \"no se registra la ejecuci\\xF3n manual\").to.have.length(0);\n});",
+              "err": {},
+              "uuid": "1f54aff7-a7d5-43e3-81f6-c994677c0bf8",
+              "parentUUID": "2ee21a3e-b68b-4476-a565-c24a712d41c8",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "CP-WF-02-02 · (alternativo) con el ajuste por defecto la ejecución manual sí queda registrada",
+              "fullTitle": "WF-02 · Ejecuciones manuales sin guardar (UI) CP-WF-02-02 · (alternativo) con el ajuste por defecto la ejecución manual sí queda registrada",
+              "timedOut": null,
+              "duration": 6125,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "ejecutarDesdeEditor(\"VyV manual guardada\", {}).then((lista) => {\n  cy.evidencia(`Ejecuciones registradas con el ajuste por defecto: ${lista.map((e) => `${e.mode}/${e.status}`).join(\", \")}`);\n  expect(lista).to.have.length(1);\n  expect(lista[0]).to.include({ mode: \"manual\", status: \"success\" });\n});",
+              "err": {},
+              "uuid": "175fbe96-157b-4531-bc56-5316efd8be70",
+              "parentUUID": "2ee21a3e-b68b-4476-a565-c24a712d41c8",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "1f54aff7-a7d5-43e3-81f6-c994677c0bf8",
+            "175fbe96-157b-4531-bc56-5316efd8be70"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 14636,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "results/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}
