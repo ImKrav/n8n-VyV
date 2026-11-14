@@ -102,6 +102,8 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | `api` | **Newman: 40 peticiones y 62 aserciones, 0 fallidas.** Evidencia: [`evidence/api/`](evidence/api/) | 14/11/2026 · n8n 2.47.0 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
 
+**Estado de los 142 casos.** [`evidence/matriz-resultados.csv`](evidence/matriz-resultados.csv) tiene, por caso, el estado (139 Pass, 2 Fail por hallazgo, 1 Not Run manual), el nivel ejecutado, la prueba automatizada, el defecto y las notas. La misma tabla está en Drive, junto a la matriz de trazabilidad original: «Final VyV › MATRICES › MATRIZ DE TRAZABILIDAD · Resultados 14-11-2026».
+
 ## Matriz de pruebas automatizadas por funcionalidad
 
 Cada una de las 20 funcionalidades del plan tiene pruebas Cypress con escenarios de **éxito**, **alternativos** y de **error**, con aserciones sobre la respuesta, el estado guardado y la interfaz. La colección Newman ([`api/`](api/README.md)) repite por API los flujos principales de los 4 módulos. Las specs están en `e2e/<módulo>/<funcionalidad>/`; `.api` son pruebas de API con `cy.request`, `.ui` usan el navegador y `.feature` son Gherkin con Screenplay.
