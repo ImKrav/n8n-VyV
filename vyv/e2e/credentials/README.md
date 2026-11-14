@@ -8,9 +8,11 @@ Una spec por funcionalidad, con escenarios de éxito, alternativos y de error. L
 | `CR-01/` | `html-name.ui.cy.js` | CP-CR-01-08 · nombre con HTML se muestra como texto |
 | `CR-01/` | `encryption-at-rest.api.cy.js` | CP-CR-01-07 · secreto cifrado en SQLite (`CYPRESS_dbPath`) |
 | `CR-02/` | `edit-delete.api.cy.js` | CP-CR-02-01 valor nuevo en uso · 02-05 renombrar · 02-07 eliminar sin uso · 02-08 eliminar en uso · error: credencial inexistente |
+| `CR-02/` | `credential-modal.ui.cy.js` | CP-CR-02-02 · secreto enmascarado y ausente del DOM · CP-CR-02-06 · el diálogo de eliminar y cancelar |
 | `CR-02/` | `secret-exposure.api.cy.js` | CP-CR-02-03, CP-CR-02-04 · el secreto no sale por la API ni en el JSON del workflow |
 | `CR-03/` | `oauth2.api.cy.js` | CP-CR-03-01 URL de redirección · 03-03 cancelar en el proveedor · 03-04 scopes · error: credencial inexistente |
 | `CR-04/` | `node-credentials.api.cy.js` | CP-CR-04-01 credencial asignada · 04-02 solo el tipo requerido · 04-05 credencial inexistente · 04-06 sin credencial · 04-07 sustituir |
+| `CR-04/` | `create-from-node.ui.cy.js` | CP-CR-04-03 · crear la credencial desde el selector del nodo · CP-CR-04-04 · la única credencial compatible se asigna sola |
 | `CR-04/` | `credential-switch.api.cy.js` | CP-CR-04-08 · la ejecución usa la credencial nueva |
 | `CR-05/` | `search-share.api.cy.js` | CP-CR-05-01 búsqueda · 05-03 filtro por tipo · 05-06 compartir sin licencia |
 | `CR-05/` | `isolation.api.cy.js`, `sort.ui.cy.js` | CP-CR-05-05 · aislamiento entre usuarios · CP-CR-05-02 · orden del listado |

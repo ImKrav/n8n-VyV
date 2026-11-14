@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /**
  * EX-04 · Ejecuciones activas y límite de concurrencia · la cola se vacía en orden de llegada (caja negra).
- * Trazabilidad: CP-EX-04-08. Necesita n8n con N8N_CONCURRENCY_PRODUCTION_LIMIT=2 (ver vyv/README.md);
+ * Trazabilidad: CP-EX-04-07 (por encima del límite quedan en cola) y CP-EX-04-08. Necesita n8n con N8N_CONCURRENCY_PRODUCTION_LIMIT=2 (ver vyv/README.md);
  * sin límite de concurrencia el caso se omite. Cada ejecución espera 4 s en un nodo Wait.
  */
 import { n8nApi } from '../../support/api.js';
@@ -26,7 +26,7 @@ describe('EX-04 · Cola de ejecuciones con límite de concurrencia (API)', () =>
   /** Lee las ejecuciones del workflow en orden de llegada (id ascendente). */
   const enOrden = () => n8nApi.ejecuciones(wf.id).then((lista) => [...lista].sort((a, b) => Number(a.id) - Number(b.id)));
 
-  it('CP-EX-04-08 · las ejecuciones en cola pasan a ejecución y terminan con éxito en orden de llegada', function () {
+  it('CP-EX-04-07 / CP-EX-04-08 · las ejecuciones por encima del límite quedan en cola, pasan a ejecución y terminan con éxito en orden de llegada', function () {
     if (!(limite > 0)) this.skip();
     const total = limite + 3;
     const ruta = n8nApi.rutaUnica('vyv-cola');
