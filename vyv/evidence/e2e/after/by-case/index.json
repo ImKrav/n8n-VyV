@@ -128,8 +128,32 @@
   "CP-CO-03-05": [
     "results/by-case/CP-CO-03-05/csv-encoding-size.api__CP-CO-03-05_evidencia.png"
   ],
+  "CP-CR-01-01": [
+    "results/by-case/CP-CR-01-01/create.api__CP-CR-01-01_evidencia.png"
+  ],
+  "CP-CR-01-02": [
+    "results/by-case/CP-CR-01-02/create.api__CP-CR-01-02_evidencia.png"
+  ],
+  "CP-CR-01-03": [
+    "results/by-case/CP-CR-01-03/create.api__CP-CR-01-03_evidencia.png"
+  ],
+  "CP-CR-01-04": [
+    "results/by-case/CP-CR-01-04/create.api__CP-CR-01-04_evidencia.png"
+  ],
+  "CP-CR-01-05": [
+    "results/by-case/CP-CR-01-05/create.api__CP-CR-01-05_evidencia.png"
+  ],
+  "CP-CR-01-06": [
+    "results/by-case/CP-CR-01-06/create.api__CP-CR-01-06_evidencia.png"
+  ],
   "CP-CR-01-07": [
     "results/by-case/CP-CR-01-07/encryption-at-rest.api__CP-CR-01-07_evidencia.png"
+  ],
+  "CP-CR-01-08": [
+    "results/by-case/CP-CR-01-08/html-name.ui__CP-CR-01-08_nombre-html.png"
+  ],
+  "CP-CR-02-01": [
+    "results/by-case/CP-CR-02-01/edit-delete.api__CP-CR-02-01_evidencia.png"
   ],
   "CP-CR-02-03": [
     "results/by-case/CP-CR-02-03/secret-exposure.api__CP-CR-02-03_evidencia.png"
@@ -137,37 +161,212 @@
   "CP-CR-02-04": [
     "results/by-case/CP-CR-02-04/secret-exposure.api__CP-CR-02-04_evidencia.png"
   ],
+  "CP-CR-02-05": [
+    "results/by-case/CP-CR-02-05/edit-delete.api__CP-CR-02-05_evidencia.png"
+  ],
+  "CP-CR-02-07": [
+    "results/by-case/CP-CR-02-07/edit-delete.api__CP-CR-02-07_evidencia.png"
+  ],
+  "CP-CR-02-08": [
+    "results/by-case/CP-CR-02-08/edit-delete.api__CP-CR-02-08_evidencia.png"
+  ],
+  "CP-CR-03-01": [
+    "results/by-case/CP-CR-03-01/oauth2.api__CP-CR-03-01_evidencia.png"
+  ],
+  "CP-CR-03-03": [
+    "results/by-case/CP-CR-03-03/oauth2.api__CP-CR-03-03_evidencia.png"
+  ],
+  "CP-CR-03-04": [
+    "results/by-case/CP-CR-03-04/oauth2.api__CP-CR-03-04_evidencia.png"
+  ],
+  "CP-CR-04-01": [
+    "results/by-case/CP-CR-04-01/node-credentials.api__CP-CR-04-01_evidencia.png"
+  ],
+  "CP-CR-04-02": [
+    "results/by-case/CP-CR-04-02/node-credentials.api__CP-CR-04-02_evidencia.png"
+  ],
+  "CP-CR-04-05": [
+    "results/by-case/CP-CR-04-05/node-credentials.api__CP-CR-04-05_evidencia.png"
+  ],
+  "CP-CR-04-06": [
+    "results/by-case/CP-CR-04-06/node-credentials.api__CP-CR-04-06_evidencia.png"
+  ],
+  "CP-CR-04-07": [
+    "results/by-case/CP-CR-04-07/node-credentials.api__CP-CR-04-07_evidencia.png"
+  ],
   "CP-CR-04-08": [
-    "results/by-case/CP-CR-04-08/credential-switch.api__CP-CR-04-08_evidencia.png",
-    "results/by-case/CP-CR-04-08/credential-switch.api__CP-CR-04-08_evidencia.png",
-    "results/by-case/CP-CR-04-08/credential-switch.api__CR-04 · Cambiar la credencial de un nodo (API) -- CP-CR-04-08 · la ejecuc.png"
+    "results/by-case/CP-CR-04-08/credential-switch.api__CP-CR-04-08_evidencia.png"
+  ],
+  "CP-CR-05-01": [
+    "results/by-case/CP-CR-05-01/search-share.api__CP-CR-05-01_evidencia.png"
   ],
   "CP-CR-05-02": [
     "results/by-case/CP-CR-05-02/sort.ui__CP-CR-05-02_nombre_az.png",
     "results/by-case/CP-CR-05-02/sort.ui__CP-CR-05-02_ultima_actualizacion.png"
   ],
+  "CP-CR-05-03": [
+    "results/by-case/CP-CR-05-03/search-share.api__CP-CR-05-03_evidencia.png"
+  ],
   "CP-CR-05-05": [
     "results/by-case/CP-CR-05-05/isolation.api__CP-CR-05-05_evidencia.png"
+  ],
+  "CP-CR-05-06": [
+    "results/by-case/CP-CR-05-06/search-share.api__CP-CR-05-06_evidencia.png"
+  ],
+  "CP-EX-01-01": [
+    "results/by-case/CP-EX-01-01/execution-states.api__CP-EX-01-01_evidencia.png"
+  ],
+  "CP-EX-01-02": [
+    "results/by-case/CP-EX-01-02/execution-states.api__CP-EX-01-02_evidencia.png"
+  ],
+  "CP-EX-01-03": [
+    "results/by-case/CP-EX-01-03/execution-states.api__CP-EX-01-03_evidencia.png"
+  ],
+  "CP-EX-01-04": [
+    "results/by-case/CP-EX-01-04/execution-states.api__CP-EX-01-04_evidencia.png"
+  ],
+  "CP-EX-01-07": [
+    "results/by-case/CP-EX-01-07/execution-states.api__CP-EX-01-07_evidencia.png"
   ],
   "CP-EX-01-08": [
     "results/by-case/CP-EX-01-08/many-executions.api__CP-EX-01-08_evidencia.png",
     "results/by-case/CP-EX-01-08/many-executions.api__CP-EX-01-08_lista.png"
   ],
+  "CP-EX-02-01": [
+    "results/by-case/CP-EX-02-01/filters.api__CP-EX-02-01_evidencia.png"
+  ],
+  "CP-EX-02-02": [
+    "results/by-case/CP-EX-02-02/filters.api__CP-EX-02-02_evidencia.png"
+  ],
+  "CP-EX-02-03": [
+    "results/by-case/CP-EX-02-03/filters.api__CP-EX-02-03_evidencia.png"
+  ],
+  "CP-EX-02-04": [
+    "results/by-case/CP-EX-02-04/filters.api__CP-EX-02-04_evidencia.png"
+  ],
+  "CP-EX-02-05": [
+    "results/by-case/CP-EX-02-05/filters.api__CP-EX-02-05_evidencia.png"
+  ],
+  "CP-EX-03-01": [
+    "results/by-case/CP-EX-03-01/preview-retry-delete.api__CP-EX-03-01_evidencia.png"
+  ],
+  "CP-EX-03-02": [
+    "results/by-case/CP-EX-03-02/preview-retry-delete.api__CP-EX-03-02_evidencia.png"
+  ],
+  "CP-EX-03-03": [
+    "results/by-case/CP-EX-03-03/preview-retry-delete.api__CP-EX-03-03_evidencia.png"
+  ],
+  "CP-EX-03-04": [
+    "results/by-case/CP-EX-03-04/preview-retry-delete.api__CP-EX-03-04_evidencia.png"
+  ],
+  "CP-EX-03-05": [
+    "results/by-case/CP-EX-03-05/preview-retry-delete.api__CP-EX-03-05_evidencia.png"
+  ],
+  "CP-EX-03-06": [
+    "results/by-case/CP-EX-03-06/preview-retry-delete.api__CP-EX-03-06_evidencia.png"
+  ],
+  "CP-EX-04-02": [
+    "results/by-case/CP-EX-04-02/stop.api__CP-EX-04-02_evidencia.png"
+  ],
+  "CP-EX-04-03": [
+    "results/by-case/CP-EX-04-03/stop.api__CP-EX-04-03_evidencia.png"
+  ],
+  "CP-EX-04-04": [
+    "results/by-case/CP-EX-04-04/stop.api__CP-EX-04-04_evidencia.png"
+  ],
+  "CP-EX-04-05": [
+    "results/by-case/CP-EX-04-05/stop.api__CP-EX-04-05_evidencia.png"
+  ],
   "CP-EX-04-08": [
     "results/by-case/CP-EX-04-08/concurrency-queue.api__CP-EX-04-08_evidencia.png",
     "results/by-case/CP-EX-04-08/concurrency-queue.api__CP-EX-04-08_evidencia.png"
+  ],
+  "CP-EX-05-01": [
+    "results/by-case/CP-EX-05-01/execution-log.api__CP-EX-05-01_evidencia.png"
+  ],
+  "CP-EX-05-02": [
+    "results/by-case/CP-EX-05-02/execution-log.api__CP-EX-05-02_evidencia.png"
+  ],
+  "CP-EX-05-03": [
+    "results/by-case/CP-EX-05-03/execution-log.api__CP-EX-05-03_evidencia.png"
+  ],
+  "CP-EX-05-04": [
+    "results/by-case/CP-EX-05-04/execution-log.api__CP-EX-05-04_evidencia.png"
+  ],
+  "CP-WF-01-01": [
+    "results/by-case/CP-WF-01-01/canvas-edit.ui__CP-WF-01-01_lienzo.png"
+  ],
+  "CP-WF-01-04": [
+    "results/by-case/CP-WF-01-04/canvas-edit.ui__CP-WF-01-04_desactivado.png"
+  ],
+  "CP-WF-01-05": [
+    "results/by-case/CP-WF-01-05/canvas-edit.ui__CP-WF-01-05_rehacer.png"
+  ],
+  "CP-WF-01-07": [
+    "results/by-case/CP-WF-01-07/canvas-edit.ui__CP-WF-01-07_nota.png"
   ],
   "CP-WF-01-08": [
     "results/by-case/CP-WF-01-08/large-workflow.ui__CP-WF-01-08_lienzo.png",
     "results/by-case/CP-WF-01-08/large-workflow.ui__WF-01 · Workflow de 100 nodos (UI) -- CP-WF-01-08 · el lienzo con 100 nodos c.png"
   ],
+  "CP-WF-02-01": [
+    "results/by-case/CP-WF-02-01/settings.api__CP-WF-02-01_evidencia.png"
+  ],
+  "CP-WF-02-03": [
+    "results/by-case/CP-WF-02-03/settings.api__CP-WF-02-03_evidencia.png"
+  ],
+  "CP-WF-02-04": [
+    "results/by-case/CP-WF-02-04/settings.api__CP-WF-02-04_evidencia.png"
+  ],
+  "CP-WF-02-06": [
+    "results/by-case/CP-WF-02-06/settings.api__CP-WF-02-06_evidencia.png"
+  ],
+  "CP-WF-03-01": [
+    "results/by-case/CP-WF-03-01/webhook-publish.api__CP-WF-03-01_evidencia.png"
+  ],
   "CP-WF-03-02": [
     "results/by-case/CP-WF-03-02/webhook-publish.api__CP-WF-03-02_evidencia.png"
+  ],
+  "CP-WF-03-03": [
+    "results/by-case/CP-WF-03-03/webhook-publish.api__CP-WF-03-03_evidencia.png"
   ],
   "CP-WF-03-04": [
     "results/by-case/CP-WF-03-04/webhook-publish.api__CP-WF-03-04_evidencia.png"
   ],
+  "CP-WF-03-05": [
+    "results/by-case/CP-WF-03-05/webhook-publish.api__CP-WF-03-05_evidencia.png"
+  ],
   "CP-WF-03-08": [
     "results/by-case/CP-WF-03-08/webhook-publish.api__CP-WF-03-08_evidencia.png"
+  ],
+  "CP-WF-04-01": [
+    "results/by-case/CP-WF-04-01/version-history.api__CP-WF-04-01_evidencia.png"
+  ],
+  "CP-WF-04-02": [
+    "results/by-case/CP-WF-04-02/version-history.api__CP-WF-04-02_evidencia.png"
+  ],
+  "CP-WF-04-03": [
+    "results/by-case/CP-WF-04-03/version-history.api__CP-WF-04-03_evidencia.png"
+  ],
+  "CP-WF-04-04": [
+    "results/by-case/CP-WF-04-04/version-history.api__CP-WF-04-04_evidencia.png"
+  ],
+  "CP-WF-04-05": [
+    "results/by-case/CP-WF-04-05/version-history.api__CP-WF-04-05_evidencia.png"
+  ],
+  "CP-WF-05-01": [
+    "results/by-case/CP-WF-05-01/import-duplicate.api__CP-WF-05-01_evidencia.png"
+  ],
+  "CP-WF-05-03": [
+    "results/by-case/CP-WF-05-03/import-duplicate.api__CP-WF-05-03_evidencia.png"
+  ],
+  "CP-WF-05-04": [
+    "results/by-case/CP-WF-05-04/import-duplicate.api__CP-WF-05-04_evidencia.png"
+  ],
+  "CP-WF-05-05": [
+    "results/by-case/CP-WF-05-05/import-duplicate.api__CP-WF-05-05_evidencia.png"
+  ],
+  "CP-WF-05-06": [
+    "results/by-case/CP-WF-05-06/import-duplicate.api__CP-WF-05-06_evidencia.png"
   ]
 }
