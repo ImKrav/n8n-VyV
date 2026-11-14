@@ -1,0 +1,211 @@
+newman
+
+n8n-VyV · API de los 4 módulos
+
+❏ 0 · Sesión
+↳ Iniciar sesión como propietario
+  POST http://localhost:5678/rest/login [200 OK, 5.79kB, 124ms]
+  ✓  HTTP 200
+  ✓  sesión del propietario
+
+↳ Proyecto personal
+  GET http://localhost:5678/rest/projects/personal [200 OK, 12.5kB, 30ms]
+  ✓  HTTP 200
+
+❏ 1 · Workflows
+↳ CP-WF-05-05 · (error) nombre vacío → 400
+  POST http://localhost:5678/rest/workflows [400 Bad Request, 525B, 17ms]
+  ✓  HTTP 400
+  ✓  mensaje
+
+↳ CP-WF-05-05 · (error) nombre de 129 caracteres → 400
+  POST http://localhost:5678/rest/workflows [400 Bad Request, 544B, 38ms]
+  ✓  HTTP 400
+  ✓  mensaje
+
+↳ CP-WF-03-01 · crear workflow sin trigger
+  POST http://localhost:5678/rest/workflows [200 OK, 1.75kB, 58ms]
+  ✓  HTTP 200
+
+↳ CP-WF-03-01 · (error) publicar sin trigger → 400
+  POST http://localhost:5678/rest/workflows/utTzMdSsKCtNzZme/activate [400 Bad Request, 1.23kB, 45ms]
+  ✓  HTTP 400
+  ✓  pide un trigger
+
+↳ CP-WF-01-01 · crear workflow Webhook → Edit Fields
+  POST http://localhost:5678/rest/workflows [200 OK, 2.06kB, 94ms]
+  ✓  HTTP 200
+  ✓  2 nodos conectados
+
+↳ CP-WF-03-02 · publicar el workflow
+  POST http://localhost:5678/rest/workflows/tHQvefyqMSfgXn7o/activate [200 OK, 2.95kB, 74ms]
+  ✓  HTTP 200
+  ✓  queda publicado
+
+↳ CP-WF-03-02 · llamar el webhook de producción
+  GET http://localhost:5678/webhook/vyv-newman-mwfok2ga [200 OK, 520B, 62ms]
+  ✓  HTTP 200
+  ✓  responde la salida del último nodo
+
+↳ CP-WF-04-01 · historial de versiones
+  GET http://localhost:5678/rest/workflow-history/workflow/tHQvefyqMSfgXn7o?take=10 [200 OK, 853B, 19ms]
+  ✓  HTTP 200
+  ✓  al menos una versión
+
+↳ CP-WF-04-02 · (error) nombrar una versión sin licencia → 403
+  PATCH http://localhost:5678/rest/workflow-history/workflow/tHQvefyqMSfgXn7o/versions/3979c8b2-516f-488b-a270-d3ca0f1d40a7 [403 Forbidden, 455B, 11ms]
+  ✓  HTTP 403
+  ✓  pide licencia
+
+↳ CP-WF-05-04 · (error) importar desde una URL inválida → 400
+  GET http://localhost:5678/rest/workflows/from-url?url=no-es-una-url&projectId=3jI2G8eCjReIDdFK [400 Bad Request, 474B, 11ms]
+  ✓  HTTP 400
+  ✓  URL inválida
+
+❏ 2 · Ejecuciones
+↳ CP-EX-01-01 · la ejecución del webhook aparece como exitosa
+  GET http://localhost:5678/rest/executions?filter=%7B%22workflowId%22%3A%22tHQvefyqMSfgXn7o%22%7D&limit=10 [200 OK, 1.34kB, 24ms]
+  ✓  HTTP 200
+  ✓  success en modo webhook
+
+↳ CP-EX-02-01 · (alternativo) filtro de estado sin coincidencias
+  GET http://localhost:5678/rest/executions?filter=%7B%22workflowId%22%3A%22tHQvefyqMSfgXn7o%22%2C%22status%22%3A%5B%22error%22%5D%7D&limit=10 [200 OK, 483B, 15ms]
+  ✓  HTTP 200
+  ✓  lista vacía
+
+↳ CP-EX-03-01 · detalle de la ejecución
+  GET http://localhost:5678/rest/executions/4259 [200 OK, 3.63kB, 19ms]
+  ✓  HTTP 200
+  ✓  mismo workflow y estado
+  ✓  incluye los datos de la ejecución
+
+↳ CP-EX-02 · (error) filtro mal formado → 400
+  GET http://localhost:5678/rest/executions?filter=%7Bno-json [400 Bad Request, 1.34kB, 11ms]
+  ✓  HTTP 400
+
+↳ CP-EX-02 · (error) límite fuera de rango → 400
+  GET http://localhost:5678/rest/executions?limit=500 [400 Bad Request, 1.37kB, 11ms]
+  ✓  HTTP 400
+  ✓  mensaje
+
+↳ CP-EX-04 · (error, hallazgo) detener una ejecución terminada
+  POST http://localhost:5678/rest/executions/4259/stop [500 Internal Server Error, 1.24kB, 26ms]
+  ✓  se rechaza
+
+↳ CP-EX-03-05 · eliminar la ejecución
+  POST http://localhost:5678/rest/executions/delete [200 OK, 382B, 23ms]
+  ✓  HTTP 200
+
+↳ CP-EX-03 · (error, hallazgo) consultar la ejecución eliminada
+  GET http://localhost:5678/rest/executions/4259 [200 OK, 382B, 15ms]
+  ✓  no devuelve datos
+
+❏ 3 · Credenciales
+↳ CP-CR-01-01 · crear credencial Header Auth
+  POST http://localhost:5678/rest/credentials [200 OK, 1.12kB, 23ms]
+  ✓  HTTP 200
+  ✓  tipo y nombre
+
+↳ CP-CR-02-03 · la respuesta no expone el secreto
+  GET http://localhost:5678/rest/credentials/KwgLDGZlUslXTLOW [200 OK, 1kB, 11ms]
+  ✓  HTTP 200
+  ✓  sin el secreto en texto plano
+
+↳ CP-CR-05-01 · buscar por nombre
+  GET http://localhost:5678/rest/credentials?filter=%7B%22name%22%3A%22VyV%20Newman%20mwfok2ga%22%7D [200 OK, 756B, 11ms]
+  ✓  HTTP 200
+  ✓  una coincidencia
+
+↳ CP-CR-01-05 · (error) tipo de credencial inexistente → 400
+  POST http://localhost:5678/rest/credentials [400 Bad Request, 1.72kB, 21ms]
+  ✓  HTTP 400
+
+↳ CP-CR-05-06 · (error) compartir sin licencia → 403
+  PUT http://localhost:5678/rest/credentials/KwgLDGZlUslXTLOW/share [403 Forbidden, 455B, 7ms]
+  ✓  HTTP 403
+  ✓  pide licencia
+
+↳ CP-CR-02-07 · eliminar la credencial
+  DELETE http://localhost:5678/rest/credentials/KwgLDGZlUslXTLOW [200 OK, 394B, 16ms]
+  ✓  HTTP 200
+
+↳ CP-CR-02 · (error) eliminar una credencial inexistente → 404
+  DELETE http://localhost:5678/rest/credentials/KwgLDGZlUslXTLOW [404 Not Found, 894B, 9ms]
+  ✓  HTTP 404
+
+❏ 4 · Core (data tables y carpetas)
+↳ CP-CO-01-01 / CP-CO-01-05 · crear data table con columnas string y number
+  POST http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/data-tables [200 OK, 1.2kB, 16ms]
+  ✓  HTTP 200
+
+↳ CP-CO-01-03 · (error) nombre de data table repetido → 409
+  POST http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/data-tables [409 Conflict, 883B, 13ms]
+  ✓  HTTP 409
+
+↳ CP-CO-02-01 · insertar una fila válida
+  POST http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/data-tables/vL7oQR2IBGE9ukSY/insert [200 OK, 505B, 20ms]
+  ✓  HTTP 200
+
+↳ CP-CO-02-02 · (error) texto en una columna number → 400
+  POST http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/data-tables/vL7oQR2IBGE9ukSY/insert [400 Bad Request, 1.04kB, 18ms]
+  ✓  HTTP 400
+
+↳ CP-CO-02-01 · (alternativo) solo se guarda la fila válida
+  GET http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/data-tables/vL7oQR2IBGE9ukSY/rows?take=10 [200 OK, 524B, 30ms]
+  ✓  HTTP 200
+  ✓  solo la fila válida
+
+↳ CP-CO-03-06 · exportar la tabla a CSV
+  GET http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/data-tables/vL7oQR2IBGE9ukSY/download-csv?includeSystemColumns=false [200 OK, 465B, 11ms]
+  ✓  HTTP 200
+  ✓  encabezado y fila
+
+↳ CP-CO-04-01 · crear carpeta en el nivel superior
+  POST http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/folders [200 OK, 566B, 11ms]
+  ✓  HTTP 200
+
+↳ CP-CO-04-03 · (error) carpeta con nombre vacío → 400
+  POST http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/folders [400 Bad Request, 464B, 8ms]
+  ✓  HTTP 400
+  ✓  mensaje
+
+↳ CP-CO-05-05 · eliminar la carpeta sin contenido
+  DELETE http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/folders/uC4vOueI1orcaUnH [200 OK, 382B, 13ms]
+  ✓  HTTP 200
+
+↳ CP-CO-01 · eliminar la data table
+  DELETE http://localhost:5678/rest/projects/3jI2G8eCjReIDdFK/data-tables/vL7oQR2IBGE9ukSY [200 OK, 394B, 19ms]
+  ✓  HTTP 200
+
+❏ 5 · Limpieza
+↳ Despublicar el workflow
+  POST http://localhost:5678/rest/workflows/tHQvefyqMSfgXn7o/deactivate [200 OK, 2.33kB, 48ms]
+  ✓  HTTP 200
+
+↳ Archivar el workflow del webhook
+  POST http://localhost:5678/rest/workflows/tHQvefyqMSfgXn7o/archive [200 OK, 1.94kB, 14ms]
+  ✓  HTTP 200
+
+↳ Archivar el workflow sin trigger
+  POST http://localhost:5678/rest/workflows/utTzMdSsKCtNzZme/archive [200 OK, 1.63kB, 14ms]
+  ✓  HTTP 200
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                40 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                40 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 5 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                62 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 4.1s                                       │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 42.15kB (approx)                          │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 26ms [min: 7ms, max: 124ms, s.d.: 24ms] │
+└────────────────────────────────────────────────────────────────┘

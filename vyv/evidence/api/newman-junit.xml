@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="n8n-VyV · API de los 4 módulos" tests="40" time="1.060">
+  <testsuite name="0 · Sesión / Iniciar sesión como propietario" id="4ffd6807-db0f-4d2a-a72e-a5633f64c0f5" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.124">
+    <testcase name="HTTP 200" time="0.124" classname="0SesionIniciarSesionComoPropietario"/>
+    <testcase name="sesión del propietario" time="0.124" classname="0SesionIniciarSesionComoPropietario"/>
+  </testsuite>
+  <testsuite name="0 · Sesión / Proyecto personal" id="ae34115e-3d23-4a0f-ba19-6ad136c50a75" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.030">
+    <testcase name="HTTP 200" time="0.030" classname="0SesionProyectoPersonal"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-05-05 · (error) nombre vacío → 400" id="27f1c163-bc00-41ce-9164-26db3334ec70" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.017">
+    <testcase name="HTTP 400" time="0.017" classname="1WorkflowsCpWf0505ErrorNombreVacio400"/>
+    <testcase name="mensaje" time="0.017" classname="1WorkflowsCpWf0505ErrorNombreVacio400"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-05-05 · (error) nombre de 129 caracteres → 400" id="43e433dd-5863-476d-bb5f-47f71347f217" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.038">
+    <testcase name="HTTP 400" time="0.038" classname="1WorkflowsCpWf0505ErrorNombreDe129Caracteres400"/>
+    <testcase name="mensaje" time="0.038" classname="1WorkflowsCpWf0505ErrorNombreDe129Caracteres400"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-03-01 · crear workflow sin trigger" id="a1fe5d65-cac4-45cb-937b-9836d403cc8a" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.058">
+    <testcase name="HTTP 200" time="0.058" classname="1WorkflowsCpWf0301CrearWorkflowSinTrigger"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-03-01 · (error) publicar sin trigger → 400" id="d4588cd3-992f-49da-ad17-03eeb8553ca1" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.045">
+    <testcase name="HTTP 400" time="0.045" classname="1WorkflowsCpWf0301ErrorPublicarSinTrigger400"/>
+    <testcase name="pide un trigger" time="0.045" classname="1WorkflowsCpWf0301ErrorPublicarSinTrigger400"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-01-01 · crear workflow Webhook → Edit Fields" id="ee236e95-005f-445f-92aa-8ff9ace7c1a7" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.094">
+    <testcase name="HTTP 200" time="0.094" classname="1WorkflowsCpWf0101CrearWorkflowWebhookEditFields"/>
+    <testcase name="2 nodos conectados" time="0.094" classname="1WorkflowsCpWf0101CrearWorkflowWebhookEditFields"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-03-02 · publicar el workflow" id="e08460dd-668e-4c4f-a72e-790c6c8da760" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.074">
+    <testcase name="HTTP 200" time="0.074" classname="1WorkflowsCpWf0302PublicarElWorkflow"/>
+    <testcase name="queda publicado" time="0.074" classname="1WorkflowsCpWf0302PublicarElWorkflow"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-03-02 · llamar el webhook de producción" id="b27af955-9cba-4caf-b255-17633cdbee9c" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.062">
+    <testcase name="HTTP 200" time="0.062" classname="1WorkflowsCpWf0302LlamarElWebhookDeProduccion"/>
+    <testcase name="responde la salida del último nodo" time="0.062" classname="1WorkflowsCpWf0302LlamarElWebhookDeProduccion"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-04-01 · historial de versiones" id="7481fb13-2838-4a0e-83b4-34758f3911a9" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.019">
+    <testcase name="HTTP 200" time="0.019" classname="1WorkflowsCpWf0401HistorialDeVersiones"/>
+    <testcase name="al menos una versión" time="0.019" classname="1WorkflowsCpWf0401HistorialDeVersiones"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-04-02 · (error) nombrar una versión sin licencia → 403" id="186db6f1-7b07-43c2-8c3c-33fadc8c4827" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 403" time="0.011" classname="1WorkflowsCpWf0402ErrorNombrarUnaVersionSinLicencia403"/>
+    <testcase name="pide licencia" time="0.011" classname="1WorkflowsCpWf0402ErrorNombrarUnaVersionSinLicencia403"/>
+  </testsuite>
+  <testsuite name="1 · Workflows / CP-WF-05-04 · (error) importar desde una URL inválida → 400" id="81e6b71b-20bf-4ff0-8ec4-27aa7560224c" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 400" time="0.011" classname="1WorkflowsCpWf0504ErrorImportarDesdeUnaUrlInvalida400"/>
+    <testcase name="URL inválida" time="0.011" classname="1WorkflowsCpWf0504ErrorImportarDesdeUnaUrlInvalida400"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-01-01 · la ejecución del webhook aparece como exitosa" id="fed0ee01-5d56-49c7-93eb-a69a0876ab84" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.024">
+    <testcase name="HTTP 200" time="0.024" classname="2EjecucionesCpEx0101LaEjecucionDelWebhookApareceComoExitosa"/>
+    <testcase name="success en modo webhook" time="0.024" classname="2EjecucionesCpEx0101LaEjecucionDelWebhookApareceComoExitosa"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-02-01 · (alternativo) filtro de estado sin coincidencias" id="6ca6d244-a3e8-4c07-8d53-c14e62985879" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.015">
+    <testcase name="HTTP 200" time="0.015" classname="2EjecucionesCpEx0201AlternativoFiltroDeEstadoSinCoincidencias"/>
+    <testcase name="lista vacía" time="0.015" classname="2EjecucionesCpEx0201AlternativoFiltroDeEstadoSinCoincidencias"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-03-01 · detalle de la ejecución" id="53cebe36-bf54-437f-9eb1-d70039a15cc1" timestamp="2026-11-14T00:41:24.576Z" tests="3" failures="0" errors="0" time="0.019">
+    <testcase name="HTTP 200" time="0.019" classname="2EjecucionesCpEx0301DetalleDeLaEjecucion"/>
+    <testcase name="mismo workflow y estado" time="0.019" classname="2EjecucionesCpEx0301DetalleDeLaEjecucion"/>
+    <testcase name="incluye los datos de la ejecución" time="0.019" classname="2EjecucionesCpEx0301DetalleDeLaEjecucion"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-02 · (error) filtro mal formado → 400" id="4d7971df-22cb-45e0-95bf-92a7d547792d" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 400" time="0.011" classname="2EjecucionesCpEx02ErrorFiltroMalFormado400"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-02 · (error) límite fuera de rango → 400" id="2a9d8357-df79-43b9-bf4d-b3eb7561b472" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 400" time="0.011" classname="2EjecucionesCpEx02ErrorLimiteFueraDeRango400"/>
+    <testcase name="mensaje" time="0.011" classname="2EjecucionesCpEx02ErrorLimiteFueraDeRango400"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-04 · (error, hallazgo) detener una ejecución terminada" id="e2108003-5cb8-4619-a185-0731744546b6" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.026">
+    <testcase name="se rechaza" time="0.026" classname="2EjecucionesCpEx04ErrorHallazgoDetenerUnaEjecucionTerminada"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-03-05 · eliminar la ejecución" id="821e0c6c-fb8c-40c3-a057-8843cf5d7e72" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.023">
+    <testcase name="HTTP 200" time="0.023" classname="2EjecucionesCpEx0305EliminarLaEjecucion"/>
+  </testsuite>
+  <testsuite name="2 · Ejecuciones / CP-EX-03 · (error, hallazgo) consultar la ejecución eliminada" id="b87c2021-eb70-4136-ad7c-9a701a798b33" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.015">
+    <testcase name="no devuelve datos" time="0.015" classname="2EjecucionesCpEx03ErrorHallazgoConsultarLaEjecucionEliminada"/>
+  </testsuite>
+  <testsuite name="3 · Credenciales / CP-CR-01-01 · crear credencial Header Auth" id="82efd349-b304-43db-aa45-d48f6e6dce6c" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.023">
+    <testcase name="HTTP 200" time="0.023" classname="3CredencialesCpCr0101CrearCredencialHeaderAuth"/>
+    <testcase name="tipo y nombre" time="0.023" classname="3CredencialesCpCr0101CrearCredencialHeaderAuth"/>
+  </testsuite>
+  <testsuite name="3 · Credenciales / CP-CR-02-03 · la respuesta no expone el secreto" id="23ca8345-b743-42c2-aa8f-69d0c807ab43" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 200" time="0.011" classname="3CredencialesCpCr0203LaRespuestaNoExponeElSecreto"/>
+    <testcase name="sin el secreto en texto plano" time="0.011" classname="3CredencialesCpCr0203LaRespuestaNoExponeElSecreto"/>
+  </testsuite>
+  <testsuite name="3 · Credenciales / CP-CR-05-01 · buscar por nombre" id="9c61cff9-240c-4340-b429-1a2275fef26a" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 200" time="0.011" classname="3CredencialesCpCr0501BuscarPorNombre"/>
+    <testcase name="una coincidencia" time="0.011" classname="3CredencialesCpCr0501BuscarPorNombre"/>
+  </testsuite>
+  <testsuite name="3 · Credenciales / CP-CR-01-05 · (error) tipo de credencial inexistente → 400" id="46d04b3a-7e19-47ad-9170-7e82ced28130" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.021">
+    <testcase name="HTTP 400" time="0.021" classname="3CredencialesCpCr0105ErrorTipoDeCredencialInexistente400"/>
+  </testsuite>
+  <testsuite name="3 · Credenciales / CP-CR-05-06 · (error) compartir sin licencia → 403" id="67def520-8057-424f-a0f7-c7018a72a37c" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP 403" time="0.007" classname="3CredencialesCpCr0506ErrorCompartirSinLicencia403"/>
+    <testcase name="pide licencia" time="0.007" classname="3CredencialesCpCr0506ErrorCompartirSinLicencia403"/>
+  </testsuite>
+  <testsuite name="3 · Credenciales / CP-CR-02-07 · eliminar la credencial" id="dc52eec8-ca73-4bdd-a3ac-65ecdcd81753" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.016">
+    <testcase name="HTTP 200" time="0.016" classname="3CredencialesCpCr0207EliminarLaCredencial"/>
+  </testsuite>
+  <testsuite name="3 · Credenciales / CP-CR-02 · (error) eliminar una credencial inexistente → 404" id="a5085f13-231c-4562-ab88-7027ad95598f" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP 404" time="0.009" classname="3CredencialesCpCr02ErrorEliminarUnaCredencialInexistente404"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-01-01 / CP-CO-01-05 · crear data table con columnas string y number" id="77851531-9328-430c-b9cd-f48602407493" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.016">
+    <testcase name="HTTP 200" time="0.016" classname="4CoreDataTablesYCarpetasCpCo0101CpCo0105CrearDataTableConColumnasStringYNumber"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-01-03 · (error) nombre de data table repetido → 409" id="09c99d5e-bcc3-4e32-963d-064d55189df0" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP 409" time="0.013" classname="4CoreDataTablesYCarpetasCpCo0103ErrorNombreDeDataTableRepetido409"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-02-01 · insertar una fila válida" id="a2fd7c6b-dc9c-4a40-ac72-5283e12e830c" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.020">
+    <testcase name="HTTP 200" time="0.020" classname="4CoreDataTablesYCarpetasCpCo0201InsertarUnaFilaValida"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-02-02 · (error) texto en una columna number → 400" id="43706317-366f-4170-be6e-e159f5f38020" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.018">
+    <testcase name="HTTP 400" time="0.018" classname="4CoreDataTablesYCarpetasCpCo0202ErrorTextoEnUnaColumnaNumber400"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-02-01 · (alternativo) solo se guarda la fila válida" id="5c8bd966-500a-4809-b814-b4a93f39dd4c" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.030">
+    <testcase name="HTTP 200" time="0.030" classname="4CoreDataTablesYCarpetasCpCo0201AlternativoSoloSeGuardaLaFilaValida"/>
+    <testcase name="solo la fila válida" time="0.030" classname="4CoreDataTablesYCarpetasCpCo0201AlternativoSoloSeGuardaLaFilaValida"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-03-06 · exportar la tabla a CSV" id="a1c249a4-66a7-4ae8-8dc2-599b17db1f70" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 200" time="0.011" classname="4CoreDataTablesYCarpetasCpCo0306ExportarLaTablaACsv"/>
+    <testcase name="encabezado y fila" time="0.011" classname="4CoreDataTablesYCarpetasCpCo0306ExportarLaTablaACsv"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-04-01 · crear carpeta en el nivel superior" id="d233f062-25c7-466c-ba6d-e68caf34d574" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP 200" time="0.011" classname="4CoreDataTablesYCarpetasCpCo0401CrearCarpetaEnElNivelSuperior"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-04-03 · (error) carpeta con nombre vacío → 400" id="2ccb245b-1fdf-4efe-b726-2dcbb9525273" timestamp="2026-11-14T00:41:24.576Z" tests="2" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP 400" time="0.008" classname="4CoreDataTablesYCarpetasCpCo0403ErrorCarpetaConNombreVacio400"/>
+    <testcase name="mensaje" time="0.008" classname="4CoreDataTablesYCarpetasCpCo0403ErrorCarpetaConNombreVacio400"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-05-05 · eliminar la carpeta sin contenido" id="c3cefa93-2111-4992-bbf6-b2a5f466859c" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP 200" time="0.013" classname="4CoreDataTablesYCarpetasCpCo0505EliminarLaCarpetaSinContenido"/>
+  </testsuite>
+  <testsuite name="4 · Core (data tables y carpetas) / CP-CO-01 · eliminar la data table" id="79a6a49d-bce5-42c7-add8-55980dc0f109" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.019">
+    <testcase name="HTTP 200" time="0.019" classname="4CoreDataTablesYCarpetasCpCo01EliminarLaDataTable"/>
+  </testsuite>
+  <testsuite name="5 · Limpieza / Despublicar el workflow" id="05a6011c-3628-476f-b8be-53802b1634b4" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.048">
+    <testcase name="HTTP 200" time="0.048" classname="5LimpiezaDespublicarElWorkflow"/>
+  </testsuite>
+  <testsuite name="5 · Limpieza / Archivar el workflow del webhook" id="d1b61682-a262-4597-aba3-353e4c14113d" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.014">
+    <testcase name="HTTP 200" time="0.014" classname="5LimpiezaArchivarElWorkflowDelWebhook"/>
+  </testsuite>
+  <testsuite name="5 · Limpieza / Archivar el workflow sin trigger" id="e2cd5393-6949-4eed-85b7-71abbf1630ed" timestamp="2026-11-14T00:41:24.576Z" tests="1" failures="0" errors="0" time="0.014">
+    <testcase name="HTTP 200" time="0.014" classname="5LimpiezaArchivarElWorkflowSinTrigger"/>
+  </testsuite>
+</testsuites>

@@ -117,15 +117,90 @@ Regresiones: 0 · Corregidos: 3
 | CO-05 Mover y eliminar carpetas Eliminar una carpeta transfiriendo su contenido | — | passed | cambió |
 | CO-05 · Carpetas: mover y eliminar (UI) CP-020-04 · elimina una carpeta transfiriendo su contenido | — | passed | cambió |
 | CO-05 · Carpetas: mover y eliminar (UI) CP-020-02 · mueve una carpeta a otra con el modal de mover | — | passed | cambió |
+| WF-01 · Lienzo del editor (UI) CP-WF-01-01 · los nodos Manual Trigger y Edit Fields conectados se conservan al recargar | — | passed | cambió |
+| WF-01 · Lienzo del editor (UI) CP-WF-01-02 / CP-WF-01-05 · (alternativo) eliminar un nodo quita sus conexiones y Ctrl+Z lo restaura | — | passed | cambió |
+| WF-01 · Lienzo del editor (UI) CP-WF-01-04 · (alternativo) un nodo desactivado se muestra atenuado y no transforma los datos | — | passed | cambió |
+| WF-01 · Lienzo del editor (UI) CP-WF-01-07 · la nota adhesiva conserva color, contenido y tamaño al guardar | — | passed | cambió |
+| WF-01 · Lienzo del editor (UI) CP-WF-01 · (error) abrir un workflow que no existe muestra el aviso y no abre un lienzo | — | passed | cambió |
 | WF-01 · Workflow de 100 nodos (UI) CP-WF-01-08 · el lienzo con 100 nodos carga en menos de 3 s y el zoom y el desplazamiento responden | — | failed | cambió |
+| WF-02 · Ajustes del workflow (API) CP-WF-02-06 / CP-WF-02-05 · los ajustes (zona horaria y timeout) persisten al volver a leer el workflow | — | passed | cambió |
+| WF-02 · Ajustes del workflow (API) CP-WF-02-01 · (alternativo) con «no guardar ejecuciones exitosas» la ejecución de producción no queda registrada | — | passed | cambió |
+| WF-02 · Ajustes del workflow (API) CP-WF-02-03 · (error) una ejecución más larga que el timeout del workflow se cancela | — | passed | cambió |
+| WF-02 · Ajustes del workflow (API) CP-WF-02-04 · (error) el workflow de error se dispara cuando el workflow principal falla | — | passed | cambió |
 | WF-03 · Webhook de producción (API) CP-WF-03-02 · el webhook de producción responde 200 y registra una ejecución exitosa | — | passed | cambió |
 | WF-03 · Webhook de producción (API) CP-WF-03-04 · dos workflows con la misma ruta y métodos distintos reciben cada uno su método | — | passed | cambió |
+| WF-03 · Webhook de producción (API) CP-WF-03-01 · (error) no se puede publicar un workflow sin nodo trigger | — | passed | cambió |
+| WF-03 · Webhook de producción (API) CP-WF-03-03 · (error) un segundo workflow con la misma ruta y método no se publica | — | passed | cambió |
+| WF-03 · Webhook de producción (API) CP-WF-03-05 · (alternativo) despublicar el workflow detiene su webhook de producción | — | passed | cambió |
 | WF-03 · Webhook de producción (API) CP-WF-03-08 · después de reiniciar n8n el workflow sigue publicado y su webhook responde | — | passed | cambió |
+| WF-04 · Historial de versiones (API) CP-WF-04-01 · tres cambios guardados crean tres versiones nuevas en orden cronológico | — | passed | cambió |
+| WF-04 · Historial de versiones (API) CP-WF-04-03 · restaurar la versión con 2 nodos sobre un workflow de 4 crea una versión nueva con ese contenido | — | passed | cambió |
+| WF-04 · Historial de versiones (API) CP-WF-04-04 / CP-WF-04-06 · una versión antigua se clona como workflow nuevo y el original no cambia | — | passed | cambió |
+| WF-04 · Historial de versiones (API) CP-WF-04-05 · (alternativo) comparar dos versiones identifica los nodos añadidos, eliminados y modificados | — | passed | cambió |
+| WF-04 · Historial de versiones (API) CP-WF-04-02 · (error) nombrar una versión sin licencia responde 403 y no cambia el nombre | — | passed | cambió |
+| WF-04 · Historial de versiones (API) CP-WF-04 · (error) una versión o un workflow inexistentes responden 404 | — | passed | cambió |
+| WF-05 · Importar y duplicar workflows (API) CP-WF-05-03 · importar desde una URL con JSON válido devuelve los nodos y conexiones del archivo | — | passed | cambió |
+| WF-05 · Importar y duplicar workflows (API) CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400 | — | passed | cambió |
+| WF-05 · Importar y duplicar workflows (API) CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan | — | passed | cambió |
+| WF-05 · Importar y duplicar workflows (API) CP-WF-05-06 · el duplicado conserva las etiquetas y sus cambios no afectan al original | — | passed | cambió |
+| WF-05 · Importar y duplicar workflows (API) CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría | — | passed | cambió |
+| EX-01 · Estados de las ejecuciones (API) CP-EX-01-01 · una ejecución exitosa aparece como «success» con inicio y duración coherentes | — | passed | cambió |
+| EX-01 · Estados de las ejecuciones (API) CP-EX-01-02 · (error) una ejecución cuyo nodo falla aparece con estado «error» | — | passed | cambió |
+| EX-01 · Estados de las ejecuciones (API) CP-EX-01-03 · (alternativo) mientras dura el nodo Wait la ejecución aparece «waiting» | — | passed | cambió |
+| EX-01 · Estados de las ejecuciones (API) CP-EX-01-04 · (alternativo) una ejecución larga aparece «running» y cambia a «success» al terminar | — | passed | cambió |
+| EX-01 · Estados de las ejecuciones (API) CP-EX-01-07 · la lista global y la del workflow muestran las mismas ejecuciones con los mismos datos | — | passed | cambió |
 | EX-01 · Lista global con más de 1 000 ejecuciones CP-EX-01-08 · la API de la lista global responde en menos de 3 s con más de 1 000 ejecuciones | — | passed | cambió |
 | EX-01 · Lista global con más de 1 000 ejecuciones CP-EX-01-08 · la lista global se abre en menos de 3 s y se desplaza sin bloqueos | — | passed | cambió |
+| EX-03 · Vista previa, reintento y eliminación (API) CP-EX-03-01 · la vista previa muestra por nodo los mismos datos que devolvió la ejecución | — | passed | cambió |
+| EX-03 · Vista previa, reintento y eliminación (API) CP-EX-03-02 · (error) la ejecución fallida identifica el nodo con error, su mensaje y sus datos de entrada | — | passed | cambió |
+| EX-03 · Vista previa, reintento y eliminación (API) CP-EX-03-04 · (alternativo) reintentar con la versión original vuelve a fallar y queda como reintento | — | passed | cambió |
+| EX-03 · Vista previa, reintento y eliminación (API) CP-EX-03-03 · reintentar con la versión actual (corregida) termina con éxito | — | passed | cambió |
+| EX-03 · Vista previa, reintento y eliminación (API) CP-EX-03-05 · eliminar una ejecución la quita de la lista | — | passed | cambió |
+| EX-03 · Vista previa, reintento y eliminación (API) CP-EX-03-06 · (alternativo) eliminar varias seleccionadas solo quita esas | — | passed | cambió |
+| EX-03 · Vista previa, reintento y eliminación (API) CP-EX-03 · (error, hallazgo) consultar una ejecución eliminada no devuelve datos (responde 200 {} y no 404) | — | passed | cambió |
+| EX-02 · Filtros de la lista de ejecuciones (API) CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado | — | passed | cambió |
+| EX-02 · Filtros de la lista de ejecuciones (API) CP-EX-02-02 · el filtro por workflow muestra solo ejecuciones de ese workflow | — | passed | cambió |
+| EX-02 · Filtros de la lista de ejecuciones (API) CP-EX-02-03 · (alternativo) rangos de fechas: el mismo día incluye, el futuro y el rango invertido devuelven vacío | — | passed | cambió |
+| EX-02 · Filtros de la lista de ejecuciones (API) CP-EX-02-04 · (alternativo) estado + workflow + fecha a la vez solo devuelven lo que cumple todo | — | passed | cambió |
+| EX-02 · Filtros de la lista de ejecuciones (API) CP-EX-02-05 · sin filtros la lista vuelve a mostrar todas las ejecuciones | — | passed | cambió |
+| EX-02 · Filtros de la lista de ejecuciones (API) CP-EX-02 · (error) un filtro mal formado o un límite fuera de rango responden 400 | — | passed | cambió |
+| EX-04 · Detener ejecuciones (API) CP-EX-04-03 · detener una ejecución en un nodo Wait la deja «canceled» y no se reanuda | — | passed | cambió |
+| EX-04 · Detener ejecuciones (API) CP-EX-04-02 · detener una ejecución de producción en curso la deja «canceled» | — | passed | cambió |
+| EX-04 · Detener ejecuciones (API) CP-EX-04-04 · (alternativo) detener en bloque solo afecta a las ejecuciones seleccionadas | — | passed | cambió |
+| EX-04 · Detener ejecuciones (API) CP-EX-04-05 · (alternativo) «detener todas» cancela todas las ejecuciones en curso | — | passed | cambió |
+| EX-04 · Detener ejecuciones (API) CP-EX-04 · (error, hallazgo) detener una ejecución ya terminada no la modifica (responde 500) | — | passed | cambió |
+| EX-05 · Datos del panel de logs (API) CP-EX-05-01 · el árbol sigue el orden real de ejecución e incluye solo la rama tomada | — | passed | cambió |
+| EX-05 · Datos del panel de logs (API) CP-EX-05-02 · la entrada y la salida de un nodo coinciden con los datos del workflow | — | passed | cambió |
+| EX-05 · Datos del panel de logs (API) CP-EX-05-03 · (error) el nodo que falla queda marcado con error y su mensaje | — | passed | cambió |
+| EX-05 · Datos del panel de logs (API) CP-EX-05-04 · (alternativo) la ejecución de Execute Workflow enlaza con la ejecución hija y sus datos | — | passed | cambió |
+| CR-01 · Crear credenciales (API) CP-CR-01-01 · una credencial Header Auth con todos sus campos se guarda y aparece en el listado | — | passed | cambió |
+| CR-01 · Crear credenciales (API) CP-CR-01-03 · la credencial «n8n API» con una clave válida de la instancia prueba la conexión con éxito | — | passed | cambió |
+| CR-01 · Crear credenciales (API) CP-CR-01-04 · (error) la credencial «n8n API» con una clave incorrecta informa el error | — | passed | cambió |
+| CR-01 · Crear credenciales (API) CP-CR-01-05 · (error) un tipo de credencial inexistente se rechaza con 400 | — | passed | cambió |
+| CR-01 · Crear credenciales (API) CP-CR-01-06 · (alternativo) dos credenciales con el mismo nombre se permiten y se distinguen por su ID | — | passed | cambió |
+| CR-01 · Crear credenciales (API) CP-CR-01-02 · (alternativo) la API guarda una credencial sin su campo obligatorio; la validación es de la interfaz | — | passed | cambió |
 | CR-01 · Cifrado de la credencial en la base de datos CP-CR-01-07 · la columna data de credentials_entity no contiene el secreto en texto plano | — | passed | cambió |
+| CR-01 · Nombre de credencial con HTML (UI) CP-CR-01-08 · (error) el nombre se muestra literal y no ejecuta ningún script | — | passed | cambió |
+| CR-03 · OAuth2 (API) CP-CR-03-01 · la URL de autorización apunta al proveedor y su redirect_uri es el callback de esta instancia | — | passed | cambió |
+| CR-03 · OAuth2 (API) CP-CR-03-04 · (alternativo) los scopes de la URL coinciden con los configurados en la credencial | — | passed | cambió |
+| CR-03 · OAuth2 (API) CP-CR-03-03 · (error) si el usuario cancela en el proveedor, el callback informa el error y no se guarda token | — | passed | cambió |
+| CR-03 · OAuth2 (API) CP-CR-03 · (error) pedir la URL de autorización de una credencial inexistente responde 404 | — | passed | cambió |
+| CR-02 · Editar y eliminar credenciales (API) CP-CR-02-01 · al cambiar el valor de una credencial en uso, el workflow envía el valor nuevo | — | passed | cambió |
+| CR-02 · Editar y eliminar credenciales (API) CP-CR-02-05 · renombrar una credencial en uso cambia el nombre y el workflow la sigue usando | — | passed | cambió |
+| CR-02 · Editar y eliminar credenciales (API) CP-CR-02-07 · (alternativo) eliminar una credencial sin uso la quita del listado y de la base de datos | — | passed | cambió |
+| CR-02 · Editar y eliminar credenciales (API) CP-CR-02-08 · (error) eliminar una credencial en uso hace que la ejecución informe el problema | — | passed | cambió |
+| CR-02 · Editar y eliminar credenciales (API) CP-CR-02 · (error) eliminar una credencial inexistente responde 404 | — | passed | cambió |
 | CR-02 · Secretos de una credencial (API) CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro | — | passed | cambió |
 | CR-02 · Secretos de una credencial (API) CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre | — | passed | cambió |
 | CR-04 · Cambiar la credencial de un nodo (API) CP-CR-04-08 · la ejecución envía la cabecera de la credencial nueva y no la de la anterior | — | passed | cambió |
+| CR-04 · Credenciales en nodos (API) CP-CR-04-01 · el nodo HTTP Request usa la credencial asignada al ejecutar | — | passed | cambió |
+| CR-04 · Credenciales en nodos (API) CP-CR-04-07 · sustituir la credencial del nodo se conserva al guardar y volver a leer | — | passed | cambió |
+| CR-04 · Credenciales en nodos (API) CP-CR-04-02 · (alternativo) al filtrar por el tipo requerido solo aparecen credenciales de ese tipo | — | passed | cambió |
+| CR-04 · Credenciales en nodos (API) CP-CR-04-05 · (error) un workflow importado con una credencial que no existe no se publica e informa el nodo | — | passed | cambió |
+| CR-04 · Credenciales en nodos (API) CP-CR-04-06 · (error) un nodo que requiere credencial y no tiene ninguna falla y lo informa | — | passed | cambió |
 | CR-05 · Aislamiento de credenciales entre usuarios (API) CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió | — | passed | cambió |
+| CR-05 · Buscar, filtrar y compartir credenciales (API) CP-CR-05-01 · un término parcial devuelve solo las coincidencias | — | passed | cambió |
+| CR-05 · Buscar, filtrar y compartir credenciales (API) CP-CR-05-01 · (alternativo) un término inexistente devuelve un listado vacío | — | passed | cambió |
+| CR-05 · Buscar, filtrar y compartir credenciales (API) CP-CR-05-03 · el filtro por tipo solo muestra credenciales de ese tipo | — | passed | cambió |
+| CR-05 · Buscar, filtrar y compartir credenciales (API) CP-CR-05-06 · (error) compartir una credencial sin licencia responde 403 y no la comparte | — | passed | cambió |
 | CR-05 · Orden del listado de credenciales (UI) CP-CR-05-02 · el listado respeta el orden por nombre y por última actualización | — | passed | cambió |

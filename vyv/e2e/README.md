@@ -172,6 +172,8 @@ cd vyv/ai/generator && LLM_API_KEY=... node generar-casos-ia.mjs   # output/ con
 | Regresión con las pruebas originales de n8n del módulo data-table | 97/97 (75 originales + 22 VyV del parser, importación CSV, servicio y subidas); 222 pruebas unitarias del módulo en verde |
 | Cypress contra n8n 2.46.6 (08/11/2026) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente |
 | Cypress contra n8n 2.47.0 de esta rama, Chromium (13/11/2026) | 94 pruebas: 92 aprobadas, 1 fallida (hallazgo CP-CO-03-04), 1 pendiente; CP-017-08 aprobado aparte con el límite de 1 MB; 0 regresiones y 3 corregidas frente a la línea base |
+| Cypress contra n8n 2.47.0 de esta rama, Chromium (14/11/2026) · 44 specs de los 4 módulos | 182 pruebas: 180 aprobadas, 2 fallidas (hallazgos CP-CO-03-04 y CP-WF-01-08), 0 pendientes; 0 regresiones y 3 corregidas frente a la línea base |
+| Newman, colección `../api/` (14/11/2026) | 40 peticiones y 62 aserciones, 0 fallidas |
 | Scripts `report`, `regression:compare`, `evidence` | Probados con los reportes reales |
 | IA | Stagehand 2.5 carga y arranca (falta navegador/API key); DeepEval 3.9 crea las 3 métricas; generador probado con un servidor que imita la API |
 

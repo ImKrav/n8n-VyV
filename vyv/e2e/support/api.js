@@ -3,6 +3,8 @@
  * de datos de las pruebas de UI y las tareas Screenplay.
  * Las respuestas de /rest vienen envueltas en { data: ... }.
  */
+import { parse } from 'flatted';
+
 const h = () => ({ 'browser-id': Cypress.env('browserId') });
 
 const req = (method, url, body, opts = {}) =>
@@ -124,10 +126,59 @@ export const n8nApi = {
       name, type: 'httpHeaderAuth', data: { name: cabecera, value: valor }, ...(projectId ? { projectId } : {}),
     }).then(ok),
   borrarCredencial: (id) => req('DELETE', `/rest/credentials/${id}`),
+  /** Workflow de eco: un Webhook que responde con lo que recibe, incluidas las cabeceras. */
+  crearEco: () => {
+    const ruta = n8nApi.rutaUnica('vyv-eco');
+    return n8nApi.crearWorkflowActivo('VyV eco de cabeceras', [n8nApi.nodoWebhook('GET', ruta)], {}).then((wf) => ({ wf, ruta }));
+  },
+  /** Nodo HTTP Request que llama a `url` con la credencial Header Auth dada (o sin credencial). */
+  nodoHttpCredencial: (url, cred, name = 'HTTP Request', position = [220, 0]) => ({
+    id: `http-${name}`, name, type: 'n8n-nodes-base.httpRequest', typeVersion: 4.2, position,
+    parameters: { url, authentication: 'genericCredentialType', genericAuthType: 'httpHeaderAuth', options: {} },
+    ...(cred ? { credentials: { httpHeaderAuth: { id: cred.id, name: cred.name } } } : {}),
+  }),
 
   /** Ejecuciones de un workflow (las más recientes primero). */
   ejecuciones: (workflowId, limit = 100) =>
     req('GET', `/rest/executions?filter=${encodeURIComponent(JSON.stringify({ workflowId }))}&limit=${limit}`)
       .then(ok)
       .then((d) => d.results ?? d),
+  /** Espera hasta que el workflow tenga `n` ejecuciones que cumplan `cond` (n8n las guarda tras responder). */
+  esperarEjecuciones: (workflowId, n = 1, cond = () => true, intentos = 30) =>
+    n8nApi.ejecuciones(workflowId).then((lista) => {
+      const listas = lista.filter(cond);
+      return listas.length >= n || intentos <= 1
+        ? listas
+        : cy.wait(500).then(() => n8nApi.esperarEjecuciones(workflowId, n, cond, intentos - 1));
+    }),
+  /** Detalle de una ejecución con `data` decodificado (n8n lo guarda serializado con flatted). */
+  detalleEjecucion: (id) =>
+    req('GET', `/rest/executions/${id}`).then(ok).then((e) => ({ ...e, data: e?.data ? parse(e.data) : undefined })),
+
+  // ----------------------------------------------------------------------- Nodos de uso común
+  /** Nodo Edit Fields (Set) que devuelve los campos dados. */
+  nodoCampos: (campos, name = 'Edit Fields', position = [220, 0]) => ({
+    id: `set-${name}`, name, type: 'n8n-nodes-base.set', typeVersion: 3.4, position,
+    parameters: {
+      mode: 'manual',
+      assignments: {
+        assignments: Object.entries(campos).map(([campo, value], i) => ({
+          id: String(i), name: campo, value, type: typeof value === 'boolean' ? 'boolean' : typeof value === 'number' ? 'number' : 'string',
+        })),
+      },
+      options: {},
+    },
+  }),
+  /** Nodo Stop and Error que hace fallar la ejecución con el mensaje dado. */
+  nodoFalla: (mensaje, name = 'Falla', position = [220, 0]) => ({
+    id: `err-${name}`, name, type: 'n8n-nodes-base.stopAndError', typeVersion: 1, position, parameters: { errorMessage: mensaje },
+  }),
+  /** Nodo Wait de `amount` unidades (`seconds` o `minutes`). */
+  nodoEspera: (amount, unit = 'seconds', name = 'Wait', position = [220, 0]) => ({
+    id: `wait-${name}`, name, type: 'n8n-nodes-base.wait', typeVersion: 1.1, position,
+    webhookId: crypto.randomUUID(), parameters: { amount, unit },
+  }),
+  /** Conexiones `main` en cadena: cadena('A', 'B', 'C') conecta A → B → C. */
+  cadena: (...nombres) =>
+    Object.fromEntries(nombres.slice(0, -1).map((n, i) => [n, { main: [[{ node: nombres[i + 1], type: 'main', index: 0 }]] }])),
 };
