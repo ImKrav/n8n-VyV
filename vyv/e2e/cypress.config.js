@@ -9,7 +9,7 @@ export default defineConfig({
   e2e: {
     baseUrl: process.env.N8N_URL ?? 'http://localhost:5678',
     // One folder for each plan module and one subfolder for each feature (core/CO-01 …).
-    specPattern: ['{workflows,executions,credentials,core,scenarios}/**/*.cy.js', '{workflows,executions,credentials,core}/**/*.feature'],
+    specPattern: ['{workflows,executions,credentials,core,scenarios,regression}/**/*.cy.js', '{workflows,executions,credentials,core}/**/*.feature'],
     fixturesFolder: 'fixtures',
     supportFile: 'support/e2e.js',
     viewportWidth: 1440,
@@ -23,7 +23,8 @@ export default defineConfig({
     downloadsFolder: 'results/downloads',
     reporter: 'mochawesome',
     reporterOptions: {
-      reportDir: 'results/mochawesome',
+      // The regression suite writes to its own folder (VYV_REPORT_DIR) to compare one run with another.
+      reportDir: process.env.VYV_REPORT_DIR ?? 'results/mochawesome',
       overwrite: false,
       html: false,
       json: true,

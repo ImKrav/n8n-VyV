@@ -1,0 +1,56 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/modules/data-table/backend
+
+ ✓ src/__tests__/csv-escape.vyv.test.ts (15 tests) 6ms
+ ✓ src/__tests__/csv-parser.infer-type.vyv.test.ts (18 tests) 6ms
+ ✓ src/__tests__/data-table-csv-import.cleanup.vyv.test.ts (3 tests) 6ms
+ ✓ src/__tests__/csv-parser.errors.vyv.test.ts (4 tests) 24ms
+
+ Test Files  4 passed (4)
+      Tests  40 passed (40)
+   Start at  00:58:42
+   Duration  1.90s (transform 58%, import 41%, tests 1%)
+
+  Transform  transforming modules took 3.04s · 58% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/despues-datatable.json
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vite.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/@n8n/api-types
+
+ ✓ src/schemas/__tests__/folder-name.schema.vyv.test.ts (19 tests) 8ms
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  00:58:45
+   Duration  171ms (transform 56%, import 24%, tests 11%, worker 8%)
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/despues-apitypes.json
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - ESM syntax in a file loaded as CommonJS (vitest.config.base.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - ESM syntax in a file loaded as CommonJS (vitest.workspace-externals.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/cli
+
+ ✓ src/services/__tests__/folder.service.vyv.test.ts (5 tests) 7ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  00:58:46
+   Duration  15.82s (transform 87%, import 8%, setup 5%)
+
+  Transform  transforming modules took 12.22s · 87% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/despues-cli.json
+backend exit 0

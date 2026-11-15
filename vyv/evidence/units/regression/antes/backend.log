@@ -1,0 +1,247 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/modules/data-table/backend
+
+ ✓ src/__tests__/csv-escape.vyv.test.ts (15 tests) 5ms
+ ❯ src/__tests__/csv-parser.infer-type.vyv.test.ts (18 tests | 10 failed) 26ms
+   ❯ CsvParserService.inferColumnType (VyV) (18)
+     ✓ Caminos independientes del grafo (V(G) = 5) (7)
+       ✓ C1 vacío/undefined → string 3ms
+       ✓ C1 solo espacios → string 0ms
+       ✓ C2 booleano (sin distinguir mayúsculas) → boolean 0ms
+       ✓ C3 número decimal → number 0ms
+       ✓ C4 fecha ISO válida → date 1ms
+       ✓ C4 fecha-hora ISO → date 0ms
+       ✓ C5 texto → string 0ms
+     ❯ Defecto encontrado (deben fallar antes del parche TDD) (8)
+       × una fecha imposible (2024-02-30) NO se infiere como date 8ms
+       × una fecha imposible (2023-02-29) NO se infiere como date 2ms
+       × una fecha imposible (2024-04-31) NO se infiere como date 1ms
+       × una fecha imposible (2024-02-31T10:00:00Z) NO se infiere como date 1ms
+       × un literal no decimal (Infinity) NO se infiere como number 2ms
+       × un literal no decimal (-Infinity) NO se infiere como number 1ms
+       × un literal no decimal (0x1A) NO se infiere como number 1ms
+       × un literal no decimal (0b101) NO se infiere como number 1ms
+     ❯ Valores límite de fechas (3)
+       × 29 de febrero solo es válido en año bisiesto 2ms
+       × días 30/31 según el mes 1ms
+       ✓ mes 13 se rechaza 0ms
+ ❯ src/__tests__/csv-parser.errors.vyv.test.ts (4 tests | 3 failed) 29ms
+   ❯ CsvParserService · errores de entrada (VyV) (4)
+     × CSV con comilla sin cerrar → FileUploadError con el detalle del parser 17ms
+     × fileId con path traversal → FileUploadError (y conserva el mensaje original) 2ms
+     × archivo inexistente → FileUploadError 5ms
+     ✓ CSV válido sigue funcionando (regresión) 3ms
+ ❯ src/__tests__/data-table-csv-import.cleanup.vyv.test.ts (3 tests | 2 failed) 15ms
+   ❯ DataTableCsvImportService.cleanupFile (VyV) (3)
+     × no lanza si la limpieza falla (no enmascara el error original de la importación) 7ms
+     × el error original del try sigue llegando al llamador cuando la limpieza va en finally 5ms
+     ✓ con un fileId válido delega la eliminación (regresión) 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/csv-parser.errors.vyv.test.ts > CsvParserService · errores de entrada (VyV) > CSV con comilla sin cerrar → FileUploadError con el detalle del parser
+AssertionError: expected Error: Quote Not Closed: the parsing is f… { …(14) } to be an instance of FileUploadError
+ ❯ src/__tests__/csv-parser.errors.vyv.test.ts:33:24
+     31|   const promesa = svc.parseFile('malformado.csv');
+     32|
+     33|   await expect(promesa).rejects.toBeInstanceOf(FileUploadError);
+       |                        ^
+     34|   await expect(svc.parseFile('malformado.csv')).rejects.toThrow(/Inval…
+     35|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  src/__tests__/csv-parser.errors.vyv.test.ts > CsvParserService · errores de entrada (VyV) > fileId con path traversal → FileUploadError (y conserva el mensaje original)
+AssertionError: expected UnexpectedError: Path traversal detected,… { …(4) } to be an instance of FileUploadError
+ ❯ src/__tests__/csv-parser.errors.vyv.test.ts:38:50
+     36|
+     37|  it('fileId con path traversal → FileUploadError (y conserva el mensaj…
+     38|   await expect(svc.parseFile('../../etc/passwd')).rejects.toBeInstance…
+       |                                                  ^
+     39|   await expect(svc.parseFile('../../etc/passwd')).rejects.toThrow('Pat…
+     40|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  src/__tests__/csv-parser.errors.vyv.test.ts > CsvParserService · errores de entrada (VyV) > archivo inexistente → FileUploadError
+AssertionError: expected [Function] to throw error including 'Uploaded file not found' but got 'ENOENT: no such file or directory, op…'
+
+Expected: "Uploaded file not found"
+Received: "ENOENT: no such file or directory, open '/tmp/vyv-csv-TD7ECk/no-existe.csv'"
+
+ ❯ src/__tests__/csv-parser.errors.vyv.test.ts:43:47
+     41|
+     42|  it('archivo inexistente → FileUploadError', async () => {
+     43|   await expect(svc.parseFile('no-existe.csv')).rejects.toThrow('Upload…
+       |                                               ^
+     44|  });
+     45|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > una fecha imposible (2024-02-30) NO se infiere como date
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > una fecha imposible (2023-02-29) NO se infiere como date
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > una fecha imposible (2024-04-31) NO se infiere como date
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > una fecha imposible (2024-02-31T10:00:00Z) NO se infiere como date
+AssertionError: expected 'date' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "date"
+
+ ❯ src/__tests__/csv-parser.infer-type.vyv.test.ts:55:42
+     53|    'una fecha imposible (%s) NO se infiere como date',
+     54|    (entrada) => {
+     55|     expect(svc.inferColumnType(entrada)).toBe('string');
+       |                                          ^
+     56|    },
+     57|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > un literal no decimal (Infinity) NO se infiere como number
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > un literal no decimal (-Infinity) NO se infiere como number
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > un literal no decimal (0x1A) NO se infiere como number
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Defecto encontrado (deben fallar antes del parche TDD) > un literal no decimal (0b101) NO se infiere como number
+AssertionError: expected 'number' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "number"
+
+ ❯ src/__tests__/csv-parser.infer-type.vyv.test.ts:62:42
+     60|    'un literal no decimal (%s) NO se infiere como number',
+     61|    (entrada) => {
+     62|     expect(svc.inferColumnType(entrada)).toBe('string');
+       |                                          ^
+     63|    },
+     64|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Valores límite de fechas > 29 de febrero solo es válido en año bisiesto
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/__tests__/csv-parser.infer-type.vyv.test.ts:70:37
+     68|   it('29 de febrero solo es válido en año bisiesto', () => {
+     69|    expect(svc.isDate('2024-02-29')).toBe(true);
+     70|    expect(svc.isDate('2023-02-29')).toBe(false);
+       |                                     ^
+     71|   });
+     72|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  src/__tests__/csv-parser.infer-type.vyv.test.ts > CsvParserService.inferColumnType (VyV) > Valores límite de fechas > días 30/31 según el mes
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/__tests__/csv-parser.infer-type.vyv.test.ts:75:37
+     73|   it('días 30/31 según el mes', () => {
+     74|    expect(svc.isDate('2024-04-30')).toBe(true);
+     75|    expect(svc.isDate('2024-04-31')).toBe(false);
+       |                                     ^
+     76|    expect(svc.isDate('2024-12-31')).toBe(true);
+     77|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  src/__tests__/data-table-csv-import.cleanup.vyv.test.ts > DataTableCsvImportService.cleanupFile (VyV) > no lanza si la limpieza falla (no enmascara el error original de la importación)
+AssertionError: promise rejected "Error: Path traversal detected, refusing …" instead of resolving
+ ❯ src/__tests__/data-table-csv-import.cleanup.vyv.test.ts:31:26
+     29|   const resultado = svc.cleanupFile('../../etc/passwd');
+     30|   // Assert
+     31|   await expect(resultado).resolves.toBeUndefined();
+       |                          ^
+     32|   expect(logger.warn).toHaveBeenCalledWith(
+     33|    'Could not clean up uploaded CSV file',
+
+Caused by: Error: Path traversal detected, refusing to join paths
+ ❯ src/__tests__/data-table-csv-import.cleanup.vyv.test.ts:27:40
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  src/__tests__/data-table-csv-import.cleanup.vyv.test.ts > DataTableCsvImportService.cleanupFile (VyV) > el error original del try sigue llegando al llamador cuando la limpieza va en finally
+AssertionError: expected Error: Path traversal detected to be Error: Error uploading file: Invalid file… // Object.is equality
+
+- Expected
++ Received
+
+  Error {
+-   "message": "Error uploading file: Invalid file id",
++   "message": "Path traversal detected",
+  }
+
+ ❯ src/__tests__/data-table-csv-import.cleanup.vyv.test.ts:51:24
+     49|   };
+     50|
+     51|   await expect(flujo()).rejects.toBe(original);
+       |                        ^
+     52|  });
+     53|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯
+
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  15 failed | 25 passed (40)
+   Start at  01:02:27
+   Duration  1.87s (transform 50%, import 46%, tests 2%, setup 1%, worker 1%)
+
+  Transform  transforming modules took 2.05s · 50% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/antes-datatable.json
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in /home/user/n8n-VyV/packages/modules/data-
+  │ table/backend
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vite.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/@n8n/api-types
+
+ ✓ src/schemas/__tests__/folder-name.schema.vyv.test.ts (19 tests) 10ms
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  01:02:30
+   Duration  147ms (transform 48%, import 26%, tests 18%, worker 8%)
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/antes-apitypes.json
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - ESM syntax in a file loaded as CommonJS (vitest.config.base.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - ESM syntax in a file loaded as CommonJS (vitest.workspace-externals.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/cli
+
+ ✓ src/services/__tests__/folder.service.vyv.test.ts (5 tests) 8ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  01:02:31
+   Duration  11.14s (transform 82%, import 11%, setup 7%)
+
+  Transform  transforming modules took 8.13s · 82% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/antes-cli.json
+backend exit 0
