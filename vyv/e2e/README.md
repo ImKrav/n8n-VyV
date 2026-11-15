@@ -26,7 +26,7 @@ Los IDs de las pruebas son los mismos de la matriz de casos y de la RTM (que van
 | 7. Cypress (UI + API) | `core/CO-0x/*.ui.cy.js`, `core/CO-0x/*.api.cy.js` | Resultados por caso |
 | 8. Gherkin + Screenplay | Un `*.feature` por funcionalidad en `workflows/`, `executions/`, `credentials/` y `core/`; `screenplay/` y `support/step_definitions/` | — |
 | 9. Jenkins, Docker, SonarQube | — (a cargo de otro integrante; ver sección 8) | — |
-| 10. Regresión | `core/regression/`, `scripts/compare-regression.mjs` | Comparación antes / después |
+| 10. Regresión | `regression/` (un archivo por módulo), `scripts/compare-regression.mjs` | Comparación antes / después |
 | 11. Accesibilidad | `core/accessibility/` (axe-core + teclado) | Hallazgos WCAG y revisión manual |
 | 12. Usabilidad (Nielsen, SUS) | — | Tareas, SUS y hallazgos |
 | 13. Seguridad | `core/security/` (OWASP Top 10) | Hallazgos, severidad, recomendaciones |
@@ -47,7 +47,7 @@ vyv/e2e/                    ← pruebas funcionales (esta carpeta)
                               *.feature    Gherkin en español (Dado/Cuando/Entonces)
     security/               OWASP Top 10
     accessibility/          WCAG 2.1 AA con axe-core
-    regression/             suite de regresión
+  regression/               suite de regresión: un archivo por módulo, specs de las 20 funcionalidades
   screenplay/               Actor, escena (Stage), habilidades, interacciones, tareas y preguntas de los 4 módulos
   support/                  comandos, cliente de la API de n8n, pasos de Gherkin por módulo (step_definitions/)
   fixtures/                 CSV y usuarios de prueba
@@ -118,17 +118,12 @@ npm run evidence          # results/by-case/<CP-xxx-yy>/
 
 ### Antes y después de la refactorización (puntos 10 y 15)
 
-1. **Antes** – n8n publicado: `npx n8n@2.46.6` y `npm run test:regression && npm run report`,
-   luego `cp results/report/consolidado.json ../evidence/e2e/regression-before.json`
-   (la línea base de la entrega ya está en ese archivo).
-   Resultado esperado: fallan CP-016-02, CP-018-07, CP-018-08 y la complementaria BUG-018-05.
-2. **Después** – n8n compilado desde esta rama (raíz del repositorio):
-   ```bash
-   pnpm install && pnpm build && pnpm start
-   ```
-   y repetir: `npm run test:regression && npm run test:refactor && npm run report`,
-   luego `cp results/report/consolidado.json results/regression-after.json`.
-3. `npm run regression:compare` → `results/regression-comparison.md` (corregidos y regresiones).
+La suite de regresión está en `regression/`: un archivo por módulo del plan, con specs de las 20 funcionalidades.
+`npm run test:regression` deja los reportes en `results/regression/` y
+`node scripts/compare-regression.mjs <antes> <después> <salida.md>` los compara por funcionalidad.
+Los casos seleccionados, las ejecuciones, los resultados y los comandos completos están en
+[`../README.md`, «Pruebas de regresión»](../README.md#pruebas-de-regresión).
+La línea base anterior (n8n 2.46.6, solo Core) sigue en `../evidence/e2e/regression-before.json`.
 
 ---
 
@@ -174,7 +169,8 @@ cd vyv/ai/generator && LLM_API_KEY=... node generar-casos-ia.mjs   # output/ con
 | Cypress contra n8n 2.47.0 de esta rama, Chromium (13/11/2026) | 94 pruebas: 92 aprobadas, 1 fallida (hallazgo CP-CO-03-04), 1 pendiente; CP-017-08 aprobado aparte con el límite de 1 MB; 0 regresiones y 3 corregidas frente a la línea base |
 | Cypress contra n8n 2.47.0 de esta rama, Chromium (14/11/2026) · 44 specs de los 4 módulos | 182 pruebas: 180 aprobadas, 2 fallidas (hallazgos CP-CO-03-04 y CP-WF-01-08), 0 pendientes; 0 regresiones y 3 corregidas frente a la línea base |
 | Newman, colección `../api/` (14/11/2026) | 40 peticiones y 62 aserciones, 0 fallidas |
-| Scripts `report`, `regression:compare`, `evidence` | Probados con los reportes reales |
+| Regresión antes / después (15/11/2026) · 20 funcionalidades | E2E: 162 pruebas, 0 regresiones por los cambios, 4 corregidas · unitarias: 349 pruebas, 0 regresiones, 20 corregidas (ver `../README.md`) |
+| Scripts `report`, `regression:compare`, `evidence` | Probados con los reportes reales; el comparador tiene su prueba (`npm run test:scripts`) |
 | IA | Stagehand 2.5 carga y arranca (falta navegador/API key); DeepEval 3.9 crea las 3 métricas; generador probado con un servidor que imita la API |
 
 ## 8. Integración con Jenkins y SonarQube (a cargo de otro integrante)

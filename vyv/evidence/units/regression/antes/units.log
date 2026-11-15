@@ -1,0 +1,668 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.mts:28:29). Use `import.meta.dirname` instead
+  - import "../@n8n/design-system/src/icons/lucide/vite" without a file extension (vite.config.mts:12:35). Add the file extension
+  - import "./vite/i18n-locales-hmr-helpers" without a file extension (vite.config.mts:15:48). Add the file extension
+  - import "../../@n8n/constants/src/csp" without a file extension (vite.config.mts:20:40). Add the file extension
+  - ESM syntax in a file loaded as CommonJS (../../@n8n/constants/src/csp.ts:6:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - import "./bucket" without a file extension (../@n8n/design-system/src/icons/lucide/vite.ts:5:46). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/frontend/editor-ui
+
+ ✓ ../../../vyv/units/core/CO-01/AddColumnButton.test.ts (5 tests) 1258ms
+   ✓ CP-CO-01-07 · Nombre de columna con caracteres no permitidos (2)
+     ✓ should allow valid column names 347ms
+ ✓ ../../../vyv/units/executions/EX-05/LogsPanel.test.ts (3 tests) 956ms
+   ✓ CP-EX-05-05 · Atajos de teclado del panel (2)
+     ✓ selection (1)
+       ✓ should allow to select previous and next row via keyboard shortcut 368ms
+     ✓ selection (1)
+       ✓ should handle arrow navigation without bubbling to canvas shortcuts 310ms
+ ✓ ../../../vyv/units/workflows/WF-02/WorkflowSettings.test.ts (13 tests) 7877ms
+   ✓ CP-WF-02-04 · Workflow de error se dispara ante un fallo (2)
+     ✓ Error Workflow (1)
+       ✓ should send DEFAULT value for errorWorkflow to backend when set to "No Workflow" 974ms
+     ✓ Error Workflow (1)
+       ✓ should save workflow with errorWorkflow when a specific workflow is selected 646ms
+   ✓ CP-WF-02-06 · Ajustes persisten tras recargar (1)
+     ✓ should save time saved per execution correctly 677ms
+   ✓ CP-WF-02-01 · No guardar ejecuciones exitosas de producción (2)
+     ✓ envía saveDataSuccessExecution «none» al elegir «Do not save» 710ms
+     ✓ mantiene el guardado de ejecuciones fallidas al desactivar solo las exitosas 542ms
+   ✓ CP-WF-02-02 · No guardar ejecuciones manuales (1)
+     ✓ envía saveManualExecutions false al elegir «Do not save» 536ms
+   ✓ CP-WF-02-03 · Timeout en sus valores límite (5)
+     ✓ guarda el timeout en el valor mínimo (1 s) 483ms
+     ✓ guarda el timeout en el valor intermedio (1 h) 540ms
+     ✓ guarda el timeout en el valor máximo permitido 555ms
+     ✓ rechaza un timeout activado en 0 segundos 605ms
+     ✓ rechaza un timeout de máximo + 1 segundo e informa el máximo 624ms
+   ✓ CP-WF-02-05 · Zona horaria del workflow (1)
+     ✓ guarda la zona horaria elegida 533ms
+   ✓ CP-WF-02-06 · Ajustes persisten tras recargar (1)
+     ✓ vuelve a enviar sin cambios los ajustes guardados al reabrir y guardar 448ms
+ ✓ ../../../vyv/units/credentials/CR-02/CredentialEdit.test.ts (1 test) 872ms
+   ✓ CP-CR-02-01 · Editar un valor sin romper los workflows (1)
+     ✓ saving credentials (1)
+       ✓ does not call onCredentialCreated when updating a credential 870ms
+ ✓ ../../../vyv/units/core/CO-05/MoveToFolderModal.test.ts (4 tests) 878ms
+   ✓ CP-CO-05-02 · Mover un workflow de vuelta a la raíz (1)
+     ✓ should reset to project root when switching projects 385ms
+ ✓ ../../../vyv/units/executions/EX-03/GlobalExecutionsList.test.ts (4 tests) 828ms
+   ✓ CP-EX-03-03 · Reintentar con la versión actual (1)
+     ✓ should show "retry" data when appropriate 374ms
+ ✓ ../../../vyv/units/credentials/CR-05/CredentialsView.test.ts (5 tests | 1 todo) 901ms
+   ✓ CP-CR-05-03 · Filtrar por tipo (1)
+     ✓ filters (1)
+       ✓ should filter by type 354ms
+ ✓ ../../../vyv/units/workflows/WF-05/DuplicateWorkflowDialog.test.ts (6 tests) 696ms
+   ✓ CP-WF-05-05 · Duplicar con nombre vacío, repetido y muy largo (4)
+     ✓ acepta un nombre en el límite de longitud y limita la entrada al máximo 430ms
+ ✓ ../../../vyv/units/credentials/CR-02/TemplatedAuthSimpleView.test.ts (2 tests) 606ms
+   ✓ CP-CR-02-02 · Secretos no visibles al reabrir (2)
+     ✓ keeps the untouched `***` sentinel — not the display mask — when composing 378ms
+ ✓ ../../../vyv/units/core/CO-05/DeleteFolderModal.test.ts (7 tests) 669ms
+ ✓ ../../../vyv/units/core/CO-04/WorkflowsView.test.ts (3 tests) 560ms
+ ❯ ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts (8 tests | 3 failed) 1646ms
+   ✓ CP-CO-01-01 · Crear data table con nombre válido (3)
+     ✓ crea la tabla desde cero en el proyecto actual y abre su detalle 179ms
+     ✓ crea la tabla al pulsar Enter en el campo de nombre 86ms
+     ✓ vuelve a la lista de data tables al cancelar 41ms
+   ❯ CP-CO-01-02 · Nombre vacío o solo espacios (4)
+     ✓ deshabilita «Create» mientras el nombre está vacío 24ms
+     × deshabilita «Create» con un nombre de solo espacios 68ms
+     × no crea la tabla al pulsar Enter con un nombre de solo espacios 59ms
+     × propone el nombre del CSV cuando el nombre tiene solo espacios 1112ms
+   ✓ CP-CO-01-03 · Nombre duplicado en el proyecto (1)
+     ✓ muestra el error del servidor (p. ej. nombre duplicado) y no cierra ni navega 75ms
+ ✓ ../../../vyv/units/executions/EX-02/ExecutionsFilter.test.ts (1 test) 581ms
+   ✓ CP-EX-02-05 · Limpiar filtros (1)
+     ✓ state change 578ms
+ ✓ ../../../vyv/units/credentials/CR-04/NodeCredentials.test.ts (4 tests) 569ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialEdit.test.ts (3 tests) 671ms
+   ✓ CP-CR-01-01 · Crear credencial Header Auth válida (1)
+     ✓ saving credentials (1)
+       ✓ calls onCredentialCreated with the newly created credential 348ms
+ ✓ ../../../vyv/units/executions/EX-03/WorkflowExecutionsPreview.test.ts (5 tests) 292ms
+ ✓ ../../../vyv/units/workflows/WF-04/WorkflowHistory.test.ts (3 tests) 298ms
+ ✓ ../../../vyv/units/credentials/CR-02/TypeToConfirmDialog.test.ts (6 tests) 385ms
+ ✓ ../../../vyv/units/workflows/WF-04/WorkflowHistoryList.test.ts (1 test) 566ms
+   ✓ CP-WF-04-01 · Cada guardado genera una versión (1)
+     ✓ should render list and delegate preview event 562ms
+ ✓ ../../../vyv/units/executions/EX-05/LogDetailsPanel.test.ts (1 test) 292ms
+ ✓ ../../../vyv/units/executions/EX-01/GlobalExecutionsList.test.ts (1 test) 322ms
+   ✓ CP-EX-01-05 · Carga incremental con más de 50 ejecuciones (1)
+     ✓ should stop offering "load more" once all executions are shown, even on a large instance 320ms
+ ✓ ../../../vyv/units/workflows/WF-05/ImportWorkflowUrlModal.test.ts (3 tests) 274ms
+ ✓ ../../../vyv/units/executions/EX-01/WorkflowExecutionsSidebar.test.ts (1 test) 242ms
+ ✓ ../../../vyv/units/executions/EX-01/GlobalExecutionsListItem.test.ts (10 tests) 397ms
+ ✓ ../../../vyv/units/credentials/CR-04/CredentialPicker.test.ts (2 tests) 318ms
+ ✓ ../../../vyv/units/credentials/CR-05/CredentialSharing.ee.test.ts (2 tests) 340ms
+   ✓ CP-CR-05-04 · Compartir con un miembro (con licencia) (1)
+     ✓ IAM-1435: projects used in but not shared with (1)
+       ✓ shares the project when the Share action is clicked 312ms
+ ✓ ../../../vyv/units/workflows/WF-01/useCanvasOperations.test.ts (13 tests) 313ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowCard.test.ts (1 test) 250ms
+ ✓ ../../../vyv/units/credentials/CR-03/CredentialCard.test.ts (2 tests) 304ms
+ ✓ ../../../vyv/units/executions/EX-03/WorkflowExecutionsCard.test.ts (1 test) 203ms
+ ✓ ../../../vyv/units/credentials/CR-02/NodeCredentials.test.ts (1 test) 261ms
+ ✓ ../../../vyv/units/core/CO-05/FolderCard.test.ts (1 test) 237ms
+ ✓ ../../../vyv/units/executions/EX-03/GlobalExecutionsListItem.test.ts (2 tests) 243ms
+ ✓ ../../../vyv/units/executions/EX-05/LogsOverviewPanel.test.ts (1 test) 284ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowPublishModal.test.ts (3 tests) 221ms
+ ✓ ../../../vyv/units/executions/EX-04/StopManyExecutionsModal.test.ts (2 tests) 195ms
+ ✓ ../../../vyv/units/executions/EX-05/LogsViewRunData.test.ts (1 test) 195ms
+ ✓ ../../../vyv/units/core/CO-03/ImportCsvModal.test.ts (2 tests) 213ms
+ ✓ ../../../vyv/units/core/CO-01/ColumnHeader.test.ts (2 tests) 197ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowHeaderDraftPublishActions.test.ts (3 tests) 214ms
+ ✓ ../../../vyv/units/workflows/WF-01/CanvasNodeToolbar.test.ts (1 test) 130ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialConfig.test.ts (1 test) 117ms
+ ✓ ../../../vyv/units/executions/EX-04/NodeExecuteButton.test.ts (2 tests) 187ms
+ ✓ ../../../vyv/units/executions/EX-04/GlobalExecutionsListItem.test.ts (4 tests) 130ms
+ ✓ ../../../vyv/units/credentials/CR-03/CredentialConfig.test.ts (2 tests) 177ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialCard.test.ts (2 tests) 127ms
+ ✓ ../../../vyv/units/core/CO-03/DownloadDataTableModal.test.ts (2 tests) 124ms
+ ✓ ../../../vyv/units/core/CO-04/FolderBreadcrumbs.test.ts (2 tests) 159ms
+ ✓ ../../../vyv/units/credentials/CR-03/ScopesNotice.test.ts (3 tests) 93ms
+ ✓ ../../../vyv/units/executions/EX-04/ExecutionStopAllText.test.ts (5 tests) 95ms
+ ✓ ../../../vyv/units/executions/EX-05/useLogsExecutionData.test.ts (1 test) 99ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialsSelectModal.test.ts (2 tests) 85ms
+ ✓ ../../../vyv/units/workflows/WF-01/CanvasNodeStickyColorSelector.test.ts (1 test) 82ms
+ ✓ ../../../vyv/units/workflows/WF-01/useHistoryHelper.test.ts (4 tests) 70ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialInputs.test.ts (1 test) 62ms
+ ✓ ../../../vyv/units/core/CO-04/FolderCard.test.ts (1 test) 88ms
+ ✓ ../../../vyv/units/workflows/WF-01/CanvasNodeDefault.test.ts (1 test) 72ms
+ ✓ ../../../vyv/units/workflows/WF-04/WorkflowVersionFormModal.test.ts (2 tests) 65ms
+ ✓ ../../../vyv/units/executions/EX-04/ConcurrentExecutionsHeader.test.ts (1 test) 64ms
+ ✓ ../../../vyv/units/credentials/CR-03/useCredentialOAuth.test.ts (3 tests) 60ms
+ ✓ ../../../vyv/units/executions/EX-01/executions.store.test.ts (7 tests) 65ms
+ ✓ ../../../vyv/units/workflows/WF-05/setupTemplate.store.test.ts (2 tests) 119ms
+ ✓ ../../../vyv/units/executions/EX-03/ExecutionPreviewHost.test.ts (2 tests) 42ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowActivationConflictingWebhookModal.test.ts (1 test) 43ms
+ ✓ ../../../vyv/units/executions/EX-04/useExecutionCommands.test.ts (1 test) 25ms
+ ✓ ../../../vyv/units/workflows/WF-05/useCanvasOperations.test.ts (1 test) 51ms
+ ✓ ../../../vyv/units/credentials/CR-04/useNodeHelpers.test.ts (6 tests) 40ms
+ ✓ ../../../vyv/units/executions/EX-03/useExecutionDebugging.test.ts (2 tests) 31ms
+ ✓ ../../../vyv/units/workflows/WF-05/templates.store.test.ts (4 tests) 27ms
+ ✓ ../../../vyv/units/executions/EX-03/executions.store.test.ts (2 tests) 25ms
+ ✓ ../../../vyv/units/workflows/WF-04/workflowHistory.store.test.ts (3 tests) 30ms
+ ✓ ../../../vyv/units/core/CO-04/folders.store.test.ts (5 tests) 21ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowActivationErrorMessage.test.ts (2 tests) 24ms
+ ✓ ../../../vyv/units/executions/EX-05/logs.utils.test.ts (4 tests) 18ms
+ ✓ ../../../vyv/units/core/CO-02/useDataTableOperations.test.ts (2 tests) 9ms
+ ❯ ../../../vyv/units/executions/EX-02/executionFilterToQueryFilter.test.ts (17 tests | 2 failed) 24ms
+   ❯ CP-EX-02-03 · Rango de fechas: mismo día, invertido y futuro (5)
+     ✓ mantiene un rango válido sin cambios 5ms
+     × normaliza un rango invertido (fin anterior al inicio) 6ms
+     × normaliza un rango invertido cuando el date picker entrega objetos Date 2ms
+     ✓ acepta un solo extremo del rango sin inventar el otro 2ms
+     ✓ no añade fechas cuando el filtro no tiene rango 1ms
+   ✓ CP-EX-02-03 · Rango de fechas: mismo día, invertido y futuro (2)
+     ✓ acepta un rango dentro del mismo día 1ms
+     ✓ envía un rango futuro tal cual (la API responde vacío) 1ms
+   ✓ CP-EX-02-01 · Filtrar por cada estado (6)
+     ✓ el estado «success» consulta [ 'success' ] 1ms
+     ✓ el estado «error» consulta [ 'crashed', 'error' ] 1ms
+     ✓ el estado «waiting» consulta [ 'waiting' ] 1ms
+     ✓ el estado «running» consulta [ 'running', 'new' ] 0ms
+     ✓ el estado «canceled» consulta [ 'canceled' ] 0ms
+     ✓ «all» no filtra por estado 0ms
+   ✓ CP-EX-02-02 · Filtrar por workflow (2)
+     ✓ envía el id del workflow elegido 0ms
+     ✓ «all» no filtra por workflow 0ms
+   ✓ CP-EX-02-04 · Combinación de filtros (1)
+     ✓ combina estado, workflow y rango de fechas en una sola consulta 0ms
+   ✓ CP-EX-02-06 · Filtro de fechas con zona horaria distinta a UTC (1)
+     ✓ conserva el instante exacto de una fecha local de America/Bogota (UTC-5) cerca de medianoche 0ms
+ ✓ ../../../vyv/units/core/CO-03/dataTable.store.test.ts (1 test) 11ms
+ ✓ ../../../vyv/units/core/CO-01/dataTable.store.columns.test.ts (2 tests) 13ms
+ ✓ ../../../vyv/units/core/CO-01/dataTable.store.test.ts (1 test) 11ms
+ ✓ ../../../vyv/units/workflows/WF-04/useWorkflowDiff.test.ts (3 tests) 16ms
+ ✓ ../../../vyv/units/core/CO-04/useFolders.test.ts (2 tests) 8ms
+ ✓ ../../../vyv/units/executions/EX-04/useNodeExecution.test.ts (1 test) 10ms
+ ✓ ../../../vyv/units/core/CO-05/useFolders.test.ts (1 test) 9ms
+ ✓ ../../../vyv/units/core/CO-02/columnUtils.test.ts (4 tests) 9ms
+ ✓ ../../../vyv/units/core/CO-05/folders.store.test.ts (1 test) 10ms
+ ✓ ../../../vyv/units/workflows/WF-03/useWorkflowActivate.test.ts (1 test) 6ms
+ ✓ ../../../vyv/units/core/CO-02/dataTable.store.test.ts (1 test) 14ms
+ ✓ ../../../vyv/units/core/CO-02/useDataTableColumnFilters.test.ts (2 tests) 8ms
+ ✓ ../../../vyv/units/core/CO-02/useAgGrid.test.ts (1 test) 8ms
+ ✓ ../../../vyv/units/executions/EX-03/executions.utils.test.ts (2 tests) 6ms
+ ✓ ../../../vyv/units/executions/EX-02/executions.utils.test.ts (1 test) 5ms
+ ↓ ../../../vyv/units/core/sin-equivalente-unitario.test.ts (8 tests | 8 todo)
+ ↓ ../../../vyv/units/credentials/sin-equivalente-unitario.test.ts (6 tests | 6 todo)
+ ↓ ../../../vyv/units/executions/sin-equivalente-unitario.test.ts (2 tests | 2 todo)
+ ↓ ../../../vyv/units/workflows/sin-equivalente-unitario.test.ts (4 tests | 4 todo)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > deshabilita «Create» con un nombre de solo espacios
+Error: expect(element).toBeDisabled()
+
+Received element is not disabled:
+  <button
+  aria-live="polite"
+  class="button button solid large"
+  data-test-id="proceed-from-select-button"
+  type="button"
+/>
+ ❯ ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts:139:26
+    137|
+    138|   // Assert
+    139|   expect(createButton()).toBeDisabled();
+       |                          ^
+    140|  });
+    141|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > no crea la tabla al pulsar Enter con un nombre de solo espacios
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      "   ",
+      "project-1",
+    ]
+
+
+Number of calls: 1
+
+ ❯ ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts:150:46
+    148|
+    149|   // Assert
+    150|   expect(dataTableStore.createDataTable).not.toHaveBeenCalled();
+       |                                              ^
+    151|  });
+    152|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts > CP-CO-01-02 · Nombre vacío o solo espacios > propone el nombre del CSV cuando el nombre tiene solo espacios
+Error: expect(element).toHaveValue(ventas)
+
+Expected the element to have value:
+  ventas
+Received:
+   
+
+Ignored nodes: comments, script, style
+<html
+  lang="en"
+>
+  <head />
+  <body>
+    <div
+      id="app-grid"
+    />
+    <div
+      id="app-modals"
+    />
+    <div>
+      <div
+        before-close="() => {
+			void router.replace({ name: PROJECT_DATA_TABLES });
+		}"
+        center="true"
+        name="addDataTableModal"
+        width="540px"
+      >
+        
+        <div
+          class="header"
+        >
+          <h2>
+            Create new data table
+          </h2>
+        </div>
+        
+        
+        <div
+          class="selectionContent"
+        >
+          <div
+            class="container"
+            data-test-id="input-label"
+          >
+            <div
+              class="labelRow"
+            >
+              <label
+                class="n8n-input-label inputLabel heading medium"
+                for="dataTableNameSelect"
+              >
+                <div
+                  class="main-content"
+                >
+                  <div
+                    class="title"
+                  >
+                    <span
+                      class="n8n-text size-medium bold"
+                    >
+                      
+                      Data table name 
+                      <span
+                        class="n8n-text danger size-medium bold"
+                      >
+                        
+                        *
+                        
+                      </span>
+                      
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="trailing-content"
+                />
+              </label>
+            </div>
+            
+            <div
+              class="n8n-input inputContainer large"
+            >
+              <div
+                class="n8n-input__wrapper inputWrapper"
+              >
+                <input
+                  autocomplete="off"
+                  class="input"
+                  data-test-id="data-table-name-input-select"
+                  name="dataTableNameSelect"
+                  placeholder="Enter data table name"
+                  type="text"
+                  value="   "
+                />
+              </div>
+            </div>
+            
+          </div>
+          <div
+            aria-orientation="vertical"
+            aria-required="false"
+            class="root vertical radioGroup"
+            data-orientation="vertical"
+            dir="ltr"
+            role="radiogroup"
+            style="outline: none;"
+            tabindex="0"
+          >
+            
+            
+            <div
+              class="item itemVertical"
+            >
+              <button
+                aria-checked="false"
+                aria-label="scratch"
+                class="control"
+                data-orientation="vertical"
+                data-reka-collection-item=""
+                data-state="unchecked"
+                data-test-id="create-from-scratch-option"
+                id="v-0"
+                required="false"
+                role="radio"
+                tabindex="-1"
+                type="button"
+                value="scratch"
+              >
+                
+                
+                
+                
+              </button>
+              <div
+                class="body"
+              >
+                <label
+                  class="content"
+                  for="v-0"
+                >
+                  
+                  
+                  <span
+                    class="label"
+                  >
+                    From scratch
+                  </span>
+                  
+                  
+                </label>
+              </div>
+            </div>
+            <div
+              class="item itemVertical"
+            >
+              <button
+                aria-checked="true"
+                aria-label="import"
+                class="control"
+                data-active=""
+                data-orientation="vertical"
+                data-reka-collection-item=""
+                data-state="checked"
+                data-test-id="import-csv-option"
+                id="v-2"
+                required="false"
+                role="radio"
+                tabindex="0"
+                type="button"
+                value="import"
+              >
+                
+                
+                <span
+                  class="dot"
+                  data-state="checked"
+                >
+                  
+                  
+                </span>
+                
+                
+              </button>
+              <div
+                class="body"
+              >
+                <label
+                  class="content"
+                  for="v-2"
+                >
+                  
+                  
+                  <span
+                    class="label"
+                  >
+                    Import CSV
+                  </span>
+                  
+                  
+                </label>
+              </div>
+            </div>
+            
+            
+          </div>
+          <div
+            class="uploadSection"
+          >
+            <div
+              class="uploadDemo"
+            >
+              <div
+                class="el-upload el-upload--text is-drag"
+                tabindex="0"
+              >
+                <div
+                  class="el-upload-dragger"
+                >
+                  
+                  
+                  
+                  <svg
+                    aria-hidden="true"
+                    class="n8n-icon uploadIcon"
+                    data-icon="cloud-arrow-up"
+                    fill="currentColor"
+                    focusable="false"
+                    height="24px"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="24px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m11.56 12.25-1.06 1.06-1.75-1.75v3.94h-1.5v-3.94L5.5 13.31l-1.06-1.06L8 8.69zM8.25.5a4 4 0 0 1 4 4v.817a4.25 4.25 0 0 1 3.5 4.183 4.24 4.24 0 0 1-1.475 3.215l-1.064-1.065a2.75 2.75 0 0 0-1.562-4.896l-.17-.004-.729-.02V4.5A2.5 2.5 0 0 0 8.25 2h-.5a2.5 2.5 0 0 0-2.5 2.5v2.25H4.5a2.75 2.75 0 0 0-1.712 4.9l-1.064 1.065A4.24 4.24 0 0 1 .25 9.5a4.25 4.25 0 0 1 3.5-4.184V4.5a4 4 0 0 1 4-4z"
+                    />
+                  </svg>
+                  <span
+                    class="n8n-text text-dark size-medium regular"
+                  >
+                    
+                    ventas.csv
+                    
+                  </span>
+                  
+                  
+                  
+                </div>
+                <input
+                  accept=".csv"
+                  class="el-upload__input"
+                  name="file"
+                  type="file"
+                />
+              </div>
+              
+              
+            </div>
+            <div
+              class="checkbox"
+            >
+              <button
+                aria-checked="true"
+                aria-required="false"
+                class="checkboxRoot"
+                data-state="checked"
+                data-test-id="has-headers-checkbox"
+                id="v-4"
+                role="checkbox"
+                type="button"
+              >
+                
+                <span
+                  class="checkboxIndicator"
+                  data-state="checked"
+                  style="pointer-events: none;"
+                >
+                  
+                  <svg
+                    aria-hidden="true"
+                    class="n8n-icon"
+                    data-icon="check"
+                    fill="currentColor"
+                    focusable="false"
+                    height="12px"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="12px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M15.56 3.25 6 12.81.44 7.25 1.5 6.19l4.5 4.5 8.5-8.5z"
+                    />
+                  </svg>
+                  
+                </span>
+                
+              </button>
+              <label
+                class="label"
+                for="v-4"
+              >
+                
+                
+                My CSV file contains a header row
+                
+                
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        
+        <div
+          class="footer"
+        >
+          <button
+            aria-live="polite"
+            class="button button outline large"
+            data-test-id="cancel-select-button"
+            type="button"
+          >
+            <transition-stub
+              appear="false"
+              css="true"
+              name="n8n-button-fade"
+              persisted="false"
+            />
+            <div
+              class="button-inner"
+            >
+              
+              
+              <span>
+                Cancel
+              </span>
+            </div>
+          </button>
+          <button
+            aria-live="polite"
+            class="button button solid large"
+            data-test-id="proceed-from-select-button"
+            type="button"
+          >
+            <transition-stub
+              appear="false"
+              css="true"
+              name="n8n-button-fade"
+              persisted="false"
+            />
+            <div
+              class="button-inner"
+            >
+              
+              
+              <span>
+                Create
+              </span>
+            </div>
+          </button>
+        </div>
+        
+      </div>
+    </div>
+  </body>
+</html>
+ ❯ ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts:165:43
+    163|
+    164|   // Assert
+    165|   await waitFor(() => expect(nameInput()).toHaveValue('ventas'));
+       |                                           ^
+    166|   expect(dataTableStore.findAvailableDataTableName).toHaveBeenCalledWi…
+    167|  });
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../../../node_modules/.pnpm/@testing-library+dom@9.3.4/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../../../node_modules/.pnpm/@testing-library+dom@9.3.4/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../../../node_modules/.pnpm/@testing-library+dom@9.3.4/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  ../../../vyv/units/executions/EX-02/executionFilterToQueryFilter.test.ts > CP-EX-02-03 · Rango de fechas: mismo día, invertido y futuro > normaliza un rango invertido (fin anterior al inicio)
+AssertionError: expected '2026-01-31T23:59:59.000Z' to be '2026-01-01T00:00:00.000Z' // Object.is equality
+
+Expected: "2026-01-01T00:00:00.000Z"
+Received: "2026-01-31T23:59:59.000Z"
+
+ ❯ ../../../vyv/units/executions/EX-02/executionFilterToQueryFilter.test.ts:45:30
+     43|
+     44|   // Assert
+     45|   expect(query.startedAfter).toBe(EARLIER);
+       |                              ^
+     46|   expect(query.startedBefore).toBe(LATER);
+     47|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  ../../../vyv/units/executions/EX-02/executionFilterToQueryFilter.test.ts > CP-EX-02-03 · Rango de fechas: mismo día, invertido y futuro > normaliza un rango invertido cuando el date picker entrega objetos Date
+AssertionError: expected '2026-01-31T23:59:59.000Z' to be '2026-01-01T00:00:00.000Z' // Object.is equality
+
+Expected: "2026-01-01T00:00:00.000Z"
+Received: "2026-01-31T23:59:59.000Z"
+
+ ❯ ../../../vyv/units/executions/EX-02/executionFilterToQueryFilter.test.ts:60:64
+     58|
+     59|   // Assert
+     60|   expect(new Date(query.startedAfter as string).toISOString()).toBe(EA…
+       |                                                                ^
+     61|   expect(new Date(query.startedBefore as string).toISOString()).toBe(L…
+     62|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  2 failed | 89 passed | 4 skipped (95)
+      Tests  5 failed | 259 passed | 21 todo (285)
+   Start at  00:59:38
+   Duration  168.02s (import 51%, transform 21%, setup 9%, tests 9%, environment 9%)
+
+     Import  3357 modules were evaluated 159160 times · 166.33s total, 51% of tracked time
+             ~79.84s faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+             learn more: https://vitest.dev/guide/improving-performance#test-isolation
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/antes-units.json
+units exit 1

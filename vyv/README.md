@@ -19,7 +19,8 @@ vyv/
 │   ├── credentials/CR-01 … CR-05/
 │   ├── core/CO-01 … CO-05/                   *.api.cy.js, *.ui.cy.js, *.feature
 │   ├── screenplay/                           actor, escena, habilidades, interacciones, tareas y preguntas
-│   ├── core/security/ core/accessibility/ core/regression/
+│   ├── core/security/ core/accessibility/
+│   ├── regression/                           suite de regresión: un archivo por módulo del plan
 │   ├── scenarios/                            escenarios extremo a extremo ES-01 … ES-06
 │   └── support/ (pasos de Gherkin) fixtures/ scripts/
 ├── api/                 colección Postman de la API de los 4 módulos (Newman)
@@ -104,6 +105,7 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | `e2e` (complemento) | **13 pruebas nuevas en Chromium, 13 aprobadas**: CP-WF-02-02, 03-07, CP-EX-01-05, 01-06, 04-01, 04-06, 05-05, CP-CR-02-02, 02-06, 04-03, 04-04 y CP-CO-05-02. Evidencia: [`evidence/e2e/after/complement/`](evidence/e2e/after/complement/) y las capturas en `by-case/` | 14/11/2026 · n8n 2.47.0, misma instancia |
 | `e2e` (escenarios y rendimiento) | **14 pruebas, 14 aprobadas**: ES-01 a ES-06 en 1366 × 768 y 1920 × 1080, la vista de una data table de 10 000 filas y el listado con 50 credenciales. Evidencia: [`evidence/e2e/after/scenarios/`](evidence/e2e/after/scenarios/) | 14/11/2026 · n8n 2.47.0, Chromium 1243 |
 | `e2e` (Gherkin + Screenplay) | **20 features, 85 escenarios y 613 pasos: 85 aprobados.** Hay una feature por funcionalidad de los 4 módulos, con escenarios de éxito, alternativos y de error. Evidencia: [`evidence/e2e/after/bdd/`](evidence/e2e/after/bdd/) (reporte de Cucumber en HTML y JSON, y la salida de Cypress) | 14/11/2026 · n8n 2.47.0, Chromium 1243 |
+| Regresión | **E2E: 162 pruebas de las 20 funcionalidades, 0 regresiones causadas por los cambios y 4 defectos corregidos. Unitarias: 349 pruebas, 0 regresiones y 20 corregidas.** Una segunda corrida E2E encontró un defecto intermitente de n8n en WF-03 que no causa esta rama. Evidencia: [`evidence/e2e/regression/`](evidence/e2e/regression/) y [`evidence/units/regression/`](evidence/units/regression/) | 15/11/2026 · antes: n8n 2.47.0 de upstream; después: esta rama |
 | Estáticas | `vue-tsc` y lint (`oxlint` + `eslint`) del editor sin errores, después de quitar dos variables sin uso que dejó el traslado de pruebas a `units/`. Evidencia: [`evidence/static/`](evidence/static/) | 14/11/2026 |
 | `api` | **Newman: 40 peticiones y 62 aserciones, 0 fallidas.** Evidencia: [`evidence/api/`](evidence/api/) | 14/11/2026 · n8n 2.47.0 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
@@ -137,7 +139,7 @@ Cada una de las 20 funcionalidades del plan tiene pruebas Cypress con escenarios
 | CO-04 Carpetas | CP-019-01, 019-03, 019-04 | 019-05 migas de pan, 019-06 conteos | 019-02 nombres inválidos, 129 caracteres | `core/CO-04/folders-create-navigate.api`, `folders.ui`, `folders.feature` | CO-04-01, 04-03 |
 | CO-05 Mover y eliminar | CP-020-01, CO-05-02 a la raíz, 020-02, 020-04 | 020-05 eliminar sin transferir, carpeta vacía | 020-03 su propio padre, mover a un descendiente, transferir a sí misma | `core/CO-05/folders-move-delete.api`, `move-to-root.api`, `folders.ui`, `folders.feature` | CO-05-05 |
 
-Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`core/accessibility/wcag.cy.js`) y regresión (`core/regression/regression-suite.cy.js`).
+Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`core/accessibility/wcag.cy.js`) y la suite de regresión (`regression/`, ver [Pruebas de regresión](#pruebas-de-regresión)).
 
 ### Hallazgos de la ejecución del 14/11/2026
 
@@ -207,6 +209,113 @@ npx cypress run --spec "{workflows,executions,credentials,core}/**/*.feature" --
 ```
 
 El reporte de Cucumber queda en `e2e/results/cucumber-report.html` y `cucumber-report.json`.
+
+## Pruebas de regresión
+
+La suite de regresión verifica que las 20 funcionalidades del plan siguen funcionando después de las correcciones y la refactorización de esta rama. Compara dos versiones del mismo n8n 2.47.0: **antes** es el código de upstream (commit `01bd57cdd`) y **después** es el código de esta rama. Las dos se diferencian solo en 7 archivos de producción:
+
+| Archivo | Cambio | Funcionalidad | Defecto |
+| --- | --- | --- | --- |
+| `editor-ui/…/AddDataTableModal.vue` | El botón Create ignora un nombre de solo espacios y propone el nombre del CSV (refactorizado en un solo lugar) | CO-01 | BUG-016-01 |
+| `editor-ui/…/executions.utils.ts` | Un rango de fechas invertido se normaliza | EX-02 | CP-EX-02-03 |
+| `data-table/…/csv-parser.service.ts` | Las fechas imposibles y los números no decimales no se infieren; los errores del parser responden 400 | CO-03 | BUG-018-01, 02, 03, 05 |
+| `data-table/…/data-table-uploads.controller.ts`, `data-table-csv-import.service.ts` | Un `fileId` con `../` responde 400 y el archivo subido se borra | CO-03 | BUG-018-05 |
+| `data-table/…/utils/csv-escape.ts` (nuevo), `data-table.service.ts` | Se extrae `escapeCsvValue()` y se neutralizan las fórmulas del CSV exportado | CO-03 | BUG-018-04 (CP-018-08) |
+
+### Casos seleccionados
+
+Hay dos niveles y los dos cubren las 20 funcionalidades:
+
+- **E2E (Cypress):** [`e2e/regression/`](e2e/regression/) tiene un archivo por módulo (`workflows`, `executions`, `credentials`, `core`). Cada archivo importa, para cada funcionalidad, las specs de su flujo principal, el alternativo y el de error. En Core entran también las pruebas de interfaz y de seguridad, porque allí están los cambios.
+- **Unitario (Vitest):** toda la suite [`units/`](units/) (las 20 funcionalidades) y las pruebas de backend `*.vyv.test.ts` de data tables y carpetas.
+
+Criterios de selección: un caso de cada tipo (éxito, alternativo y error) por funcionalidad, todos los casos que tocan el código cambiado, y pruebas que terminan en pocos minutos y dan el mismo resultado en cada corrida. Quedan fuera las pruebas de rendimiento (100 nodos, 1 000 ejecuciones, 60 ejecuciones paginadas, 10 000 filas, 50 credenciales), las que necesitan otra configuración de n8n (cola de concurrencia, límite de almacenamiento, cifrado en la base, reinicio) y los escenarios ES-01 a ES-06, que tienen su propia corrida.
+
+| Funcionalidad | Specs (`e2e/…`) | Pruebas E2E | Pruebas unitarias | Casos del plan (E2E) |
+| --- | --- | --- | --- | --- |
+| WF-01 Crear y editar | `canvas-edit.ui` | 5 | 21 | CP-WF-01-01, 01-02, 01-04, 01-05, 01-07 |
+| WF-02 Ajustes | `settings.api`, `manual-executions.ui` | 6 | 13 | CP-WF-02-01 … 02-06 |
+| WF-03 Publicar | `webhook-publish.api`, `unpublished-changes.ui` | 7 | 14 | CP-WF-03-01 … 03-05, 03-07, 03-08 |
+| WF-04 Historial | `version-history.api` | 6 | 12 | CP-WF-04-01 … 04-06 |
+| WF-05 Plantillas, importar y duplicar | `import-duplicate.api` | 5 | 16 | CP-WF-05-01, 05-03 … 05-06 |
+| EX-01 Lista de ejecuciones | `execution-states.api` | 5 | 20 | CP-EX-01-01 … 01-04, 01-07 |
+| EX-02 Filtros | `filters.api` | 6 | 19 | CP-EX-02-01 … 02-05 |
+| EX-03 Vista previa, reintento y eliminación | `preview-retry-delete.api` | 7 | 20 | CP-EX-03-01 … 03-06 |
+| EX-04 Detener | `stop.api`, `editor-stop.ui` | 7 | 17 | CP-EX-04-01 … 04-06 |
+| EX-05 Panel de logs | `execution-log.api`, `logs-keyboard.ui` | 5 | 11 | CP-EX-05-01 … 05-05 |
+| CR-01 Crear y probar | `create.api`, `html-name.ui` | 7 | 10 | CP-CR-01-01 … 01-06, 01-08 |
+| CR-02 Editar y eliminar | `edit-delete.api`, `secret-exposure.api`, `credential-modal.ui` | 9 | 12 | CP-CR-02-01 … 02-08 |
+| CR-03 OAuth2 | `oauth2.api` | 4 | 11 | CP-CR-03-01, 03-03, 03-04 |
+| CR-04 Credenciales en nodos | `node-credentials.api`, `credential-switch.api`, `create-from-node.ui` | 8 | 13 | CP-CR-04-01 … 04-08 |
+| CR-05 Listado y permisos | `search-share.api`, `sort.ui`, `isolation.api` | 6 | 8 | CP-CR-05-01, 05-02, 05-03, 05-05, 05-06 |
+| CO-01 Data tables | `data-table-columns.api`, `data-tables.ui` | 14 | 20 | CP-016-01 … 016-07 (BUG-016-01) |
+| CO-02 Filas | `row-editing.api`, `data-table-node.api`, `data-table-rows.ui` | 13 | 12 | CP-017-01 … 017-07, CP-CO-02-08 |
+| CO-03 CSV | `csv-import-export.api`, `csv.ui`, `core/security/owasp` | 14 | 48 | CP-018-01 … 018-08, BUG-018-05 |
+| CO-04 Carpetas | `folders-create-navigate.api`, `folders.ui` | 10 | 32 | CP-019-01 … 019-04, 019-06 |
+| CO-05 Mover y eliminar | `folders-move-delete.api`, `move-to-root.api`, `folders.ui` | 11 | 20 | CP-020-01 … 020-05, CP-CO-05-02 |
+| Seguridad (Core) | `core/security/owasp`, pruebas sin caso del plan | 7 | — | OWASP A01, A03, A04, A05 |
+| **Total** | 38 specs | **162** | **349** | |
+
+### Ejecuciones
+
+| Corrida | Código | Comando | Resultado |
+| --- | --- | --- | --- |
+| E2E antes | upstream `01bd57cdd` (los 6 archivos restaurados; `data-table` y `editor-ui` compilados) | `npm run test:regression` | 162 pruebas: 157 aprobadas, 4 fallidas, 1 pendiente · [`antes/`](evidence/e2e/regression/antes/) |
+| E2E después | esta rama | `npm run test:regression` | 162 pruebas: 161 aprobadas, 0 fallidas, 1 pendiente · [`despues/`](evidence/e2e/regression/despues/) |
+| E2E después (2.ª corrida) | esta rama, después de volver a compilar | `npm run test:regression` | 162 pruebas: 160 aprobadas, 1 fallida (CP-WF-03-03), 1 pendiente · [`despues-2/`](evidence/e2e/regression/despues-2/) |
+| Unitarias antes | upstream `01bd57cdd` | `./vyv/run-tests.sh units` y las 3 pruebas de `backend` | 349 pruebas: 329 aprobadas, 20 fallidas · [`antes/`](evidence/units/regression/antes/) |
+| Unitarias después | esta rama | `./vyv/run-tests.sh units` y las 3 pruebas de `backend` | 349 pruebas: 349 aprobadas · [`despues/`](evidence/units/regression/despues/) |
+
+La prueba pendiente es CP-WF-03-08: necesita `CYPRESS_restartCommand` para reiniciar n8n. Las «21 pendientes» unitarias son los `it.todo` de la suite. Todas las corridas son del 15/11/2026, con Chromium 1243.
+
+### Resultados comparativos
+
+Columnas: aprobadas / fallidas / pendientes.
+
+| Funcionalidad | E2E antes | E2E después | Unitarias antes | Unitarias después | Resultado |
+| --- | --- | --- | --- | --- | --- |
+| WF-01 | 5 / 0 / 0 | 5 / 0 / 0 | 20 / 0 / 1 | 20 / 0 / 1 | ✅ sin cambios |
+| WF-02 | 6 / 0 / 0 | 6 / 0 / 0 | 13 / 0 / 0 | 13 / 0 / 0 | ✅ sin cambios |
+| WF-03 | 6 / 0 / 1 | 6 / 0 / 1 | 11 / 0 / 3 | 11 / 0 / 3 | ✅ sin cambios · ⚠️ en la 2.ª corrida falla CP-WF-03-03 (defecto intermitente de n8n, ver abajo) |
+| WF-04 | 6 / 0 / 0 | 6 / 0 / 0 | 12 / 0 / 0 | 12 / 0 / 0 | ✅ sin cambios |
+| WF-05 | 5 / 0 / 0 | 5 / 0 / 0 | 16 / 0 / 0 | 16 / 0 / 0 | ✅ sin cambios |
+| EX-01 | 5 / 0 / 0 | 5 / 0 / 0 | 19 / 0 / 1 | 19 / 0 / 1 | ✅ sin cambios |
+| EX-02 | 6 / 0 / 0 | 6 / 0 / 0 | 17 / 2 / 0 | 19 / 0 / 0 | 🟢 2 corregidas (rango de fechas invertido) |
+| EX-03 | 7 / 0 / 0 | 7 / 0 / 0 | 20 / 0 / 0 | 20 / 0 / 0 | ✅ sin cambios |
+| EX-04 | 7 / 0 / 0 | 7 / 0 / 0 | 16 / 0 / 1 | 16 / 0 / 1 | ✅ sin cambios |
+| EX-05 | 5 / 0 / 0 | 5 / 0 / 0 | 11 / 0 / 0 | 11 / 0 / 0 | ✅ sin cambios |
+| CR-01 | 7 / 0 / 0 | 7 / 0 / 0 | 9 / 0 / 1 | 9 / 0 / 1 | ✅ sin cambios |
+| CR-02 | 9 / 0 / 0 | 9 / 0 / 0 | 10 / 0 / 2 | 10 / 0 / 2 | ✅ sin cambios |
+| CR-03 | 4 / 0 / 0 | 4 / 0 / 0 | 10 / 0 / 1 | 10 / 0 / 1 | ✅ sin cambios |
+| CR-04 | 8 / 0 / 0 | 8 / 0 / 0 | 12 / 0 / 1 | 12 / 0 / 1 | ✅ sin cambios |
+| CR-05 | 6 / 0 / 0 | 6 / 0 / 0 | 6 / 0 / 2 | 6 / 0 / 2 | ✅ sin cambios |
+| CO-01 | 13 / 1 / 0 | 14 / 0 / 0 | 15 / 3 / 2 | 18 / 0 / 2 | 🟢 1 + 3 corregidas (BUG-016-01) |
+| CO-02 | 13 / 0 / 0 | 13 / 0 / 0 | 10 / 0 / 2 | 10 / 0 / 2 | ✅ sin cambios |
+| CO-03 | 11 / 3 / 0 | 14 / 0 / 0 | 30 / 15 / 3 | 45 / 0 / 3 | 🟢 3 + 15 corregidas (BUG-018-01 … 05) |
+| CO-04 | 10 / 0 / 0 | 10 / 0 / 0 | 32 / 0 / 0 | 32 / 0 / 0 | ✅ sin cambios |
+| CO-05 | 11 / 0 / 0 | 11 / 0 / 0 | 19 / 0 / 1 | 19 / 0 / 1 | ✅ sin cambios |
+| Seguridad (Core) | 7 / 0 / 0 | 7 / 0 / 0 | — | — | ✅ sin cambios |
+| **Total** | **157 / 4 / 1** | **161 / 0 / 1** | **329 / 20 / 21** | **349 / 0 / 21** | **0 regresiones · 24 corregidas** |
+
+Las 24 pruebas corregidas son exactamente las de los defectos de la primera tabla. En E2E son CP-016-02, CP-018-07, CP-018-08 y BUG-018-05. En unitarias son las de `AddDataTableModal` (3), el rango de fechas de EX-02 (2) y el parser, la importación y el escape de CSV (15). Ninguna prueba pasa antes y falla después por los cambios. El detalle prueba por prueba está en [`comparacion-antes-vs-despues.md`](evidence/e2e/regression/comparacion-antes-vs-despues.md) y en [`units/regression/comparacion.md`](evidence/units/regression/comparacion.md).
+
+**Hallazgo de la segunda corrida (WF-03).** En la segunda corrida «después» falló CP-WF-03-03: n8n publicó un segundo workflow con la misma ruta y el mismo método que uno ya publicado (respondió 200 en lugar de 409). No es una regresión de esta rama, porque el código de publicación y de webhooks (`packages/cli`) es el mismo antes y después. El script [`diagnostico-webhook-duplicado.mjs`](evidence/e2e/regression/diagnostico-webhook-duplicado.mjs) lo reproduce contra la misma instancia: el segundo workflow se aceptó en 5 de 10 intentos y luego en 5 de 6. La causa no está confirmada: parece una condición de carrera entre el registro del webhook del primer workflow y la comprobación de conflictos del segundo. Hay que registrarlo como defecto y repetirlo en el entorno del plan. El comparador lo marca como regresión en [`comparacion-antes-vs-despues-2.md`](evidence/e2e/regression/comparacion-antes-vs-despues-2.md) porque compara estados, no causas.
+
+### Ejecutar la regresión
+
+```bash
+# Antes: restaurar los 6 archivos de upstream, compilar y reiniciar n8n
+git checkout 01bd57cdd -- packages/frontend/editor-ui/src/features/core/dataTable/components/AddDataTableModal.vue packages/frontend/editor-ui/src/features/execution/executions/executions.utils.ts packages/modules/data-table/backend/src/csv-parser.service.ts packages/modules/data-table/backend/src/data-table-csv-import.service.ts packages/modules/data-table/backend/src/data-table-uploads.controller.ts packages/modules/data-table/backend/src/data-table.service.ts
+pnpm --filter @n8n/backend-module-data-table build && pnpm --filter n8n-editor-ui build
+cd vyv/e2e && npm run test:regression && mv results/regression results/regression-antes
+
+# Después: volver al código de la rama, compilar, reiniciar n8n y repetir
+git checkout HEAD -- ../../packages/
+npm run test:regression
+node scripts/compare-regression.mjs results/regression-antes results/regression results/regression-comparison.md
+```
+
+En el nivel unitario los pasos son los mismos, con `./vyv/run-tests.sh units --reporter=default --reporter=json --outputFile.json=<archivo>` en lugar de Cypress. El comparador acepta el JSON de mochawesome y el de Vitest, agrupa por funcionalidad y termina con código 1 si hay regresiones. Su propia prueba se ejecuta con `npm run test:scripts`.
 
 ## Escenarios extremo a extremo (ES-01 a ES-06)
 

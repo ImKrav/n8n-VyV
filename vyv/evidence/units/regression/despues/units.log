@@ -1,0 +1,174 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.mts:28:29). Use `import.meta.dirname` instead
+  - import "../@n8n/design-system/src/icons/lucide/vite" without a file extension (vite.config.mts:12:35). Add the file extension
+  - import "./vite/i18n-locales-hmr-helpers" without a file extension (vite.config.mts:15:48). Add the file extension
+  - import "../../@n8n/constants/src/csp" without a file extension (vite.config.mts:20:40). Add the file extension
+  - ESM syntax in a file loaded as CommonJS (../../@n8n/constants/src/csp.ts:6:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+  - import "./bucket" without a file extension (../@n8n/design-system/src/icons/lucide/vite.ts:5:46). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.1 /home/user/n8n-VyV/packages/frontend/editor-ui
+
+ ✓ ../../../vyv/units/core/CO-01/AddColumnButton.test.ts (5 tests) 1449ms
+   ✓ CP-CO-01-05 · Añadir columnas de los cuatro tipos (3)
+     ✓ should display all column type options 329ms
+     ✓ should allow selecting different column types 354ms
+   ✓ CP-CO-01-07 · Nombre de columna con caracteres no permitidos (2)
+     ✓ should allow valid column names 369ms
+ ✓ ../../../vyv/units/executions/EX-05/LogsPanel.test.ts (3 tests) 1086ms
+   ✓ CP-EX-05-02 · Detalle de entrada y salida de un nodo (1)
+     ✓ should render only output panel of selected node by default 365ms
+   ✓ CP-EX-05-05 · Atajos de teclado del panel (2)
+     ✓ selection (1)
+       ✓ should allow to select previous and next row via keyboard shortcut 428ms
+ ✓ ../../../vyv/units/workflows/WF-02/WorkflowSettings.test.ts (13 tests) 7672ms
+   ✓ CP-WF-02-04 · Workflow de error se dispara ante un fallo (2)
+     ✓ Error Workflow (1)
+       ✓ should send DEFAULT value for errorWorkflow to backend when set to "No Workflow" 980ms
+     ✓ Error Workflow (1)
+       ✓ should save workflow with errorWorkflow when a specific workflow is selected 592ms
+   ✓ CP-WF-02-06 · Ajustes persisten tras recargar (1)
+     ✓ should save time saved per execution correctly 541ms
+   ✓ CP-WF-02-01 · No guardar ejecuciones exitosas de producción (2)
+     ✓ envía saveDataSuccessExecution «none» al elegir «Do not save» 627ms
+     ✓ mantiene el guardado de ejecuciones fallidas al desactivar solo las exitosas 663ms
+   ✓ CP-WF-02-02 · No guardar ejecuciones manuales (1)
+     ✓ envía saveManualExecutions false al elegir «Do not save» 651ms
+   ✓ CP-WF-02-03 · Timeout en sus valores límite (5)
+     ✓ guarda el timeout en el valor mínimo (1 s) 505ms
+     ✓ guarda el timeout en el valor intermedio (1 h) 492ms
+     ✓ guarda el timeout en el valor máximo permitido 453ms
+     ✓ rechaza un timeout activado en 0 segundos 534ms
+     ✓ rechaza un timeout de máximo + 1 segundo e informa el máximo 503ms
+   ✓ CP-WF-02-05 · Zona horaria del workflow (1)
+     ✓ guarda la zona horaria elegida 567ms
+   ✓ CP-WF-02-06 · Ajustes persisten tras recargar (1)
+     ✓ vuelve a enviar sin cambios los ajustes guardados al reabrir y guardar 540ms
+ ✓ ../../../vyv/units/core/CO-05/MoveToFolderModal.test.ts (4 tests) 911ms
+   ✓ CP-CO-05-01 · Mover un workflow a una carpeta (1)
+     ✓ should move selected workflow on submit 365ms
+   ✓ CP-CO-05-02 · Mover un workflow de vuelta a la raíz (1)
+     ✓ should reset to project root when switching projects 351ms
+ ✓ ../../../vyv/units/credentials/CR-02/CredentialEdit.test.ts (1 test) 1084ms
+   ✓ CP-CR-02-01 · Editar un valor sin romper los workflows (1)
+     ✓ saving credentials (1)
+       ✓ does not call onCredentialCreated when updating a credential 1081ms
+ ✓ ../../../vyv/units/executions/EX-03/GlobalExecutionsList.test.ts (4 tests) 765ms
+   ✓ CP-EX-03-03 · Reintentar con la versión actual (1)
+     ✓ should show "retry" data when appropriate 395ms
+ ✓ ../../../vyv/units/credentials/CR-05/CredentialsView.test.ts (5 tests | 1 todo) 846ms
+ ✓ ../../../vyv/units/core/CO-04/WorkflowsView.test.ts (3 tests) 606ms
+ ✓ ../../../vyv/units/executions/EX-02/ExecutionsFilter.test.ts (1 test) 508ms
+   ✓ CP-EX-02-05 · Limpiar filtros (1)
+     ✓ state change 505ms
+ ✓ ../../../vyv/units/workflows/WF-05/DuplicateWorkflowDialog.test.ts (6 tests) 611ms
+   ✓ CP-WF-05-05 · Duplicar con nombre vacío, repetido y muy largo (4)
+     ✓ acepta un nombre en el límite de longitud y limita la entrada al máximo 329ms
+ ✓ ../../../vyv/units/credentials/CR-04/NodeCredentials.test.ts (4 tests) 496ms
+ ✓ ../../../vyv/units/core/CO-05/DeleteFolderModal.test.ts (7 tests) 565ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialEdit.test.ts (3 tests) 503ms
+ ✓ ../../../vyv/units/credentials/CR-02/TemplatedAuthSimpleView.test.ts (2 tests) 642ms
+   ✓ CP-CR-02-02 · Secretos no visibles al reabrir (2)
+     ✓ keeps the untouched `***` sentinel — not the display mask — when composing 374ms
+ ✓ ../../../vyv/units/core/CO-01/AddDataTableModal.test.ts (8 tests) 520ms
+ ✓ ../../../vyv/units/workflows/WF-04/WorkflowHistoryList.test.ts (1 test) 353ms
+   ✓ CP-WF-04-01 · Cada guardado genera una versión (1)
+     ✓ should render list and delegate preview event 350ms
+ ✓ ../../../vyv/units/executions/EX-01/GlobalExecutionsList.test.ts (1 test) 326ms
+   ✓ CP-EX-01-05 · Carga incremental con más de 50 ejecuciones (1)
+     ✓ should stop offering "load more" once all executions are shown, even on a large instance 324ms
+ ✓ ../../../vyv/units/executions/EX-05/LogDetailsPanel.test.ts (1 test) 332ms
+   ✓ CP-EX-05-02 · Detalle de entrada y salida de un nodo (1)
+     ✓ should show name, run status, input, and output of the node 330ms
+ ✓ ../../../vyv/units/executions/EX-03/WorkflowExecutionsPreview.test.ts (5 tests) 377ms
+ ✓ ../../../vyv/units/workflows/WF-04/WorkflowHistory.test.ts (3 tests) 375ms
+ ✓ ../../../vyv/units/credentials/CR-02/TypeToConfirmDialog.test.ts (6 tests) 357ms
+ ✓ ../../../vyv/units/workflows/WF-05/ImportWorkflowUrlModal.test.ts (3 tests) 316ms
+ ✓ ../../../vyv/units/credentials/CR-05/CredentialSharing.ee.test.ts (2 tests) 269ms
+ ✓ ../../../vyv/units/executions/EX-01/WorkflowExecutionsSidebar.test.ts (1 test) 308ms
+   ✓ CP-EX-01-05 · Carga incremental con más de 50 ejecuciones (1)
+     ✓ infinite scroll sentinel (1)
+       ✓ should observe the sentinel when executions are present and more pages exist 305ms
+ ✓ ../../../vyv/units/credentials/CR-04/CredentialPicker.test.ts (2 tests) 292ms
+ ✓ ../../../vyv/units/executions/EX-01/GlobalExecutionsListItem.test.ts (10 tests) 304ms
+ ✓ ../../../vyv/units/executions/EX-03/GlobalExecutionsListItem.test.ts (2 tests) 192ms
+ ✓ ../../../vyv/units/workflows/WF-01/useCanvasOperations.test.ts (13 tests) 251ms
+ ✓ ../../../vyv/units/credentials/CR-02/NodeCredentials.test.ts (1 test) 210ms
+ ✓ ../../../vyv/units/credentials/CR-03/CredentialCard.test.ts (2 tests) 224ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowCard.test.ts (1 test) 234ms
+ ✓ ../../../vyv/units/executions/EX-05/LogsOverviewPanel.test.ts (1 test) 191ms
+ ✓ ../../../vyv/units/executions/EX-04/StopManyExecutionsModal.test.ts (2 tests) 187ms
+ ✓ ../../../vyv/units/executions/EX-03/WorkflowExecutionsCard.test.ts (1 test) 212ms
+ ✓ ../../../vyv/units/executions/EX-05/LogsViewRunData.test.ts (1 test) 187ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowPublishModal.test.ts (3 tests) 190ms
+ ✓ ../../../vyv/units/core/CO-05/FolderCard.test.ts (1 test) 199ms
+ ✓ ../../../vyv/units/credentials/CR-03/CredentialConfig.test.ts (2 tests) 142ms
+ ✓ ../../../vyv/units/core/CO-01/ColumnHeader.test.ts (2 tests) 166ms
+ ✓ ../../../vyv/units/core/CO-03/ImportCsvModal.test.ts (2 tests) 170ms
+ ✓ ../../../vyv/units/workflows/WF-01/CanvasNodeToolbar.test.ts (1 test) 153ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowHeaderDraftPublishActions.test.ts (3 tests) 154ms
+ ✓ ../../../vyv/units/executions/EX-04/NodeExecuteButton.test.ts (2 tests) 146ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialCard.test.ts (2 tests) 129ms
+ ✓ ../../../vyv/units/executions/EX-04/GlobalExecutionsListItem.test.ts (4 tests) 133ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialConfig.test.ts (1 test) 146ms
+ ✓ ../../../vyv/units/core/CO-04/FolderBreadcrumbs.test.ts (2 tests) 112ms
+ ✓ ../../../vyv/units/core/CO-03/DownloadDataTableModal.test.ts (2 tests) 123ms
+ ✓ ../../../vyv/units/credentials/CR-03/ScopesNotice.test.ts (3 tests) 106ms
+ ✓ ../../../vyv/units/executions/EX-04/ExecutionStopAllText.test.ts (5 tests) 96ms
+ ✓ ../../../vyv/units/executions/EX-05/useLogsExecutionData.test.ts (1 test) 97ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialsSelectModal.test.ts (2 tests) 90ms
+ ✓ ../../../vyv/units/workflows/WF-01/CanvasNodeStickyColorSelector.test.ts (1 test) 93ms
+ ✓ ../../../vyv/units/core/CO-04/FolderCard.test.ts (1 test) 65ms
+ ✓ ../../../vyv/units/workflows/WF-01/CanvasNodeDefault.test.ts (1 test) 64ms
+ ✓ ../../../vyv/units/credentials/CR-01/CredentialInputs.test.ts (1 test) 78ms
+ ✓ ../../../vyv/units/workflows/WF-04/WorkflowVersionFormModal.test.ts (2 tests) 62ms
+ ✓ ../../../vyv/units/workflows/WF-01/useHistoryHelper.test.ts (4 tests) 69ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowActivationConflictingWebhookModal.test.ts (1 test) 42ms
+ ✓ ../../../vyv/units/credentials/CR-03/useCredentialOAuth.test.ts (3 tests) 52ms
+ ✓ ../../../vyv/units/executions/EX-04/ConcurrentExecutionsHeader.test.ts (1 test) 57ms
+ ✓ ../../../vyv/units/workflows/WF-05/useCanvasOperations.test.ts (1 test) 41ms
+ ✓ ../../../vyv/units/workflows/WF-05/setupTemplate.store.test.ts (2 tests) 49ms
+ ✓ ../../../vyv/units/executions/EX-01/executions.store.test.ts (7 tests) 51ms
+ ✓ ../../../vyv/units/executions/EX-03/ExecutionPreviewHost.test.ts (2 tests) 44ms
+ ✓ ../../../vyv/units/credentials/CR-04/useNodeHelpers.test.ts (6 tests) 38ms
+ ✓ ../../../vyv/units/executions/EX-03/useExecutionDebugging.test.ts (2 tests) 37ms
+ ✓ ../../../vyv/units/workflows/WF-03/WorkflowActivationErrorMessage.test.ts (2 tests) 26ms
+ ✓ ../../../vyv/units/executions/EX-04/useExecutionCommands.test.ts (1 test) 41ms
+ ✓ ../../../vyv/units/workflows/WF-05/templates.store.test.ts (4 tests) 32ms
+ ✓ ../../../vyv/units/workflows/WF-04/workflowHistory.store.test.ts (3 tests) 28ms
+ ✓ ../../../vyv/units/core/CO-04/folders.store.test.ts (5 tests) 20ms
+ ✓ ../../../vyv/units/executions/EX-03/executions.store.test.ts (2 tests) 30ms
+ ✓ ../../../vyv/units/executions/EX-05/logs.utils.test.ts (4 tests) 16ms
+ ✓ ../../../vyv/units/core/CO-02/dataTable.store.test.ts (1 test) 10ms
+ ✓ ../../../vyv/units/executions/EX-02/executionFilterToQueryFilter.test.ts (17 tests) 14ms
+ ✓ ../../../vyv/units/core/CO-01/dataTable.store.columns.test.ts (2 tests) 13ms
+ ✓ ../../../vyv/units/executions/EX-04/useNodeExecution.test.ts (1 test) 12ms
+ ✓ ../../../vyv/units/core/CO-03/dataTable.store.test.ts (1 test) 14ms
+ ✓ ../../../vyv/units/workflows/WF-04/useWorkflowDiff.test.ts (3 tests) 13ms
+ ✓ ../../../vyv/units/core/CO-01/dataTable.store.test.ts (1 test) 13ms
+ ✓ ../../../vyv/units/core/CO-05/folders.store.test.ts (1 test) 11ms
+ ✓ ../../../vyv/units/core/CO-05/useFolders.test.ts (1 test) 11ms
+ ✓ ../../../vyv/units/core/CO-02/useDataTableColumnFilters.test.ts (2 tests) 9ms
+ ✓ ../../../vyv/units/core/CO-02/useDataTableOperations.test.ts (2 tests) 17ms
+ ✓ ../../../vyv/units/core/CO-02/columnUtils.test.ts (4 tests) 11ms
+ ✓ ../../../vyv/units/core/CO-04/useFolders.test.ts (2 tests) 12ms
+ ✓ ../../../vyv/units/core/CO-02/useAgGrid.test.ts (1 test) 8ms
+ ✓ ../../../vyv/units/executions/EX-03/executions.utils.test.ts (2 tests) 6ms
+ ✓ ../../../vyv/units/workflows/WF-03/useWorkflowActivate.test.ts (1 test) 10ms
+ ↓ ../../../vyv/units/core/sin-equivalente-unitario.test.ts (8 tests | 8 todo)
+ ↓ ../../../vyv/units/credentials/sin-equivalente-unitario.test.ts (6 tests | 6 todo)
+ ↓ ../../../vyv/units/executions/sin-equivalente-unitario.test.ts (2 tests | 2 todo)
+ ✓ ../../../vyv/units/executions/EX-02/executions.utils.test.ts (1 test) 5ms
+ ↓ ../../../vyv/units/workflows/sin-equivalente-unitario.test.ts (4 tests | 4 todo)
+
+ Test Files  91 passed | 4 skipped (95)
+      Tests  264 passed | 21 todo (285)
+   Start at  00:55:50
+   Duration  170.96s (import 50%, transform 23%, setup 10%, environment 9%, tests 8%)
+
+     Import  3357 modules were evaluated 159163 times · 163.08s total, 50% of tracked time
+             ~78.28s faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+             learn more: https://vitest.dev/guide/improving-performance#test-isolation
+
+JSON report written to /tmp/claude-0/-home-user-n8n-VyV/ac4a7039-11c4-59b4-a670-83cf3ca34cc3/scratchpad/reg-unit/despues-units.json
+units exit 0

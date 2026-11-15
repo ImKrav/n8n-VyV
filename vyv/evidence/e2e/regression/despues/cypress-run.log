@@ -1,0 +1,629 @@
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Custom Chrome for Testing 153 (headless)                                       │
+  │ Node Version:   v22.23.4 (/opt/node22/bin/node)                                                │
+  │ Specs:          4 found (core.regression.cy.js, credentials.regression.cy.js, executions.regre │
+  │                 ssion.cy.js, workflows.regression.cy.js)                                       │
+  │ Searched:       regression/**/*.cy.js                                                          │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core.regression.cy.js                                                           (1 of 4)
+
+
+  CO-01 · Data tables y columnas (API)
+[EVIDENCIA] CO-01 · Data tables y columnas (API) > CP-016-01 · crea una data table con nombre válido :: Tabla creada con id 82jhBXUjR79251bs
+    ✓ CP-016-01 · crea una data table con nombre válido
+    ✓ CP-016-02 · rechaza nombre vacío o solo espacios
+[EVIDENCIA] CO-01 · Data tables y columnas (API) > CP-016-03 · rechaza nombre duplicado en el mismo proyecto (409) :: Data table with name 'vyv_dup_mwh437xw255' already exists in this project
+    ✓ CP-016-03 · rechaza nombre duplicado en el mismo proyecto (409)
+    ✓ Complementaria · valores límite de la longitud del nombre (1 / 128 / 129)
+    Columnas
+      ✓ CP-016-04 · añade columnas de los 4 tipos
+      ✓ CP-016-05 · rechaza nombres de columna inválidos y acepta los válidos (límite 63/64)
+      ✓ Complementaria · rechaza columna duplicada (409)
+      ✓ Complementaria · rechaza nombres reservados del sistema
+      ✓ CP-016-06 · renombra una columna y conserva sus datos
+      ✓ CP-016-07 · elimina una columna sin afectar las demás
+
+  CO-01 · Data tables (UI)
+    ✓ CP-016-01 · crea una data table desde cero y aparece su tarjeta (13059ms)
+    ✓ CP-016-02 · el botón Create queda deshabilitado con nombre vacío (5156ms)
+    ✓ CP-016-04 · muestra los encabezados de las columnas de los 4 tipos (5454ms)
+    ✓ CP-016-05 · el popover de nueva columna no crea nombres inválidos (5931ms)
+
+  CO-02 · Edición de filas (API)
+    ✓ CP-017-01 · añade una fila con un valor válido por tipo
+[EVIDENCIA] CO-02 · Edición de filas (API) > CP-017-02 · rechaza valores incompatibles con el tipo de la columna :: Validation error with data table request: value 'abc' does not match column type 'number': 'edad' expects a number but we got 'abc'
+    ✓ CP-017-02 · rechaza valores incompatibles con el tipo de la columna
+    ✓ CP-017-03 · guarda fechas en formato ISO UTC
+    ✓ CP-017-04 · admite nulos y el filtro isEmpty los encuentra
+[EVIDENCIA] CO-02 · Edición de filas (API) > CP-017-05 · guarda una celda de 10.000 caracteres :: Inserción de 10000 caracteres en 53 ms
+    ✓ CP-017-05 · guarda una celda de 10.000 caracteres
+[EVIDENCIA] CO-02 · Edición de filas (API) > CP-017-05 · guarda una celda de 100.000 caracteres :: Inserción de 100000 caracteres en 104 ms
+    ✓ CP-017-05 · guarda una celda de 100.000 caracteres
+    Con datos de ejemplo
+      ✓ CP-017-06 · ordena por edad ascendente y descendente
+      ✓ CP-017-07 · filtra con gt (valor límite excluido), eq y like
+      ✓ Complementaria · elimina filas seleccionadas
+
+  CO-02 · Nodo Data Table en un workflow (API)
+[EVIDENCIA] CO-02 · Nodo Data Table en un workflow (API) > CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro :: Insertar → HTTP 200: {"nombre":"Luis","edad":40,"id":1,"createdAt":"2026-11-15T00:44:38.971Z","updatedAt":"2026-11-15T00:44:38.971Z"}
+[EVIDENCIA] CO-02 · Nodo Data Table en un workflow (API) > CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro :: Leer edad > 35 → {"nombre":"Luis","edad":40,"id":1,"createdAt":"2026-11-15T00:44:38.971Z","updatedAt":"2026-11-15T00:44:38.971Z"}
+    ✓ CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro
+
+  CO-02 · Edición de filas (UI)
+    ✓ CP-017-01 · añade una fila y los valores persisten tras recargar (13518ms)
+    ✓ CP-017-06/07 · ordena y busca filas en la vista (9702ms)
+    ✓ Complementaria · elimina filas seleccionadas (5553ms)
+
+  CO-03 · Importar y exportar CSV (API)
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-01 · importa un CSV válido e infiere los tipos :: Tipos inferidos: ["nombre:string","edad:number","activo:boolean","fecha:date"]
+    ✓ CP-018-01 · importa un CSV válido e infiere los tipos
+    ✓ CP-018-02 · rechaza archivos que no son .csv (RNF-018)
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-03 · rechaza un CSV malformado sin crear tablas :: Respuesta 400: {"code":400,"message":"Error uploading file: Invalid CSV file: Quote Not Closed: the parsing is finished with an opening quote at line 4","stacktrace":"Response
+    ✓ CP-018-03 · rechaza un CSV malformado sin crear tablas
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-04 · no importa filas parciales si hay tipos incompatibles :: Validation error with data table request: value 'abc' does not match column type 'number': 'edad' expects a number but we got 'abc'
+    ✓ CP-018-04 · no importa filas parciales si hay tipos incompatibles
+    ✓ CP-018-05 · rechaza columnas que no existen en la tabla
+    ✓ Complementaria · ignora las columnas de sistema del CSV
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-06 · el CSV descargado coincide con el original (round-trip) :: Round-trip OK: 5 filas idénticas
+    ✓ CP-018-06 · el CSV descargado coincide con el original (round-trip)
+    ✓ Complementaria · exporta con columnas de sistema cuando se solicita
+    ✓ Complementaria · CSV sin encabezados genera Column_1..Column_n
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > Hallazgo CP-018-07 · inferencia de fechas imposibles (documenta el defecto) :: Tipos inferidos: {"nombre":"string","fecha_iso":"date","fecha_imposible":"string","fecha_ddmm":"string","numero_raro":"string"}
+    ✓ Hallazgo CP-018-07 · inferencia de fechas imposibles (documenta el defecto)
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > Complementaria · BUG-018-05 · CSV malformado y fileId inválido responden 400 (tras la refactorización) :: CSV malformado → HTTP 400
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > Complementaria · BUG-018-05 · CSV malformado y fileId inválido responden 400 (tras la refactorización) :: fileId con path traversal → HTTP 400
+    ✓ Complementaria · BUG-018-05 · CSV malformado y fileId inválido responden 400 (tras la refactorización)
+
+  CO-03 · CSV (UI)
+    ✓ CP-018-01 · importa valido.csv desde el modal de nueva data table (8893ms)
+    ✓ CP-018-06 · descarga el CSV desde la vista de la tabla
+
+  CO-04 · Carpetas: crear y navegar (API)
+    ✓ Precondición · la función Folders está habilitada por licencia
+    ✓ CP-019-01 · crea una carpeta en la raíz del proyecto
+    ✓ CP-019-02 · rechaza las 4 clases de nombres inválidos con su mensaje
+    ✓ Complementaria · valores límite de longitud (128 acepta / 129 rechaza)
+    ✓ CP-019-03 · renombra una carpeta
+    ✓ CP-019-04 · anida 3 niveles y el árbol muestra la ruta A → B → C
+    ✓ CP-019-06 · el contenido de la carpeta cuenta workflows y subcarpetas
+
+  CO-04 · Carpetas: crear y navegar (UI)
+    ✓ CP-019-01 · crea una carpeta desde el botón de añadir recurso
+    ✓ CP-019-03/05 · renombra desde los breadcrumbs y navega con las migas de pan
+    ✓ CP-019-06 · la tarjeta de carpeta muestra los conteos
+
+  CO-05 · Carpetas: mover y eliminar (API)
+    ✓ CP-020-01 · mueve un workflow de la raíz a una carpeta
+    ✓ CP-020-02 · mueve una carpeta con contenido dentro de otra
+    ✓ CP-020-03 · impide que una carpeta sea su propio padre
+    ✓ Complementaria · impide mover una carpeta dentro de su descendiente
+    ✓ Complementaria · elimina una carpeta vacía
+    ✓ CP-020-04 · elimina con contenido transfiriéndolo a otra carpeta
+    ✓ CP-020-05 · elimina con contenido sin transferir: los workflows quedan archivados
+    ✓ Complementaria · rechaza transferir el contenido a la carpeta que se elimina
+
+  CO-05 · Mover un workflow a la raíz (API)
+[EVIDENCIA] CO-05 · Mover un workflow a la raíz (API) > CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones :: Tras mover a la raíz: parentFolder=null
+[EVIDENCIA] CO-05 · Mover un workflow a la raíz (API) > CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones :: Contenido de la carpeta: {"totalSubFolders":0,"totalWorkflows":0}
+[EVIDENCIA] CO-05 · Mover un workflow a la raíz (API) > CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones :: Ejecuciones conservadas: 1
+    ✓ CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones
+
+  CO-05 · Carpetas: mover y eliminar (UI)
+    ✓ CP-020-04 · elimina una carpeta transfiriendo su contenido (6496ms)
+    ✓ CP-020-02 · mueve una carpeta a otra con el modal de mover (7068ms)
+
+  Seguridad · Data tables y carpetas (OWASP Top 10)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01 Broken Access Control · la API exige sesión válida (sin cookie → 401) :: A01 · OK · Endpoints protegidos devuelven 401 sin sesión
+    ✓ A01 Broken Access Control · la API exige sesión válida (sin cookie → 401)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión) :: A07 · OK · Sesión ligada al browser-id
+    ✓ A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01 · path traversal en fileId al crear una tabla desde CSV :: A01 · OK · fileId con ../ rechazado (400: Error uploading file: Error uploading file: Invalid file id: Path traversal dete)
+    ✓ A01 · path traversal en fileId al crear una tabla desde CSV
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A03 Injection · nombres con SQL no alteran la base de datos :: A03 · OK · Sin inyección SQL en nombres ni filtros
+    ✓ A03 Injection · nombres con SQL no alteran la base de datos
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto :: A03 · OK · Nombre de carpeta con < > rechazado
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto :: A03 · OK · Nombre de tabla con HTML se renderiza escapado
+    ✓ A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236) :: A03 · OK · Las fórmulas se neutralizan al exportar
+    ✓ CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A04 Insecure Design · solo se aceptan archivos .csv :: A04 · OK · Extensiones distintas de .csv rechazadas
+    ✓ A04 Insecure Design · solo se aceptan archivos .csv
+┌───────────────────────────────────────┬───────────┐
+│ (index)                               │ Values    │
+├───────────────────────────────────────┼───────────┤
+│ x-content-type-options                │ 'nosniff' │
+│ x-frame-options / CSP frame-ancestors │ false     │
+│ x-powered-by (no debe exponerse)      │ 'ausente' │
+└───────────────────────────────────────┴───────────┘
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor :: A05 · REVISAR · {"x-content-type-options":"nosniff","x-frame-options / CSP frame-ancestors":false,"x-powered-by (no debe exponerse)":"ausente"}
+    ✓ A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor
+
+
+  69 passing (2m)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_096.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        69                                                                               │
+  │ Passing:      69                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  19                                                                               │
+  │ Video:        true                                                                             │
+  │ Duration:     2 minutes, 9 seconds                                                             │
+  │ Spec Ran:     core.regression.cy.js                                                            │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-016-01_p     (1440x900)
+     aso2_nombre.png                                                                                
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-016-01_p     (1440x900)
+     aso3_detalle.png                                                                               
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-016-01_p     (1440x900)
+     aso4_tarjeta.png                                                                               
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-016-02_n     (1440x900)
+     ombre_solo_espacios.png                                                                        
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-016-04_e     (1440x900)
+     ncabezados.png                                                                                 
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-016-05_m     (1440x900)
+     ensaje_formato.png                                                                             
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-017-01_p     (1440x900)
+     ersistencia.png                                                                                
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-017-06_o     (1440x900)
+     rden_ascendente.png                                                                            
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-017-07_b     (1440x900)
+     usqueda.png                                                                                    
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/Complementa     (1440x900)
+     ria_filas_eliminadas.png                                                                       
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-018-01_v     (1440x900)
+     ista_previa.png                                                                                
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-018-01_t     (1440x900)
+     abla_importada.png                                                                             
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-018-06_d     (1440x900)
+     escarga.png                                                                                    
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-019-01_t     (1440x900)
+     arjeta.png                                                                                     
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-019-05_b     (1440x900)
+     readcrumbs.png                                                                                 
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-019-03_0     (1440x900)
+     6_navegacion.png                                                                               
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-019-06_c     (1440x900)
+     onteos.png                                                                                     
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-020-04_m     (1440x900)
+     odal.png                                                                                       
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/core.regression.cy.js/CP-020-02_m     (1440x900)
+     ovida.png                                                                                      
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/core.regression.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials.regression.cy.js                                                    (2 of 4)
+
+
+  CR-01 · Crear credenciales (API)
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-01 · una credencial Header Auth con todos sus campos se guarda y aparece en el listado :: Credencial sONzTKLxodaxoeie «VyV-Header_mwh460rq570» en el listado: 1 coincidencia
+    ✓ CP-CR-01-01 · una credencial Header Auth con todos sus campos se guarda y aparece en el listado
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-03 · la credencial «n8n API» con una clave válida de la instancia prueba la conexión con éxito :: Prueba de conexión: OK · Connection successful!
+    ✓ CP-CR-01-03 · la credencial «n8n API» con una clave válida de la instancia prueba la conexión con éxito
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-04 · (error) la credencial «n8n API» con una clave incorrecta informa el error :: Prueba de conexión: Error · Unauthorized
+    ✓ CP-CR-01-04 · (error) la credencial «n8n API» con una clave incorrecta informa el error
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-05 · (error) un tipo de credencial inexistente se rechaza con 400 :: Tipo inexistente → HTTP 400: Unrecognized credential type: tipoNoExisteVyv
+    ✓ CP-CR-01-05 · (error) un tipo de credencial inexistente se rechaza con 400
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-06 · (alternativo) dos credenciales con el mismo nombre se permiten y se distinguen por su ID :: Mismo nombre «VyV-Repetida_mwh461j2919»: 04vQ9LadtcQi2lKp y fi5kVLiVvvpadCPM
+    ✓ CP-CR-01-06 · (alternativo) dos credenciales con el mismo nombre se permiten y se distinguen por su ID
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-02 · (alternativo) la API guarda una credencial sin su campo obligatorio; la validación es de la interfaz :: Header Auth sin «name» ni «value» → HTTP 200
+    ✓ CP-CR-01-02 · (alternativo) la API guarda una credencial sin su campo obligatorio; la validación es de la interfaz
+
+  CR-01 · Nombre de credencial con HTML (UI)
+[EVIDENCIA] CR-01 · Nombre de credencial con HTML (UI) > CP-CR-01-08 · (error) el nombre se muestra literal y no ejecuta ningún script :: El nombre con <img onerror> y <script> aparece como texto y no se ejecuta
+    ✓ CP-CR-01-08 · (error) el nombre se muestra literal y no ejecuta ningún script (5969ms)
+
+  CR-02 · Editar y eliminar credenciales (API)
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-01 · al cambiar el valor de una credencial en uso, el workflow envía el valor nuevo :: Antes: x-token=v1 · después de editar: x-token=v2
+    ✓ CP-CR-02-01 · al cambiar el valor de una credencial en uso, el workflow envía el valor nuevo
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-05 · renombrar una credencial en uso cambia el nombre y el workflow la sigue usando :: Credencial VrkXQNmVpagZdLYX renombrada a «VyV-CR02_mwh468kd521-renombrada» · el workflow responde 200 con x-token=renombrada
+    ✓ CP-CR-02-05 · renombrar una credencial en uso cambia el nombre y el workflow la sigue usando
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-07 · (alternativo) eliminar una credencial sin uso la quita del listado y de la base de datos :: Después de eliminar 8frEv4PLfSfUyaUN: GET → 404 · 0 en el listado
+    ✓ CP-CR-02-07 · (alternativo) eliminar una credencial sin uso la quita del listado y de la base de datos
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-08 · (error) eliminar una credencial en uso hace que la ejecución informe el problema :: Ejecución 4867: error · nodo HTTP Request error · CredentialNotFoundError · redacción: credential_inaccessible
+    ✓ CP-CR-02-08 · (error) eliminar una credencial en uso hace que la ejecución informe el problema
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02 · (error) eliminar una credencial inexistente responde 404 :: DELETE de una credencial inexistente → HTTP 404: Credential to be deleted not found. You can only removed credentials owned by you
+    ✓ CP-CR-02 · (error) eliminar una credencial inexistente responde 404
+
+  CR-02 · Secretos de una credencial (API)
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro :: GET /rest/credentials/VG7RtQJvgq25oTQY → {"data":{"updatedAt":"2026-11-15T00:46:22.040Z","createdAt":"2026-11-15T00:46:22.043Z","id":"VG7RtQJvgq25oTQY","name":"VyV-Header_mwh46amh541","type":"httpHeaderAuth","isManaged":f
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro :: GET /rest/credentials/VG7RtQJvgq25oTQY?includeData=true → {"data":{"data":{"name":"X-API-Key","value":"__n8n_BLANK_VALUE_e5362baf-c777-4d57-a609-6eaf1f9e87f6"},"updatedAt":"2026-11-15T00:46:22.040Z","createdAt":"2026-11-15T00:46:22.043Z",
+    ✓ CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre :: credentials del nodo: {"id":"VG7RtQJvgq25oTQY","name":"VyV-Header_mwh46amh541"}
+    ✓ CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre
+
+  CR-02 · Formulario y eliminación de credenciales (UI)
+[EVIDENCIA] CR-02 · Formulario y eliminación de credenciales (UI) > CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM :: Campo Value al reabrir: «__n8n_BLANK_VALUE_e5362baf-c77»
+    ✓ CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM (5031ms)
+[EVIDENCIA] CR-02 · Formulario y eliminación de credenciales (UI) > CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial :: El diálogo pide confirmar con «Yes, delete» (sin texto que escribir); al cancelar, la credencial sigue en el listado
+    ✓ CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial (5691ms)
+
+  CR-03 · OAuth2 (API)
+[EVIDENCIA] CR-03 · OAuth2 (API) > CP-CR-03-01 · la URL de autorización apunta al proveedor y su redirect_uri es el callback de esta instancia :: Autorización: https://auth.example.com/authorize · redirect_uri=http://localhost:5678/rest/oauth2-credential/callback
+    ✓ CP-CR-03-01 · la URL de autorización apunta al proveedor y su redirect_uri es el callback de esta instancia
+[EVIDENCIA] CR-03 · OAuth2 (API) > CP-CR-03-04 · (alternativo) los scopes de la URL coinciden con los configurados en la credencial :: Scopes pedidos al proveedor: read, write
+    ✓ CP-CR-03-04 · (alternativo) los scopes de la URL coinciden con los configurados en la credencial
+[EVIDENCIA] CR-03 · OAuth2 (API) > CP-CR-03-03 · (error) si el usuario cancela en el proveedor, el callback informa el error y no se guarda token :: Callback con error=access_denied → HTTP 200: n8n - OAuth Callback Error: The OAuth2 server returned an error. More details access_denied Failed to connect. The windo
+    ✓ CP-CR-03-03 · (error) si el usuario cancela en el proveedor, el callback informa el error y no se guarda token
+[EVIDENCIA] CR-03 · OAuth2 (API) > CP-CR-03 · (error) pedir la URL de autorización de una credencial inexistente responde 404 :: Autorizar una credencial inexistente → HTTP 404: Credential not found
+    ✓ CP-CR-03 · (error) pedir la URL de autorización de una credencial inexistente responde 404
+
+  CR-04 · Credenciales en nodos (API)
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-01 · el nodo HTTP Request usa la credencial asignada al ejecutar :: Cabecera recibida por el eco: x-token=asignada
+    ✓ CP-CR-04-01 · el nodo HTTP Request usa la credencial asignada al ejecutar
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-07 · sustituir la credencial del nodo se conserva al guardar y volver a leer :: Credencial del nodo tras guardar: 2w8mvTJ2Dbd5IyO3 «VyV-CR04_mwh46lu1427»
+    ✓ CP-CR-04-07 · sustituir la credencial del nodo se conserva al guardar y volver a leer
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-02 · (alternativo) al filtrar por el tipo requerido solo aparecen credenciales de ese tipo :: Filtro type=httpHeaderAuth: 13 credenciales, tipos httpHeaderAuth
+    ✓ CP-CR-04-02 · (alternativo) al filtrar por el tipo requerido solo aparecen credenciales de ese tipo
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-05 · (error) un workflow importado con una credencial que no existe no se publica e informa el nodo :: Publicar con credencial inexistente → HTTP 400: Cannot publish workflow: Credential "Credencial de otra instancia" no longer exists. Update the node to use a different credential.
+    ✓ CP-CR-04-05 · (error) un workflow importado con una credencial que no existe no se publica e informa el nodo
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-06 · (error) un nodo que requiere credencial y no tiene ninguna falla y lo informa :: Nodo HTTP Request: Credentials not found
+    ✓ CP-CR-04-06 · (error) un nodo que requiere credencial y no tiene ninguna falla y lo informa
+
+  CR-04 · Cambiar la credencial de un nodo (API)
+[EVIDENCIA] CR-04 · Cambiar la credencial de un nodo (API) > CP-CR-04-08 · la ejecución envía la cabecera de la credencial nueva y no la de la anterior :: Cabeceras recibidas por el eco (intento 2): x-token=abc · x-api-key=(ausente)
+    ✓ CP-CR-04-08 · la ejecución envía la cabecera de la credencial nueva y no la de la anterior
+
+  CR-04 · Crear credencial desde el nodo (UI)
+[EVIDENCIA] CR-04 · Crear credencial desde el nodo (UI) > CP-CR-04-03 · la credencial creada desde el selector del nodo queda seleccionada en el nodo :: Credencial «VyV-Nodo 69082» creada (httpHeaderAuth) y seleccionada en el nodo HTTP Request
+    ✓ CP-CR-04-03 · la credencial creada desde el selector del nodo queda seleccionada en el nodo (5854ms)
+[EVIDENCIA] CR-04 · Crear credencial desde el nodo (UI) > CP-CR-04-04 · (alternativo) con una sola credencial compatible, el nodo la toma sin intervención :: El nodo toma la única credencial httpQueryAuth: VyV-Unica 6383 (2JvHh4N1ww8HruBx)
+    ✓ CP-CR-04-04 · (alternativo) con una sola credencial compatible, el nodo la toma sin intervención (5188ms)
+
+  CR-05 · Buscar, filtrar y compartir credenciales (API)
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-01 · un término parcial devuelve solo las coincidencias :: «vyvbusca69083 Fact» → vyvbusca69083 Facturación
+    ✓ CP-CR-05-01 · un término parcial devuelve solo las coincidencias
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-01 · (alternativo) un término inexistente devuelve un listado vacío :: Término inexistente → 0 credenciales
+    ✓ CP-CR-05-01 · (alternativo) un término inexistente devuelve un listado vacío
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-03 · el filtro por tipo solo muestra credenciales de ese tipo :: type=httpBasicAuth → vyvbusca69083 Básica (httpBasicAuth)
+    ✓ CP-CR-05-03 · el filtro por tipo solo muestra credenciales de ese tipo
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-06 · (error) compartir una credencial sin licencia responde 403 y no la comparte :: Compartir sin licencia → HTTP 403: Plan lacks license for this feature
+    ✓ CP-CR-05-06 · (error) compartir una credencial sin licencia responde 403 y no la comparte
+
+  CR-05 · Orden del listado de credenciales (UI)
+[EVIDENCIA] CR-05 · Orden del listado de credenciales (UI) > CP-CR-05-02 · el listado respeta el orden por nombre y por última actualización :: Orden por última actualización tras editar vyvorden69083 Bravo: vyvorden69083 Bravo > vyvorden69083 Alpha > vyvorden69083 Charlie
+    ✓ CP-CR-05-02 · el listado respeta el orden por nombre y por última actualización (8570ms)
+
+  CR-05 · Aislamiento de credenciales entre usuarios (API)
+[EVIDENCIA] CR-05 · Aislamiento de credenciales entre usuarios (API) > CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió :: Miembro · GET /rest/credentials → 0 credenciales; VyV-Privada visible: false
+[EVIDENCIA] CR-05 · Aislamiento de credenciales entre usuarios (API) > CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió :: Miembro · GET /rest/credentials/vNhmqxlbLCWDZB7e → HTTP 403
+    ✓ CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió
+
+
+  34 passing (53s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_097.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        34                                                                               │
+  │ Passing:      34                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  7                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     53 seconds                                                                       │
+  │ Spec Ran:     credentials.regression.cy.js                                                     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/credentials.regression.cy.js/CP-C     (1440x900)
+     R-01-08_nombre-html.png                                                                        
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/credentials.regression.cy.js/CP-C     (1440x900)
+     R-02-02_enmascarado.png                                                                        
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/credentials.regression.cy.js/CP-C     (1440x900)
+     R-02-06_dialogo.png                                                                            
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/credentials.regression.cy.js/CP-C     (1440x900)
+     R-04-03_seleccionada.png                                                                       
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/credentials.regression.cy.js/CP-C     (1440x900)
+     R-04-04_asignada.png                                                                           
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/credentials.regression.cy.js/CP-C     (1440x900)
+     R-05-02_nombre_az.png                                                                          
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/credentials.regression.cy.js/CP-C     (1440x900)
+     R-05-02_ultima_actualizacion.png                                                               
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/credentials.regression.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  executions.regression.cy.js                                                     (3 of 4)
+
+
+  EX-01 · Estados de las ejecuciones (API)
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-01 · una ejecución exitosa aparece como «success» con inicio y duración coherentes :: Ejecución 4879: success · modo webhook · duración 13 ms
+    ✓ CP-EX-01-01 · una ejecución exitosa aparece como «success» con inicio y duración coherentes
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-02 · (error) una ejecución cuyo nodo falla aparece con estado «error» :: Webhook → HTTP 500 · ejecución 4880: error
+    ✓ CP-EX-01-02 · (error) una ejecución cuyo nodo falla aparece con estado «error»
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-03 · (alternativo) mientras dura el nodo Wait la ejecución aparece «waiting» :: Ejecución 4881: waiting hasta 2026-11-15T00:52:08.606Z
+    ✓ CP-EX-01-03 · (alternativo) mientras dura el nodo Wait la ejecución aparece «waiting»
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-04 · (alternativo) una ejecución larga aparece «running» y cambia a «success» al terminar :: Ejecución 4882: running → success
+    ✓ CP-EX-01-04 · (alternativo) una ejecución larga aparece «running» y cambia a «success» al terminar (5243ms)
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-07 · la lista global y la del workflow muestran las mismas ejecuciones con los mismos datos :: Workflow QLgNDMUCqVzFO1tk: 1 en su lista · 1 en la global
+    ✓ CP-EX-01-07 · la lista global y la del workflow muestran las mismas ejecuciones con los mismos datos
+
+  EX-02 · Filtros de la lista de ejecuciones (API)
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=success: 100 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=error: 43 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=waiting: 1 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=canceled: 37 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=running: 0 ejecuciones
+    ✓ CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-02 · el filtro por workflow muestra solo ejecuciones de ese workflow :: workflowId=KP5WTwvbFV9WJzX9: 1 ejecuciones
+    ✓ CP-EX-02-02 · el filtro por workflow muestra solo ejecuciones de ese workflow
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-03 · (alternativo) rangos de fechas: el mismo día incluye, el futuro y el rango invertido devuelven vacío :: Día 2026-11-15 (UTC): 1 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-03 · (alternativo) rangos de fechas: el mismo día incluye, el futuro y el rango invertido devuelven vacío :: Rango invertido: 0 ejecuciones
+    ✓ CP-EX-02-03 · (alternativo) rangos de fechas: el mismo día incluye, el futuro y el rango invertido devuelven vacío
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-04 · (alternativo) estado + workflow + fecha a la vez solo devuelven lo que cumple todo :: error + workflow + desde 2026-11-15T00:46:16.808Z: 4885
+    ✓ CP-EX-02-04 · (alternativo) estado + workflow + fecha a la vez solo devuelven lo que cumple todo
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-05 · sin filtros la lista vuelve a mostrar todas las ejecuciones :: Sin filtros: 100 ejecuciones (límite 100)
+    ✓ CP-EX-02-05 · sin filtros la lista vuelve a mostrar todas las ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02 · (error) un filtro mal formado o un límite fuera de rango responden 400 :: Filtro mal formado → HTTP 400: Failed to parse query string
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02 · (error) un filtro mal formado o un límite fuera de rango responden 400 :: limit=500 → HTTP 400: Execution limit must be between 1 and 100
+    ✓ CP-EX-02 · (error) un filtro mal formado o un límite fuera de rango responden 400
+
+  EX-03 · Vista previa, reintento y eliminación (API)
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-01 · la vista previa muestra por nodo los mismos datos que devolvió la ejecución :: Nodos en la vista previa: Webhook, Edit Fields · salida de Edit Fields: {"pedido":42,"estado":"listo"}
+    ✓ CP-EX-03-01 · la vista previa muestra por nodo los mismos datos que devolvió la ejecución
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-02 · (error) la ejecución fallida identifica el nodo con error, su mensaje y sus datos de entrada :: Nodo con error: Falla · mensaje: fallo controlado VyV
+    ✓ CP-EX-03-02 · (error) la ejecución fallida identifica el nodo con error, su mensaje y sus datos de entrada
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-04 · (alternativo) reintentar con la versión original vuelve a fallar y queda como reintento :: Reintento 4890 de 4889: error (retry)
+    ✓ CP-EX-03-04 · (alternativo) reintentar con la versión original vuelve a fallar y queda como reintento
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-03 · reintentar con la versión actual (corregida) termina con éxito :: Reintento 4892 con la versión actual: success
+    ✓ CP-EX-03-03 · reintentar con la versión actual (corregida) termina con éxito
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-05 · eliminar una ejecución la quita de la lista :: Después de eliminar 4893: 0 ejecuciones en la lista
+    ✓ CP-EX-03-05 · eliminar una ejecución la quita de la lista
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-06 · (alternativo) eliminar varias seleccionadas solo quita esas :: Eliminadas 4895, 4894 · quedan 4896
+    ✓ CP-EX-03-06 · (alternativo) eliminar varias seleccionadas solo quita esas
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03 · (error, hallazgo) consultar una ejecución eliminada no devuelve datos (responde 200 {} y no 404) :: GET de la ejecución eliminada 4897 → HTTP 200 {}
+    ✓ CP-EX-03 · (error, hallazgo) consultar una ejecución eliminada no devuelve datos (responde 200 {} y no 404)
+
+  EX-04 · Detener ejecuciones (API)
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-03 · detener una ejecución en un nodo Wait la deja «canceled» y no se reanuda :: Detener 4898: waiting → canceled
+    ✓ CP-EX-04-03 · detener una ejecución en un nodo Wait la deja «canceled» y no se reanuda
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-02 · detener una ejecución de producción en curso la deja «canceled» :: Detener 4899: running → canceled
+    ✓ CP-EX-04-02 · detener una ejecución de producción en curso la deja «canceled»
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-04 · (alternativo) detener en bloque solo afecta a las ejecuciones seleccionadas :: Detener solo A: 4900 canceled · 4901 waiting
+    ✓ CP-EX-04-04 · (alternativo) detener en bloque solo afecta a las ejecuciones seleccionadas
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-05 · (alternativo) «detener todas» cancela todas las ejecuciones en curso :: Detener todas: 3 ejecuciones detenidas
+    ✓ CP-EX-04-05 · (alternativo) «detener todas» cancela todas las ejecuciones en curso
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04 · (error, hallazgo) detener una ejecución ya terminada no la modifica (responde 500) :: Detener la ejecución terminada 4904 → HTTP 500: Only running or waiting executions can be stopped and 4904 is currently success
+    ✓ CP-EX-04 · (error, hallazgo) detener una ejecución ya terminada no la modifica (responde 500)
+
+  EX-04 · Detener desde el editor (UI)
+[EVIDENCIA] EX-04 · Detener desde el editor (UI) > CP-EX-04-01 · detener una ejecución manual larga la deja «canceled» y el nodo siguiente no se ejecuta :: Ejecución 4905: manual/canceled · nodos ejecutados: 
+    ✓ CP-EX-04-01 · detener una ejecución manual larga la deja «canceled» y el nodo siguiente no se ejecuta (8444ms)
+[EVIDENCIA] EX-04 · Detener desde el editor (UI) > CP-EX-04-06 · (alternativo) al dejar de escuchar el webhook de prueba, su URL ya no dispara la ejecución :: GET /webhook-test/vyv-test-1794703662235-386630 tras detener la escucha → HTTP 404
+    ✓ CP-EX-04-06 · (alternativo) al dejar de escuchar el webhook de prueba, su URL ya no dispara la ejecución (5354ms)
+
+  EX-05 · Datos del panel de logs (API)
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-01 · el árbol sigue el orden real de ejecución e incluye solo la rama tomada :: Orden de ejecución: Webhook → If → Rama sí
+    ✓ CP-EX-05-01 · el árbol sigue el orden real de ejecución e incluye solo la rama tomada
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-02 · la entrada y la salida de un nodo coinciden con los datos del workflow :: If: 0 ítems en «true» y 1 en «false» · salida de «Rama no»: {"rama":"no"}
+    ✓ CP-EX-05-02 · la entrada y la salida de un nodo coinciden con los datos del workflow
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-03 · (error) el nodo que falla queda marcado con error y su mensaje :: Estado: error · nodo con error: Rama sí · fallo en la rama sí
+    ✓ CP-EX-05-03 · (error) el nodo que falla queda marcado con error y su mensaje
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-04 · (alternativo) la ejecución de Execute Workflow enlaza con la ejecución hija y sus datos :: Respuesta del padre: {"desde":"hijo"} · ejecución hija: {"executionId":"4910","workflowId":"SOTNp9pF3jNmRztc"}
+    ✓ CP-EX-05-04 · (alternativo) la ejecución de Execute Workflow enlaza con la ejecución hija y sus datos
+
+  EX-05 · Panel de logs con el teclado (UI)
+[EVIDENCIA] EX-05 · Panel de logs con el teclado (UI) > CP-EX-05-05 · los atajos abren, recorren y cierran el panel de logs :: «l» abre el panel, ↓/↑ recorren Manual Trigger → Paso A → Paso B → Paso A, Esc quita la selección y «l» cierra
+    ✓ CP-EX-05-05 · los atajos abren, recorren y cierran el panel de logs
+
+
+  30 passing (52s)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_098.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        30                                                                               │
+  │ Passing:      30                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  3                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     51 seconds                                                                       │
+  │ Spec Ran:     executions.regression.cy.js                                                      │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/executions.regression.cy.js/CP-EX     (1440x900)
+     -04-01_detenida.png                                                                            
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/executions.regression.cy.js/CP-EX     (1440x900)
+     -04-06_escucha-detenida.png                                                                    
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/executions.regression.cy.js/CP-EX     (1440x900)
+     -05-05_seleccion-con-flechas.png                                                               
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/executions.regression.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  workflows.regression.cy.js                                                      (4 of 4)
+
+
+  WF-01 · Lienzo del editor (UI)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-01 · los nodos Manual Trigger y Edit Fields conectados se conservan al recargar :: Después de recargar: 2 nodos y la conexión Manual Trigger → Edit Fields
+    ✓ CP-WF-01-01 · los nodos Manual Trigger y Edit Fields conectados se conservan al recargar (10250ms)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-02 / CP-WF-01-05 · (alternativo) eliminar un nodo quita sus conexiones y Ctrl+Z lo restaura :: Eliminar "Paso B": el nodo y su conexión desaparecen; el resto se conserva
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-02 / CP-WF-01-05 · (alternativo) eliminar un nodo quita sus conexiones y Ctrl+Z lo restaura :: Ctrl+Z restaura el nodo con su conexión; Ctrl+Shift+Z lo vuelve a eliminar
+    ✓ CP-WF-01-02 / CP-WF-01-05 · (alternativo) eliminar un nodo quita sus conexiones y Ctrl+Z lo restaura (5052ms)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-04 · (alternativo) un nodo desactivado se muestra atenuado y no transforma los datos :: Campos de la respuesta: headers, params, query, body, webhookUrl, executionMode, final · final=ok
+    ✓ CP-WF-01-04 · (alternativo) un nodo desactivado se muestra atenuado y no transforma los datos
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-07 · la nota adhesiva conserva color, contenido y tamaño al guardar :: Nota leída: {"content":"## Nota VyV\nTexto de prueba","color":4,"width":300,"height":180}
+    ✓ CP-WF-01-07 · la nota adhesiva conserva color, contenido y tamaño al guardar
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01 · (error) abrir un workflow que no existe muestra el aviso y no abre un lienzo :: Un id inexistente lleva a /entity-not-found/workflow con el aviso "Workflow not found"
+    ✓ CP-WF-01 · (error) abrir un workflow que no existe muestra el aviso y no abre un lienzo
+
+  WF-02 · Ajustes del workflow (API)
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-06 / CP-WF-02-05 · los ajustes (zona horaria y timeout) persisten al volver a leer el workflow :: Ajustes leídos: {"timezone":"America/Bogota","executionTimeout":120,"saveManualExecutions":false}
+    ✓ CP-WF-02-06 / CP-WF-02-05 · los ajustes (zona horaria y timeout) persisten al volver a leer el workflow
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-01 · (alternativo) con «no guardar ejecuciones exitosas» la ejecución de producción no queda registrada :: Ejecuciones guardadas: 0
+    ✓ CP-WF-02-01 · (alternativo) con «no guardar ejecuciones exitosas» la ejecución de producción no queda registrada
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-03 · (error) una ejecución más larga que el timeout del workflow se cancela :: Estado con timeout de 1 s y espera de 4 s: canceled
+    ✓ CP-WF-02-03 · (error) una ejecución más larga que el timeout del workflow se cancela
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-04 · (error) el workflow de error se dispara cuando el workflow principal falla :: Ejecuciones del workflow de error: error/success
+    ✓ CP-WF-02-04 · (error) el workflow de error se dispara cuando el workflow principal falla
+
+  WF-02 · Ejecuciones manuales sin guardar (UI)
+[EVIDENCIA] WF-02 · Ejecuciones manuales sin guardar (UI) > CP-WF-02-02 · con «no guardar ejecuciones manuales» la ejecución desde el editor no queda registrada :: Ejecuciones registradas con saveManualExecutions=false: 0
+    ✓ CP-WF-02-02 · con «no guardar ejecuciones manuales» la ejecución desde el editor no queda registrada (5127ms)
+[EVIDENCIA] WF-02 · Ejecuciones manuales sin guardar (UI) > CP-WF-02-02 · (alternativo) con el ajuste por defecto la ejecución manual sí queda registrada :: Ejecuciones registradas con el ajuste por defecto: manual/success
+    ✓ CP-WF-02-02 · (alternativo) con el ajuste por defecto la ejecución manual sí queda registrada
+
+  WF-03 · Webhook de producción (API)
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-02 · el webhook de producción responde 200 y registra una ejecución exitosa :: GET /webhook/vyv-wf03-1794703720657-119930 → 200 {"ok":true}
+    ✓ CP-WF-03-02 · el webhook de producción responde 200 y registra una ejecución exitosa
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-04 · dos workflows con la misma ruta y métodos distintos reciben cada uno su método :: GET y POST /webhook/vyv-met-1794703721611-742784 → A y B (una ejecución cada uno)
+    ✓ CP-WF-03-04 · dos workflows con la misma ruta y métodos distintos reciben cada uno su método
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-01 · (error) no se puede publicar un workflow sin nodo trigger :: Publicar sin trigger → HTTP 400: Workflow cannot be activated because it has no trigger node. At least one trigger, webhook, or polling node is required.
+    ✓ CP-WF-03-01 · (error) no se puede publicar un workflow sin nodo trigger
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-03 · (error) un segundo workflow con la misma ruta y método no se publica :: Publicar B con la misma ruta → HTTP 409: There is a conflict with one of the webhooks.
+    ✓ CP-WF-03-03 · (error) un segundo workflow con la misma ruta y método no se publica
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-05 · (alternativo) despublicar el workflow detiene su webhook de producción :: Después de despublicar: GET /webhook/vyv-despublicar-1794703723061-461855 → 404
+    ✓ CP-WF-03-05 · (alternativo) despublicar el workflow detiene su webhook de producción
+    - CP-WF-03-08 · después de reiniciar n8n el workflow sigue publicado y su webhook responde
+
+  WF-03 · Cambios sin publicar (API y UI)
+[EVIDENCIA] WF-03 · Cambios sin publicar (API y UI) > CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados :: Tras guardar v=2 sin publicar, producción responde {"v":1}
+[EVIDENCIA] WF-03 · Cambios sin publicar (API y UI) > CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados :: Tras publicar, producción responde {"v":2}
+    ✓ CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados (10077ms)
+
+  WF-04 · Historial de versiones (API)
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-01 · tres cambios guardados crean tres versiones nuevas en orden cronológico :: Versiones (más reciente primero): bfa80a69 → dd754b78 → 194418c6 → b94f5504
+    ✓ CP-WF-04-01 · tres cambios guardados crean tres versiones nuevas en orden cronológico
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-03 · restaurar la versión con 2 nodos sobre un workflow de 4 crea una versión nueva con ese contenido :: Después de restaurar: 2 nodos · 5 versiones
+    ✓ CP-WF-04-03 · restaurar la versión con 2 nodos sobre un workflow de 4 crea una versión nueva con ese contenido
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-04 / CP-WF-04-06 · una versión antigua se clona como workflow nuevo y el original no cambia :: Clon uxbv87C7FmaznQ6g: 2 nodos · original uguRDHpRvP5GRoSx: 3 nodos
+    ✓ CP-WF-04-04 / CP-WF-04-06 · una versión antigua se clona como workflow nuevo y el original no cambia
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-05 · (alternativo) comparar dos versiones identifica los nodos añadidos, eliminados y modificados :: Diff: {"añadidos":["Nuevo"],"eliminados":["Se va"],"modificados":["Se queda"]}
+    ✓ CP-WF-04-05 · (alternativo) comparar dos versiones identifica los nodos añadidos, eliminados y modificados
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-02 · (error) nombrar una versión sin licencia responde 403 y no cambia el nombre :: Nombrar versión → HTTP 403: Plan lacks license for this feature
+    ✓ CP-WF-04-02 · (error) nombrar una versión sin licencia responde 403 y no cambia el nombre
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04 · (error) una versión o un workflow inexistentes responden 404 :: Workflow inexistente → HTTP 404: Could not find workflow
+    ✓ CP-WF-04 · (error) una versión o un workflow inexistentes responden 404
+
+  WF-05 · Importar y duplicar workflows (API)
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-03 · importar desde una URL con JSON válido devuelve los nodos y conexiones del archivo :: Importado desde /webhook/vyv-json-1794703736581-903605 → workflow Qg6ag93CIUsAN2Zk con 2 nodos
+    ✓ CP-WF-05-03 · importar desde una URL con JSON válido devuelve los nodos y conexiones del archivo
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400 :: texto que no es URL → HTTP 400: Invalid url
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400 :: ruta inexistente → HTTP 400: The data in the file does not seem to be a n8n workflow JSON file!
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400 :: respuesta que no es un workflow → HTTP 400: The data in the file does not seem to be a n8n workflow JSON file!
+    ✓ CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre vacío → HTTP 400: Workflow name is required
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre 129 caracteres → HTTP 400: Workflow name must be 128 characters or less
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre 128 caracteres → HTTP 200
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre repetido → HTTP 200
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre repetido (segunda vez) → HTTP 200
+    ✓ CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-06 · el duplicado conserva las etiquetas y sus cambios no afectan al original :: Original tras modificar la copia: "VyV original", 2 nodos, etiquetas vyv-etiqueta_mwh49n7g206
+    ✓ CP-WF-05-06 · el duplicado conserva las etiquetas y sus cambios no afectan al original
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría :: "slack": 2621 plantillas · primera: Scrape physician profiles from BrowserAct into Google Sheets and notify Slack
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría :: Término inexistente: 0 plantillas
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría :: Sin filtro: 14214 · categoría "AI": 9841
+    ✓ CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría
+
+
+  28 passing (1m)
+  1 pending
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/mochawesome/mochawesome_099.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        29                                                                               │
+  │ Passing:      28                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      1                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  7                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 minute, 1 second                                                               │
+  │ Spec Ran:     workflows.regression.cy.js                                                       │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/workflows.regression.cy.js/CP-WF-     (1440x900)
+     01-01_lienzo.png                                                                               
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/workflows.regression.cy.js/CP-WF-     (1440x900)
+     01-05_rehacer.png                                                                              
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/workflows.regression.cy.js/CP-WF-     (1440x900)
+     01-04_desactivado.png                                                                          
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/workflows.regression.cy.js/CP-WF-     (1440x900)
+     01-07_nota.png                                                                                 
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/workflows.regression.cy.js/CP-WF-     (1440x900)
+     01_no-existe.png                                                                               
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/workflows.regression.cy.js/CP-WF-     (1440x900)
+     02-02_editor.png                                                                               
+  -  /home/user/n8n-VyV/vyv/e2e/results/screenshots/workflows.regression.cy.js/CP-WF-     (1440x900)
+     03-07_cambios-sin-publicar.png                                                                 
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/workflows.regression.cy.js.mp4
+
+
+resize:  can't open terminal /dev/tty
+================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✔  core.regression.cy.js                    02:09       69       69        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials.regression.cy.js             00:53       34       34        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  executions.regression.cy.js              00:51       30       30        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  workflows.regression.cy.js               01:01       29       28        -        1        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✔  All specs passed!                        04:55      162      161        -        1        -  
+
+exit 0

@@ -180,26 +180,18 @@ pnpm --config.shell-emulator=true --filter @n8n/backend-module-data-table test c
 
 ## C. Antes y después de la refactorización (puntos 10 y 15)
 
-1. **Antes** (n8n publicado, A.2) – en `vyv\e2e`:
+1. **Antes**: restaura los 6 archivos de producción de upstream, compila y levanta n8n (los comandos están en
+   [`../README.md`, «Pruebas de regresión»](../README.md#pruebas-de-regresión)). En `vyv\e2e`:
    ```powershell
-   Remove-Item -Recurse -Force results -ErrorAction SilentlyContinue
-   npm run test:regression; npm run test:refactor; npm run report
-   Copy-Item results\report\consolidado.json ..\evidence\e2e\regression-before.json
+   npm run test:regression
+   Rename-Item results\regression regression-antes
    ```
-2. **Compilar y levantar n8n con las correcciones** (Terminal 1, raíz del repositorio; 30–60 min la primera vez):
+2. **Después**: vuelve al código de la rama, compila y levanta n8n otra vez. En `vyv\e2e`:
    ```powershell
-   cd C:\Proyectos\n8n-VyV
-   pnpm build
-   pnpm start                # http://localhost:5678 (base de datos nueva: crea el usuario y registra la licencia)
+   npm run test:regression
+   node scripts\compare-regression.mjs results\regression-antes results\regression results\regression-comparison.md
    ```
-3. **Después** – en `vyv\e2e`:
-   ```powershell
-   Remove-Item -Recurse -Force results -ErrorAction SilentlyContinue
-   npm run test:regression; npm run test:refactor; npm run report
-   Copy-Item results\report\consolidado.json results\regression-after.json
-   npm run regression:compare        # results\regression-comparison.md → "corregidos"
-   ```
-   Esperado: CP-016-02, CP-018-07, CP-018-08 y "BUG-018-05" pasan a aprobadas, sin regresiones.
+   Esperado: CP-016-02, CP-018-07, CP-018-08 y BUG-018-05 pasan a aprobadas y no hay regresiones.
 
 > `pnpm build` compila todo n8n y es pesado (≈8 GB de RAM). Si falla en Windows, usa WSL (Ubuntu)
 > con los mismos comandos, o pídele al integrante de Docker/Jenkins que levante la imagen de esta rama.
