@@ -1,0 +1,142 @@
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Custom Chrome for Testing 153 (headless)                                       │
+  │ Node Version:   v22.23.4 (/opt/node22/bin/node)                                                │
+  │ Specs:          1 found (manual.a11y.cy.js)                                                    │
+  │ Searched:       accessibility/manual.a11y.cy.js                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  manual.a11y.cy.js                                                               (1 of 1)
+
+
+  Accesibilidad · comprobaciones manuales con guion
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 2.4.3 · I-00 · cumple: orden de Tab: emailOrLdapLoginId → password → form-submit-button → auth-form
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 2.1.1 · I-00 · cumple: Enter en el campo de contraseña envía el formulario
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 3.3.1 · I-00 · cumple: mensaje: «Sign in | Problem logging in Wrong username or password. Do you have caps lock on?»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 4.1.3 · I-00 · cumple: anunciado por aria-live=polite, alert
+    ✓ Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) (7176ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.1 · I-01 · cumple: 45 elementos distintos en 45 Tab; botón de crear alcanzable
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.2 · I-01 · cumple: últimas 10 paradas en 10 elementos distintos
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.7 · I-01 · no cumple: 43 de 44 paradas con indicador visible; sin indicador: DIV
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.11 · I-01 · cumple: ningún elemento con foco queda tapado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 1.4.11 · I-01 · no cumple: 43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1)
+    ✓ Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) (6033ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.1 · I-06 · cumple: 45 elementos distintos en 45 Tab; botón de crear alcanzable
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.2 · I-06 · cumple: últimas 10 paradas en 10 elementos distintos
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.7 · I-06 · no cumple: 43 de 44 paradas con indicador visible; sin indicador: DIV
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.11 · I-06 · cumple: ningún elemento con foco queda tapado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 1.4.11 · I-06 · no cumple: 43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1), credential-card-dependents (1.61:1)
+    ✓ Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.1 · I-08 · cumple: 45 elementos distintos en 45 Tab; botón de crear alcanzable
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.2 · I-08 · cumple: últimas 10 paradas en 10 elementos distintos
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.7 · I-08 · no cumple: 43 de 44 paradas con indicador visible; sin indicador: DIV
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.11 · I-08 · cumple: ningún elemento con foco queda tapado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 1.4.11 · I-08 · no cumple: 43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1)
+    ✓ Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.1.1 · I-06 · cumple: la tarjeta no recibe el foco; con Tab se llega a su menú de acciones («credential-card-actions»), que ofrece «Open»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.4.3 · I-07 · cumple: al abrir con Enter el foco está en «dialog-close-button»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.4.3 · I-07 · cumple: 20 Tab: el foco no sale del modal
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.1.1 · I-07 · no cumple: con el foco en «parameter-input-field» (un campo del formulario), Esc no cierra el modal ni con dos pulsaciones; solo el botón de cerrar lo cierra
+    ✓ Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) (6990ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · modal de nueva data table: foco inicial en el nombre y Esc lo cierra (2.4.3, 2.1.1) :: 2.4.3 · I-11 · cumple: foco inicial en «data-table-name-input-select»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · modal de nueva data table: foco inicial en el nombre y Esc lo cierra (2.4.3, 2.1.1) :: 2.1.1 · I-11 · cumple: Esc cierra el modal
+    ✓ Teclado · modal de nueva data table: foco inicial en el nombre y Esc lo cierra (2.4.3, 2.1.1)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · editor de workflows: los nodos del lienzo se alcanzan con Tab (2.1.1) :: 2.1.1 · I-02 · no cumple: ningún nodo del lienzo recibe el foco con Tab en 60 pulsaciones
+    ✓ Teclado · editor de workflows: los nodos del lienzo se alcanzan con Tab (2.1.1)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Etiquetas · Inicio de sesión: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2) :: 3.3.2 · I-00 · cumple: 2 de 2 campos con etiqueta
+    ✓ Etiquetas · Inicio de sesión: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Etiquetas · Formulario de una credencial: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2) :: 3.3.2 · I-07 · no cumple: 2 de 3 campos con etiqueta; sin etiqueta: input (placeholder «Select»)
+    ✓ Etiquetas · Formulario de una credencial: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Etiquetas · Modal de nueva data table: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2) :: 3.3.2 · I-11 · no cumple: 0 de 1 campos con etiqueta; sin etiqueta: input (placeholder «Enter data table name»)
+    ✓ Etiquetas · Modal de nueva data table: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Contraste · texto de ejemplo (placeholder) de los campos · Lista de workflows (1.4.3) :: 1.4.3 · I-01 · cumple: «Search» 4.74:1, «Select» 4.74:1
+    ✓ Contraste · texto de ejemplo (placeholder) de los campos · Lista de workflows (1.4.3)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Contraste · texto de ejemplo (placeholder) de los campos · Formulario de una credencial (1.4.3) :: 1.4.3 · I-07 · cumple: «Select» 4.74:1
+    ✓ Contraste · texto de ejemplo (placeholder) de los campos · Formulario de una credencial (1.4.3)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Contraste · texto de ejemplo (placeholder) de los campos · Modal de nueva data table (1.4.3) :: 1.4.3 · I-11 · cumple: «Enter data table name» 4.74:1
+    ✓ Contraste · texto de ejemplo (placeholder) de los campos · Modal de nueva data table (1.4.3)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 3.1.1 · todas · cumple: <html lang="en">
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-00 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-01 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-02 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-03 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-04 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-05 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-06 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-07 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-08 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-09 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-10 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-11 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.2 · todas · no cumple: I-00: «n8n.io - Workflow Automation» · I-01: «Workflows - n8n[DEV]» · I-02: «▶️ VyV A11y workflow - n8n[DEV]» · I-03: «n8n.io - Workflow Automation» · I-04: «Executions - n8n[DEV]» · I-05: «▶️ VyV A11y workflow - n8n[DEV]» · I-06: «Credentials - n8n[DEV]» · I-07: «Credentials - n8n[DEV]» · I-08: «Data tables - n8n[DEV]» · I-09: «Data tables > vyv_a11y_mwhb0087456 - n8n[DEV]» · I-10: «Workflows - n8n[DEV]» · I-11: «Data tables - n8n[DEV]»
+    ✓ Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) (36031ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-00 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-01 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-04 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-06 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-08 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+    ✓ Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) (13939ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-00 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-01 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-04 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-06 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-08 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+    ✓ Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) (12256ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-00 · cumple: ningún texto queda cortado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-01 · cumple: ningún texto queda cortado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-06 · cumple: ningún texto queda cortado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-07 · cumple: ningún texto queda cortado
+    ✓ Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) (12518ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · orientación vertical y horizontal (1.3.4) y movimiento reducido (2.3.3) :: 1.3.4 · I-01 · cumple: la vista se usa en 768 × 1024 (vertical) y en 1024 × 768 (horizontal)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · orientación vertical y horizontal (1.3.4) y movimiento reducido (2.3.3) :: 2.3.3 · todas · cumple: 70 reglas CSS para prefers-reduced-motion
+    ✓ Adaptación visual · orientación vertical y horizontal (1.3.4) y movimiento reducido (2.3.3) (6195ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Objetivos · Lista de workflows: controles de al menos 24 × 24 px (2.5.8) :: 2.5.8 · I-01 · no cumple: 144 controles; 2 menores de 24 px sin espacio suficiente: card-badge, breadcrumbs-item
+    ✓ Objetivos · Lista de workflows: controles de al menos 24 × 24 px (2.5.8)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Objetivos · Editor de workflows (lienzo): controles de al menos 24 × 24 px (2.5.8) :: 2.5.8 · I-02 · cumple: 42 controles; 0 menores de 24 px sin espacio suficiente
+    ✓ Objetivos · Editor de workflows (lienzo): controles de al menos 24 × 24 px (2.5.8)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Objetivos · Lista de credenciales: controles de al menos 24 × 24 px (2.5.8) :: 2.5.8 · I-06 · cumple: 37 controles; 0 menores de 24 px sin espacio suficiente
+    ✓ Objetivos · Lista de credenciales: controles de al menos 24 × 24 px (2.5.8)
+
+
+  21 passing (2m)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/a11y/mochawesome/mochawesome_002.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        21                                                                               │
+  │ Passing:      21                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     2 minutes, 25 seconds                                                            │
+  │ Spec Ran:     manual.a11y.cy.js                                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/manual.a11y.cy.js (5).mp4
+
+
+resize:  can't open terminal /dev/tty
+================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✔  manual.a11y.cy.js                        02:25       21       21        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✔  All specs passed!                        02:25       21       21        -        -        -  
+

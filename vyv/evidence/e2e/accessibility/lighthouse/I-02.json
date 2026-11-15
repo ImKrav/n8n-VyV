@@ -1,0 +1,37 @@
+{
+  "interfaz": "I-02",
+  "url": "/workflow/NAYng8Q2YbdbviL8",
+  "puntuacion": 85,
+  "fallidas": [
+    {
+      "regla": "aria-allowed-attr",
+      "titulo": "`[aria-*]` attributes do not match their roles",
+      "nodos": [
+        "div._container_qey36_1 > div._group_1gp4i_1 > span._checklistAnchor_1gp4i_5 > span#reka-popover-trigger-v-0-48",
+        "div > div._projects_1gsv8_3 > div._home_1gsv8_162 > div#reka-popover-trigger-v-0-8",
+        "div#side-menu > div._bottomMenu_1y1rq_3 > div._bottomMenuItems_1y1rq_12 > div#reka-popover-trigger-v-0-14"
+      ],
+      "total": 3
+    },
+    {
+      "regla": "aria-dialog-name",
+      "titulo": "Elements with `role=\"dialog\"` or `role=\"alertdialog\"` do not have accessible names.",
+      "nodos": [
+        "body > div > div#reka-popover-content-v-0-49"
+      ],
+      "total": 1
+    },
+    {
+      "regla": "aria-required-parent",
+      "titulo": "`[role]`s are not contained by their required parent element",
+      "nodos": [
+        "div._home_1gsv8_162 > div#reka-popover-trigger-v-0-8 > span > a#instance-ai",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#home",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#3jI2G8eCjReIDdFK",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#templates",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#insights"
+      ],
+      "total": 7
+    }
+  ]
+}

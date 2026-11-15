@@ -1,0 +1,21 @@
+{
+  "proyecto": "3jI2G8eCjReIDdFK",
+  "wf": "10x9nlpHaZ5tfCxI",
+  "ejecucion": "5119",
+  "credencial": "aRsEXuQtA6mrrtVC",
+  "tabla": "GLuKghiVGXHUSdvA",
+  "carpeta": "xDCfRiQtP8jyXAJs",
+  "urls": {
+    "I-00": "/signin",
+    "I-01": "/home/workflows",
+    "I-02": "/workflow/10x9nlpHaZ5tfCxI",
+    "I-03": "/workflow/10x9nlpHaZ5tfCxI/history",
+    "I-04": "/home/executions",
+    "I-05": "/workflow/10x9nlpHaZ5tfCxI/executions/5119",
+    "I-06": "/home/credentials",
+    "I-07": "/home/credentials/aRsEXuQtA6mrrtVC",
+    "I-08": "/home/datatables",
+    "I-09": "/projects/3jI2G8eCjReIDdFK/datatables/GLuKghiVGXHUSdvA",
+    "I-10": "/projects/3jI2G8eCjReIDdFK/folders/xDCfRiQtP8jyXAJs/workflows"
+  }
+}

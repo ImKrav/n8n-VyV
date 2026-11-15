@@ -1,0 +1,392 @@
+[
+  {
+    "criterio": "2.4.3",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "orden de Tab: emailOrLdapLoginId → password → form-submit-button → auth-form"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "Enter en el campo de contraseña envía el formulario"
+  },
+  {
+    "criterio": "3.3.1",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "mensaje: «Sign in | Problem logging in Wrong username or password. Do you have caps lock on?»"
+  },
+  {
+    "criterio": "4.1.3",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "anunciado por aria-live=polite, alert"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "45 elementos distintos en 45 Tab; botón de crear alcanzable"
+  },
+  {
+    "criterio": "2.1.2",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "últimas 10 paradas en 10 elementos distintos"
+  },
+  {
+    "criterio": "2.4.7",
+    "interfaz": "I-01",
+    "resultado": "no cumple",
+    "detalle": "43 de 44 paradas con indicador visible; sin indicador: DIV"
+  },
+  {
+    "criterio": "2.4.11",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "ningún elemento con foco queda tapado"
+  },
+  {
+    "criterio": "1.4.11",
+    "interfaz": "I-01",
+    "resultado": "no cumple",
+    "detalle": "43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1)"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "45 elementos distintos en 45 Tab; botón de crear alcanzable"
+  },
+  {
+    "criterio": "2.1.2",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "últimas 10 paradas en 10 elementos distintos"
+  },
+  {
+    "criterio": "2.4.7",
+    "interfaz": "I-06",
+    "resultado": "no cumple",
+    "detalle": "43 de 44 paradas con indicador visible; sin indicador: DIV"
+  },
+  {
+    "criterio": "2.4.11",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "ningún elemento con foco queda tapado"
+  },
+  {
+    "criterio": "1.4.11",
+    "interfaz": "I-06",
+    "resultado": "no cumple",
+    "detalle": "43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1), credential-card-dependents (1.61:1)"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-08",
+    "resultado": "cumple",
+    "detalle": "45 elementos distintos en 45 Tab; botón de crear alcanzable"
+  },
+  {
+    "criterio": "2.1.2",
+    "interfaz": "I-08",
+    "resultado": "cumple",
+    "detalle": "últimas 10 paradas en 10 elementos distintos"
+  },
+  {
+    "criterio": "2.4.7",
+    "interfaz": "I-08",
+    "resultado": "no cumple",
+    "detalle": "43 de 44 paradas con indicador visible; sin indicador: DIV"
+  },
+  {
+    "criterio": "2.4.11",
+    "interfaz": "I-08",
+    "resultado": "cumple",
+    "detalle": "ningún elemento con foco queda tapado"
+  },
+  {
+    "criterio": "1.4.11",
+    "interfaz": "I-08",
+    "resultado": "no cumple",
+    "detalle": "43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1)"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "la tarjeta no recibe el foco; con Tab se llega a su menú de acciones («credential-card-actions»), que ofrece «Open»"
+  },
+  {
+    "criterio": "2.4.3",
+    "interfaz": "I-07",
+    "resultado": "cumple",
+    "detalle": "al abrir con Enter el foco está en «dialog-close-button»"
+  },
+  {
+    "criterio": "2.4.3",
+    "interfaz": "I-07",
+    "resultado": "cumple",
+    "detalle": "20 Tab: el foco no sale del modal"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-07",
+    "resultado": "no cumple",
+    "detalle": "con el foco en «parameter-input-field» (un campo del formulario), Esc no cierra el modal ni con dos pulsaciones; solo el botón de cerrar lo cierra"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-11",
+    "resultado": "cumple",
+    "detalle": "Esc cierra el modal"
+  },
+  {
+    "criterio": "2.4.3",
+    "interfaz": "I-11",
+    "resultado": "cumple",
+    "detalle": "foco inicial en «data-table-name-input-select»"
+  },
+  {
+    "criterio": "2.1.1",
+    "interfaz": "I-02",
+    "resultado": "no cumple",
+    "detalle": "ningún nodo del lienzo recibe el foco con Tab en 60 pulsaciones"
+  },
+  {
+    "criterio": "3.3.2",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "2 de 2 campos con etiqueta"
+  },
+  {
+    "criterio": "3.3.2",
+    "interfaz": "I-07",
+    "resultado": "no cumple",
+    "detalle": "2 de 3 campos con etiqueta; sin etiqueta: input (placeholder «Select»)"
+  },
+  {
+    "criterio": "3.3.2",
+    "interfaz": "I-11",
+    "resultado": "no cumple",
+    "detalle": "0 de 1 campos con etiqueta; sin etiqueta: input (placeholder «Enter data table name»)"
+  },
+  {
+    "criterio": "1.4.3",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "«Search» 4.74:1, «Select» 4.74:1"
+  },
+  {
+    "criterio": "1.4.3",
+    "interfaz": "I-07",
+    "resultado": "cumple",
+    "detalle": "«Select» 4.74:1"
+  },
+  {
+    "criterio": "1.4.3",
+    "interfaz": "I-11",
+    "resultado": "cumple",
+    "detalle": "«Enter data table name» 4.74:1"
+  },
+  {
+    "criterio": "3.1.1",
+    "interfaz": "todas",
+    "resultado": "cumple",
+    "detalle": "<html lang=\"en\">"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-02",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-03",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-04",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-05",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-07",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-08",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-09",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-10",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.1",
+    "interfaz": "I-11",
+    "resultado": "cumple",
+    "detalle": "región main; sin enlace para saltar al contenido"
+  },
+  {
+    "criterio": "2.4.2",
+    "interfaz": "todas",
+    "resultado": "no cumple",
+    "detalle": "I-00: «n8n.io - Workflow Automation» · I-01: «Workflows - n8n[DEV]» · I-02: «▶️ VyV A11y workflow - n8n[DEV]» · I-03: «n8n.io - Workflow Automation» · I-04: «Executions - n8n[DEV]» · I-05: «▶️ VyV A11y workflow - n8n[DEV]» · I-06: «Credentials - n8n[DEV]» · I-07: «Credentials - n8n[DEV]» · I-08: «Data tables - n8n[DEV]» · I-09: «Data tables > vyv_a11y_mwhb0087456 - n8n[DEV]» · I-10: «Workflows - n8n[DEV]» · I-11: «Data tables - n8n[DEV]»"
+  },
+  {
+    "criterio": "1.4.10",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "ancho 320 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.10",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "ancho 320 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.10",
+    "interfaz": "I-04",
+    "resultado": "cumple",
+    "detalle": "ancho 320 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.10",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "ancho 320 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.10",
+    "interfaz": "I-08",
+    "resultado": "cumple",
+    "detalle": "ancho 320 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.4",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "ancho 720 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.4",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "ancho 720 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.4",
+    "interfaz": "I-04",
+    "resultado": "cumple",
+    "detalle": "ancho 720 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.4",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "ancho 720 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.4",
+    "interfaz": "I-08",
+    "resultado": "cumple",
+    "detalle": "ancho 720 px: sin desplazamiento horizontal; contenido principal visible"
+  },
+  {
+    "criterio": "1.4.12",
+    "interfaz": "I-00",
+    "resultado": "cumple",
+    "detalle": "ningún texto queda cortado"
+  },
+  {
+    "criterio": "1.4.12",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "ningún texto queda cortado"
+  },
+  {
+    "criterio": "1.4.12",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "ningún texto queda cortado"
+  },
+  {
+    "criterio": "1.4.12",
+    "interfaz": "I-07",
+    "resultado": "cumple",
+    "detalle": "ningún texto queda cortado"
+  },
+  {
+    "criterio": "1.3.4",
+    "interfaz": "I-01",
+    "resultado": "cumple",
+    "detalle": "la vista se usa en 768 × 1024 (vertical) y en 1024 × 768 (horizontal)"
+  },
+  {
+    "criterio": "2.3.3",
+    "interfaz": "todas",
+    "resultado": "cumple",
+    "detalle": "70 reglas CSS para prefers-reduced-motion"
+  },
+  {
+    "criterio": "2.5.8",
+    "interfaz": "I-01",
+    "resultado": "no cumple",
+    "detalle": "144 controles; 2 menores de 24 px sin espacio suficiente: card-badge, breadcrumbs-item"
+  },
+  {
+    "criterio": "2.5.8",
+    "interfaz": "I-02",
+    "resultado": "cumple",
+    "detalle": "42 controles; 0 menores de 24 px sin espacio suficiente"
+  },
+  {
+    "criterio": "2.5.8",
+    "interfaz": "I-06",
+    "resultado": "cumple",
+    "detalle": "37 controles; 0 menores de 24 px sin espacio suficiente"
+  }
+]

@@ -1,0 +1,1597 @@
+{
+  "I-00-light": {
+    "interfaz": "I-00",
+    "nombre": "Inicio de sesión",
+    "modulo": "—",
+    "tema": "light",
+    "reglasEvaluadas": 25,
+    "aprobadas": 25,
+    "violaciones": 0,
+    "nodos": 0,
+    "hallazgos": []
+  },
+  "I-01-light": {
+    "interfaz": "I-01",
+    "nombre": "Lista de workflows",
+    "modulo": "1 · Workflows",
+    "tema": "light",
+    "reglasEvaluadas": 35,
+    "aprobadas": 31,
+    "violaciones": 4,
+    "nodos": 62,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11",
+          "#reka-popover-trigger-v-0-41"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 51,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-46",
+          "#reka-dropdown-menu-trigger-v-0-50"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      }
+    ]
+  },
+  "I-02-light": {
+    "interfaz": "I-02",
+    "nombre": "Editor de workflows (lienzo)",
+    "modulo": "1 · Workflows",
+    "tema": "light",
+    "reglasEvaluadas": 27,
+    "aprobadas": 25,
+    "violaciones": 2,
+    "nodos": 10,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-48",
+          "#reka-popover-trigger-v-0-8",
+          "#reka-popover-trigger-v-0-14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      }
+    ]
+  },
+  "I-03-light": {
+    "interfaz": "I-03",
+    "nombre": "Historial de versiones",
+    "modulo": "1 · Workflows",
+    "tema": "light",
+    "reglasEvaluadas": 33,
+    "aprobadas": 27,
+    "violaciones": 6,
+    "nodos": 13,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-24"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "link-name",
+        "impacto": "serious",
+        "wcag": [
+          "2.4.4",
+          "4.1.2"
+        ],
+        "descripcion": "Links must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "._closeButton_1dknu_38"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/link-name?application=axeAPI"
+      },
+      {
+        "regla": "list",
+        "impacto": "serious",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+        "nodos": 1,
+        "ejemplos": [
+          "ul"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/list?application=axeAPI"
+      },
+      {
+        "regla": "nested-interactive",
+        "impacto": "serious",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Interactive controls must not be nested",
+        "nodos": 1,
+        "ejemplos": [
+          "._item_1p6i8_1"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/nested-interactive?application=axeAPI"
+      }
+    ]
+  },
+  "I-04-light": {
+    "interfaz": "I-04",
+    "nombre": "Lista global de ejecuciones",
+    "modulo": "2 · Ejecuciones",
+    "tema": "light",
+    "reglasEvaluadas": 32,
+    "aprobadas": 28,
+    "violaciones": 4,
+    "nodos": 32,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 22,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-22",
+          "#v-0-42",
+          "#v-0-43"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      }
+    ]
+  },
+  "I-05-light": {
+    "interfaz": "I-05",
+    "nombre": "Ejecuciones del workflow y vista previa",
+    "modulo": "2 · Ejecuciones",
+    "tema": "light",
+    "reglasEvaluadas": 27,
+    "aprobadas": 25,
+    "violaciones": 2,
+    "nodos": 10,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-34",
+          "#reka-popover-trigger-v-0-8",
+          "#reka-popover-trigger-v-0-14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      }
+    ]
+  },
+  "I-06-light": {
+    "interfaz": "I-06",
+    "nombre": "Lista de credenciales",
+    "modulo": "3 · Credenciales",
+    "tema": "light",
+    "reglasEvaluadas": 34,
+    "aprobadas": 29,
+    "violaciones": 5,
+    "nodos": 23,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11",
+          "#reka-popover-trigger-v-0-84"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 11,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-88",
+          "#reka-dropdown-menu-trigger-v-0-91"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "label-content-name-mismatch",
+        "impacto": "serious",
+        "wcag": [
+          "2.5.3"
+        ],
+        "descripcion": "Elements must have their visible text as part of their accessible name",
+        "nodos": 1,
+        "ejemplos": [
+          "._outline_nomns_577"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/label-content-name-mismatch?application=axeAPI"
+      }
+    ]
+  },
+  "I-07-light": {
+    "interfaz": "I-07",
+    "nombre": "Formulario de una credencial",
+    "modulo": "3 · Credenciales",
+    "tema": "light",
+    "reglasEvaluadas": 29,
+    "aprobadas": 27,
+    "violaciones": 2,
+    "nodos": 4,
+    "hallazgos": [
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 3,
+        "ejemplos": [
+          "#connection",
+          "#sharing",
+          "#details"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      }
+    ]
+  },
+  "I-08-light": {
+    "interfaz": "I-08",
+    "nombre": "Lista de data tables",
+    "modulo": "4 · Core",
+    "tema": "light",
+    "reglasEvaluadas": 35,
+    "aprobadas": 31,
+    "violaciones": 4,
+    "nodos": 36,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 26,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-43",
+          "#reka-dropdown-menu-trigger-v-0-46"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      }
+    ]
+  },
+  "I-09-light": {
+    "interfaz": "I-09",
+    "nombre": "Detalle de una data table",
+    "modulo": "4 · Core",
+    "tema": "light",
+    "reglasEvaluadas": 35,
+    "aprobadas": 31,
+    "violaciones": 4,
+    "nodos": 11,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          ".ag-root"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-21"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      }
+    ]
+  },
+  "I-10-light": {
+    "interfaz": "I-10",
+    "nombre": "Carpeta con migas de pan",
+    "modulo": "4 · Core",
+    "tema": "light",
+    "reglasEvaluadas": 32,
+    "aprobadas": 28,
+    "violaciones": 4,
+    "nodos": 14,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11",
+          "#reka-popover-trigger-v-0-32"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-39",
+          "#reka-dropdown-menu-trigger-v-0-42"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      }
+    ]
+  },
+  "I-11-light": {
+    "interfaz": "I-11",
+    "nombre": "Modal de nueva data table",
+    "modulo": "4 · Core",
+    "tema": "light",
+    "reglasEvaluadas": 33,
+    "aprobadas": 29,
+    "violaciones": 4,
+    "nodos": 36,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 26,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-43",
+          "#reka-dropdown-menu-trigger-v-0-46"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      }
+    ]
+  },
+  "I-00-dark": {
+    "interfaz": "I-00",
+    "nombre": "Inicio de sesión",
+    "modulo": "—",
+    "tema": "dark",
+    "reglasEvaluadas": 25,
+    "aprobadas": 25,
+    "violaciones": 0,
+    "nodos": 0,
+    "hallazgos": []
+  },
+  "I-01-dark": {
+    "interfaz": "I-01",
+    "nombre": "Lista de workflows",
+    "modulo": "1 · Workflows",
+    "tema": "dark",
+    "reglasEvaluadas": 36,
+    "aprobadas": 31,
+    "violaciones": 5,
+    "nodos": 63,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11",
+          "#reka-popover-trigger-v-0-41"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 51,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-46",
+          "#reka-dropdown-menu-trigger-v-0-50"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-02-dark": {
+    "interfaz": "I-02",
+    "nombre": "Editor de workflows (lienzo)",
+    "modulo": "1 · Workflows",
+    "tema": "dark",
+    "reglasEvaluadas": 27,
+    "aprobadas": 24,
+    "violaciones": 3,
+    "nodos": 11,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-48",
+          "#reka-popover-trigger-v-0-8",
+          "#reka-popover-trigger-v-0-14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-03-dark": {
+    "interfaz": "I-03",
+    "nombre": "Historial de versiones",
+    "modulo": "1 · Workflows",
+    "tema": "dark",
+    "reglasEvaluadas": 34,
+    "aprobadas": 27,
+    "violaciones": 7,
+    "nodos": 14,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-24"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      },
+      {
+        "regla": "link-name",
+        "impacto": "serious",
+        "wcag": [
+          "2.4.4",
+          "4.1.2"
+        ],
+        "descripcion": "Links must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "._closeButton_1dknu_38"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/link-name?application=axeAPI"
+      },
+      {
+        "regla": "list",
+        "impacto": "serious",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+        "nodos": 1,
+        "ejemplos": [
+          "ul"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/list?application=axeAPI"
+      },
+      {
+        "regla": "nested-interactive",
+        "impacto": "serious",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Interactive controls must not be nested",
+        "nodos": 1,
+        "ejemplos": [
+          "._item_1p6i8_1"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/nested-interactive?application=axeAPI"
+      }
+    ]
+  },
+  "I-04-dark": {
+    "interfaz": "I-04",
+    "nombre": "Lista global de ejecuciones",
+    "modulo": "2 · Ejecuciones",
+    "tema": "dark",
+    "reglasEvaluadas": 33,
+    "aprobadas": 28,
+    "violaciones": 5,
+    "nodos": 33,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 22,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-22",
+          "#v-0-42",
+          "#v-0-43"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-05-dark": {
+    "interfaz": "I-05",
+    "nombre": "Ejecuciones del workflow y vista previa",
+    "modulo": "2 · Ejecuciones",
+    "tema": "dark",
+    "reglasEvaluadas": 28,
+    "aprobadas": 25,
+    "violaciones": 3,
+    "nodos": 11,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-34",
+          "#reka-popover-trigger-v-0-8",
+          "#reka-popover-trigger-v-0-14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-06-dark": {
+    "interfaz": "I-06",
+    "nombre": "Lista de credenciales",
+    "modulo": "3 · Credenciales",
+    "tema": "dark",
+    "reglasEvaluadas": 35,
+    "aprobadas": 29,
+    "violaciones": 6,
+    "nodos": 24,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11",
+          "#reka-popover-trigger-v-0-84"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 11,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-88",
+          "#reka-dropdown-menu-trigger-v-0-91"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      },
+      {
+        "regla": "label-content-name-mismatch",
+        "impacto": "serious",
+        "wcag": [
+          "2.5.3"
+        ],
+        "descripcion": "Elements must have their visible text as part of their accessible name",
+        "nodos": 1,
+        "ejemplos": [
+          "._outline_nomns_577"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/label-content-name-mismatch?application=axeAPI"
+      }
+    ]
+  },
+  "I-07-dark": {
+    "interfaz": "I-07",
+    "nombre": "Formulario de una credencial",
+    "modulo": "3 · Credenciales",
+    "tema": "dark",
+    "reglasEvaluadas": 30,
+    "aprobadas": 27,
+    "violaciones": 3,
+    "nodos": 5,
+    "hallazgos": [
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 3,
+        "ejemplos": [
+          "#connection",
+          "#sharing",
+          "#details"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-08-dark": {
+    "interfaz": "I-08",
+    "nombre": "Lista de data tables",
+    "modulo": "4 · Core",
+    "tema": "dark",
+    "reglasEvaluadas": 36,
+    "aprobadas": 31,
+    "violaciones": 5,
+    "nodos": 37,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 26,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-43",
+          "#reka-dropdown-menu-trigger-v-0-46"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-09-dark": {
+    "interfaz": "I-09",
+    "nombre": "Detalle de una data table",
+    "modulo": "4 · Core",
+    "tema": "dark",
+    "reglasEvaluadas": 36,
+    "aprobadas": 31,
+    "violaciones": 5,
+    "nodos": 12,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          ".ag-root"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 1,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-21"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-10-dark": {
+    "interfaz": "I-10",
+    "nombre": "Carpeta con migas de pan",
+    "modulo": "4 · Core",
+    "tema": "dark",
+    "reglasEvaluadas": 33,
+    "aprobadas": 28,
+    "violaciones": 5,
+    "nodos": 15,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11",
+          "#reka-popover-trigger-v-0-32"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 3,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-39",
+          "#reka-dropdown-menu-trigger-v-0-42"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  },
+  "I-11-dark": {
+    "interfaz": "I-11",
+    "nombre": "Modal de nueva data table",
+    "modulo": "4 · Core",
+    "tema": "dark",
+    "reglasEvaluadas": 34,
+    "aprobadas": 29,
+    "violaciones": 5,
+    "nodos": 37,
+    "hallazgos": [
+      {
+        "regla": "aria-allowed-attr",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Elements must only use supported ARIA attributes",
+        "nodos": 2,
+        "ejemplos": [
+          "#reka-popover-trigger-v-0-5",
+          "#reka-popover-trigger-v-0-11"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-children",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must contain particular children",
+        "nodos": 1,
+        "ejemplos": [
+          "._tabs_1xd39_14"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-children?application=axeAPI"
+      },
+      {
+        "regla": "aria-required-parent",
+        "impacto": "critical",
+        "wcag": [
+          "1.3.1"
+        ],
+        "descripcion": "Certain ARIA roles must be contained by particular parents",
+        "nodos": 7,
+        "ejemplos": [
+          "#instance-ai",
+          "#home",
+          "#\\33 jI2G8eCjReIDdFK"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+      },
+      {
+        "regla": "button-name",
+        "impacto": "critical",
+        "wcag": [
+          "4.1.2"
+        ],
+        "descripcion": "Buttons must have discernible text",
+        "nodos": 26,
+        "ejemplos": [
+          "#reka-dropdown-menu-trigger-v-0-18",
+          "#reka-dropdown-menu-trigger-v-0-43",
+          "#reka-dropdown-menu-trigger-v-0-46"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/button-name?application=axeAPI"
+      },
+      {
+        "regla": "color-contrast",
+        "impacto": "serious",
+        "wcag": [
+          "1.4.3"
+        ],
+        "descripcion": "Elements must meet minimum color contrast ratio thresholds",
+        "nodos": 1,
+        "ejemplos": [
+          "._pill_jfvmx_10"
+        ],
+        "ayuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI"
+      }
+    ]
+  }
+}

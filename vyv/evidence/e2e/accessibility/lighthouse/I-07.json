@@ -1,0 +1,25 @@
+{
+  "interfaz": "I-07",
+  "url": "/home/credentials/D0hmRY3P8IEaWmaa",
+  "puntuacion": 89,
+  "fallidas": [
+    {
+      "regla": "aria-required-parent",
+      "titulo": "`[role]`s are not contained by their required parent element",
+      "nodos": [
+        "div._sidebar_fjqp3_35 > div._menuItemWrapper_7t8d9_572 > span._disabledTrigger_h2wfg_8 > a#connection",
+        "div._sidebar_fjqp3_35 > div._menuItemWrapper_7t8d9_572 > span._disabledTrigger_h2wfg_8 > a#sharing",
+        "div._sidebar_fjqp3_35 > div._menuItemWrapper_7t8d9_572 > span._disabledTrigger_h2wfg_8 > a#details"
+      ],
+      "total": 3
+    },
+    {
+      "regla": "button-name",
+      "titulo": "Buttons do not have an accessible name",
+      "nodos": [
+        "div > div._buttonGroup_1d8c0_1 > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-18"
+      ],
+      "total": 1
+    }
+  ]
+}
