@@ -29,7 +29,7 @@ Los IDs de las pruebas son los mismos de la matriz de casos y de la RTM (que van
 | 10. Regresión | `regression/` (un archivo por módulo), `scripts/compare-regression.mjs` | Comparación antes / después |
 | 11. Accesibilidad | `accessibility/` (axe-core, comprobaciones manuales con guion) y `scripts/lighthouse-a11y.mjs` (Lighthouse) | Criterios WCAG evaluados, barreras y recomendaciones (`../README.md`) |
 | 12. Usabilidad (Nielsen, SUS) | — | Tareas, SUS y hallazgos |
-| 13. Seguridad | `core/security/` (OWASP Top 10) | Hallazgos, severidad, recomendaciones |
+| 13. Seguridad | `security/` (OWASP Top 10:2025 de los 4 módulos), `core/security/` y `../security/` (informe, hallazgos y `scans.sh`) | Hallazgos, severidad CVSS, validación y recomendaciones |
 | 14. IA | `../ai/stagehand`, `../ai/deepeval`, `../ai/generator` | Configuración, resultados y límites |
 | 15. Refactorización | **Cambios en el código de n8n** (sección 3) | Comparación de versiones y pruebas posteriores |
 
@@ -45,7 +45,8 @@ vyv/e2e/                    ← pruebas funcionales (esta carpeta)
                               *.api.cy.js  por API (caja negra)
                               *.ui.cy.js   por interfaz
                               *.feature    Gherkin en español (Dado/Cuando/Entonces)
-    security/               OWASP Top 10
+    security/               OWASP Top 10 de data tables y carpetas
+  security/                 OWASP Top 10:2025: workflows, executions, credentials y transversal (propietario frente a miembro)
   accessibility/            WCAG 2.2 A/AA: axe en 12 interfaces × 2 temas y comprobaciones manuales con guion
   regression/               suite de regresión: un archivo por módulo, specs de las 20 funcionalidades
   screenplay/               Actor, escena (Stage), habilidades, interacciones, tareas y preguntas de los 4 módulos

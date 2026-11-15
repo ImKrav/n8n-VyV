@@ -1,0 +1,756 @@
+
+
+DevTools listening on ws://127.0.0.1:63558/devtools/browser/f36bc436-a615-4034-a5b9-5cbfd8fade46
+(node:3752) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("file%3A///C%3A/Users/jdmg2/AppData/Local/Cypress/Cache/14.5.4/Cypress/resources/app/node_modules/ts-node/esm/transpile-only.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3752) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+====================================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Chrome 157 (headless)                                                          │
+  │ Node Version:   v24.14.1 (C:\Program Files\nodejs\node.exe)                                    │
+  │ Specs:          10 found (security/credentials.security.cy.js, security/executions.security.cy │
+  │                 .js, security/transversal.security.cy.js, security/workflows.security.cy.js, c │
+  │                 ore/security/owasp.cy.js, credentials/CR-01/encryption-at-rest.api.cy.js, cred │
+  │                 entials/CR-01/html-name...)                                                    │
+  │ Searched:       C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\security\**\*.cy.js, C:\ │
+  │                 Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\core\security\**\*.cy.js, C │
+  │                 :\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\credentials\CR-01\encrypt │
+  │                 ion-at-rest.api.cy.js, C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\c │
+  │                 redentials\CR-01\html-name.ui.cy.js, C:\Users\jdmg2\Documents\Homara\Final\n8n │
+  │                 -VyV\vyv\e2e\credentials\CR-02\secret-exposure.api.cy.js, C:\Users\jdmg2\Docum │
+  │                 ents\Homara\Final\n8n-VyV\vyv\e2e\credentials\CR-02\credential-modal.ui.cy.js, │
+  │                  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\credentials\CR-05\isola │
+  │                 tion.api.cy.js                                                                 │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  security/credentials.security.cy.js                                            (1 of 10)
+
+
+  Seguridad · Credenciales (OWASP Top 10:2025)
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-01 · A01 Broken Access Control · sin sesión, la API de credenciales responde 401 :: CP-SEG-CR-01 · A01 · OK · 7 rutas responden 401 sin sesión
+    √ CP-SEG-CR-01 · A01 Broken Access Control · sin sesión, la API de credenciales responde 401
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-02 · A01 Broken Access Control · el miembro no edita, borra, comparte ni transfiere una credencial ajena :: CP-SEG-CR-02 · A01 · OK · PATCH /rest/credentials/:id → 403; DELETE /rest/credentials/:id → 403; PUT /rest/credentials/:id/share → 403; PUT /rest/credentials/:id/transfer → 403
+    √ CP-SEG-CR-02 · A01 Broken Access Control · el miembro no edita, borra, comparte ni transfiere una credencial ajena
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-03 · A01 Broken Access Control · el miembro no puede usar en su workflow ni probar una credencial ajena :: CP-SEG-CR-03 · A01 · OK · guardar → 200; publicar → 400: Cannot publish workflow: You do not have access to credential "VyV-Seg-CR_mwi1lv; probar → 403 Forbidden
+    √ CP-SEG-CR-03 · A01 Broken Access Control · el miembro no puede usar en su workflow ni probar una credencial ajena
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-04 · A04 Cryptographic Failures · crear y editar no devuelven el secreto, y leerlo con includeData lo redacta :: CP-SEG-CR-04 · A04 · OK · POST, PATCH y GET?includeData=true sin el secreto; value = CREDENTIAL_BLANKING_VALUE
+    √ CP-SEG-CR-04 · A04 Cryptographic Failures · crear y editar no devuelven el secreto, y leerlo con includeData lo redacta
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-05 · A08 Software or Data Integrity Failures · guardar reenviando el valor redactado conserva el secreto original :: CP-SEG-CR-05 · A08 · OK · cabecera recibida por el eco tras renombrar: el secreto original
+    √ CP-SEG-CR-05 · A08 Software or Data Integrity Failures · guardar reenviando el valor redactado conserva el secreto original
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-06 · A04 Cryptographic Failures · una credencial OAuth2 no devuelve clientSecret ni tokens en claro :: CP-SEG-CR-06 · A04 · OK · clientSecret redactado y sin oauthTokenData en la respuesta
+    √ CP-SEG-CR-06 · A04 Cryptographic Failures · una credencial OAuth2 no devuelve clientSecret ni tokens en claro
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-07 · A05 Injection · un nombre con SQL y claves __proto__ en data no alteran otras credenciales ni el servidor :: CP-SEG-CR-07 · A05 · OK · Nombre con SQL guardado como texto; __proto__ en data sin efecto
+    √ CP-SEG-CR-07 · A05 Injection · un nombre con SQL y claves __proto__ en data no alteran otras credenciales ni el servidor
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-08 · A06 Insecure Design · el listado con includeData=true no devuelve secretos :: CP-SEG-CR-08 · A06 · OK · 7 credenciales listadas; secreto en claro: false
+    √ CP-SEG-CR-08 · A06 Insecure Design · el listado con includeData=true no devuelve secretos
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-09 · A07 Authentication Failures · el flujo OAuth2 no se inicia para una credencial ajena ni acepta un state falso :: CP-SEG-CR-09 · A07 · OK · auth de una ajena → 404; callback con state falso → 200
+    √ CP-SEG-CR-09 · A07 Authentication Failures · el flujo OAuth2 no se inicia para una credencial ajena ni acepta un state falso
+    1) CP-SEG-CR-10 · A06 Insecure Design · la API rechaza una credencial sin sus campos obligatorios (issue #11)
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-11 · A10 Mishandling of Exceptional Conditions · id y tipo inexistentes responden 4xx sin traza :: CP-SEG-CR-11 · A10 · OK · id inexistente → 404; tipo inexistente → 400
+    √ CP-SEG-CR-11 · A10 Mishandling of Exceptional Conditions · id y tipo inexistentes responden 4xx sin traza
+
+
+  10 passing (10s)
+  1 failing
+
+  1) Seguridad · Credenciales (OWASP Top 10:2025)
+       CP-SEG-CR-10 · A06 Insecure Design · la API rechaza una credencial sin sus campos obligatorios (issue #11):
+
+      AssertionError: expected 200 to equal 400
+      + expected - actual
+
+      -200
+      +400
+      
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\credentials.security.cy.js:479:29)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        11                                                                               │
+  │ Passing:      10                                                                               │
+  │ Failing:      1                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  1                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     10 seconds                                                                       │
+  │ Spec Ran:     security/credentials.security.cy.js                                              │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\credentials.security.cy.js\Seguridad · Credenciales (OWASP Top 102025) -- CP-               
+     SEG-CR-10 · A06 Insecure Design · la API rechaza una credencial sin sus campos o               
+     bligatorios (issue #11) (failed).png                                                           
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\security\credentials.security.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  security/executions.security.cy.js                                             (2 of 10)
+
+
+  Seguridad · Ejecuciones (OWASP Top 10:2025)
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-01 · A01 Broken Access Control · sin sesión, la API de ejecuciones responde 401 :: CP-SEG-EX-01 · A01 · OK · 5 rutas responden 401 sin sesión
+    √ CP-SEG-EX-01 · A01 Broken Access Control · sin sesión, la API de ejecuciones responde 401
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-02 · A01 Broken Access Control · el miembro no ve las ejecuciones del propietario en su lista ni filtrando por workflowId :: CP-SEG-EX-02 · A01 · OK · filtro workflowId ajeno → 200, 0 resultados
+    √ CP-SEG-EX-02 · A01 Broken Access Control · el miembro no ve las ejecuciones del propietario en su lista ni filtrando por workflowId
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-03 · A01 Broken Access Control · el miembro no obtiene el detalle de una ejecución ajena :: CP-SEG-EX-03 · A01 · OK · GET /rest/executions/:id ajena → 404 {"code":404,"message":"Execution not found"} (sin datos de la ejecución: true)
+    √ CP-SEG-EX-03 · A01 Broken Access Control · el miembro no obtiene el detalle de una ejecución ajena
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-04 · A01 Broken Access Control · el miembro no puede detener, reintentar ni eliminar ejecuciones ajenas :: CP-SEG-EX-04 · A01 · OK · stop → 404; retry → 404; delete → 404; estado final: waiting
+    √ CP-SEG-EX-04 · A01 Broken Access Control · el miembro no puede detener, reintentar ni eliminar ejecuciones ajenas
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-05 · A04 Cryptographic Failures · el detalle de una ejecución fallida no contiene el secreto de la credencial :: CP-SEG-EX-05 · A04 · OK · Detalle de 6943 caracteres; contiene el secreto: false
+    √ CP-SEG-EX-05 · A04 Cryptographic Failures · el detalle de una ejecución fallida no contiene el secreto de la credencial
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-06 · A05 Injection · filtros malformados o con SQL responden 4xx y no amplían resultados :: CP-SEG-EX-06 · A05 · OK · JSON roto → 400; estado con SQL → 200; workflowId con SQL → 200; lastId con SQL → 400
+    √ CP-SEG-EX-06 · A05 Injection · filtros malformados o con SQL responden 4xx y no amplían resultados
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-07 · A06 Insecure Design · la lista no permite pedir más de 100 ejecuciones por página :: CP-SEG-EX-07 · A06 · OK · limit=100000 → 400: Execution limit must be between 1 and 100
+    √ CP-SEG-EX-07 · A06 Insecure Design · la lista no permite pedir más de 100 ejecuciones por página
+    1) CP-SEG-EX-08 · A10 Mishandling of Exceptional Conditions · detener una ejecución terminada responde 4xx, no 500 (issue #9)
+    2) CP-SEG-EX-09 · A10 Mishandling of Exceptional Conditions · una ejecución inexistente responde 404 (issue #10)
+
+
+  7 passing (8s)
+  2 failing
+
+  1) Seguridad · Ejecuciones (OWASP Top 10:2025)
+       CP-SEG-EX-08 · A10 Mishandling of Exceptional Conditions · detener una ejecución terminada responde 4xx, no 500 (issue #9):
+     AssertionError: expected 500 to be within 400..499
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\executions.security.cy.js:418:32)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+  2) Seguridad · Ejecuciones (OWASP Top 10:2025)
+       CP-SEG-EX-09 · A10 Mishandling of Exceptional Conditions · una ejecución inexistente responde 404 (issue #10):
+
+      AssertionError: expected 200 to equal 404
+      + expected - actual
+
+      -200
+      +404
+      
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\executions.security.cy.js:430:29)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_001.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        9                                                                                │
+  │ Passing:      7                                                                                │
+  │ Failing:      2                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  2                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     security/executions.security.cy.js                                               │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\executions.security.cy.js\Seguridad · Ejecuciones (OWASP Top 102025) -- CP-SE               
+     G-EX-08 · A10 Mishandling of Exceptional Conditions · detener una ejecución term               
+     inada responde 4xx, no 500 (issue #9) (failed).png                                             
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\executions.security.cy.js\Seguridad · Ejecuciones (OWASP Top 102025) -- CP-SE               
+     G-EX-09 · A10 Mishandling of Exceptional Conditions · una ejecución inexistente                
+     responde 404 (issue #10) (failed).png                                                          
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\security\executions.security.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  security/transversal.security.cy.js                                            (3 of 10)
+
+
+  Seguridad transversal (OWASP Top 10:2025)
+[EVIDENCIA] Seguridad transversal (OWASP Top 10:2025) > CP-SEG-TR-01 · A02 Security Misconfiguration · el editor envía las cabeceras de seguridad y no expone la tecnología :: CP-SEG-TR-01 · A02 · OK · {"x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","referrer-policy":"no-referrer","cross-origin-opener-policy":"same-origin-allow-popups","x-powered-by":"ausente"}
+    √ CP-SEG-TR-01 · A02 Security Misconfiguration · el editor envía las cabeceras de seguridad y no expone la tecnología
+    1) CP-SEG-TR-02 · A02 Security Misconfiguration · la política de seguridad de contenido (CSP) se aplica, no solo se informa
+    2) CP-SEG-TR-08 · A02 Security Misconfiguration · los scripts estáticos del editor se sirven con X-Content-Type-Options: nosniff
+[EVIDENCIA] Seguridad transversal (OWASP Top 10:2025) > CP-SEG-TR-03 · A07 Authentication Failures · la cookie de sesión es HttpOnly y SameSite :: CP-SEG-TR-03 · A07 · OK · n8n-auth: Max-Age=604800; Path=/; Expires=Sun, 22 Nov 2026 16:22:39 GMT; HttpOnly; SameSite=Lax (Secure depende de N8N_SECURE_COOKIE y de HTTPS)
+    √ CP-SEG-TR-03 · A07 Authentication Failures · la cookie de sesión es HttpOnly y SameSite
+[EVIDENCIA] Seguridad transversal (OWASP Top 10:2025) > CP-SEG-TR-04 · A07 Authentication Failures · el error de inicio de sesión no revela si el correo existe :: CP-SEG-TR-04 · A07 · OK · existente → 401 «Wrong username or password. Do you have caps lock on?»; inexistente → 401 «Wrong username or password. Do you have caps lock on?»
+    √ CP-SEG-TR-04 · A07 Authentication Failures · el error de inicio de sesión no revela si el correo existe
+[EVIDENCIA] Seguridad transversal (OWASP Top 10:2025) > CP-SEG-TR-05 · A07 Authentication Failures · el inicio de sesión limita los intentos fallidos por correo :: CP-SEG-TR-05 · A07 · OK · 7 intentos → 401, 401, 401, 401, 401, 429, 429
+    √ CP-SEG-TR-05 · A07 Authentication Failures · el inicio de sesión limita los intentos fallidos por correo
+[EVIDENCIA] Seguridad transversal (OWASP Top 10:2025) > CP-SEG-TR-06 · A07 Authentication Failures · cerrar sesión invalida la cookie aunque se reutilice :: CP-SEG-TR-06 · A07 · OK · cookie reutilizada tras logout → 401
+    √ CP-SEG-TR-06 · A07 Authentication Failures · cerrar sesión invalida la cookie aunque se reutilice
+[EVIDENCIA] Seguridad transversal (OWASP Top 10:2025) > CP-SEG-TR-07 · A01 Broken Access Control · el miembro no lee, escribe ni borra la data table del propietario :: CP-SEG-TR-07 · A01 · OK · GET :tabla/rows → 403 User is missing a scope required to perf; POST :tabla/insert → 403 User is missing a scope required to perf; GET :tabla/download-csv → 403 User is missing a scope required to perf; DELETE :tabla → 403 User is missing a scope required to perf
+    √ CP-SEG-TR-07 · A01 Broken Access Control · el miembro no lee, escribe ni borra la data table del propietario
+
+
+  6 passing (6s)
+  2 failing
+
+  1) Seguridad transversal (OWASP Top 10:2025)
+       CP-SEG-TR-02 · A02 Security Misconfiguration · la política de seguridad de contenido (CSP) se aplica, no solo se informa:
+     AssertionError: cabecera Content-Security-Policy: expected undefined to exist
+      at Object.proxyGetter [as get] (http://localhost:5678/__cypress/runner/cypress_runner.js:80410:22)
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\transversal.security.cy.js:315:64)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+
+  2) Seguridad transversal (OWASP Top 10:2025)
+       CP-SEG-TR-08 · A02 Security Misconfiguration · los scripts estáticos del editor se sirven con X-Content-Type-Options: nosniff:
+     AssertionError: expected undefined to equal 'nosniff'
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\transversal.security.cy.js:324:28)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_002.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        8                                                                                │
+  │ Passing:      6                                                                                │
+  │ Failing:      2                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  2                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     security/transversal.security.cy.js                                              │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\transversal.security.cy.js\Seguridad transversal (OWASP Top 102025) -- CP-SEG               
+     -TR-02 · A02 Security Misconfiguration · la política de seguridad de contenido (               
+     CSP) se aplica, no solo se informa (failed).png                                                
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\transversal.security.cy.js\Seguridad transversal (OWASP Top 102025) -- CP-SEG               
+     -TR-08 · A02 Security Misconfiguration · los scripts estáticos del editor se sir               
+     ven con X-Content-Type-Options nosniff (failed).png                                            
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\security\transversal.security.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  security/workflows.security.cy.js                                              (4 of 10)
+
+
+  Seguridad · Workflows (OWASP Top 10:2025)
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-01 · A01 Broken Access Control · sin sesión, la API de workflows responde 401 :: CP-SEG-WF-01 · A01 · OK · 7 rutas responden 401 sin sesión
+    √ CP-SEG-WF-01 · A01 Broken Access Control · sin sesión, la API de workflows responde 401
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-02 · A01 Broken Access Control · un miembro no lee, edita, archiva, activa ni ve el historial de un workflow ajeno :: CP-SEG-WF-02 · A01 · OK · GET /rest/workflows/:id → 403; PATCH /rest/workflows/:id → 403; POST /rest/workflows/:id/archive → 403; DELETE /rest/workflows/:id → 403; POST /rest/workflows/:id/activate → 403; GET /rest/workflow-history/workflow/:id → 404
+    √ CP-SEG-WF-02 · A01 Broken Access Control · un miembro no lee, edita, archiva, activa ni ve el historial de un workflow ajeno
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-03 · A01 Broken Access Control · el listado del miembro no incluye el workflow del propietario :: CP-SEG-WF-03 · A01 · OK · 0 workflows visibles para el miembro
+    √ CP-SEG-WF-03 · A01 Broken Access Control · el listado del miembro no incluye el workflow del propietario
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-04 · A01 Broken Access Control · el miembro no puede crear un workflow en el proyecto personal del propietario :: CP-SEG-WF-04 · A01 · OK · POST /rest/workflows con projectId ajeno → 400
+    √ CP-SEG-WF-04 · A01 Broken Access Control · el miembro no puede crear un workflow en el proyecto personal del propietario
+    1) CP-SEG-WF-05 · A01 Broken Access Control (SSRF) · importar desde URL no consulta direcciones internas
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-06 · A05 Injection · un nombre con HTML se guarda como texto y no se ejecuta en la lista :: CP-SEG-WF-06 · A05 · OK · 2 nombres con manejadores mostrados como texto, sin ejecución. Errores de la página: > Invalid or unexpected token | > Invalid or unexpected token
+    √ CP-SEG-WF-06 · A05 Injection · un nombre con HTML se guarda como texto y no se ejecuta en la lista (7346ms)
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-07 · A05 Injection · un nombre y una búsqueda con SQL no alteran los datos :: CP-SEG-WF-07 · A05 · OK · Consultas parametrizadas: nombre y filtro con SQL sin efecto
+    √ CP-SEG-WF-07 · A05 Injection · un nombre y una búsqueda con SQL no alteran los datos
+    2) CP-SEG-WF-08 · A08 Software or Data Integrity Failures · una edición basada en una versión vieja no sobrescribe la actual
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-09 · A01 Broken Access Control · un webhook deja de ejecutar el workflow al despublicarlo :: CP-SEG-WF-09 · A01 · OK · Ruta no registrada → 404; webhook despublicado, primera petición → 404
+    √ CP-SEG-WF-09 · A01 Broken Access Control · un webhook deja de ejecutar el workflow al despublicarlo
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-10 · A10 Mishandling of Exceptional Conditions · un id inexistente responde 404 sin traza :: CP-SEG-WF-10 · A10 · OK · 404: Could not load the workflow - you can only access workflows owned by you
+    √ CP-SEG-WF-10 · A10 Mishandling of Exceptional Conditions · un id inexistente responde 404 sin traza
+    3) CP-SEG-WF-11 · A10 Mishandling of Exceptional Conditions · un cuerpo JSON malformado responde 400, no 500
+
+
+  8 passing (14s)
+  3 failing
+
+  1) Seguridad · Workflows (OWASP Top 10:2025)
+       CP-SEG-WF-05 · A01 Broken Access Control (SSRF) · importar desde URL no consulta direcciones internas:
+     AssertionError: n8n descargó contenido de direcciones internas (N8N_SSRF_PROTECTION_ENABLED=false por defecto): expected [ Array(2) ] to have a length of 0 but got 2
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\workflows.security.cy.js:367:138)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+
+  2) Seguridad · Workflows (OWASP Top 10:2025)
+       CP-SEG-WF-08 · A08 Software or Data Integrity Failures · una edición basada en una versión vieja no sobrescribe la actual:
+
+      AssertionError: expected 200 to be one of [ 400, 409 ]
+      + expected - actual
+
+      -200
+      +[ 400, 409 ]
+      
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\workflows.security.cy.js:412:34)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+  3) Seguridad · Workflows (OWASP Top 10:2025)
+       CP-SEG-WF-11 · A10 Mishandling of Exceptional Conditions · un cuerpo JSON malformado responde 400, no 500:
+
+      error del cliente, no del servidor
+      + expected - actual
+
+      -500
+      +400
+      
+      at Context.eval (http://localhost:5678/__cypress/tests?p=security\workflows.security.cy.js:454:67)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_003.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        11                                                                               │
+  │ Passing:      8                                                                                │
+  │ Failing:      3                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  3                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     14 seconds                                                                       │
+  │ Spec Ran:     security/workflows.security.cy.js                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\workflows.security.cy.js\Seguridad · Workflows (OWASP Top 102025) -- CP-SEG-W               
+     F-05 · A01 Broken Access Control (SSRF) · importar desde URL no consulta direcci               
+     ones internas (failed).png                                                                     
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\workflows.security.cy.js\Seguridad · Workflows (OWASP Top 102025) -- CP-SEG-W               
+     F-08 · A08 Software or Data Integrity Failures · una edición basada en una versi               
+     ón vieja no sobrescribe la actual (failed).png                                                 
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\securi    (1902x1104)
+     ty\workflows.security.cy.js\Seguridad · Workflows (OWASP Top 102025) -- CP-SEG-W               
+     F-11 · A10 Mishandling of Exceptional Conditions · un cuerpo JSON malformado res               
+     ponde 400, no 500 (failed).png                                                                 
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\security\workflows.security.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core/security/owasp.cy.js                                                      (5 of 10)
+
+
+  Seguridad · Data tables y carpetas (OWASP Top 10)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01 Broken Access Control · la API exige sesión válida (sin cookie → 401) :: A01 · OK · Endpoints protegidos devuelven 401 sin sesión
+    √ A01 Broken Access Control · la API exige sesión válida (sin cookie → 401)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión) :: A07 · OK · Sesión ligada al browser-id
+    √ A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01 · path traversal en fileId al crear una tabla desde CSV :: A01 · OK · fileId con ../ rechazado (500: Path traversal detected, refusing to join paths: /tmp/n8nDataTableUploads and [")
+    √ A01 · path traversal en fileId al crear una tabla desde CSV
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A03 Injection · nombres con SQL no alteran la base de datos :: A03 · OK · Sin inyección SQL en nombres ni filtros
+    √ A03 Injection · nombres con SQL no alteran la base de datos
+    1) A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto
+    2) CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A04 Insecure Design · solo se aceptan archivos .csv :: A04 · OK · Extensiones distintas de .csv rechazadas
+    √ A04 Insecure Design · solo se aceptan archivos .csv
+┌───────────────────────────────────────┬──────────────┐
+│ (index)                               │ Values       │
+├───────────────────────────────────────┼──────────────┤
+│ x-content-type-options                │ 'nosniff'    │
+│ x-frame-options / CSP frame-ancestors │ 'SAMEORIGIN' │
+│ x-powered-by (no debe exponerse)      │ 'ausente'    │
+└───────────────────────────────────────┴──────────────┘
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor :: A05 · REVISAR · {"x-content-type-options":"nosniff","x-frame-options / CSP frame-ancestors":"SAMEORIGIN","x-powered-by (no debe exponerse)":"ausente"}
+    √ A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor
+
+
+  6 passing (2s)
+  2 failing
+
+  1) Seguridad · Data tables y carpetas (OWASP Top 10)
+       A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto:
+
+      AssertionError: expected 403 to equal 400
+      + expected - actual
+
+      -403
+      +400
+      
+      at Context.eval (http://localhost:5678/__cypress/tests?p=core\security\owasp.cy.js:285:29)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+  2) Seguridad · Data tables y carpetas (OWASP Top 10)
+       CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236):
+     AssertionError: celdas con fórmulas sin neutralizar: expected [ Array(4) ] to have a length of 0 but got 4
+      at Context.eval (http://localhost:5678/__cypress/tests?p=core\security\owasp.cy.js:312:82)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_004.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        8                                                                                │
+  │ Passing:      6                                                                                │
+  │ Failing:      2                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  3                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     2 seconds                                                                        │
+  │ Spec Ran:     core/security/owasp.cy.js                                                        │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core\s    (1902x1104)
+     ecurity\owasp.cy.js\Seguridad · Data tables y carpetas (OWASP Top 10) -- A03 Inj               
+     ection (XSS) · un nombre de carpeta con HTML se muestra como texto (failed).png                
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core\s    (1902x1104)
+     ecurity\owasp.cy.js\Seguridad · Data tables y carpetas (OWASP Top 10) -- CP-018-               
+     08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236) (failed).png                     
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core\s    (1902x1104)
+     ecurity\owasp.cy.js\CP-018-08_evidencia.png                                                    
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\core\security\owasp.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-01/encryption-at-rest.api.cy.js                                 (6 of 10)
+
+
+  CR-01 · Cifrado de la credencial en la base de datos
+    1) CP-CR-01-07 · la columna data de credentials_entity no contiene el secreto en texto plano
+
+
+  0 passing (843ms)
+  1 failing
+
+  1) CR-01 · Cifrado de la credencial en la base de datos
+       CP-CR-01-07 · la columna data de credentials_entity no contiene el secreto en texto plano:
+
+      se leyó la base de datos
+      + expected - actual
+
+
+      at Context.eval (http://localhost:5678/__cypress/tests?p=credentials\CR-01\encryption-at-rest.api.cy.js:243:63)
+      at getRet (http://localhost:5678/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://localhost:5678/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://localhost:5678/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://localhost:5678/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://localhost:5678/__cypress/runner/cypress_runner.js:121328:21)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_005.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      0                                                                                │
+  │ Failing:      1                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  2                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     0 seconds                                                                        │
+  │ Spec Ran:     credentials/CR-01/encryption-at-rest.api.cy.js                                   │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials\CR-01\encryption-at-rest.api.cy.js\CR-01 · Cifrado de la credencial en la                
+     base de datos -- CP-CR-01-07 · la columna data de credentials_entity no contiene               
+      el secreto en texto plano (failed).png                                                        
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials\CR-01\encryption-at-rest.api.cy.js\CP-CR-01-07_evidencia.png                             
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\credentials\CR-01\encryption-at-rest.api.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-01/html-name.ui.cy.js                                           (7 of 10)
+
+
+  CR-01 · Nombre de credencial con HTML (UI)
+[EVIDENCIA] CR-01 · Nombre de credencial con HTML (UI) > CP-CR-01-08 · (error) el nombre se muestra literal y no ejecuta ningún script :: El nombre con <img onerror> y <script> aparece como texto y no se ejecuta
+    √ CP-CR-01-08 · (error) el nombre se muestra literal y no ejecuta ningún script (5784ms)
+
+
+  1 passing (6s)
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_006.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      1                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  1                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     5 seconds                                                                        │
+  │ Spec Ran:     credentials/CR-01/html-name.ui.cy.js                                             │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials\CR-01\html-name.ui.cy.js\CP-CR-01-08_nombre-html.png                                     
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\credentials\CR-01\html-name.ui.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-02/secret-exposure.api.cy.js                                    (8 of 10)
+
+
+  CR-02 · Secretos de una credencial (API)
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro :: GET /rest/credentials/tRLW98b7FRiYSpsb → {"data":{"updatedAt":"2026-11-15T16:23:17.297Z","createdAt":"2026-11-15T16:23:17.300Z","id":"tRLW98b7FRiYSpsb","name":"VyV-Header_mwi1n6l3650","type":"httpHeaderAuth","isManaged":f
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro :: GET /rest/credentials/tRLW98b7FRiYSpsb?includeData=true → {"data":{"data":{"name":"X-API-Key","value":"__n8n_BLANK_VALUE_e5362baf-c777-4d57-a609-6eaf1f9e87f6"},"updatedAt":"2026-11-15T16:23:17.297Z","createdAt":"2026-11-15T16:23:17.300Z",
+    √ CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre :: credentials del nodo: {"id":"tRLW98b7FRiYSpsb","name":"VyV-Header_mwi1n6l3650"}
+    √ CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre
+
+
+  2 passing (2s)
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_007.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        2                                                                                │
+  │ Passing:      2                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  2                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 second                                                                         │
+  │ Spec Ran:     credentials/CR-02/secret-exposure.api.cy.js                                      │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials\CR-02\secret-exposure.api.cy.js\CP-CR-02-03_evidencia.png                                
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials\CR-02\secret-exposure.api.cy.js\CP-CR-02-04_evidencia.png                                
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\credentials\CR-02\secret-exposure.api.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-02/credential-modal.ui.cy.js                                    (9 of 10)
+
+
+  CR-02 · Formulario y eliminación de credenciales (UI)
+[EVIDENCIA] CR-02 · Formulario y eliminación de credenciales (UI) > CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM :: Campo Value al reabrir: «__n8n_BLANK_VALUE_e5362baf-c77»
+    √ CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM (6017ms)
+[EVIDENCIA] CR-02 · Formulario y eliminación de credenciales (UI) > CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial :: El diálogo pide confirmar con «Yes, delete» (sin texto que escribir); al cancelar, la credencial sigue en el listado
+    √ CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial (6494ms)
+
+
+  2 passing (13s)
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_008.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        2                                                                                │
+  │ Passing:      2                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  2                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     12 seconds                                                                       │
+  │ Spec Ran:     credentials/CR-02/credential-modal.ui.cy.js                                      │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials\CR-02\credential-modal.ui.cy.js\CP-CR-02-02_enmascarado.png                              
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials\CR-02\credential-modal.ui.cy.js\CP-CR-02-06_dialogo.png                                  
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\credentials\CR-02\credential-modal.ui.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials/CR-05/isolation.api.cy.js                                         (10 of 10)
+
+
+  CR-05 · Aislamiento de credenciales entre usuarios (API)
+[EVIDENCIA] CR-05 · Aislamiento de credenciales entre usuarios (API) > CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió :: Miembro · GET /rest/credentials → 0 credenciales; VyV-Privada visible: false
+[EVIDENCIA] CR-05 · Aislamiento de credenciales entre usuarios (API) > CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió :: Miembro · GET /rest/credentials/d9jWLYpBnKWm7Osh → HTTP 403
+    √ CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió
+
+
+  1 passing (1s)
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_009.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      1                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  1                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 second                                                                         │
+  │ Spec Ran:     credentials/CR-05/isolation.api.cy.js                                            │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials\CR-05\isolation.api.cy.js\CP-CR-05-05_evidencia.png                                      
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\credentials\CR-05\isolation.api.cy.js.mp4
+
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✖  security/credentials.security.cy.js      00:10       11       10        1        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  security/executions.security.cy.js       00:07        9        7        2        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  security/transversal.security.cy.js      00:05        8        6        2        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  security/workflows.security.cy.js        00:14       11        8        3        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  core/security/owasp.cy.js                00:02        8        6        2        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  credentials/CR-01/encryption-at-res      845ms        1        -        1        -        - │
+  │    t.api.cy.js                                                                                 │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-01/html-name.ui.cy.j      00:05        1        1        -        -        - │
+  │    s                                                                                           │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-02/secret-exposure.a      00:01        2        2        -        -        - │
+  │    pi.cy.js                                                                                    │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-02/credential-modal.      00:12        2        2        -        -        - │
+  │    ui.cy.js                                                                                    │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  credentials/CR-05/isolation.api.cy.      00:01        1        1        -        -        - │
+  │    js                                                                                          │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✖  6 of 10 failed (60%)                     01:02       54       43       11        -        -  
+
