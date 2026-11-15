@@ -19,7 +19,8 @@ vyv/
 │   ├── credentials/CR-01 … CR-05/
 │   ├── core/CO-01 … CO-05/                   *.api.cy.js, *.ui.cy.js, *.feature
 │   ├── screenplay/                           actor, escena, habilidades, interacciones, tareas y preguntas
-│   ├── core/security/ core/accessibility/
+│   ├── core/security/                        OWASP Top 10
+│   ├── accessibility/                        WCAG 2.2: axe, comprobaciones manuales y datos de las interfaces
 │   ├── regression/                           suite de regresión: un archivo por módulo del plan
 │   ├── scenarios/                            escenarios extremo a extremo ES-01 … ES-06
 │   └── support/ (pasos de Gherkin) fixtures/ scripts/
@@ -106,6 +107,7 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | `e2e` (escenarios y rendimiento) | **14 pruebas, 14 aprobadas**: ES-01 a ES-06 en 1366 × 768 y 1920 × 1080, la vista de una data table de 10 000 filas y el listado con 50 credenciales. Evidencia: [`evidence/e2e/after/scenarios/`](evidence/e2e/after/scenarios/) | 14/11/2026 · n8n 2.47.0, Chromium 1243 |
 | `e2e` (Gherkin + Screenplay) | **20 features, 85 escenarios y 613 pasos: 85 aprobados.** Hay una feature por funcionalidad de los 4 módulos, con escenarios de éxito, alternativos y de error. Evidencia: [`evidence/e2e/after/bdd/`](evidence/e2e/after/bdd/) (reporte de Cucumber en HTML y JSON, y la salida de Cypress) | 14/11/2026 · n8n 2.47.0, Chromium 1243 |
 | Regresión | **E2E: 162 pruebas de las 20 funcionalidades, 0 regresiones causadas por los cambios y 4 defectos corregidos. Unitarias: 349 pruebas, 0 regresiones y 20 corregidas.** Una segunda corrida E2E encontró un defecto intermitente de n8n en WF-03 que no causa esta rama. Evidencia: [`evidence/e2e/regression/`](evidence/e2e/regression/) y [`evidence/units/regression/`](evidence/units/regression/) | 15/11/2026 · antes: n8n 2.47.0 de upstream; después: esta rama |
+| Accesibilidad | **12 interfaces de los 4 módulos con axe (tema claro y oscuro), Lighthouse (78–100) y 65 comprobaciones manuales: 14 barreras WCAG 2.2 A/AA**, con su criterio, impacto y recomendación. Evidencia: [`evidence/e2e/accessibility/`](evidence/e2e/accessibility/) | 15/11/2026 · n8n 2.47.0, Chromium 1243 |
 | Estáticas | `vue-tsc` y lint (`oxlint` + `eslint`) del editor sin errores, después de quitar dos variables sin uso que dejó el traslado de pruebas a `units/`. Evidencia: [`evidence/static/`](evidence/static/) | 14/11/2026 |
 | `api` | **Newman: 40 peticiones y 62 aserciones, 0 fallidas.** Evidencia: [`evidence/api/`](evidence/api/) | 14/11/2026 · n8n 2.47.0 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
@@ -139,7 +141,7 @@ Cada una de las 20 funcionalidades del plan tiene pruebas Cypress con escenarios
 | CO-04 Carpetas | CP-019-01, 019-03, 019-04 | 019-05 migas de pan, 019-06 conteos | 019-02 nombres inválidos, 129 caracteres | `core/CO-04/folders-create-navigate.api`, `folders.ui`, `folders.feature` | CO-04-01, 04-03 |
 | CO-05 Mover y eliminar | CP-020-01, CO-05-02 a la raíz, 020-02, 020-04 | 020-05 eliminar sin transferir, carpeta vacía | 020-03 su propio padre, mover a un descendiente, transferir a sí misma | `core/CO-05/folders-move-delete.api`, `move-to-root.api`, `folders.ui`, `folders.feature` | CO-05-05 |
 
-Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`core/accessibility/wcag.cy.js`) y la suite de regresión (`regression/`, ver [Pruebas de regresión](#pruebas-de-regresión)).
+Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`accessibility/`, ver [Pruebas de accesibilidad](#pruebas-de-accesibilidad)) y la suite de regresión (`regression/`, ver [Pruebas de regresión](#pruebas-de-regresión)).
 
 ### Hallazgos de la ejecución del 14/11/2026
 
@@ -316,6 +318,124 @@ node scripts/compare-regression.mjs results/regression-antes results/regression 
 ```
 
 En el nivel unitario los pasos son los mismos, con `./vyv/run-tests.sh units --reporter=default --reporter=json --outputFile.json=<archivo>` en lugar de Cypress. El comparador acepta el JSON de mochawesome y el de Vitest, agrupa por funcionalidad y termina con código 1 si hay regresiones. Su propia prueba se ejecuta con `npm run test:scripts`.
+
+## Pruebas de accesibilidad
+
+La evaluación sigue la skill [`accessibility`](https://github.com/addyosmani/web-quality-skills) (WCAG 2.2, nivel A y AA). Combina una auditoría automática con Lighthouse y axe-core, y comprobaciones manuales de teclado, foco, etiquetas, contraste, mensajes y adaptación visual. La skill propone Lighthouse a través de Chrome DevTools MCP, pero en este contenedor ese navegador no arranca (no hay servidor X y se ejecuta como root). Por eso se usa la alternativa que la propia skill indica: Lighthouse por CLI/API y axe-core. Las comprobaciones manuales tienen un guion en Cypress, así se repiten igual en cada corrida.
+
+### Interfaces seleccionadas
+
+Se eligieron las pantallas que más usa una persona en cada módulo del plan: [`e2e/accessibility/interfaces.js`](e2e/accessibility/interfaces.js).
+
+| ID | Módulo | Funcionalidades | Interfaz | Ruta |
+| --- | --- | --- | --- | --- |
+| I-00 | — | Acceso | Inicio de sesión | `/signin` |
+| I-01 | 1 · Workflows | WF-01, WF-05 | Lista de workflows | `/home/workflows` |
+| I-02 | 1 · Workflows | WF-01, WF-02, WF-03 | Editor de workflows (lienzo) | `/workflow/:id` |
+| I-03 | 1 · Workflows | WF-04 | Historial de versiones | `/workflow/:id/history` |
+| I-04 | 2 · Ejecuciones | EX-01, EX-02, EX-04 | Lista global de ejecuciones | `/home/executions` |
+| I-05 | 2 · Ejecuciones | EX-03, EX-05 | Ejecuciones del workflow y vista previa | `/workflow/:id/executions/:ejecución` |
+| I-06 | 3 · Credenciales | CR-05 | Lista de credenciales | `/home/credentials` |
+| I-07 | 3 · Credenciales | CR-01, CR-02 | Formulario de una credencial | `/home/credentials/:id` |
+| I-08 | 4 · Core | CO-01 | Lista de data tables | `/home/datatables` |
+| I-09 | 4 · Core | CO-02, CO-03 | Detalle de una data table | `/projects/:p/datatables/:id` |
+| I-10 | 4 · Core | CO-04, CO-05 | Carpeta con migas de pan | `/projects/:p/folders/:id/workflows` |
+| I-11 | 4 · Core | CO-01, CO-03 | Modal de nueva data table | se abre desde I-08 |
+
+### Ejecuciones
+
+| Herramienta | Qué hace | Interfaces | Resultado (15/11/2026) | Evidencia |
+| --- | --- | --- | --- | --- |
+| axe-core 4 en Cypress ([`automatic.a11y.cy.js`](e2e/accessibility/automatic.a11y.cy.js)) | Reglas WCAG 2.0, 2.1 y 2.2 A/AA, en tema claro y oscuro | las 12, × 2 temas | 24 vistas auditadas, 764 evaluaciones de reglas; 9 reglas con violaciones | `resumen-axe.json`, `axe-*.json` |
+| Lighthouse 12.6.1, categoría Accessibility ([`lighthouse-a11y.mjs`](e2e/scripts/lighthouse-a11y.mjs)) | Auditoría en escritorio 1440 × 900, con sesión iniciada | las 11 con URL | puntuación de 78 a 100 | `resumen-lighthouse.json`, `lighthouse/*.json` |
+| Comprobaciones manuales con guion ([`manual.a11y.cy.js`](e2e/accessibility/manual.a11y.cy.js)) | Teclado, foco, etiquetas, contraste, mensajes, adaptación visual, título, idioma y tamaño de los objetivos | según la comprobación | 65 comprobaciones: 53 cumplen, 12 no cumplen | `manual.json` |
+
+La evidencia está en [`evidence/e2e/accessibility/`](evidence/e2e/accessibility/). Todas las corridas son contra n8n 2.47.0 de esta rama, con Chromium 1243.
+
+| Interfaz | Lighthouse | axe, tema claro (reglas / nodos) | axe, tema oscuro (reglas / nodos) |
+| --- | --- | --- | --- |
+| I-00 Inicio de sesión | 100 | 0 / 0 | 0 / 0 |
+| I-01 Lista de workflows | 81 | 4 / 62 | 5 / 63 |
+| I-02 Editor de workflows | 85 | 2 / 10 | 3 / 11 |
+| I-03 Historial de versiones | 78 | 6 / 13 | 7 / 14 |
+| I-04 Lista global de ejecuciones | 80 | 4 / 32 | 5 / 33 |
+| I-05 Ejecuciones del workflow | 89 | 2 / 10 | 3 / 11 |
+| I-06 Lista de credenciales | 80 | 5 / 23 | 6 / 24 |
+| I-07 Formulario de una credencial | 89 | 2 / 4 | 3 / 5 |
+| I-08 Lista de data tables | 81 | 4 / 36 | 5 / 37 |
+| I-09 Detalle de una data table | 80 | 4 / 11 | 5 / 12 |
+| I-10 Carpeta con migas de pan | 79 | 4 / 14 | 5 / 15 |
+| I-11 Modal de nueva data table | — | 4 / 36 | 5 / 37 |
+
+En tema oscuro, la regla de más es siempre `color-contrast` sobre la etiqueta «E2E_TESTS=true» (4,43:1 para un mínimo de 4,5:1). Esa etiqueta solo aparece en el modo de pruebas de n8n, así que no se cuenta como barrera del producto. Con esa excepción, el tema oscuro no añade fallos de contraste.
+
+### Criterios WCAG evaluados
+
+| Criterio | Nivel | Cómo se evaluó | Resultado |
+| --- | --- | --- | --- |
+| 1.1.1 Contenido no textual | A | axe, Lighthouse | ✅ en la corrida final (una corrida anterior marcó un icono de credencial sin `alt` en I-06) |
+| 1.3.1 Información y relaciones | A | axe, Lighthouse | ❌ A11Y-02, A11Y-04, A11Y-05, A11Y-07 |
+| 1.3.4 Orientación | AA | manual: 768 × 1024 y 1024 × 768 | ✅ |
+| 1.4.3 Contraste mínimo | AA | axe en los dos temas; manual: texto de ejemplo (placeholder) | ✅ (4,74:1 en los placeholders; excepción de modo de pruebas arriba) |
+| 1.4.4 Cambio de tamaño del texto | AA | manual: zoom del 200 % | ✅ |
+| 1.4.10 Reflujo | AA | manual: 320 px de ancho | ✅ sin desplazamiento horizontal |
+| 1.4.11 Contraste sin texto | AA | manual: contraste del indicador de foco | ❌ A11Y-09 |
+| 1.4.12 Espaciado del texto | AA | manual: espaciado de WCAG inyectado | ✅ ningún texto cortado |
+| 2.1.1 Teclado | A | manual | ❌ A11Y-10, A11Y-11 |
+| 2.1.2 Sin trampas de teclado | A | manual | ✅ |
+| 2.3.3 Animación por interacción | AAA (informativo) | manual: reglas `prefers-reduced-motion` | ✅ 70 reglas |
+| 2.4.1 Evitar bloques | A | manual | ✅ región `main` (no hay enlace para saltar al contenido) |
+| 2.4.2 Titulado de páginas | A | manual | ❌ A11Y-13 |
+| 2.4.3 Orden del foco | A | manual | ❌ A11Y-11 |
+| 2.4.4 Propósito de los enlaces | A | axe | ❌ A11Y-05 |
+| 2.4.7 Foco visible | AA | manual | ❌ A11Y-08 |
+| 2.4.11 Foco no oculto | AA | manual | ✅ |
+| 2.5.3 Etiqueta en el nombre | A | axe | ❌ A11Y-06 |
+| 2.5.8 Tamaño del objetivo (mínimo) | AA | manual | ❌ A11Y-14 |
+| 3.1.1 Idioma de la página | A | manual, axe | ✅ `lang="en"` |
+| 3.3.1 Identificación de errores | A | manual: contraseña incorrecta | ✅ «Wrong username or password…» |
+| 3.3.2 Etiquetas o instrucciones | A | manual | ❌ A11Y-12 |
+| 4.1.2 Nombre, función y valor | A | axe, Lighthouse | ❌ A11Y-01, A11Y-03, A11Y-05, A11Y-07 |
+| 4.1.3 Mensajes de estado | AA | manual: error de inicio de sesión | ✅ `role="alert"` y `aria-live` |
+
+### Barreras encontradas y recomendaciones
+
+| ID | Criterio | Impacto | Interfaces | Barrera | Recomendación |
+| --- | --- | --- | --- | --- | --- |
+| A11Y-01 | 4.1.2 | Crítico | 9 de 12 (hasta 51 nodos en I-01) | Los botones de solo icono no tienen nombre accesible: sobre todo el menú de acciones «⋮» de cada tarjeta de workflow, credencial y data table (`reka-dropdown-menu-trigger`). Un lector de pantalla los anuncia como «botón» sin decir qué hacen. | Dar a `N8nActionToggle` y a los botones de icono un `aria-label` con la acción y el elemento, p. ej. «Acciones de VyV A11y workflow». |
+| A11Y-02 | 1.3.1 | Crítico | 11 de 12 | Los enlaces del menú lateral (Overview, Assistant, proyecto personal) y las pestañas del formulario de credencial (Connection, Sharing) tienen `role="menuitem"` sin un `role="menu"` que los contenga. | Quitar `role="menuitem"` y dejar enlaces dentro de un `<nav>` con `aria-current`, o agruparlos en un `role="menu"` real con su navegación por flechas. |
+| A11Y-03 | 4.1.2 | Crítico | 10 de 12 | Los disparadores de las ventanas emergentes del menú lateral (Assistant, Help) son `<div type="button" aria-expanded>`: un `div` sin rol no admite `aria-expanded`. | Usar `<button>` (o `role="button"` con `tabindex` y manejo de Enter/Espacio). |
+| A11Y-04 | 1.3.1 | Crítico | 7 de 12 | Las pestañas del proyecto son un `role="tablist"` con enlaces `<a>` como hijos, sin `role="tab"`. El grid de la data table (ag-grid) tiene hijos de presentación que reciben el foco. | Marcar cada enlace con `role="tab"` y `aria-selected`, o usar navegación con `aria-current`. Revisar la configuración de accesibilidad de ag-grid. |
+| A11Y-05 | 2.4.4, 1.3.1, 4.1.2 | Serio | I-03 | En el historial de versiones, el enlace para cerrar no tiene texto; la lista `<ul>` tiene un `<span>` como hijo directo; cada versión es un `<li role="button">` con controles enfocables dentro. Lighthouse también marca el rol no permitido de ese `li`. | `aria-label="Close version history"` en el enlace; `<li>` como hijos directos; separar la acción de seleccionar versión de su menú de acciones. |
+| A11Y-06 | 2.5.3 | Serio | I-06 | Un botón del listado de credenciales tiene un nombre accesible que no incluye su texto visible. | Hacer que el `aria-label` empiece por el texto visible, o quitarlo. |
+| A11Y-07 | 1.3.1, 4.1.2 | Serio | I-04, I-02 | La tabla de la lista global de ejecuciones no asocia sus celdas a encabezados (`td-has-header`, Lighthouse). En el editor, una ventana emergente con `role="dialog"` no tiene nombre (`aria-dialog-name`). | Usar `<th scope="col">` en la tabla; dar `aria-label` o `aria-labelledby` al diálogo. |
+| A11Y-08 | 2.4.7 | Moderado | I-01, I-06, I-08 | El área de desplazamiento del menú lateral (`div` con `tabindex="0"` del componente scroll area) recibe el foco sin ningún indicador visible. | Quitar el `tabindex` si el área no necesita foco, o darle un estilo `:focus-visible`. |
+| A11Y-09 | 1.4.11 | Moderado | I-01, I-06, I-08 | El contorno de foco de los enlaces del menú lateral, de Settings, del selector de orden y de los enlaces de dependencias es negro al 20 % de opacidad: 1,6:1 contra el fondo, por debajo de 3:1. Los botones sí cumplen, porque añaden un anillo interior negro. | Subir la opacidad del token del contorno de foco hasta 3:1 o más, o usar el mismo anillo que los botones. |
+| A11Y-10 | 2.1.1 | Crítico | I-02 | En el editor, ningún nodo del lienzo recibe el foco con Tab (60 pulsaciones). Una persona que solo usa el teclado no puede seleccionar ni abrir un nodo. | Hacer los nodos enfocables (roving `tabindex` en el lienzo) con Enter para abrirlos y flechas para moverse entre ellos, y documentar los atajos. |
+| A11Y-11 | 2.1.1, 2.4.3 | Serio | I-07 | En el formulario de una credencial, Esc solo cierra el modal si el foco está en la cabecera: con el foco en un campo del formulario no lo cierra ni con dos pulsaciones. Al cerrar, el foco va a `body` y no vuelve a la tarjeta que abrió el modal. | Cerrar con Esc desde cualquier control del diálogo (sin que los campos detengan el evento) y devolver el foco al elemento que abrió el modal. |
+| A11Y-12 | 3.3.2 | Serio | I-11, I-07 | El campo de nombre del modal de nueva data table solo tiene el texto de ejemplo «Enter data table name», sin etiqueta asociada. El selector «Select» del formulario de credencial tampoco tiene etiqueta. | Asociar una etiqueta visible (`<label for>`) o `aria-labelledby`. El texto de ejemplo no sustituye a la etiqueta. |
+| A11Y-13 | 2.4.2 | Moderado | I-00, I-03 | El inicio de sesión y el historial de versiones tienen el título genérico «n8n.io - Workflow Automation»: no se distinguen en las pestañas ni en el lector de pantalla. | Dar a cada vista un título propio, p. ej. «Sign in - n8n» y «Version history - n8n». |
+| A11Y-14 | 2.5.8 | Menor | I-01 | La insignia de la tarjeta (`card-badge`) y las migas de pan miden menos de 24 × 24 px y tienen otros controles muy cerca. | Aumentar el área de toque hasta 24 × 24 px o separar los controles. |
+
+Además, las tarjetas de la lista de credenciales son un `<div>` que solo se abre con el ratón. Con el teclado se llega a su menú de acciones, que ofrece «Open», así que 2.1.1 se cumple, pero con un paso más que con el ratón.
+
+### Lo que no cubren estas pruebas
+
+- **Lectores de pantalla reales** (NVDA, VoiceOver): no están disponibles en el contenedor. El nombre, la función y el estado se evalúan con axe y Lighthouse, que leen el mismo árbol de accesibilidad.
+- **Alto contraste de Windows y zoom real del navegador:** el zoom del 200 % se simula con un viewport de 720 × 450, que es equivalente para el reflujo pero no para todos los efectos.
+- **Contraste del indicador de foco:** se mide sobre el contorno (outline) y el primer anillo de `box-shadow`. Un indicador con otro mecanismo (por ejemplo, un cambio de fondo) se cuenta como visible, pero su contraste no se mide.
+- **Títulos con «[DEV]»:** salen así porque la instancia es una compilación de desarrollo; en producción ese sufijo no aparece.
+
+### Ejecutar las pruebas de accesibilidad
+
+```bash
+cd vyv/e2e
+npm install
+CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' npm run test:a11y          # axe (12 interfaces × 2 temas) y comprobaciones manuales
+CHROME_PATH=/ruta/a/chrome CYPRESS_ownerEmail='…' CYPRESS_ownerPassword='…' npm run test:lighthouse   # Lighthouse sobre las URL de results/a11y/datos.json
+```
+
+`npm run test:a11y` crea los datos de prueba (un workflow con una ejecución, una credencial, una data table y una carpeta) y escribe `results/a11y/datos.json` con las URL que audita Lighthouse. Por eso `test:lighthouse` va después.
 
 ## Escenarios extremo a extremo (ES-01 a ES-06)
 

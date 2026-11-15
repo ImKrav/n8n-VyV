@@ -1,0 +1,42 @@
+{
+  "interfaz": "I-05",
+  "nombre": "Ejecuciones del workflow y vista previa",
+  "modulo": "2 · Ejecuciones",
+  "tema": "light",
+  "reglasEvaluadas": 27,
+  "aprobadas": 25,
+  "violaciones": 2,
+  "nodos": 10,
+  "hallazgos": [
+    {
+      "regla": "aria-allowed-attr",
+      "impacto": "critical",
+      "wcag": [
+        "4.1.2"
+      ],
+      "descripcion": "Elements must only use supported ARIA attributes",
+      "nodos": 3,
+      "ejemplos": [
+        "#reka-popover-trigger-v-0-34",
+        "#reka-popover-trigger-v-0-8",
+        "#reka-popover-trigger-v-0-14"
+      ],
+      "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-allowed-attr?application=axeAPI"
+    },
+    {
+      "regla": "aria-required-parent",
+      "impacto": "critical",
+      "wcag": [
+        "1.3.1"
+      ],
+      "descripcion": "Certain ARIA roles must be contained by particular parents",
+      "nodos": 7,
+      "ejemplos": [
+        "#instance-ai",
+        "#home",
+        "#\\33 jI2G8eCjReIDdFK"
+      ],
+      "ayuda": "https://dequeuniversity.com/rules/axe/4.14/aria-required-parent?application=axeAPI"
+    }
+  ]
+}

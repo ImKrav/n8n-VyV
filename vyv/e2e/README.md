@@ -27,7 +27,7 @@ Los IDs de las pruebas son los mismos de la matriz de casos y de la RTM (que van
 | 8. Gherkin + Screenplay | Un `*.feature` por funcionalidad en `workflows/`, `executions/`, `credentials/` y `core/`; `screenplay/` y `support/step_definitions/` | — |
 | 9. Jenkins, Docker, SonarQube | — (a cargo de otro integrante; ver sección 8) | — |
 | 10. Regresión | `regression/` (un archivo por módulo), `scripts/compare-regression.mjs` | Comparación antes / después |
-| 11. Accesibilidad | `core/accessibility/` (axe-core + teclado) | Hallazgos WCAG y revisión manual |
+| 11. Accesibilidad | `accessibility/` (axe-core, comprobaciones manuales con guion) y `scripts/lighthouse-a11y.mjs` (Lighthouse) | Criterios WCAG evaluados, barreras y recomendaciones (`../README.md`) |
 | 12. Usabilidad (Nielsen, SUS) | — | Tareas, SUS y hallazgos |
 | 13. Seguridad | `core/security/` (OWASP Top 10) | Hallazgos, severidad, recomendaciones |
 | 14. IA | `../ai/stagehand`, `../ai/deepeval`, `../ai/generator` | Configuración, resultados y límites |
@@ -46,7 +46,7 @@ vyv/e2e/                    ← pruebas funcionales (esta carpeta)
                               *.ui.cy.js   por interfaz
                               *.feature    Gherkin en español (Dado/Cuando/Entonces)
     security/               OWASP Top 10
-    accessibility/          WCAG 2.1 AA con axe-core
+  accessibility/            WCAG 2.2 A/AA: axe en 12 interfaces × 2 temas y comprobaciones manuales con guion
   regression/               suite de regresión: un archivo por módulo, specs de las 20 funcionalidades
   screenplay/               Actor, escena (Stage), habilidades, interacciones, tareas y preguntas de los 4 módulos
   support/                  comandos, cliente de la API de n8n, pasos de Gherkin por módulo (step_definitions/)
@@ -110,7 +110,8 @@ npm run test:api          # 36 casos por API
 npm run test:ui           # interfaz
 npm run test:bdd          # Gherkin + Screenplay
 npm run test:security     # OWASP
-npm run test:a11y         # WCAG
+npm run test:a11y         # WCAG 2.2: axe y comprobaciones manuales
+npm run test:lighthouse   # Lighthouse (después de test:a11y; CHROME_PATH=…)
 npm run test:all          # todo lo anterior (lo que ejecuta ../run-tests.sh e2e)
 npm run report            # results/report/index.html
 npm run evidence          # results/by-case/<CP-xxx-yy>/

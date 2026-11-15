@@ -1,0 +1,11 @@
+I-00 /signin: 100 · sin reglas fallidas
+I-01 /home/workflows: 81 · aria-allowed-attr, aria-required-children, aria-required-parent, button-name
+I-02 /workflow/NAYng8Q2YbdbviL8: 85 · aria-allowed-attr, aria-dialog-name, aria-required-parent
+I-03 /workflow/NAYng8Q2YbdbviL8/history/9a1eca57-cf6b-4b7b-ad0d-1e7a3e4aae31: 78 · aria-allowed-attr, aria-allowed-role, aria-required-parent, button-name, link-name, list
+I-04 /home/executions: 80 · aria-allowed-attr, aria-required-children, aria-required-parent, button-name, td-has-header
+I-05 /workflow/NAYng8Q2YbdbviL8/executions/5118: 89 · aria-allowed-attr, aria-required-parent
+I-06 /home/credentials: 80 · aria-allowed-attr, aria-required-children, aria-required-parent, button-name
+I-07 /home/credentials/D0hmRY3P8IEaWmaa: 89 · aria-required-parent, button-name
+I-08 /home/datatables: 81 · aria-allowed-attr, aria-required-children, aria-required-parent, button-name
+I-09 /projects/3jI2G8eCjReIDdFK/datatables/I87gLEYucACoO6kS: 80 · aria-allowed-attr, aria-required-children, aria-required-parent, button-name
+I-10 /projects/3jI2G8eCjReIDdFK/folders/MfWgILHtVXwvVZLX/workflows: 79 · aria-allowed-attr, aria-required-children, aria-required-parent, button-name

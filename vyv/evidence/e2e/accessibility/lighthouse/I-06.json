@@ -1,0 +1,49 @@
+{
+  "interfaz": "I-06",
+  "url": "/home/credentials",
+  "puntuacion": 80,
+  "fallidas": [
+    {
+      "regla": "aria-allowed-attr",
+      "titulo": "`[aria-*]` attributes do not match their roles",
+      "nodos": [
+        "div > div._projects_1gsv8_3 > div._home_1gsv8_162 > div#reka-popover-trigger-v-0-5",
+        "div#side-menu > div._bottomMenu_1y1rq_3 > div._bottomMenuItems_1y1rq_12 > div#reka-popover-trigger-v-0-11",
+        "div._filters-row_18h2g_121 > div._filters_18h2g_121 > div._sort-and-filter_18h2g_139 > span#reka-popover-trigger-v-0-84"
+      ],
+      "total": 3
+    },
+    {
+      "regla": "aria-required-children",
+      "titulo": "Elements with an ARIA `[role]` that require children to contain a specific `[role]` are missing some or all of those required children.",
+      "nodos": [
+        "div > div._actions_e1k9j_147 > div.n8n-tabs > div._tabs_1xd39_14"
+      ],
+      "total": 1
+    },
+    {
+      "regla": "aria-required-parent",
+      "titulo": "`[role]`s are not contained by their required parent element",
+      "nodos": [
+        "div._home_1gsv8_162 > div#reka-popover-trigger-v-0-5 > span > a#instance-ai",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#home",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#3jI2G8eCjReIDdFK",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#templates",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#insights"
+      ],
+      "total": 7
+    },
+    {
+      "regla": "button-name",
+      "titulo": "Buttons do not have an accessible name",
+      "nodos": [
+        "div > div._buttonGroup_1d8c0_1 > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-18",
+        "div._append_vkfqj_54 > div._cardActions_11x3s_157 > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-88",
+        "div._append_vkfqj_54 > div._cardActions_11x3s_157 > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-91",
+        "div._append_vkfqj_54 > div._cardActions_11x3s_157 > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-94",
+        "div._append_vkfqj_54 > div._cardActions_11x3s_157 > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-98"
+      ],
+      "total": 11
+    }
+  ]
+}

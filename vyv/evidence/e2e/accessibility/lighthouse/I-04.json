@@ -1,0 +1,56 @@
+{
+  "interfaz": "I-04",
+  "url": "/home/executions",
+  "puntuacion": 80,
+  "fallidas": [
+    {
+      "regla": "aria-allowed-attr",
+      "titulo": "`[aria-*]` attributes do not match their roles",
+      "nodos": [
+        "div > div._projects_1gsv8_3 > div._home_1gsv8_162 > div#reka-popover-trigger-v-0-5",
+        "div#side-menu > div._bottomMenu_1y1rq_3 > div._bottomMenuItems_1y1rq_12 > div#reka-popover-trigger-v-0-11"
+      ],
+      "total": 2
+    },
+    {
+      "regla": "aria-required-children",
+      "titulo": "Elements with an ARIA `[role]` that require children to contain a specific `[role]` are missing some or all of those required children.",
+      "nodos": [
+        "div > div._actions_e1k9j_147 > div.n8n-tabs > div._tabs_1xd39_14"
+      ],
+      "total": 1
+    },
+    {
+      "regla": "aria-required-parent",
+      "titulo": "`[role]`s are not contained by their required parent element",
+      "nodos": [
+        "div._home_1gsv8_162 > div#reka-popover-trigger-v-0-5 > span > a#instance-ai",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#home",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#3jI2G8eCjReIDdFK",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#templates",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#insights"
+      ],
+      "total": 7
+    },
+    {
+      "regla": "button-name",
+      "titulo": "Buttons do not have an accessible name",
+      "nodos": [
+        "div > div._buttonGroup_1d8c0_1 > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-22",
+        "tr > th > div._checkbox_1xlzj_2 > button#v-0-42",
+        "tr > td > div._checkbox_1xlzj_2 > button#v-0-43",
+        "tbody > tr > td > button#reka-dropdown-menu-trigger-v-0-47",
+        "tr > td > div._checkbox_1xlzj_2 > button#v-0-48"
+      ],
+      "total": 22
+    },
+    {
+      "regla": "td-has-header",
+      "titulo": "`<td>` elements in a large `<table>` do not have table headers.",
+      "nodos": [
+        "div._execTable_17pg6_23 > div._n8nTable_11pw4_1 > div._n8nTableScroll_11pw4_1 > table"
+      ],
+      "total": 1
+    }
+  ]
+}

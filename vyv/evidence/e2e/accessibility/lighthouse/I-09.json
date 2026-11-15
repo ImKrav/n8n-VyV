@@ -1,0 +1,44 @@
+{
+  "interfaz": "I-09",
+  "url": "/projects/3jI2G8eCjReIDdFK/datatables/I87gLEYucACoO6kS",
+  "puntuacion": 80,
+  "fallidas": [
+    {
+      "regla": "aria-allowed-attr",
+      "titulo": "`[aria-*]` attributes do not match their roles",
+      "nodos": [
+        "div > div._projects_1gsv8_3 > div._home_1gsv8_162 > div#reka-popover-trigger-v-0-5",
+        "div#side-menu > div._bottomMenu_1y1rq_3 > div._bottomMenuItems_1y1rq_12 > div#reka-popover-trigger-v-0-11"
+      ],
+      "total": 2
+    },
+    {
+      "regla": "aria-required-children",
+      "titulo": "Elements with an ARIA `[role]` that require children to contain a specific `[role]` are missing some or all of those required children.",
+      "nodos": [
+        "div.ag-theme-params-1 > div.ag-root-wrapper > div.ag-root-wrapper-body > div.ag-root"
+      ],
+      "total": 1
+    },
+    {
+      "regla": "aria-required-parent",
+      "titulo": "`[role]`s are not contained by their required parent element",
+      "nodos": [
+        "div._home_1gsv8_162 > div#reka-popover-trigger-v-0-5 > span > a#instance-ai",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#home",
+        "div._home_1gsv8_162 > div._menuItemWrapper_7t8d9_572 > span > a#3jI2G8eCjReIDdFK",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#templates",
+        "div._bottomMenuItems_1y1rq_12 > div._menuItemWrapper_7t8d9_572 > span > a#insights"
+      ],
+      "total": 7
+    },
+    {
+      "regla": "button-name",
+      "titulo": "Buttons do not have an accessible name",
+      "nodos": [
+        "div._data-table-actions_w5mn1_6 > div > span.action-toggle > button#reka-dropdown-menu-trigger-v-0-21"
+      ],
+      "total": 1
+    }
+  ]
+}

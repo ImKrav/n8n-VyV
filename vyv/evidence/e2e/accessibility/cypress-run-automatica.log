@@ -1,0 +1,225 @@
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Custom Chrome for Testing 153 (headless)                                       │
+  │ Node Version:   v22.23.4 (/opt/node22/bin/node)                                                │
+  │ Specs:          2 found (automatic.a11y.cy.js, manual.a11y.cy.js)                              │
+  │ Searched:       accessibility/**/*.cy.js                                                       │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  automatic.a11y.cy.js                                                            (1 of 2)
+
+
+  Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA)
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-00 · Inicio de sesión · tema claro :: I-00-light: 25 reglas cumplidas, 0 violaciones (ninguna)
+    ✓ I-00 · Inicio de sesión · tema claro (5010ms)
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-01 · Lista de workflows · tema claro :: I-01-light: 31 reglas cumplidas, 4 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name)
+    ✓ I-01 · Lista de workflows · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-02 · Editor de workflows (lienzo) · tema claro :: I-02-light: 25 reglas cumplidas, 2 violaciones (aria-allowed-attr, aria-required-parent)
+    ✓ I-02 · Editor de workflows (lienzo) · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-03 · Historial de versiones · tema claro :: I-03-light: 27 reglas cumplidas, 6 violaciones (aria-allowed-attr, aria-required-parent, button-name, link-name, list, nested-interactive)
+    ✓ I-03 · Historial de versiones · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-04 · Lista global de ejecuciones · tema claro :: I-04-light: 28 reglas cumplidas, 4 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name)
+    ✓ I-04 · Lista global de ejecuciones · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-05 · Ejecuciones del workflow y vista previa · tema claro :: I-05-light: 25 reglas cumplidas, 2 violaciones (aria-allowed-attr, aria-required-parent)
+    ✓ I-05 · Ejecuciones del workflow y vista previa · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-06 · Lista de credenciales · tema claro :: I-06-light: 29 reglas cumplidas, 5 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, label-content-name-mismatch)
+    ✓ I-06 · Lista de credenciales · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-07 · Formulario de una credencial · tema claro :: I-07-light: 27 reglas cumplidas, 2 violaciones (aria-required-parent, button-name)
+    ✓ I-07 · Formulario de una credencial · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-08 · Lista de data tables · tema claro :: I-08-light: 31 reglas cumplidas, 4 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name)
+    ✓ I-08 · Lista de data tables · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-09 · Detalle de una data table · tema claro :: I-09-light: 31 reglas cumplidas, 4 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name)
+    ✓ I-09 · Detalle de una data table · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-10 · Carpeta con migas de pan · tema claro :: I-10-light: 28 reglas cumplidas, 4 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name)
+    ✓ I-10 · Carpeta con migas de pan · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-11 · Modal de nueva data table · tema claro :: I-11-light: 29 reglas cumplidas, 4 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name)
+    ✓ I-11 · Modal de nueva data table · tema claro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-00 · Inicio de sesión · tema oscuro :: I-00-dark: 25 reglas cumplidas, 0 violaciones (ninguna)
+    ✓ I-00 · Inicio de sesión · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-01 · Lista de workflows · tema oscuro :: I-01-dark: 31 reglas cumplidas, 5 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, color-contrast)
+    ✓ I-01 · Lista de workflows · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-02 · Editor de workflows (lienzo) · tema oscuro :: I-02-dark: 24 reglas cumplidas, 3 violaciones (aria-allowed-attr, aria-required-parent, color-contrast)
+    ✓ I-02 · Editor de workflows (lienzo) · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-03 · Historial de versiones · tema oscuro :: I-03-dark: 27 reglas cumplidas, 7 violaciones (aria-allowed-attr, aria-required-parent, button-name, color-contrast, link-name, list, nested-interactive)
+    ✓ I-03 · Historial de versiones · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-04 · Lista global de ejecuciones · tema oscuro :: I-04-dark: 28 reglas cumplidas, 5 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, color-contrast)
+    ✓ I-04 · Lista global de ejecuciones · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-05 · Ejecuciones del workflow y vista previa · tema oscuro :: I-05-dark: 25 reglas cumplidas, 3 violaciones (aria-allowed-attr, aria-required-parent, color-contrast)
+    ✓ I-05 · Ejecuciones del workflow y vista previa · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-06 · Lista de credenciales · tema oscuro :: I-06-dark: 29 reglas cumplidas, 6 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, color-contrast, label-content-name-mismatch)
+    ✓ I-06 · Lista de credenciales · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-07 · Formulario de una credencial · tema oscuro :: I-07-dark: 27 reglas cumplidas, 3 violaciones (aria-required-parent, button-name, color-contrast)
+    ✓ I-07 · Formulario de una credencial · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-08 · Lista de data tables · tema oscuro :: I-08-dark: 31 reglas cumplidas, 5 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, color-contrast)
+    ✓ I-08 · Lista de data tables · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-09 · Detalle de una data table · tema oscuro :: I-09-dark: 31 reglas cumplidas, 5 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, color-contrast)
+    ✓ I-09 · Detalle de una data table · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-10 · Carpeta con migas de pan · tema oscuro :: I-10-dark: 28 reglas cumplidas, 5 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, color-contrast)
+    ✓ I-10 · Carpeta con migas de pan · tema oscuro
+[EVIDENCIA] Accesibilidad · auditoría automática (axe-core, WCAG 2.2 A/AA) > I-11 · Modal de nueva data table · tema oscuro :: I-11-dark: 29 reglas cumplidas, 5 violaciones (aria-allowed-attr, aria-required-children, aria-required-parent, button-name, color-contrast)
+    ✓ I-11 · Modal de nueva data table · tema oscuro
+
+
+  24 passing (1m)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/a11y/mochawesome/mochawesome.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        24                                                                               │
+  │ Passing:      24                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 minute, 17 seconds                                                             │
+  │ Spec Ran:     automatic.a11y.cy.js                                                             │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/automatic.a11y.cy.js (2).mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  manual.a11y.cy.js                                                               (2 of 2)
+
+
+  Accesibilidad · comprobaciones manuales con guion
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 2.4.3 · I-00 · cumple: orden de Tab: emailOrLdapLoginId → password → form-submit-button → auth-form
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 2.1.1 · I-00 · cumple: Enter en el campo de contraseña envía el formulario
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 3.3.1 · I-00 · cumple: mensaje: «Sign in | Problem logging in Wrong username or password. Do you have caps lock on?»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) :: 4.1.3 · I-00 · cumple: anunciado por aria-live=polite, alert
+    ✓ Teclado · inicio de sesión: orden de Tab y envío con Enter (2.1.1, 2.4.3) (6574ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.1 · I-01 · cumple: 45 elementos distintos en 45 Tab; botón de crear alcanzable
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.2 · I-01 · cumple: últimas 10 paradas en 10 elementos distintos
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.7 · I-01 · no cumple: 43 de 44 paradas con indicador visible; sin indicador: DIV
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.11 · I-01 · cumple: ningún elemento con foco queda tapado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 1.4.11 · I-01 · no cumple: 43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1)
+    ✓ Teclado y foco · Lista de workflows: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) (5787ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.1 · I-06 · cumple: 45 elementos distintos en 45 Tab; botón de crear alcanzable
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.2 · I-06 · cumple: últimas 10 paradas en 10 elementos distintos
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.7 · I-06 · no cumple: 43 de 44 paradas con indicador visible; sin indicador: DIV
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.11 · I-06 · cumple: ningún elemento con foco queda tapado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 1.4.11 · I-06 · no cumple: 43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1), credential-card-dependents (1.61:1)
+    ✓ Teclado y foco · Lista de credenciales: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.1 · I-08 · cumple: 45 elementos distintos en 45 Tab; botón de crear alcanzable
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.1.2 · I-08 · cumple: últimas 10 paradas en 10 elementos distintos
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.7 · I-08 · no cumple: 43 de 44 paradas con indicador visible; sin indicador: DIV
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 2.4.11 · I-08 · cumple: ningún elemento con foco queda tapado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11) :: 1.4.11 · I-08 · no cumple: 43 indicadores de foco medidos (outline o box-shadow); por debajo de 3:1: menu-item (1.61:1), main-sidebar-settings (1.61:1), resources-list-sort (1.6:1)
+    ✓ Teclado y foco · Lista de data tables: alcance, indicador visible y foco no tapado (2.1.1, 2.1.2, 2.4.7, 2.4.11, 1.4.11)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.1.1 · I-06 · cumple: la tarjeta no recibe el foco; con Tab se llega a su menú de acciones («credential-card-actions»), que ofrece «Open»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.4.3 · I-07 · cumple: al abrir con Enter el foco está en «dialog-close-button»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.4.3 · I-07 · cumple: 20 Tab: el foco no sale del modal
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) :: 2.1.1 · I-07 · no cumple: Esc no cierra el modal; solo se cierra con el botón de cerrar
+    ✓ Teclado · formulario de una credencial: el foco queda en el modal, Esc lo cierra y vuelve al origen (2.1.2, 2.4.3) (6687ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · modal de nueva data table: foco inicial en el nombre y Esc lo cierra (2.4.3, 2.1.1) :: 2.4.3 · I-11 · cumple: foco inicial en «data-table-name-input-select»
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · modal de nueva data table: foco inicial en el nombre y Esc lo cierra (2.4.3, 2.1.1) :: 2.1.1 · I-11 · cumple: Esc cierra el modal
+    ✓ Teclado · modal de nueva data table: foco inicial en el nombre y Esc lo cierra (2.4.3, 2.1.1)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Teclado · editor de workflows: los nodos del lienzo se alcanzan con Tab (2.1.1) :: 2.1.1 · I-02 · no cumple: ningún nodo del lienzo recibe el foco con Tab en 60 pulsaciones
+    ✓ Teclado · editor de workflows: los nodos del lienzo se alcanzan con Tab (2.1.1) (5081ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Etiquetas · Inicio de sesión: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2) :: 3.3.2 · I-00 · cumple: 2 de 2 campos con etiqueta
+    ✓ Etiquetas · Inicio de sesión: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Etiquetas · Formulario de una credencial: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2) :: 3.3.2 · I-07 · no cumple: 2 de 3 campos con etiqueta; sin etiqueta: input (placeholder «Select»)
+    ✓ Etiquetas · Formulario de una credencial: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Etiquetas · Modal de nueva data table: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2) :: 3.3.2 · I-11 · no cumple: 0 de 1 campos con etiqueta; sin etiqueta: input (placeholder «Enter data table name»)
+    ✓ Etiquetas · Modal de nueva data table: cada campo tiene nombre accesible (1.3.1, 3.3.2, 4.1.2)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Contraste · texto de ejemplo (placeholder) de los campos · Lista de workflows (1.4.3) :: 1.4.3 · I-01 · cumple: «Search» 4.74:1, «Select» 4.74:1
+    ✓ Contraste · texto de ejemplo (placeholder) de los campos · Lista de workflows (1.4.3)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Contraste · texto de ejemplo (placeholder) de los campos · Formulario de una credencial (1.4.3) :: 1.4.3 · I-07 · cumple: «Select» 4.74:1
+    ✓ Contraste · texto de ejemplo (placeholder) de los campos · Formulario de una credencial (1.4.3)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Contraste · texto de ejemplo (placeholder) de los campos · Modal de nueva data table (1.4.3) :: 1.4.3 · I-11 · cumple: «Enter data table name» 4.74:1
+    ✓ Contraste · texto de ejemplo (placeholder) de los campos · Modal de nueva data table (1.4.3)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 3.1.1 · todas · cumple: <html lang="en">
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-00 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-01 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-02 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-03 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-04 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-05 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-06 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-07 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-08 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-09 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-10 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.1 · I-11 · cumple: región main; sin enlace para saltar al contenido
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) :: 2.4.2 · todas · no cumple: I-00: «n8n.io - Workflow Automation» · I-01: «Workflows - n8n[DEV]» · I-02: «▶️ VyV A11y workflow - n8n[DEV]» · I-03: «n8n.io - Workflow Automation» · I-04: «Executions - n8n[DEV]» · I-05: «▶️ VyV A11y workflow - n8n[DEV]» · I-06: «Credentials - n8n[DEV]» · I-07: «Credentials - n8n[DEV]» · I-08: «Data tables - n8n[DEV]» · I-09: «Data tables > vyv_a11y_mwhas4rv656 - n8n[DEV]» · I-10: «Workflows - n8n[DEV]» · I-11: «Data tables - n8n[DEV]»
+    ✓ Página · título, idioma y salto de bloques en todas las interfaces (2.4.2, 3.1.1, 2.4.1) (35832ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-00 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-01 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-04 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-06 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) :: 1.4.10 · I-08 · cumple: ancho 320 px: sin desplazamiento horizontal; contenido principal visible
+    ✓ Adaptación visual · reflujo a 320 px de ancho: sin desplazamiento horizontal (1.4.10) (13157ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-00 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-01 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-04 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-06 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) :: 1.4.4 · I-08 · cumple: ancho 720 px: sin desplazamiento horizontal; contenido principal visible
+    ✓ Adaptación visual · zoom del 200 % (1440 × 900 al 200 %): sin desplazamiento horizontal (1.4.4) (13300ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-00 · cumple: ningún texto queda cortado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-01 · cumple: ningún texto queda cortado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-06 · cumple: ningún texto queda cortado
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) :: 1.4.12 · I-07 · cumple: ningún texto queda cortado
+    ✓ Adaptación visual · espaciado de texto de WCAG sin perder contenido (1.4.12) (12060ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · orientación vertical y horizontal (1.3.4) y movimiento reducido (2.3.3) :: 1.3.4 · I-01 · cumple: la vista se usa en 768 × 1024 (vertical) y en 1024 × 768 (horizontal)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Adaptación visual · orientación vertical y horizontal (1.3.4) y movimiento reducido (2.3.3) :: 2.3.3 · todas · cumple: 70 reglas CSS para prefers-reduced-motion
+    ✓ Adaptación visual · orientación vertical y horizontal (1.3.4) y movimiento reducido (2.3.3) (6143ms)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Objetivos · Lista de workflows: controles de al menos 24 × 24 px (2.5.8) :: 2.5.8 · I-01 · no cumple: 143 controles; 2 menores de 24 px sin espacio suficiente: card-badge, breadcrumbs-item
+    ✓ Objetivos · Lista de workflows: controles de al menos 24 × 24 px (2.5.8)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Objetivos · Editor de workflows (lienzo): controles de al menos 24 × 24 px (2.5.8) :: 2.5.8 · I-02 · cumple: 42 controles; 0 menores de 24 px sin espacio suficiente
+    ✓ Objetivos · Editor de workflows (lienzo): controles de al menos 24 × 24 px (2.5.8)
+[EVIDENCIA] Accesibilidad · comprobaciones manuales con guion > Objetivos · Lista de credenciales: controles de al menos 24 × 24 px (2.5.8) :: 2.5.8 · I-06 · cumple: 38 controles; 0 menores de 24 px sin espacio suficiente
+    ✓ Objetivos · Lista de credenciales: controles de al menos 24 × 24 px (2.5.8)
+
+
+  21 passing (2m)
+
+[mochawesome] Report JSON saved to /home/user/n8n-VyV/vyv/e2e/results/a11y/mochawesome/mochawesome_001.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        21                                                                               │
+  │ Passing:      21                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     2 minutes, 21 seconds                                                            │
+  │ Spec Ran:     manual.a11y.cy.js                                                                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: /home/user/n8n-VyV/vyv/e2e/results/videos/manual.a11y.cy.js (4).mp4
+
+
+resize:  can't open terminal /dev/tty
+================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✔  automatic.a11y.cy.js                     01:17       24       24        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✔  manual.a11y.cy.js                        02:21       21       21        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✔  All specs passed!                        03:39       45       45        -        -        -  
+
