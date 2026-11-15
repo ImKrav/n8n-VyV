@@ -21,6 +21,8 @@ const ARCHIVOS = [
 
 /** Funcionalidad del plan a la que pertenece una prueba, por su título completo. */
 export const funcionalidad = (titulo) => {
+  // CP-SEG-WF-01 … son casos de seguridad, no de la funcionalidad WF-01.
+  if (/\bCP-SEG-/.test(titulo)) return 'Seguridad';
   const directa = titulo.match(/\b(WF|EX|CR|CO)-0[1-5]\b/);
   if (directa) return directa[0];
   const antigua = titulo.match(/\b(?:CP|BUG)-(01[6-9]|020)-/);

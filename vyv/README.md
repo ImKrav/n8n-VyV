@@ -19,17 +19,20 @@ vyv/
 │   ├── credentials/CR-01 … CR-05/
 │   ├── core/CO-01 … CO-05/                   *.api.cy.js, *.ui.cy.js, *.feature
 │   ├── screenplay/                           actor, escena, habilidades, interacciones, tareas y preguntas
-│   ├── core/security/                        OWASP Top 10
+│   ├── core/security/                        OWASP Top 10 de data tables y carpetas
+│   ├── security/                             OWASP Top 10:2025 de Workflows, Ejecuciones, Credenciales y transversal
 │   ├── accessibility/                        WCAG 2.2: axe, comprobaciones manuales y datos de las interfaces
 │   ├── regression/                           suite de regresión: un archivo por módulo del plan
 │   ├── scenarios/                            escenarios extremo a extremo ES-01 … ES-06
 │   └── support/ (pasos de Gherkin) fixtures/ scripts/
 ├── api/                 colección Postman de la API de los 4 módulos (Newman)
+├── security/            informe OWASP Top 10:2025, registro de hallazgos y scans.sh (SAST, SCA, secretos, DAST)
 ├── ai/                  Stagehand, DeepEval y generador de casos con IA
 └── evidence/
     ├── units/           ciclos TDD, ejecución completa y cobertura de la suite unitaria
     ├── e2e/             ejecuciones de Cypress «antes» (n8n 2.46.6) y «después» (2.47.0) y línea base de regresión
     ├── api/             última ejecución de Newman (JUnit y consola)
+    ├── security/        corridas de seguridad antes/después y salidas de Semgrep, pnpm audit, Trivy, gitleaks, ZAP y n8n audit
     └── static/          typecheck y lint del editor (pruebas estáticas)
 ```
 
@@ -38,6 +41,7 @@ vyv/
 | [`units/`](units/README.md) | Un `describe` por caso del plan, TDD, AAA, FIRST y dobles de prueba | 1 Workflows · 2 Ejecuciones · 3 Credenciales · 4 Core | Vitest |
 | [`e2e/`](e2e/README.md) | Las 20 funcionalidades por API (`cy.request`), UI y Gherkin + Screenplay, con escenarios de éxito, alternativos y de error; seguridad (OWASP), accesibilidad (WCAG) y regresión | 1 · 2 · 3 · 4 | Cypress |
 | [`api/`](api/README.md) | Flujos principales y errores de la API REST de los 4 módulos | 1 · 2 · 3 · 4 | Postman + Newman |
+| [`security/`](security/README.md) | OWASP Top 10:2025: pruebas dirigidas por API y UI (propietario frente a miembro), SAST, SCA, secretos, DAST pasivo y auditoría de la instancia | 1 · 2 · 3 · 4 | Cypress, Semgrep, pnpm audit, Trivy, gitleaks, OWASP ZAP |
 | [`ai/`](e2e/README.md#6-inteligencia-artificial-punto-14) | Flujos en lenguaje natural, evaluación de un asistente y generación de casos | 4 Core | Stagehand, DeepEval, LLM |
 
 Las pruebas unitarias de backend de data tables y carpetas (`*.vyv.test.ts`) están junto al código que verifican, en `packages/` (ver la sección 5 de [`e2e/README.md`](e2e/README.md)). `run-tests.sh` también las ejecuta.
@@ -106,8 +110,9 @@ La prueba del límite de almacenamiento (CP-017-08) y la regresión antes/despu�
 | `e2e` (complemento) | **13 pruebas nuevas en Chromium, 13 aprobadas**: CP-WF-02-02, 03-07, CP-EX-01-05, 01-06, 04-01, 04-06, 05-05, CP-CR-02-02, 02-06, 04-03, 04-04 y CP-CO-05-02. Evidencia: [`evidence/e2e/after/complement/`](evidence/e2e/after/complement/) y las capturas en `by-case/` | 14/11/2026 · n8n 2.47.0, misma instancia |
 | `e2e` (escenarios y rendimiento) | **14 pruebas, 14 aprobadas**: ES-01 a ES-06 en 1366 × 768 y 1920 × 1080, la vista de una data table de 10 000 filas y el listado con 50 credenciales. Evidencia: [`evidence/e2e/after/scenarios/`](evidence/e2e/after/scenarios/) | 14/11/2026 · n8n 2.47.0, Chromium 1243 |
 | `e2e` (Gherkin + Screenplay) | **20 features, 85 escenarios y 613 pasos: 85 aprobados.** Hay una feature por funcionalidad de los 4 módulos, con escenarios de éxito, alternativos y de error. Evidencia: [`evidence/e2e/after/bdd/`](evidence/e2e/after/bdd/) (reporte de Cucumber en HTML y JSON, y la salida de Cypress) | 14/11/2026 · n8n 2.47.0, Chromium 1243 |
-| Regresión | **E2E: 162 pruebas de las 20 funcionalidades, 0 regresiones causadas por los cambios y 4 defectos corregidos. Unitarias: 349 pruebas, 0 regresiones y 20 corregidas.** Una segunda corrida E2E encontró un defecto intermitente de n8n en WF-03 que no causa esta rama. Evidencia: [`evidence/e2e/regression/`](evidence/e2e/regression/) y [`evidence/units/regression/`](evidence/units/regression/) | 15/11/2026 · antes: n8n 2.47.0 de upstream; después: esta rama |
+| Regresión | **E2E: 162 pruebas de las 20 funcionalidades, 0 regresiones causadas por los cambios y 4 defectos corregidos. Unitarias: 349 pruebas, 0 regresiones y 20 corregidas.** Una segunda corrida E2E encontró un defecto intermitente de n8n en WF-03 que no causa esta rama. **Corrida con las pruebas de seguridad: 193 pruebas, 0 regresiones y 4 corregidas** ([`con-seguridad/`](evidence/e2e/regression/con-seguridad/)). Evidencia: [`evidence/e2e/regression/`](evidence/e2e/regression/) y [`evidence/units/regression/`](evidence/units/regression/) | 15/11/2026 · antes: n8n 2.47.0 de upstream; después: esta rama |
 | Accesibilidad | **12 interfaces de los 4 módulos con axe (tema claro y oscuro), Lighthouse (78–100) y 65 comprobaciones manuales: 14 barreras WCAG 2.2 A/AA**, con su criterio, impacto y recomendación. Evidencia: [`evidence/e2e/accessibility/`](evidence/e2e/accessibility/) | 15/11/2026 · n8n 2.47.0, Chromium 1243 |
+| Seguridad | **54 pruebas OWASP Top 10:2025 de los 4 módulos: antes 43 aprobadas / 11 fallidas, después 45 / 9.** 19 hallazgos registrados: 1 de severidad media (SSRF por la configuración por defecto, mitigado con `N8N_SSRF_PROTECTION_ENABLED=true`), 11 bajos, 2 por validar, 3 falsos positivos y 2 de dependencias (18 avisos altos de pnpm audit; 2 CVE críticas de Alpine en la imagen, Trivy). El issue #8 no se reproduce en modo normal. Evidencia: [`evidence/security/`](evidence/security/) · informe: [`security/README.md`](security/README.md) | 15/11/2026 · n8n 2.47.0 oficial (Docker) y fork compilado, modo normal, Chromium |
 | Estáticas | `vue-tsc` y lint (`oxlint` + `eslint`) del editor sin errores, después de quitar dos variables sin uso que dejó el traslado de pruebas a `units/`. Evidencia: [`evidence/static/`](evidence/static/) | 14/11/2026 |
 | `api` | **Newman: 40 peticiones y 62 aserciones, 0 fallidas.** Evidencia: [`evidence/api/`](evidence/api/) | 14/11/2026 · n8n 2.47.0 |
 | `e2e` (antes) | 84 aprobadas, 3 fallidas (defectos reales), 1 pendiente. Evidencia: [`evidence/e2e/before/`](evidence/e2e/before/) | 08/11/2026 · n8n 2.46.6 publicado |
@@ -141,7 +146,7 @@ Cada una de las 20 funcionalidades del plan tiene pruebas Cypress con escenarios
 | CO-04 Carpetas | CP-019-01, 019-03, 019-04 | 019-05 migas de pan, 019-06 conteos | 019-02 nombres inválidos, 129 caracteres | `core/CO-04/folders-create-navigate.api`, `folders.ui`, `folders.feature` | CO-04-01, 04-03 |
 | CO-05 Mover y eliminar | CP-020-01, CO-05-02 a la raíz, 020-02, 020-04 | 020-05 eliminar sin transferir, carpeta vacía | 020-03 su propio padre, mover a un descendiente, transferir a sí misma | `core/CO-05/folders-move-delete.api`, `move-to-root.api`, `folders.ui`, `folders.feature` | CO-05-05 |
 
-Además: seguridad OWASP (`core/security/owasp.cy.js`), accesibilidad WCAG (`accessibility/`, ver [Pruebas de accesibilidad](#pruebas-de-accesibilidad)) y la suite de regresión (`regression/`, ver [Pruebas de regresión](#pruebas-de-regresión)).
+Además: seguridad OWASP Top 10:2025 de los 4 módulos (`security/` y `core/security/owasp.cy.js`, ver [`security/README.md`](security/README.md)), accesibilidad WCAG (`accessibility/`, ver [Pruebas de accesibilidad](#pruebas-de-accesibilidad)) y la suite de regresión (`regression/`, ver [Pruebas de regresión](#pruebas-de-regresión)).
 
 ### Hallazgos de la ejecución del 14/11/2026
 
@@ -302,6 +307,23 @@ Columnas: aprobadas / fallidas / pendientes.
 Las 24 pruebas corregidas son exactamente las de los defectos de la primera tabla. En E2E son CP-016-02, CP-018-07, CP-018-08 y BUG-018-05. En unitarias son las de `AddDataTableModal` (3), el rango de fechas de EX-02 (2) y el parser, la importación y el escape de CSV (15). Ninguna prueba pasa antes y falla después por los cambios. El detalle prueba por prueba está en [`comparacion-antes-vs-despues.md`](evidence/e2e/regression/comparacion-antes-vs-despues.md) y en [`units/regression/comparacion.md`](evidence/units/regression/comparacion.md).
 
 **Hallazgo de la segunda corrida (WF-03).** En la segunda corrida «después» falló CP-WF-03-03: n8n publicó un segundo workflow con la misma ruta y el mismo método que uno ya publicado (respondió 200 en lugar de 409). No es una regresión de esta rama, porque el código de publicación y de webhooks (`packages/cli`) es el mismo antes y después. El script [`diagnostico-webhook-duplicado.mjs`](evidence/e2e/regression/diagnostico-webhook-duplicado.mjs) lo reproduce contra la misma instancia: el segundo workflow se aceptó en 5 de 10 intentos y luego en 5 de 6. La causa no está confirmada: parece una condición de carrera entre el registro del webhook del primer workflow y la comprobación de conflictos del segundo. Hay que registrarlo como defecto y repetirlo en el entorno del plan. El comparador lo marca como regresión en [`comparacion-antes-vs-despues-2.md`](evidence/e2e/regression/comparacion-antes-vs-despues-2.md) porque compara estados, no causas.
+
+### Corrida con las pruebas de seguridad (15/11/2026)
+
+Las suites de Workflows, Ejecuciones y Credenciales importan ahora también su spec de seguridad (`e2e/security/<módulo>.security.cy.js`, ver [`security/README.md`](security/README.md)). Así cada corrida de regresión comprueba también que los controles de seguridad no se degradan. La spec transversal queda fuera, porque sus cabeceras cambian con `E2E_TESTS`. Las dos versiones se compilaron desde este repositorio en el mismo equipo y corrieron con la misma configuración: `E2E_TESTS=true` con Folders activada, SQLite y `http://127.0.0.1:5680`. «Antes» son los 7 archivos de producción de upstream `01bd57cdd`; «después» es esta rama.
+
+| Corrida | Pruebas | Aprobadas | Fallidas | Pendientes | Evidencia |
+| --- | --- | --- | --- | --- | --- |
+| Antes (upstream) | 193 | 178 | 14 | 1 | [`con-seguridad/antes/`](evidence/e2e/regression/con-seguridad/antes/) |
+| Después (esta rama) | 193 | 182 | 10 | 1 | [`con-seguridad/despues/`](evidence/e2e/regression/con-seguridad/despues/) |
+
+**Resultado: 0 regresiones y 4 corregidas** (CP-016-02, BUG-018-05, CP-018-07 y CP-018-08, las mismas de la corrida anterior). El detalle prueba por prueba está en [`comparacion-antes-vs-despues.md`](evidence/e2e/regression/con-seguridad/comparacion-antes-vs-despues.md). Las 10 fallidas de «después» fallan igual en «antes»:
+
+- **8 de seguridad**, que son hallazgos de n8n: SEC-01, SEC-05 a SEC-09 y SEC-19. En esta corrida, CP-SEG-WF-10 y CP-SEG-CR-11 fallan porque n8n se arrancó sin `NODE_ENV=production` y las respuestas de error traen `stacktrace`.
+- **CP-CR-03-01**: el `redirect_uri` usa `localhost` y la prueba espera la URL base (`127.0.0.1`). Es una diferencia de entorno.
+- **CP-CR-04-03**: el selector de credenciales del nodo no aparece en los 15 s de espera. Pasaba en la corrida anterior del equipo; se debe revisar en el entorno del plan.
+
+La pendiente es CP-WF-03-08, que necesita `CYPRESS_restartCommand`. CP-SEG-WF-09 (webhook justo después de despublicar) pasó en las dos versiones; solo falló en una corrida aislada (SEC-10, por validar).
 
 ### Ejecutar la regresión
 
@@ -467,7 +489,7 @@ Los hallazgos están registrados en GitHub Issues (numeral 13.3) con las etiquet
 | --- | --- | --- | --- |
 | #6 | CP-CO-03-04 | La importación de CSV ignora el separador «;» | Media |
 | #7 | CP-WF-01-08 | El lienzo con 100 nodos tarda más de 3 s | Media |
-| #8 | BUG-018-06 | Sin `X-Frame-Options` ni `frame-ancestors` | Alta |
+| #8 | BUG-018-06 | Sin `X-Frame-Options` ni `frame-ancestors`. No se reproduce en modo normal: solo falta en desarrollo y con `E2E_TESTS` (ver SEC-17 en [`security/README.md`](security/README.md)) | Alta |
 | #9 | CP-EX-04 | Detener una ejecución terminada responde 500 | Baja |
 | #10 | CP-EX-03 | Una ejecución eliminada responde 200 con `{}` | Baja |
 | #11 | CP-CR-01-02 | La API guarda credenciales sin sus campos obligatorios | Baja |

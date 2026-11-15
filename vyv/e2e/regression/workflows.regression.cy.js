@@ -11,3 +11,5 @@ import '../workflows/WF-03/webhook-publish.api.cy.js'; // WF-03 · Publicar
 import '../workflows/WF-03/unpublished-changes.ui.cy.js';
 import '../workflows/WF-04/version-history.api.cy.js'; // WF-04 · Historial de versiones
 import '../workflows/WF-05/import-duplicate.api.cy.js'; // WF-05 · Plantillas, importar y duplicar
+// Seguridad del módulo (OWASP Top 10:2025, RNF-02)
+import '../security/workflows.security.cy.js';

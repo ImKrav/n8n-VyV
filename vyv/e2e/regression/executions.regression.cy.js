@@ -11,3 +11,5 @@ import '../executions/EX-04/stop.api.cy.js'; // EX-04 · Detener
 import '../executions/EX-04/editor-stop.ui.cy.js';
 import '../executions/EX-05/execution-log.api.cy.js'; // EX-05 · Panel de logs
 import '../executions/EX-05/logs-keyboard.ui.cy.js';
+// Seguridad del módulo (OWASP Top 10:2025, RNF-02)
+import '../security/executions.security.cy.js';
