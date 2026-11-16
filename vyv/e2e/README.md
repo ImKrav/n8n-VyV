@@ -146,15 +146,13 @@ Para ver el **rojo** del TDD: `git checkout <commit "TDD rojo">` y ejecutar las 
 
 ## 6. Inteligencia artificial (punto 14)
 
-```bash
-# Stagehand (automatiza flujos con lenguaje natural)
-cd vyv/ai/stagehand && npm install && npm run preparar   # instala Chromium para Playwright
-cp .env.example .env                                # OPENAI_API_KEY o GOOGLE_API_KEY + credenciales de n8n
-npm test                                            # results.json + screenshots/
+Selenium, Stagehand y DeepEval cubren las 20 funcionalidades de los 4 módulos. Guía completa, matriz de cobertura y
+límites en [`../ai/README.md`](../ai/README.md).
 
-# DeepEval (evalúa el workflow "Asistente de Data Tables"; ver vyv/ai/deepeval/README.md)
-cd vyv/ai/deepeval && python -m venv .venv && .venv/Scripts/activate && pip install -r requirements.txt
-deepeval test run test_asistente_datatables.py      # sin API key o sin el workflow: se omite con un mensaje claro
+```bash
+./vyv/run-tests.sh ai selenium      # 49 pruebas de interfaz deterministas (sin API key)
+./vyv/run-tests.sh ai stagehand     # 20 flujos en lenguaje natural (OPENAI_API_KEY o GOOGLE_API_KEY)
+./vyv/run-tests.sh ai deepeval      # errores de la API y asistente de IA (LLM juez)
 
 # Generador de casos con IA (cualquier API compatible con OpenAI)
 cd vyv/ai/generator && LLM_API_KEY=... node generar-casos-ia.mjs   # output/ con CSV, Gherkin y análisis

@@ -27,7 +27,7 @@ vyv/
 │   └── support/ (pasos de Gherkin) fixtures/ scripts/
 ├── api/                 colección Postman de la API de los 4 módulos (Newman)
 ├── security/            informe OWASP Top 10:2025, registro de hallazgos y scans.sh (SAST, SCA, secretos, DAST)
-├── ai/                  Stagehand, DeepEval y generador de casos con IA
+├── ai/                  Selenium, Stagehand, DeepEval y generador de casos con IA (los 4 módulos)
 └── evidence/
     ├── units/           ciclos TDD, ejecución completa y cobertura de la suite unitaria
     ├── e2e/             ejecuciones de Cypress «antes» (n8n 2.46.6) y «después» (2.47.0) y línea base de regresión
@@ -42,7 +42,7 @@ vyv/
 | [`e2e/`](e2e/README.md) | Las 20 funcionalidades por API (`cy.request`), UI y Gherkin + Screenplay, con escenarios de éxito, alternativos y de error; seguridad (OWASP), accesibilidad (WCAG) y regresión | 1 · 2 · 3 · 4 | Cypress |
 | [`api/`](api/README.md) | Flujos principales y errores de la API REST de los 4 módulos | 1 · 2 · 3 · 4 | Postman + Newman |
 | [`security/`](security/README.md) | OWASP Top 10:2025: pruebas dirigidas por API y UI (propietario frente a miembro), SAST, SCA, secretos, DAST pasivo y auditoría de la instancia | 1 · 2 · 3 · 4 | Cypress, Semgrep, pnpm audit, Trivy, gitleaks, OWASP ZAP |
-| [`ai/`](e2e/README.md#6-inteligencia-artificial-punto-14) | Flujos en lenguaje natural, evaluación de un asistente y generación de casos | 4 Core | Stagehand, DeepEval, LLM |
+| [`ai/`](ai/README.md) | Pruebas de interfaz deterministas (49), 20 flujos en lenguaje natural, evaluación de errores de la API y de un asistente, y generación de casos | 1 · 2 · 3 · 4 | Selenium, Stagehand, DeepEval, LLM |
 
 Las pruebas unitarias de backend de data tables y carpetas (`*.vyv.test.ts`) están junto al código que verifican, en `packages/` (ver la sección 5 de [`e2e/README.md`](e2e/README.md)). `run-tests.sh` también las ejecuta.
 

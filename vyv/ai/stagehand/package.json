@@ -3,7 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node stagehand-datatables-carpetas.mjs",
+    "test": "node run.mjs",
+    "test:workflows": "node run.mjs workflows",
+    "test:executions": "node run.mjs executions",
+    "test:credentials": "node run.mjs credentials",
+    "test:core": "node run.mjs core",
+    "test:core-original": "node stagehand-datatables-carpetas.mjs",
     "preparar": "playwright install chromium"
   },
   "dependencies": {

@@ -6,3 +6,10 @@ ai/generator/output/
 ai/deepeval/.venv/
 .env
 cypress.env.json
+ai/stagehand/results/
+ai/selenium/results/
+ai/selenium/.venv/
+ai/selenium/.pytest_cache/
+ai/deepeval/.pytest_cache/
+ai/deepeval/.deepeval/
+__pycache__/

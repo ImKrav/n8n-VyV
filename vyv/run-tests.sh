@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # Runs the n8n-VyV test plan (modules 1–4) from vyv/.
 #
-# Usage: ./vyv/run-tests.sh [units|backend|e2e|api|security|all] [Vitest arguments for units]
+# Usage: ./vyv/run-tests.sh [units|backend|e2e|api|security|ai|all] [arguments]
 #   units    editor unit suite (vyv/units); no arguments: full run with coverage; `units CO-05` runs a subset
 #   backend  backend unit tests *.vyv.test.ts of data tables and folders
 #   e2e      Cypress suite (vyv/e2e); needs n8n on http://localhost:5678
 #   api      Newman API collection (vyv/api); needs n8n on http://localhost:5678
 #   security OWASP Top 10:2025 Cypress specs and the Docker scans (vyv/security); needs n8n in normal mode
-#   all      the four parts in sequence
+#   ai       AI tools over the 4 modules: selenium | stagehand | deepeval | all (default); needs n8n on :5678
+#            e.g. `ai selenium`, `ai stagehand core`, `ai deepeval`. LLM keys in each tool's .env
+#   all      units, backend, e2e and api in sequence (ai and security are run on their own)
 # Without an argument it runs units and backend, which do not need a running n8n.
 set -euo pipefail
 VYV="$(cd "$(dirname "$0")" && pwd)"
@@ -60,6 +62,37 @@ security() {
 	return "$status"
 }
 
+# AI tools (Selenium, Stagehand, DeepEval) over the four modules. Each one is independent: a missing
+# API key or a stopped n8n skips that tool with a clear message instead of failing the whole run.
+ai() {
+	local tool="${1:-all}"
+	[ $# -gt 0 ] && shift
+	[ "$tool" = all ] && set --  # extra arguments only make sense for one specific tool
+	local status=0
+	if [ "$tool" = selenium ] || [ "$tool" = all ]; then
+		(
+			cd "$VYV/ai/selenium"
+			[ -d .venv ] || { python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt; }
+			.venv/bin/pytest "$@"
+		) || status=$?
+	fi
+	if [ "$tool" = stagehand ] || [ "$tool" = all ]; then
+		(
+			cd "$VYV/ai/stagehand"
+			[ -d node_modules ] || { npm install && npm run preparar; }
+			node run.mjs "$@"
+		) || status=$?
+	fi
+	if [ "$tool" = deepeval ] || [ "$tool" = all ]; then
+		(
+			cd "$VYV/ai/deepeval"
+			[ -d .venv ] || { python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt; }
+			.venv/bin/pytest -q "$@"
+		) || status=$?
+	fi
+	return "$status"
+}
+
 part="${1:-}"
 [ $# -gt 0 ] && shift
 case "$part" in
@@ -68,7 +101,8 @@ case "$part" in
 	e2e) e2e ;;
 	api) api ;;
 	security) security ;;
+	ai) ai "$@" ;;
 	all) (units) && (backend) && (e2e) && api ;;
 	'') (units) && backend ;;
-	*) sed -n '4,11p' "$0" >&2; exit 2 ;;
+	*) sed -n '4,13p' "$0" >&2; exit 2 ;;
 esac

@@ -1,4 +1,26 @@
-# DeepEval – Asistente de Data Tables (componente de IA incorporado)
+# DeepEval · calidad de la IA y de los mensajes de n8n (módulos 1–4)
+
+| Archivo | Qué evalúa |
+| --- | --- |
+| `test_calidad_errores_api.py` | 12 errores reales de la API de Workflows, Ejecuciones, Credenciales y Core: código 4xx (determinista) + juez LLM: mensaje **útil** y **sin fuga de información interna**. Incluye los casos del código refactorizado (BUG-018-05). |
+| `test_asistente_modulos.py` | El asistente responde sobre **datos reales de los 4 módulos** (workflows, ejecuciones, credenciales, carpetas): relevancia, fidelidad y exactitud (la respuesta esperada se calcula con la API). Seguridad: no revela secretos ni obedece instrucciones inyectadas en un nombre. |
+| `test_asistente_datatables.py` | Evaluación original del asistente de Data Tables (5 preguntas × 3 métricas). |
+
+```bash
+cd vyv/ai/deepeval
+python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+cp .env.example .env          # OPENAI_API_KEY + N8N_URL / N8N_EMAIL / N8N_PASSWORD
+deepeval test run test_calidad_errores_api.py      # no necesita el workflow del asistente
+pytest -q -m seguridad                              # solo fuga de secretos / inyección
+pytest -q -m "wf or cr"                             # por módulo: wf | ex | cr | co
+```
+
+`test_calidad_errores_api.py` solo necesita n8n y la API key del juez. `test_asistente_*` además necesitan el workflow
+del asistente (sección 1 de este README). Si falta algo, esa suite se **omite** con un mensaje claro.
+
+---
+
+# Asistente de Data Tables (componente de IA incorporado)
 
 ## 1. Construir el workflow en n8n (5 minutos)
 1. Crear workflow **"Asistente de Data Tables"**.
@@ -20,7 +42,7 @@
 
 ## 2. Ejecutar
 ```bash
-cd ia/deepeval
+cd vyv/ai/deepeval
 python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env   # poner la API key
