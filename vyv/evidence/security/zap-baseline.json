@@ -1,0 +1,1309 @@
+{
+	"@programName": "ZAP",
+	"@version": "2.16.1",
+	"@generated": "Sun, 15 Nov 2026 16:21:10",
+	"created": "2026-11-15T16:21:10.423536981Z",
+	"site":[ 
+		{
+			"@name": "http://host.docker.internal:5678",
+			"@host": "host.docker.internal",
+			"@port": "5678",
+			"@ssl": "false",
+			"alerts": [ 
+				{
+					"pluginid": "10038",
+					"alertRef": "10038-1",
+					"alert": "Content Security Policy (CSP) Header Not Set",
+					"name": "Content Security Policy (CSP) Header Not Set",
+					"riskcode": "2",
+					"confidence": "3",
+					"riskdesc": "Medium (High)",
+					"desc": "<p>Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a set of standard HTTP headers that allow website owners to declare approved sources of content that browsers should be allowed to load on that page \u2014 covered types are JavaScript, CSS, HTML frames, fonts, images and embeddable objects such as Java applets, ActiveX, audio and video files.</p>",
+					"instances":[ 
+						{
+							"id": "7",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "6",
+							"uri": "http://host.docker.internal:5678/robots.txt",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "5",
+							"uri": "http://host.docker.internal:5678/sitemap.xml",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						}
+					],
+					"count": "3",
+					"systemic": false,
+					"solution": "<p>Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.</p>",
+					"otherinfo": "",
+					"reference": "<p>https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP</p><p>https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html</p><p>https://www.w3.org/TR/CSP/</p><p>https://w3c.github.io/webappsec-csp/</p><p>https://web.dev/articles/csp</p><p>https://caniuse.com/#feat=contentsecuritypolicy</p><p>https://content-security-policy.com/</p>",
+					"cweid": "693",
+					"wascid": "15",
+					"sourceid": "1"
+				},
+				{
+					"pluginid": "90004",
+					"alertRef": "90004-1",
+					"alert": "Insufficient Site Isolation Against Spectre Vulnerability",
+					"name": "Insufficient Site Isolation Against Spectre Vulnerability",
+					"riskcode": "1",
+					"confidence": "2",
+					"riskdesc": "Low (Medium)",
+					"desc": "<p>Cross-Origin-Resource-Policy header is an opt-in header designed to counter side-channels attacks like Spectre. Resource should be specifically set as shareable amongst different origins.</p>",
+					"instances":[ 
+						{
+							"id": "34",
+							"uri": "http://host.docker.internal:5678/assets/index-D6djc33x.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "32",
+							"uri": "http://host.docker.internal:5678/assets/rolldown-runtime-Cnm24cU6.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "27",
+							"uri": "http://host.docker.internal:5678/assets/vendor-BpMiN8nO.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "38",
+							"uri": "http://host.docker.internal:5678/favicon.ico",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "33",
+							"uri": "http://host.docker.internal:5678/static/base-path.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "30",
+							"uri": "http://host.docker.internal:5678/static/posthog.init.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "29",
+							"uri": "http://host.docker.internal:5678/static/prefers-color-scheme.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "48",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Embedder-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "49",
+							"uri": "http://host.docker.internal:5678/robots.txt",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Embedder-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "50",
+							"uri": "http://host.docker.internal:5678/sitemap.xml",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Embedder-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "51",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Opener-Policy",
+							"attack": "",
+							"evidence": "same-origin-allow-popups",
+							"otherinfo": ""
+						},
+						{
+							"id": "54",
+							"uri": "http://host.docker.internal:5678/robots.txt",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Opener-Policy",
+							"attack": "",
+							"evidence": "same-origin-allow-popups",
+							"otherinfo": ""
+						},
+						{
+							"id": "53",
+							"uri": "http://host.docker.internal:5678/sitemap.xml",
+							"nodeName": null,
+							"method": "GET",
+							"param": "Cross-Origin-Opener-Policy",
+							"attack": "",
+							"evidence": "same-origin-allow-popups",
+							"otherinfo": ""
+						}
+					],
+					"count": "13",
+					"systemic": false,
+					"solution": "<p>Ensure that the application/web server sets the Cross-Origin-Resource-Policy header appropriately, and that it sets the Cross-Origin-Resource-Policy header to 'same-origin' for all web pages.</p><p>'same-site' is considered as less secured and should be avoided.</p><p>If resources must be shared, set the header to 'cross-origin'.</p><p>If possible, ensure that the end user uses a standards-compliant and modern web browser that supports the Cross-Origin-Resource-Policy header (https://caniuse.com/mdn-http_headers_cross-origin-resource-policy).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Embedder-Policy</p>",
+					"cweid": "693",
+					"wascid": "14",
+					"sourceid": "26"
+				},
+				{
+					"pluginid": "10063",
+					"alertRef": "10063-1",
+					"alert": "Permissions Policy Header Not Set",
+					"name": "Permissions Policy Header Not Set",
+					"riskcode": "1",
+					"confidence": "2",
+					"riskdesc": "Low (Medium)",
+					"desc": "<p>Permissions Policy Header is an added layer of security that helps to restrict from unauthorized access or usage of browser/client features by web resources. This policy ensures the user privacy by limiting or specifying the features of the browsers can be used by the web resources. Permissions Policy provides a set of standard HTTP headers that allow website owners to limit which features of browsers can be used by the page such as camera, microphone, location, full screen etc.</p>",
+					"instances":[ 
+						{
+							"id": "42",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "116",
+							"uri": "http://host.docker.internal:5678/assets/app-Ccz2bwNC.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "31",
+							"uri": "http://host.docker.internal:5678/assets/index-D6djc33x.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "25",
+							"uri": "http://host.docker.internal:5678/assets/rolldown-runtime-Cnm24cU6.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "114",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "45",
+							"uri": "http://host.docker.internal:5678/robots.txt",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "46",
+							"uri": "http://host.docker.internal:5678/sitemap.xml",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "28",
+							"uri": "http://host.docker.internal:5678/static/base-path.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "26",
+							"uri": "http://host.docker.internal:5678/static/posthog.init.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						}
+					],
+					"count": "9",
+					"systemic": false,
+					"solution": "<p>Ensure that your web server, application server, load balancer, etc. is configured to set the Permissions-Policy header.</p>",
+					"otherinfo": "",
+					"reference": "<p>https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Permissions-Policy</p><p>https://developer.chrome.com/blog/feature-policy/</p><p>https://scotthelme.co.uk/a-new-security-header-feature-policy/</p><p>https://w3c.github.io/webappsec-feature-policy/</p><p>https://www.smashingmagazine.com/2018/12/feature-policy/</p>",
+					"cweid": "693",
+					"wascid": "15",
+					"sourceid": "7"
+				},
+				{
+					"pluginid": "10096",
+					"alertRef": "10096",
+					"alert": "Timestamp Disclosure - Unix",
+					"name": "Timestamp Disclosure - Unix",
+					"riskcode": "1",
+					"confidence": "1",
+					"riskdesc": "Low (Low)",
+					"desc": "<p>A timestamp was disclosed by the application/web server. - Unix</p>",
+					"instances":[ 
+						{
+							"id": "70",
+							"uri": "http://host.docker.internal:5678/assets/app-Ccz2bwNC.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1708695471",
+							"otherinfo": "1708695471, which evaluates to: 2024-02-23 13:37:51."
+						},
+						{
+							"id": "106",
+							"uri": "http://host.docker.internal:5678/assets/app-Ccz2bwNC.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1711838940",
+							"otherinfo": "1711838940, which evaluates to: 2024-03-30 22:49:00."
+						},
+						{
+							"id": "104",
+							"uri": "http://host.docker.internal:5678/assets/app-Ccz2bwNC.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1712334442",
+							"otherinfo": "1712334442, which evaluates to: 2024-04-05 16:27:22."
+						},
+						{
+							"id": "81",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1495990901",
+							"otherinfo": "1495990901, which evaluates to: 2017-05-28 17:01:41."
+						},
+						{
+							"id": "88",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1501505948",
+							"otherinfo": "1501505948, which evaluates to: 2017-07-31 12:59:08."
+						},
+						{
+							"id": "100",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1502002290",
+							"otherinfo": "1502002290, which evaluates to: 2017-08-06 06:51:30."
+						},
+						{
+							"id": "59",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1508970993",
+							"otherinfo": "1508970993, which evaluates to: 2017-10-25 22:36:33."
+						},
+						{
+							"id": "77",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1518500249",
+							"otherinfo": "1518500249, which evaluates to: 2018-02-13 05:37:29."
+						},
+						{
+							"id": "84",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1522805485",
+							"otherinfo": "1522805485, which evaluates to: 2018-04-04 01:31:25."
+						},
+						{
+							"id": "107",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1530992060",
+							"otherinfo": "1530992060, which evaluates to: 2018-07-07 19:34:20."
+						},
+						{
+							"id": "65",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1537002063",
+							"otherinfo": "1537002063, which evaluates to: 2018-09-15 09:01:03."
+						},
+						{
+							"id": "73",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1541459225",
+							"otherinfo": "1541459225, which evaluates to: 2018-11-05 23:07:05."
+						},
+						{
+							"id": "83",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1546045734",
+							"otherinfo": "1546045734, which evaluates to: 2018-12-29 01:08:54."
+						},
+						{
+							"id": "74",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1549556828",
+							"otherinfo": "1549556828, which evaluates to: 2019-02-07 16:27:08."
+						},
+						{
+							"id": "61",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1555081692",
+							"otherinfo": "1555081692, which evaluates to: 2019-04-12 15:08:12."
+						},
+						{
+							"id": "112",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1560198380",
+							"otherinfo": "1560198380, which evaluates to: 2019-06-10 20:26:20."
+						},
+						{
+							"id": "86",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1575990012",
+							"otherinfo": "1575990012, which evaluates to: 2019-12-10 15:00:12."
+						},
+						{
+							"id": "93",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1595750129",
+							"otherinfo": "1595750129, which evaluates to: 2020-07-26 07:55:29."
+						},
+						{
+							"id": "89",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1607167915",
+							"otherinfo": "1607167915, which evaluates to: 2020-12-05 11:31:55."
+						},
+						{
+							"id": "91",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1654270250",
+							"otherinfo": "1654270250, which evaluates to: 2022-06-03 15:30:50."
+						},
+						{
+							"id": "71",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1694076839",
+							"otherinfo": "1694076839, which evaluates to: 2023-09-07 08:53:59."
+						},
+						{
+							"id": "63",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1695183700",
+							"otherinfo": "1695183700, which evaluates to: 2023-09-20 04:21:40."
+						},
+						{
+							"id": "108",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1700485571",
+							"otherinfo": "1700485571, which evaluates to: 2023-11-20 13:06:11."
+						},
+						{
+							"id": "92",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1731405415",
+							"otherinfo": "1731405415, which evaluates to: 2024-11-12 09:56:55."
+						},
+						{
+							"id": "75",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1732584193",
+							"otherinfo": "1732584193, which evaluates to: 2024-11-26 01:23:13."
+						},
+						{
+							"id": "95",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1732584194",
+							"otherinfo": "1732584194, which evaluates to: 2024-11-26 01:23:14."
+						},
+						{
+							"id": "101",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1735328473",
+							"otherinfo": "1735328473, which evaluates to: 2024-12-27 19:41:13."
+						},
+						{
+							"id": "66",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1747873779",
+							"otherinfo": "1747873779, which evaluates to: 2025-05-22 00:29:39."
+						},
+						{
+							"id": "69",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1750603025",
+							"otherinfo": "1750603025, which evaluates to: 2025-06-22 14:37:05."
+						},
+						{
+							"id": "96",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1770035416",
+							"otherinfo": "1770035416, which evaluates to: 2026-02-02 12:30:16."
+						},
+						{
+							"id": "72",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1779033703",
+							"otherinfo": "1779033703, which evaluates to: 2026-05-17 16:01:43."
+						},
+						{
+							"id": "99",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1804603682",
+							"otherinfo": "1804603682, which evaluates to: 2027-03-09 14:48:02."
+						},
+						{
+							"id": "90",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1816402316",
+							"otherinfo": "1816402316, which evaluates to: 2027-07-24 04:11:56."
+						},
+						{
+							"id": "105",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1839030562",
+							"otherinfo": "1839030562, which evaluates to: 2028-04-11 01:49:22."
+						},
+						{
+							"id": "82",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1856431235",
+							"otherinfo": "1856431235, which evaluates to: 2028-10-29 11:20:35."
+						},
+						{
+							"id": "78",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1859775393",
+							"otherinfo": "1859775393, which evaluates to: 2028-12-07 04:16:33."
+						},
+						{
+							"id": "111",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1873313359",
+							"otherinfo": "1873313359, which evaluates to: 2029-05-12 20:49:19."
+						},
+						{
+							"id": "109",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1894986606",
+							"otherinfo": "1894986606, which evaluates to: 2030-01-18 17:10:06."
+						},
+						{
+							"id": "58",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1899447441",
+							"otherinfo": "1899447441, which evaluates to: 2030-03-11 08:17:21."
+						},
+						{
+							"id": "87",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1914138554",
+							"otherinfo": "1914138554, which evaluates to: 2030-08-28 09:09:14."
+						},
+						{
+							"id": "60",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1925078388",
+							"otherinfo": "1925078388, which evaluates to: 2031-01-01 23:59:48."
+						},
+						{
+							"id": "102",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1926607734",
+							"otherinfo": "1926607734, which evaluates to: 2031-01-19 16:48:54."
+						},
+						{
+							"id": "67",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1955562222",
+							"otherinfo": "1955562222, which evaluates to: 2031-12-20 19:43:42."
+						},
+						{
+							"id": "97",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1958414417",
+							"otherinfo": "1958414417, which evaluates to: 2032-01-22 20:00:17."
+						},
+						{
+							"id": "64",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1986661051",
+							"otherinfo": "1986661051, which evaluates to: 2032-12-14 18:17:31."
+						},
+						{
+							"id": "98",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1990404162",
+							"otherinfo": "1990404162, which evaluates to: 2033-01-27 02:02:42."
+						},
+						{
+							"id": "62",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "1996064986",
+							"otherinfo": "1996064986, which evaluates to: 2033-04-02 14:29:46."
+						},
+						{
+							"id": "85",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "2003034995",
+							"otherinfo": "2003034995, which evaluates to: 2033-06-22 06:36:35."
+						},
+						{
+							"id": "80",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "2007800933",
+							"otherinfo": "2007800933, which evaluates to: 2033-08-16 10:28:53."
+						},
+						{
+							"id": "103",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "2022574463",
+							"otherinfo": "2022574463, which evaluates to: 2034-02-03 10:14:23."
+						},
+						{
+							"id": "68",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "2024104815",
+							"otherinfo": "2024104815, which evaluates to: 2034-02-21 03:20:15."
+						},
+						{
+							"id": "110",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "2054922799",
+							"otherinfo": "2054922799, which evaluates to: 2035-02-12 19:53:19."
+						}
+					],
+					"count": "52",
+					"systemic": false,
+					"solution": "<p>Manually confirm that the timestamp data is not sensitive, and that the data cannot be aggregated to disclose exploitable patterns.</p>",
+					"otherinfo": "<p>1708695471, which evaluates to: 2024-02-23 13:37:51.</p>",
+					"reference": "<p>https://cwe.mitre.org/data/definitions/200.html</p>",
+					"cweid": "497",
+					"wascid": "13",
+					"sourceid": "29"
+				},
+				{
+					"pluginid": "10021",
+					"alertRef": "10021",
+					"alert": "X-Content-Type-Options Header Missing",
+					"name": "X-Content-Type-Options Header Missing",
+					"riskcode": "1",
+					"confidence": "2",
+					"riskdesc": "Low (Medium)",
+					"desc": "<p>The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type. Current (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing.</p>",
+					"instances":[ 
+						{
+							"id": "115",
+							"uri": "http://host.docker.internal:5678/assets/app-Ccz2bwNC.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "35",
+							"uri": "http://host.docker.internal:5678/assets/app-Cy7qV0b1.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "8",
+							"uri": "http://host.docker.internal:5678/assets/rolldown-runtime-Cnm24cU6.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "11",
+							"uri": "http://host.docker.internal:5678/assets/vendor-BpMiN8nO.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "113",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "2",
+							"uri": "http://host.docker.internal:5678/favicon.ico",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "3",
+							"uri": "http://host.docker.internal:5678/static/base-path.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "9",
+							"uri": "http://host.docker.internal:5678/static/posthog.init.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						},
+						{
+							"id": "0",
+							"uri": "http://host.docker.internal:5678/static/prefers-color-scheme.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "x-content-type-options",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.\nAt \"High\" threshold this scan rule will not alert on client or server error responses."
+						}
+					],
+					"count": "9",
+					"systemic": false,
+					"solution": "<p>Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.</p><p>If possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.</p>",
+					"otherinfo": "<p>This issue still applies to error type pages (401, 403, 500, etc.) as those pages are often still affected by injection issues, in which case there is still concern for browsers sniffing pages away from their actual content type.</p><p>At \"High\" threshold this scan rule will not alert on client or server error responses.</p>",
+					"reference": "<p>https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/gg622941(v=vs.85)</p><p>https://owasp.org/www-community/Security_Headers</p>",
+					"cweid": "693",
+					"wascid": "15",
+					"sourceid": "29"
+				},
+				{
+					"pluginid": "10116",
+					"alertRef": "10116",
+					"alert": "ZAP is Out of Date",
+					"name": "ZAP is Out of Date",
+					"riskcode": "1",
+					"confidence": "3",
+					"riskdesc": "Low (High)",
+					"desc": "<p>The version of ZAP you are using to test your app is out of date and is no longer being updated.</p><p>The risk level is set based on how out of date your ZAP version is.</p>",
+					"instances":[ 
+						{
+							"id": "36",
+							"uri": "http://host.docker.internal:5678/favicon.ico",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "The latest version of ZAP is 2.17.0"
+						}
+					],
+					"count": "1",
+					"systemic": false,
+					"solution": "<p>Download the latest version of ZAP from https://www.zaproxy.org/download/ and install it.</p>",
+					"otherinfo": "<p>The latest version of ZAP is 2.17.0</p>",
+					"reference": "<p>https://www.zaproxy.org/download/</p>",
+					"cweid": "1104",
+					"wascid": "45",
+					"sourceid": "21"
+				},
+				{
+					"pluginid": "10038",
+					"alertRef": "10038-3",
+					"alert": "Content Security Policy (CSP) Report-Only Header Found",
+					"name": "Content Security Policy (CSP) Report-Only Header Found",
+					"riskcode": "0",
+					"confidence": "3",
+					"riskdesc": "Informational (High)",
+					"desc": "<p>The response contained a Content-Security-Policy-Report-Only header, this may indicate a work-in-progress implementation, or an oversight in promoting pre-Prod to Prod, etc.</p><p></p><p>Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a set of standard HTTP headers that allow website owners to declare approved sources of content that browsers should be allowed to load on that page \u2014 covered types are JavaScript, CSS, HTML frames, fonts, images and embeddable objects such as Java applets, ActiveX, audio and video files.</p>",
+					"instances":[ 
+						{
+							"id": "10",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "12",
+							"uri": "http://host.docker.internal:5678/robots.txt",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "13",
+							"uri": "http://host.docker.internal:5678/sitemap.xml",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						}
+					],
+					"count": "3",
+					"systemic": false,
+					"solution": "<p>Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.</p>",
+					"otherinfo": "",
+					"reference": "<p>https://www.w3.org/TR/CSP2/</p><p>https://w3c.github.io/webappsec-csp/</p><p>https://caniuse.com/#feat=contentsecuritypolicy</p><p>https://content-security-policy.com/</p>",
+					"cweid": "693",
+					"wascid": "15",
+					"sourceid": "1"
+				},
+				{
+					"pluginid": "10027",
+					"alertRef": "10027",
+					"alert": "Information Disclosure - Suspicious Comments",
+					"name": "Information Disclosure - Suspicious Comments",
+					"riskcode": "0",
+					"confidence": "1",
+					"riskdesc": "Informational (Low)",
+					"desc": "<p>The response appears to contain suspicious comments which may help an attacker.</p>",
+					"instances":[ 
+						{
+							"id": "57",
+							"uri": "http://host.docker.internal:5678/assets/app-Ccz2bwNC.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "admin",
+							"otherinfo": "The following pattern was used: \\bADMIN\\b and was detected in likely comment: \"//docs.n8n.io/1-0-migration-checklist\">migration guide</a> for more information.`,\"banners.workflowAutoDeactivated.message\":`Thi\", see evidence field for the suspicious comment/snippet."
+						},
+						{
+							"id": "56",
+							"uri": "http://host.docker.internal:5678/assets/vendor-Byl1K1cb.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "select",
+							"otherinfo": "The following pattern was used: \\bSELECT\\b and was detected in likely comment: \"//g,Be=`html,body,base,head,link,meta,style,title,address,article,aside,footer,header,hgroup,h1,h2,h3,h4,h5,h6,nav,section,div,d\", see evidence field for the suspicious comment/snippet."
+						}
+					],
+					"count": "2",
+					"systemic": false,
+					"solution": "<p>Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.</p>",
+					"otherinfo": "<p>The following pattern was used: \\bADMIN\\b and was detected in likely comment: \"//docs.n8n.io/1-0-migration-checklist\">migration guide</a> for more information.`,\"banners.workflowAutoDeactivated.message\":`Thi\", see evidence field for the suspicious comment/snippet.</p>",
+					"reference": "",
+					"cweid": "615",
+					"wascid": "13",
+					"sourceid": "29"
+				},
+				{
+					"pluginid": "10109",
+					"alertRef": "10109",
+					"alert": "Modern Web Application",
+					"name": "Modern Web Application",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>The application appears to be a modern web application. If you need to explore it automatically then the Ajax Spider may well be more effective than the standard one.</p>",
+					"instances":[ 
+						{
+							"id": "16",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "<script src=\"/static/base-path.js\" type=\"text/javascript\" nonce=\"76ddhlhq3DIZ5cZHQ9OIEw\"></script>",
+							"otherinfo": "No links have been found while there are scripts, which is an indication that this is a modern web application."
+						},
+						{
+							"id": "24",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "<script src=\"/static/base-path.js\" type=\"text/javascript\" nonce=\"ad88piN7oSBIvpEC8GE-8w\"></script>",
+							"otherinfo": "No links have been found while there are scripts, which is an indication that this is a modern web application."
+						},
+						{
+							"id": "15",
+							"uri": "http://host.docker.internal:5678/robots.txt",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "<script src=\"/static/base-path.js\" type=\"text/javascript\" nonce=\"OO-12hm_OGiIjflHIGAi_Q\"></script>",
+							"otherinfo": "No links have been found while there are scripts, which is an indication that this is a modern web application."
+						},
+						{
+							"id": "23",
+							"uri": "http://host.docker.internal:5678/sitemap.xml",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "<script src=\"/static/base-path.js\" type=\"text/javascript\" nonce=\"wKw9-iPPXwzoBKIVQPL5fw\"></script>",
+							"otherinfo": "No links have been found while there are scripts, which is an indication that this is a modern web application."
+						}
+					],
+					"count": "4",
+					"systemic": false,
+					"solution": "<p>This is an informational alert and so no changes are required.</p>",
+					"otherinfo": "<p>No links have been found while there are scripts, which is an indication that this is a modern web application.</p>",
+					"reference": "",
+					"cweid": "-1",
+					"wascid": "-1",
+					"sourceid": "1"
+				},
+				{
+					"pluginid": "10049",
+					"alertRef": "10049-1",
+					"alert": "Non-Storable Content",
+					"name": "Non-Storable Content",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
+					"instances":[ 
+						{
+							"id": "39",
+							"uri": "http://host.docker.internal:5678",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						},
+						{
+							"id": "41",
+							"uri": "http://host.docker.internal:5678/robots.txt",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						},
+						{
+							"id": "44",
+							"uri": "http://host.docker.internal:5678/sitemap.xml",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						}
+					],
+					"count": "3",
+					"systemic": false,
+					"solution": "<p>The content may be marked as storable by ensuring that the following conditions are satisfied:</p><p>The request method must be understood by the cache and defined as being cacheable (\"GET\", \"HEAD\", and \"POST\" are currently defined as cacheable)</p><p>The response status code must be understood by the cache (one of the 1XX, 2XX, 3XX, 4XX, or 5XX response classes are generally understood)</p><p>The \"no-store\" cache directive must not appear in the request or response header fields</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"private\" response directive must not appear in the response</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"Authorization\" header field must not appear in the request, unless the response explicitly allows it (using one of the \"must-revalidate\", \"public\", or \"s-maxage\" Cache-Control response directives)</p><p>In addition to the conditions above, at least one of the following conditions must also be satisfied by the response:</p><p>It must contain an \"Expires\" header field</p><p>It must contain a \"max-age\" response directive</p><p>For \"shared\" caches such as \"proxy\" caches, it must contain a \"s-maxage\" response directive</p><p>It must contain a \"Cache Control Extension\" that allows it to be cached</p><p>It must have a status code that is defined as cacheable by default (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
+					"cweid": "524",
+					"wascid": "13",
+					"sourceid": "7"
+				},
+				{
+					"pluginid": "10049",
+					"alertRef": "10049-3",
+					"alert": "Storable and Cacheable Content",
+					"name": "Storable and Cacheable Content",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>The response contents are storable by caching components such as proxy servers, and may be retrieved directly from the cache, rather than from the origin server by the caching servers, in response to similar requests from other users. If the response data is sensitive, personal or user-specific, this may result in sensitive information being leaked. In some cases, this may even result in a user gaining complete control of the session of another user, depending on the configuration of the caching components in use in their environment. This is primarily an issue where \"shared\" caching servers such as \"proxy\" caches are configured on the local network. This configuration is typically found in corporate or educational environments, for instance.</p>",
+					"instances":[ 
+						{
+							"id": "55",
+							"uri": "http://host.docker.internal:5678/assets/app-Cy7qV0b1.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						},
+						{
+							"id": "21",
+							"uri": "http://host.docker.internal:5678/assets/index-D6djc33x.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						},
+						{
+							"id": "20",
+							"uri": "http://host.docker.internal:5678/assets/rolldown-runtime-Cnm24cU6.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						},
+						{
+							"id": "22",
+							"uri": "http://host.docker.internal:5678/assets/vendor-BpMiN8nO.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						},
+						{
+							"id": "37",
+							"uri": "http://host.docker.internal:5678/favicon.ico",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						},
+						{
+							"id": "19",
+							"uri": "http://host.docker.internal:5678/static/base-path.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						},
+						{
+							"id": "17",
+							"uri": "http://host.docker.internal:5678/static/posthog.init.js",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						},
+						{
+							"id": "18",
+							"uri": "http://host.docker.internal:5678/static/prefers-color-scheme.css",
+							"nodeName": null,
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "max-age=86400",
+							"otherinfo": ""
+						}
+					],
+					"count": "8",
+					"systemic": false,
+					"solution": "<p>Validate that the response does not contain sensitive, personal or user-specific information. If it does, consider the use of the following HTTP response headers, to limit, or prevent the content being stored and retrieved from the cache by another user:</p><p>Cache-Control: no-cache, no-store, must-revalidate, private</p><p>Pragma: no-cache</p><p>Expires: 0</p><p>This configuration directs both HTTP 1.0 and HTTP 1.1 compliant caching servers to not store the response, and to not retrieve the response (without validation) from the cache, in response to a similar request.</p>",
+					"otherinfo": "",
+					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
+					"cweid": "524",
+					"wascid": "13",
+					"sourceid": "28"
+				}
+			]
+		}
+	],
+	"sequences":[
+	]
+
+}

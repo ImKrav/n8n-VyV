@@ -11,6 +11,7 @@ test('asigna cada prueba a su funcionalidad del plan', () => {
   assert.equal(funcionalidad('Seguridad · Data tables CP-018-08 · fórmulas'), 'CO-03');
   assert.equal(funcionalidad('packages/cli/src/services/__tests__/folder.service.vyv.test.ts › borra'), 'CO-05');
   assert.equal(funcionalidad('Seguridad · Data tables y carpetas (OWASP Top 10) A05 · cabeceras'), 'Seguridad');
+  assert.equal(funcionalidad('Seguridad · Workflows (OWASP Top 10:2025) CP-SEG-WF-01 · A01 · sin sesión'), 'Seguridad');
   assert.equal(funcionalidad('Prueba sin funcionalidad'), 'Otras');
 });
 

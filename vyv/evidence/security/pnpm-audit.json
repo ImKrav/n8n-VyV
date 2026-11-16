@@ -1,0 +1,2350 @@
+{
+  "advisories": {
+    "1107528": {
+      "findings": [
+        {
+          "version": "2.4.3",
+          "paths": [
+            "packages__frontend__@n8n__design-system>element-plus",
+            "packages__modules__insights__frontend>element-plus",
+            "packages__modules__mcp__frontend>element-plus",
+            "packages__frontend__@n8n__storybook>element-plus"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1107528,
+      "title": "Element Plus Link component (el-link) implements insufficient input validation for the href attribute",
+      "module_name": "element-plus",
+      "vulnerable_versions": "<=2.11.0",
+      "patched_versions": ">=2.11.1",
+      "severity": "moderate",
+      "cwe": "CWE-20, CWE-116",
+      "github_advisory_id": "GHSA-5m5x-9j46-h678",
+      "url": "https://github.com/advisories/GHSA-5m5x-9j46-h678"
+    },
+    "1113190": {
+      "findings": [
+        {
+          "version": "13.0.2",
+          "paths": [
+            "packages__frontend__@n8n__design-system>markdown-it",
+            "packages__quality__policy__code-health>markdown-it",
+            "packages__frontend__@n8n__chat>markdown-it",
+            "packages__frontend__@n8n__chat>vue-markdown-render>markdown-it"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1113190,
+      "title": "markdown-it is has a Regular Expression Denial of Service (ReDoS)",
+      "module_name": "markdown-it",
+      "vulnerable_versions": ">=13.0.0 <14.1.1",
+      "patched_versions": ">=14.1.1",
+      "severity": "moderate",
+      "cwe": "CWE-1333",
+      "github_advisory_id": "GHSA-38c4-r59v-3vqw",
+      "url": "https://github.com/advisories/GHSA-38c4-r59v-3vqw"
+    },
+    "1117038": {
+      "findings": [
+        {
+          "version": "2.1.0",
+          "paths": [
+            "packages__nodes-base>showdown"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1117038,
+      "title": "Showdown vulnerable to Regular Expression Denial of Service (ReDoS) in link/anchor parsing",
+      "module_name": "showdown",
+      "vulnerable_versions": "<=2.1.0",
+      "patched_versions": null,
+      "patched_versions_unpublished": true,
+      "severity": "moderate",
+      "cwe": "CWE-674, CWE-777",
+      "github_advisory_id": "GHSA-rmmh-p597-ppvv",
+      "url": "https://github.com/advisories/GHSA-rmmh-p597-ppvv"
+    },
+    "1118827": {
+      "findings": [
+        {
+          "version": "9.0.5",
+          "paths": [
+            "packages__cli>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/mongodb>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>mongodb>socks>ip-address",
+            "packages__nodes-base>mongodb>socks>ip-address"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1118827,
+      "title": "ip-address has XSS in Address6 HTML-emitting methods",
+      "module_name": "ip-address",
+      "vulnerable_versions": "<=10.1.0",
+      "patched_versions": ">=10.1.1",
+      "severity": "moderate",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-v2v4-37r5-5v8g",
+      "url": "https://github.com/advisories/GHSA-v2v4-37r5-5v8g"
+    },
+    "1119438": {
+      "findings": [
+        {
+          "version": "1.1.2",
+          "paths": [
+            "packages__cli>sqlite3>node-gyp>make-fetch-happen>http-proxy-agent>@tootallnate/once",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>sqlite3>node-gyp>make-fetch-happen>http-proxy-agent>@tootallnate/once",
+            "packages__@n8n__nodes-langchain>sqlite3>node-gyp>make-fetch-happen>http-proxy-agent>@tootallnate/once"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1119438,
+      "title": "@tootallnate/once vulnerable to Incorrect Control Flow Scoping",
+      "module_name": "@tootallnate/once",
+      "vulnerable_versions": "<2.0.1",
+      "patched_versions": ">=2.0.1",
+      "severity": "low",
+      "cwe": "CWE-705",
+      "github_advisory_id": "GHSA-vpq2-c234-7xj6",
+      "url": "https://github.com/advisories/GHSA-vpq2-c234-7xj6"
+    },
+    "1120820": {
+      "findings": [
+        {
+          "version": "13.0.2",
+          "paths": [
+            "packages__frontend__@n8n__design-system>markdown-it",
+            "packages__quality__policy__code-health>markdown-it",
+            "packages__frontend__@n8n__chat>markdown-it",
+            "packages__frontend__@n8n__chat>vue-markdown-render>markdown-it"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1120820,
+      "title": "markdown-it: Quadratic complexity DoS in smartquotes rule via replaceAt string operations",
+      "module_name": "markdown-it",
+      "vulnerable_versions": "<=14.1.1",
+      "patched_versions": ">=14.2.0",
+      "severity": "moderate",
+      "cwe": "CWE-400, CWE-407",
+      "github_advisory_id": "GHSA-6v5v-wf23-fmfq",
+      "url": "https://github.com/advisories/GHSA-6v5v-wf23-fmfq"
+    },
+    "1130722": {
+      "findings": [
+        {
+          "version": "9.0.5",
+          "paths": [
+            "packages__cli>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/mongodb>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>mongodb>socks>ip-address",
+            "packages__nodes-base>mongodb>socks>ip-address"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1130722,
+      "title": "ip-address: Address4 decodes leading-zero octets as decimal while resolvers decode them as octal, allowing SSRF and trust-boundary bypass",
+      "module_name": "ip-address",
+      "vulnerable_versions": "<=10.3.0",
+      "patched_versions": ">=10.3.1",
+      "severity": "high",
+      "cwe": "CWE-20, CWE-918",
+      "github_advisory_id": "GHSA-mwp4-54f8-5fhr",
+      "url": "https://github.com/advisories/GHSA-mwp4-54f8-5fhr"
+    },
+    "1138814": {
+      "findings": [
+        {
+          "version": "2.1.0",
+          "paths": [
+            "packages__nodes-base>showdown"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1138814,
+      "title": "showdown metadata title handling allows cross-site scripting",
+      "module_name": "showdown",
+      "vulnerable_versions": "<=2.1.0",
+      "patched_versions": null,
+      "patched_versions_unpublished": true,
+      "severity": "moderate",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-cr32-g25g-vxjj",
+      "url": "https://github.com/advisories/GHSA-cr32-g25g-vxjj"
+    },
+    "1138815": {
+      "findings": [
+        {
+          "version": "2.1.0",
+          "paths": [
+            "packages__nodes-base>showdown"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1138815,
+      "title": "showdown allows stored cross-site scripting through table header ID injection",
+      "module_name": "showdown",
+      "vulnerable_versions": "<=2.1.0",
+      "patched_versions": null,
+      "patched_versions_unpublished": true,
+      "severity": "moderate",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-22g5-r2x5-97cx",
+      "url": "https://github.com/advisories/GHSA-22g5-r2x5-97cx"
+    },
+    "1139346": {
+      "findings": [
+        {
+          "version": "2.0.1",
+          "paths": [
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>@puppeteer/browsers>extract-zip",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>extract-zip",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>extract-zip",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>@puppeteer/browsers>extract-zip"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1139346,
+      "title": "extract-zip unvalidated symlink path traversal",
+      "module_name": "extract-zip",
+      "vulnerable_versions": "<=2.0.1",
+      "patched_versions": null,
+      "patched_versions_unpublished": true,
+      "severity": "high",
+      "cwe": "CWE-22",
+      "github_advisory_id": "GHSA-jmr9-qjv8-65gv",
+      "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv"
+    },
+    "1164823": {
+      "findings": [
+        {
+          "version": "1.9.1",
+          "paths": [
+            "packages__@n8n__backend-common>stream-json"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1164823,
+      "title": "stream-json: pick/ignore/filter/replace filters are O(depth²) on nested input — small crafted JSON blocks the event loop for seconds→minutes (DoS)",
+      "module_name": "stream-json",
+      "vulnerable_versions": "<=3.4.0",
+      "patched_versions": ">=3.5.0",
+      "severity": "moderate",
+      "cwe": "CWE-407",
+      "github_advisory_id": "GHSA-528h-pc64-c93x",
+      "url": "https://github.com/advisories/GHSA-528h-pc64-c93x"
+    },
+    "1193685": {
+      "findings": [
+        {
+          "version": "2.0.1",
+          "paths": [
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>@puppeteer/browsers>extract-zip",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>extract-zip",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>extract-zip",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>@puppeteer/browsers>extract-zip"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1193685,
+      "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+      "module_name": "extract-zip",
+      "vulnerable_versions": "<=2.0.1",
+      "patched_versions": null,
+      "patched_versions_unpublished": true,
+      "severity": "high",
+      "cwe": "CWE-22",
+      "github_advisory_id": "GHSA-7pqw-9j4j-h8q3",
+      "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3"
+    },
+    "1239948": {
+      "findings": [
+        {
+          "version": "9.0.5",
+          "paths": [
+            "packages__cli>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/mongodb>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>mongodb>socks>ip-address",
+            "packages__nodes-base>mongodb>socks>ip-address"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1239948,
+      "title": "ip-address: Address6.isLinkLocal() recognizes fe80::/64 rather than fe80::/10, allowing SSRF and trust-boundary bypass to on-link hosts",
+      "module_name": "ip-address",
+      "vulnerable_versions": "<=10.5.0",
+      "patched_versions": ">=10.5.1",
+      "severity": "moderate",
+      "cwe": "CWE-697, CWE-918",
+      "github_advisory_id": "GHSA-rpw4-54j3-4h4q",
+      "url": "https://github.com/advisories/GHSA-rpw4-54j3-4h4q"
+    },
+    "1240097": {
+      "findings": [
+        {
+          "version": "9.0.5",
+          "paths": [
+            "packages__cli>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/mongodb>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>mongodb>socks>ip-address",
+            "packages__nodes-base>mongodb>socks>ip-address"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1240097,
+      "title": "ip-address: isInSubnet() and isHostInSubnet() compare addresses of different families as if they shared an address space, allowing an allowlist check to admit an address outside its range",
+      "module_name": "ip-address",
+      "vulnerable_versions": "<=10.7.0",
+      "patched_versions": ">=10.7.1",
+      "severity": "moderate",
+      "cwe": "CWE-697, CWE-843",
+      "github_advisory_id": "GHSA-j6r3-76f7-8jcv",
+      "url": "https://github.com/advisories/GHSA-j6r3-76f7-8jcv"
+    },
+    "1240098": {
+      "findings": [
+        {
+          "version": "9.0.5",
+          "paths": [
+            "packages__cli>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/mongodb>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>mongodb>socks>ip-address",
+            "packages__nodes-base>mongodb>socks>ip-address"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1240098,
+      "title": "ip-address: Address6 builds a parse diagnostic proportional to the input with no length bound, allowing a single long string to stall or crash the process",
+      "module_name": "ip-address",
+      "vulnerable_versions": "<=10.7.0",
+      "patched_versions": ">=10.7.1",
+      "severity": "moderate",
+      "cwe": "CWE-400, CWE-770",
+      "github_advisory_id": "GHSA-h3mg-xc3c-68pw",
+      "url": "https://github.com/advisories/GHSA-h3mg-xc3c-68pw"
+    },
+    "1240853": {
+      "findings": [
+        {
+          "version": "5.3.1",
+          "paths": [
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1240853,
+      "title": "basic-ftp: Quadratic-time CPU denial of service in Client.list() Unix directory-listing parser (RE_LINE backtracking)",
+      "module_name": "basic-ftp",
+      "vulnerable_versions": "<=6.2.0",
+      "patched_versions": ">=6.2.1",
+      "severity": "high",
+      "cwe": "CWE-1333",
+      "github_advisory_id": "GHSA-c475-qrg2-pj4r",
+      "url": "https://github.com/advisories/GHSA-c475-qrg2-pj4r"
+    },
+    "1241262": {
+      "findings": [
+        {
+          "version": "1.9.1",
+          "paths": [
+            "packages__@n8n__backend-common>stream-json"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1241262,
+      "title": "stream-json: JSONC parser and verifier re-scan the whole accumulated comment on every input chunk",
+      "module_name": "stream-json",
+      "vulnerable_versions": "<=3.5.0",
+      "patched_versions": ">=3.6.0",
+      "severity": "moderate",
+      "cwe": "CWE-407",
+      "github_advisory_id": "GHSA-hqr4-qq8f-hg3x",
+      "url": "https://github.com/advisories/GHSA-hqr4-qq8f-hg3x"
+    },
+    "1241263": {
+      "findings": [
+        {
+          "version": "1.9.1",
+          "paths": [
+            "packages__@n8n__backend-common>stream-json"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1241263,
+      "title": "stream-json has a prototype pollution issue: Assembler writes this.current[this.key] on plain objects",
+      "module_name": "stream-json",
+      "vulnerable_versions": "<3.6.0",
+      "patched_versions": ">=3.6.0",
+      "severity": "moderate",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-mjw6-4jj6-33hc",
+      "url": "https://github.com/advisories/GHSA-mjw6-4jj6-33hc"
+    },
+    "1242600": {
+      "findings": [
+        {
+          "version": "13.0.2",
+          "paths": [
+            "packages__frontend__@n8n__design-system>markdown-it",
+            "packages__quality__policy__code-health>markdown-it",
+            "packages__frontend__@n8n__chat>markdown-it",
+            "packages__frontend__@n8n__chat>vue-markdown-render>markdown-it"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242600,
+      "title": "markdown-it: Quadratic complexity in smartquotes with unmatched closing quotes",
+      "module_name": "markdown-it",
+      "vulnerable_versions": "<14.3.2",
+      "patched_versions": ">=14.3.2",
+      "severity": "high",
+      "cwe": "CWE-400, CWE-407",
+      "github_advisory_id": "GHSA-r7fv-28h4-cvq7",
+      "url": "https://github.com/advisories/GHSA-r7fv-28h4-cvq7"
+    },
+    "1242646": {
+      "findings": [
+        {
+          "version": "13.0.2",
+          "paths": [
+            "packages__frontend__@n8n__design-system>markdown-it",
+            "packages__quality__policy__code-health>markdown-it",
+            "packages__frontend__@n8n__chat>markdown-it",
+            "packages__frontend__@n8n__chat>vue-markdown-render>markdown-it"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242646,
+      "title": "markdown-it: Quadratic-time denial of service in inline HTML parsing with html enabled",
+      "module_name": "markdown-it",
+      "vulnerable_versions": "<14.3.3",
+      "patched_versions": ">=14.3.3",
+      "severity": "low",
+      "cwe": "CWE-400, CWE-407",
+      "github_advisory_id": "GHSA-vfgh-jcmw-g37q",
+      "url": "https://github.com/advisories/GHSA-vfgh-jcmw-g37q"
+    },
+    "1242741": {
+      "findings": [
+        {
+          "version": "2.18.0",
+          "paths": [
+            "packages__frontend__@n8n__design-system>sanitize-html",
+            "packages__@n8n__nodes-langchain>sanitize-html",
+            "packages__nodes-base>sanitize-html"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242741,
+      "title": "ApostropheCMS sanitize-html: unbounded recursion when re-sanitizing the fallback of a discarded iframe (stack overflow, nestingLimit not enforced)",
+      "module_name": "sanitize-html",
+      "vulnerable_versions": ">=2.18.0 <2.18.1",
+      "patched_versions": ">=2.18.1",
+      "severity": "moderate",
+      "cwe": "CWE-674",
+      "github_advisory_id": "GHSA-c9rx-x947-fp3h",
+      "url": "https://github.com/advisories/GHSA-c9rx-x947-fp3h"
+    },
+    "1242764": {
+      "findings": [
+        {
+          "version": "5.0.1",
+          "paths": [
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1242764,
+      "title": "Vitest: Servers misapply `server.fs.deny`, serving `.env`, private keys, `.git`, and the API token file",
+      "module_name": "@vitest/browser",
+      "vulnerable_versions": ">=5.0.0-beta.6 <5.0.5",
+      "patched_versions": ">=5.0.5",
+      "severity": "moderate",
+      "cwe": "CWE-200, CWE-552",
+      "github_advisory_id": "GHSA-p458-7748-mcp3",
+      "url": "https://github.com/advisories/GHSA-p458-7748-mcp3"
+    },
+    "1242765": {
+      "findings": [
+        {
+          "version": "5.0.1",
+          "paths": [
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>vitest>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>vitest>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/ui",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1242765,
+      "title": "Vitest: Servers misapply `server.fs.deny`, serving `.env`, private keys, `.git`, and the API token file",
+      "module_name": "@vitest/ui",
+      "vulnerable_versions": ">=5.0.0-beta.6 <5.0.5",
+      "patched_versions": ">=5.0.5",
+      "severity": "moderate",
+      "cwe": "CWE-200, CWE-552",
+      "github_advisory_id": "GHSA-p458-7748-mcp3",
+      "url": "https://github.com/advisories/GHSA-p458-7748-mcp3"
+    },
+    "1242766": {
+      "findings": [
+        {
+          "version": "5.0.1",
+          "paths": [
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242766,
+      "title": "Vitest: Code injection via unauthenticated manual mock registration",
+      "module_name": "@vitest/mocker",
+      "vulnerable_versions": ">=5.0.0-beta.1 <5.0.3",
+      "patched_versions": ">=5.0.3",
+      "severity": "moderate",
+      "cwe": "CWE-94, CWE-116, CWE-306",
+      "github_advisory_id": "GHSA-qxg6-89mg-rqv8",
+      "url": "https://github.com/advisories/GHSA-qxg6-89mg-rqv8"
+    },
+    "1242768": {
+      "findings": [
+        {
+          "version": "5.0.1",
+          "paths": [
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__frontend__@n8n__frontend-test-utils>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>@vitest/browser>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/browser-playwright>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-v8>@vitest/browser>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/coverage-istanbul>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest-mock-extended>vitest>@vitest/ui>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/coverage-v8>@vitest/browser>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/browser-playwright>@vitest/mocker",
+            "packages__@n8n__backend-test-utils>vitest>@vitest/browser-playwright>@vitest/browser>@vitest/mocker"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242768,
+      "title": "Vitest: Windows backslash traversal bypasses the @vitest/mocker redirect allowlist fix",
+      "module_name": "@vitest/mocker",
+      "vulnerable_versions": ">=5.0.0-rc.2 <5.0.3",
+      "patched_versions": ">=5.0.3",
+      "severity": "moderate",
+      "cwe": "CWE-22",
+      "github_advisory_id": "GHSA-xp26-3454-mjgp",
+      "url": "https://github.com/advisories/GHSA-xp26-3454-mjgp"
+    },
+    "1242862": {
+      "findings": [
+        {
+          "version": "4.2.0",
+          "paths": [
+            "packages__nodes-base>snowflake-sdk>toml"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242862,
+      "title": "toml-node: Quadratic-complexity DoS via many array-of-tables headers in toml.parse()",
+      "module_name": "toml",
+      "vulnerable_versions": "<=5.0.0",
+      "patched_versions": ">=5.0.1",
+      "severity": "high",
+      "cwe": "CWE-407",
+      "github_advisory_id": "GHSA-4qx8-w7c3-pj3p",
+      "url": "https://github.com/advisories/GHSA-4qx8-w7c3-pj3p"
+    },
+    "1242863": {
+      "findings": [
+        {
+          "version": "4.2.0",
+          "paths": [
+            "packages__nodes-base>snowflake-sdk>toml"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242863,
+      "title": "toml-node: Quadratic-complexity DoS via long dotted keys or table paths in toml.parse()",
+      "module_name": "toml",
+      "vulnerable_versions": "<=5.0.0",
+      "patched_versions": ">=5.0.1",
+      "severity": "high",
+      "cwe": "CWE-407",
+      "github_advisory_id": "GHSA-9j65-hcg3-gc64",
+      "url": "https://github.com/advisories/GHSA-9j65-hcg3-gc64"
+    },
+    "1242864": {
+      "findings": [
+        {
+          "version": "4.2.0",
+          "paths": [
+            "packages__nodes-base>snowflake-sdk>toml"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1242864,
+      "title": "toml-node: Uncontrolled resource consumption (CPU DoS) via unbounded-length integer literals in toml.parse()",
+      "module_name": "toml",
+      "vulnerable_versions": "<=5.0.0",
+      "patched_versions": ">=5.0.1",
+      "severity": "high",
+      "cwe": "CWE-400, CWE-770",
+      "github_advisory_id": "GHSA-9qmh-m7c6-f92p",
+      "url": "https://github.com/advisories/GHSA-9qmh-m7c6-f92p"
+    },
+    "1242883": {
+      "findings": [
+        {
+          "version": "10.7.1",
+          "paths": [
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>socks>ip-address",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>express-rate-limit>ip-address",
+            "packages__cli>@modelcontextprotocol/sdk>express-rate-limit>ip-address",
+            "packages__cli>express-rate-limit>ip-address",
+            "packages__cli>rate-limit-redis>express-rate-limit>ip-address",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>express-rate-limit>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>express-rate-limit>ip-address",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>express-rate-limit>ip-address",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>express-rate-limit>ip-address",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>express-rate-limit>ip-address",
+            "packages__@n8n__imap>imapflow>socks>ip-address",
+            "packages__nodes-base>mqtt>socks>ip-address"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "9.0.5",
+          "paths": [
+            "packages__cli>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/mongodb>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>sqlite3>node-gyp>make-fetch-happen>socks-proxy-agent>socks>ip-address",
+            "packages__@n8n__nodes-langchain>@langchain/community>mongodb>socks>ip-address",
+            "packages__@n8n__nodes-langchain>mongodb>socks>ip-address",
+            "packages__nodes-base>mongodb>socks>ip-address"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1242883,
+      "title": "ip-address: Address6 matches a zone identifier in quadratic time ahead of its length limit, allowing a single long string to stall the process",
+      "module_name": "ip-address",
+      "vulnerable_versions": "<=10.7.3",
+      "patched_versions": ">=10.7.4",
+      "severity": "moderate",
+      "cwe": "CWE-1333",
+      "github_advisory_id": "GHSA-rxp7-6hxx-x8q5",
+      "url": "https://github.com/advisories/GHSA-rxp7-6hxx-x8q5"
+    },
+    "1243066": {
+      "findings": [
+        {
+          "version": "3.25.76",
+          "paths": [
+            "packages__@n8n__engine>zod",
+            "packages__@n8n__blob-storage>zod",
+            "packages__@n8n__ai-utilities>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph>@langchain/langgraph-checkpoint>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph>@langchain/langgraph-checkpoint>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph>@langchain/langgraph-sdk>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph>@langchain/langgraph-sdk>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph>zod",
+            "packages__@n8n__ai-utilities>langchain>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>langchain>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph-checkpoint>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/langgraph-checkpoint>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>langchain>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/textsplitters>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/textsplitters>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/textsplitters>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/textsplitters>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/openai>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/openai>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>@langchain/openai>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/classic>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/openai>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/openai>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/openai>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/openai>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/openai>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/openai>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/textsplitters>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/textsplitters>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/openai>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/openai>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>@langchain/openai>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/classic>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph>@langchain/langgraph-checkpoint>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph>@langchain/langgraph-checkpoint>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph>@langchain/langgraph-sdk>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph>@langchain/langgraph-sdk>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph-checkpoint>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/langgraph-checkpoint>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>langchain>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>@langchain/core>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>chromium-bidi>zod",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>chromium-bidi>zod",
+            "packages__@n8n__ai-utilities>zod",
+            "packages__@n8n__ai-utilities>zod-to-json-schema>zod",
+            "packages__@n8n__config>zod",
+            "packages__@n8n__extension-sdk>zod",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>zod",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>zod",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>zod-to-json-schema>zod",
+            "packages__@n8n__mcp-apps>zod",
+            "packages__@n8n__syslog-client>zod",
+            "packages__@n8n__instance-ai>zod-from-json-schema>zod",
+            "packages__@n8n__instance-ai>ai>@ai-sdk/gateway>zod",
+            "packages__@n8n__instance-ai>ai>@ai-sdk/gateway>@ai-sdk/provider-utils>zod",
+            "packages__@n8n__instance-ai>ai>@ai-sdk/provider-utils>zod",
+            "packages__@n8n__instance-ai>ai>zod",
+            "packages__@n8n__instance-ai>langsmith>openai>zod",
+            "packages__@n8n__instance-ai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/openai>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/openai>@langchain/core>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/openai>openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>langsmith>openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/core>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/langgraph>@langchain/langgraph-checkpoint>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/langgraph>@langchain/langgraph-checkpoint>@langchain/core>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/langgraph>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/langgraph>@langchain/core>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/langgraph>@langchain/langgraph-sdk>@langchain/core>langsmith>openai>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/langgraph>@langchain/langgraph-sdk>@langchain/core>zod",
+            "packages__@n8n__ai-workflow-builder.ee>@langchain/langgraph>zod"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243066,
+      "title": "Zod can exhaust memory while validating oversized constrained collections",
+      "module_name": "zod",
+      "vulnerable_versions": "<4.6.6",
+      "patched_versions": ">=4.6.6",
+      "severity": "high",
+      "cwe": "CWE-770",
+      "github_advisory_id": "GHSA-mrhx-c7xc-m3w5",
+      "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+    },
+    "1243074": {
+      "findings": [
+        {
+          "version": "2.3.0",
+          "paths": [
+            "packages__@n8n__engine>express>body-parser",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>express>body-parser",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser",
+            "packages__cli>@modelcontextprotocol/sdk>express>body-parser",
+            "packages__cli>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>express>body-parser",
+            "packages__cli>swagger-ui-express>express>body-parser",
+            "packages__cli>express-rate-limit>express>body-parser",
+            "packages__cli>rate-limit-redis>express-rate-limit>express>body-parser",
+            "packages__cli>express>body-parser",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>express>body-parser",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>express>body-parser",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>express>body-parser",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>express>body-parser",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser",
+            "packages__@n8n__nodes-langchain>express>body-parser",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>express>body-parser",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser",
+            "packages__modules__apps__backend>express>body-parser",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>express>body-parser",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243074,
+      "title": "body-parser vulnerable to Denial of Service via trailing bytes after a compressed request body",
+      "module_name": "body-parser",
+      "vulnerable_versions": ">=2.0.0 <2.4.0",
+      "patched_versions": ">=2.4.0",
+      "severity": "high",
+      "cwe": "CWE-248",
+      "github_advisory_id": "GHSA-27r3-jxmh-p828",
+      "url": "https://github.com/advisories/GHSA-27r3-jxmh-p828"
+    },
+    "1243083": {
+      "findings": [
+        {
+          "version": "2.4.0",
+          "paths": [
+            "packages__cli>multer",
+            "packages__modules__data-table__backend>multer"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243083,
+      "title": "multer vulnerable to Denial of Service via a pending asynchronous fileFilter after request teardown",
+      "module_name": "multer",
+      "vulnerable_versions": ">=2.0.0 <2.5.0",
+      "patched_versions": ">=2.5.0",
+      "severity": "high",
+      "cwe": "CWE-248, CWE-404",
+      "github_advisory_id": "GHSA-q7qp-rjg7-q26m",
+      "url": "https://github.com/advisories/GHSA-q7qp-rjg7-q26m"
+    },
+    "1243091": {
+      "findings": [
+        {
+          "version": "10.0.14",
+          "paths": [
+            "packages__cli>nodemailer",
+            "packages__nodes-base>nodemailer",
+            "packages__nodes-base>mailparser>nodemailer"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243091,
+      "title": "Nodemailer: A nested comment ends early in addressparser, releasing the rest of the comment as a recipient",
+      "module_name": "nodemailer",
+      "vulnerable_versions": ">=3.0.0 <10.1.4",
+      "patched_versions": ">=10.1.4",
+      "severity": "moderate",
+      "cwe": "CWE-20, CWE-436",
+      "github_advisory_id": "GHSA-8c8m-p3m8-cjg8",
+      "url": "https://github.com/advisories/GHSA-8c8m-p3m8-cjg8"
+    },
+    "1243092": {
+      "findings": [
+        {
+          "version": "10.0.14",
+          "paths": [
+            "packages__cli>nodemailer",
+            "packages__nodes-base>nodemailer",
+            "packages__nodes-base>mailparser>nodemailer"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243092,
+      "title": "Nodemailer: A \";\" inside a quoted string or comment ends an address group early in addressparser, turning display text into a recipient",
+      "module_name": "nodemailer",
+      "vulnerable_versions": ">=3.0.0 <10.1.4",
+      "patched_versions": ">=10.1.4",
+      "severity": "moderate",
+      "cwe": "CWE-20, CWE-436",
+      "github_advisory_id": "GHSA-m943-m63m-w62w",
+      "url": "https://github.com/advisories/GHSA-m943-m63m-w62w"
+    },
+    "1243093": {
+      "findings": [
+        {
+          "version": "10.0.14",
+          "paths": [
+            "packages__cli>nodemailer",
+            "packages__nodes-base>nodemailer",
+            "packages__nodes-base>mailparser>nodemailer"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243093,
+      "title": "Nodemailer: A \">\" inside a quoted local part ends an angle-addr early in addressparser, delivering to a domain the header does not name",
+      "module_name": "nodemailer",
+      "vulnerable_versions": ">=3.0.0 <10.1.4",
+      "patched_versions": ">=10.1.4",
+      "severity": "moderate",
+      "cwe": "CWE-20, CWE-436",
+      "github_advisory_id": "GHSA-85x2-q946-cp5h",
+      "url": "https://github.com/advisories/GHSA-85x2-q946-cp5h"
+    },
+    "1243098": {
+      "findings": [
+        {
+          "version": "3.1.8",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__agents>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint>table>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint-scss>stylelint>table>ajv>fast-uri",
+            "packages__nodes-base>@kafkajs/confluent-schema-registry>ajv>fast-uri"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243098,
+      "title": "fast-uri vulnerable to URI scheme spoofing via percent-encoded scheme decoding",
+      "module_name": "fast-uri",
+      "vulnerable_versions": ">=3.0.0 <3.1.9",
+      "patched_versions": ">=3.1.9",
+      "severity": "moderate",
+      "cwe": "CWE-172, CWE-180",
+      "github_advisory_id": "GHSA-w74x-v6f9-j3xg",
+      "url": "https://github.com/advisories/GHSA-w74x-v6f9-j3xg"
+    },
+    "1243101": {
+      "findings": [
+        {
+          "version": "3.1.8",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__agents>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint>table>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint-scss>stylelint>table>ajv>fast-uri",
+            "packages__nodes-base>@kafkajs/confluent-schema-registry>ajv>fast-uri"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243101,
+      "title": "fast-uri vulnerable to improper path equivalence in relative reference normalization",
+      "module_name": "fast-uri",
+      "vulnerable_versions": ">=3.0.0 <3.1.9",
+      "patched_versions": ">=3.1.9",
+      "severity": "low",
+      "cwe": "CWE-41",
+      "github_advisory_id": "GHSA-xhq7-xmqj-769h",
+      "url": "https://github.com/advisories/GHSA-xhq7-xmqj-769h"
+    },
+    "1243104": {
+      "findings": [
+        {
+          "version": "3.1.8",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__agents>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint>table>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint-scss>stylelint>table>ajv>fast-uri",
+            "packages__nodes-base>@kafkajs/confluent-schema-registry>ajv>fast-uri"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243104,
+      "title": "fast-uri vulnerable to host confusion via unchecked WHATWG host canonicalization",
+      "module_name": "fast-uri",
+      "vulnerable_versions": ">=3.1.3 <3.1.9",
+      "patched_versions": ">=3.1.9",
+      "severity": "moderate",
+      "cwe": "CWE-20, CWE-436",
+      "github_advisory_id": "GHSA-wjr9-j795-jxcr",
+      "url": "https://github.com/advisories/GHSA-wjr9-j795-jxcr"
+    },
+    "1243107": {
+      "findings": [
+        {
+          "version": "3.1.8",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__cli>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__agents>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv>fast-uri",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>ajv-formats>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint>table>ajv>fast-uri",
+            "packages__@n8n__stylelint-config>stylelint-scss>stylelint>table>ajv>fast-uri",
+            "packages__nodes-base>@kafkajs/confluent-schema-registry>ajv>fast-uri"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243107,
+      "title": "fast-uri vulnerable to scheme injection via an unescaped first-segment colon in suffix references",
+      "module_name": "fast-uri",
+      "vulnerable_versions": ">=3.0.0 <3.1.9",
+      "patched_versions": ">=3.1.9",
+      "severity": "low",
+      "cwe": "CWE-41, CWE-116",
+      "github_advisory_id": "GHSA-333x-w4r6-6crp",
+      "url": "https://github.com/advisories/GHSA-333x-w4r6-6crp"
+    },
+    "1243111": {
+      "findings": [
+        {
+          "version": "5.1.5",
+          "paths": [
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-runtime>@microsoft/agents-hosting>@azure/msal-node",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-hosting>@azure/msal-node",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@microsoft/agents-a365-runtime>@microsoft/agents-hosting>@azure/msal-node",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@microsoft/agents-hosting>@azure/msal-node"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "5.6.0",
+          "paths": [
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>@azure/msal-node"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243111,
+      "title": "MSAL Node authorization code flow may disclose parameters to an attacker-controlled endpoint",
+      "module_name": "@azure/msal-node",
+      "vulnerable_versions": ">=5.0.0-beta.0 <7.1.0",
+      "patched_versions": ">=7.1.0",
+      "severity": "high",
+      "cwe": "CWE-346",
+      "github_advisory_id": "GHSA-xcx6-jx8p-x3h5",
+      "url": "https://github.com/advisories/GHSA-xcx6-jx8p-x3h5"
+    },
+    "1243486": {
+      "findings": [
+        {
+          "version": "2.0.0",
+          "paths": [
+            "packages__cli>@modelcontextprotocol/node"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243486,
+      "title": "MCP TypeScript SDK: HTTP server transports and handlers did not limit request body size or JSON-RPC batch length",
+      "module_name": "@modelcontextprotocol/node",
+      "vulnerable_versions": ">=2.0.0 <2.1.0",
+      "patched_versions": ">=2.1.0",
+      "severity": "high",
+      "cwe": "CWE-770",
+      "github_advisory_id": "GHSA-f897-62hf-6gxq",
+      "url": "https://github.com/advisories/GHSA-f897-62hf-6gxq"
+    },
+    "1243505": {
+      "findings": [
+        {
+          "version": "4.3.1",
+          "paths": [
+            "packages__frontend__@n8n__design-system>sanitize-html>deepmerge",
+            "packages__@n8n__ai-utilities>@langchain/community>html-to-text>deepmerge",
+            "packages__@n8n__nodes-langchain>html-to-text>deepmerge",
+            "packages__@n8n__nodes-langchain>@langchain/community>html-to-text>deepmerge",
+            "packages__@n8n__nodes-langchain>sanitize-html>deepmerge",
+            "packages__nodes-base>sanitize-html>deepmerge",
+            "packages__nodes-base>mailparser>html-to-text>deepmerge",
+            "packages__nodes-base>html-to-text>deepmerge"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243505,
+      "title": "deepmerge mergeObject() allows prototype poisoning of returned objects",
+      "module_name": "deepmerge",
+      "vulnerable_versions": ">=4.2.0 <=4.3.1",
+      "patched_versions": null,
+      "patched_versions_unpublished": true,
+      "severity": "low",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-gcqx-w48m-w2h4",
+      "url": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4"
+    },
+    "1243629": {
+      "findings": [
+        {
+          "version": "11.4.5",
+          "paths": [
+            "packages__modules__insights__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/core-base",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/core-base",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/core-base",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/core-base",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/core-base"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243629,
+      "title": "Vue I18n: `escapeParameter` does not escape named values when the same call also passes a list",
+      "module_name": "@intlify/core-base",
+      "vulnerable_versions": ">=9.0.0-beta.12 <11.4.14",
+      "patched_versions": ">=11.4.14",
+      "severity": "low",
+      "cwe": "CWE-79, CWE-116",
+      "github_advisory_id": "GHSA-8rc2-428q-7ww3",
+      "url": "https://github.com/advisories/GHSA-8rc2-428q-7ww3"
+    },
+    "1243633": {
+      "findings": [
+        {
+          "version": "11.4.5",
+          "paths": [
+            "packages__modules__insights__frontend>vue-i18n",
+            "packages__modules__mcp__frontend>vue-i18n",
+            "packages__@n8n__mcp-apps>vue-i18n",
+            "packages__modules__inbox__frontend>vue-i18n",
+            "packages__frontend__@n8n__i18n>vue-i18n"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243633,
+      "title": "Vue I18n: `escapeParameter` does not escape named values when the same call also passes a list",
+      "module_name": "vue-i18n",
+      "vulnerable_versions": ">=9.0.0-beta.5 <11.4.14",
+      "patched_versions": ">=11.4.14",
+      "severity": "low",
+      "cwe": "CWE-79, CWE-116",
+      "github_advisory_id": "GHSA-8rc2-428q-7ww3",
+      "url": "https://github.com/advisories/GHSA-8rc2-428q-7ww3"
+    },
+    "1243635": {
+      "findings": [
+        {
+          "version": "11.4.5",
+          "paths": [
+            "packages__modules__insights__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/shared",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/devtools-types>@intlify/shared",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/core-base>@intlify/shared",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/core-base>@intlify/devtools-types>@intlify/shared",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/shared",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/shared",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/devtools-types>@intlify/shared",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/core-base>@intlify/shared",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/core-base>@intlify/devtools-types>@intlify/shared",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/shared",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/shared",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/devtools-types>@intlify/shared",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/core-base>@intlify/shared",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/core-base>@intlify/devtools-types>@intlify/shared",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/shared",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/shared",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/devtools-types>@intlify/shared",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/core-base>@intlify/shared",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/core-base>@intlify/devtools-types>@intlify/shared",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/shared",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/devtools-types>@intlify/core-base>@intlify/shared",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/devtools-types>@intlify/shared",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/core-base>@intlify/message-compiler>@intlify/shared",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/core-base>@intlify/shared",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/core-base>@intlify/devtools-types>@intlify/shared",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/shared"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243635,
+      "title": "Vue I18n: escapeParameter does not prevent XSS through srcdoc in translation messages",
+      "module_name": "@intlify/shared",
+      "vulnerable_versions": ">=11.1.10 <11.4.14",
+      "patched_versions": ">=11.4.14",
+      "severity": "high",
+      "cwe": "CWE-79, CWE-116",
+      "github_advisory_id": "GHSA-83rm-6c8r-g728",
+      "url": "https://github.com/advisories/GHSA-83rm-6c8r-g728"
+    },
+    "1243647": {
+      "findings": [
+        {
+          "version": "11.4.5",
+          "paths": [
+            "packages__modules__insights__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__modules__insights__frontend>vue-i18n>@intlify/core-base",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__modules__mcp__frontend>vue-i18n>@intlify/core-base",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__@n8n__mcp-apps>vue-i18n>@intlify/core-base",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__modules__inbox__frontend>vue-i18n>@intlify/core-base",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/devtools-types>@intlify/core-base",
+            "packages__frontend__@n8n__i18n>vue-i18n>@intlify/core-base"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243647,
+      "title": "Vue I18n: escapeParameter does not prevent XSS through srcdoc in translation messages",
+      "module_name": "@intlify/core-base",
+      "vulnerable_versions": ">=11.1.10 <11.4.14",
+      "patched_versions": ">=11.4.14",
+      "severity": "high",
+      "cwe": "CWE-79, CWE-116",
+      "github_advisory_id": "GHSA-83rm-6c8r-g728",
+      "url": "https://github.com/advisories/GHSA-83rm-6c8r-g728"
+    },
+    "1243655": {
+      "findings": [
+        {
+          "version": "11.4.5",
+          "paths": [
+            "packages__modules__insights__frontend>vue-i18n",
+            "packages__modules__mcp__frontend>vue-i18n",
+            "packages__@n8n__mcp-apps>vue-i18n",
+            "packages__modules__inbox__frontend>vue-i18n",
+            "packages__frontend__@n8n__i18n>vue-i18n"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243655,
+      "title": "Vue I18n: escapeParameter does not prevent XSS through srcdoc in translation messages",
+      "module_name": "vue-i18n",
+      "vulnerable_versions": ">=11.1.10 <11.4.14",
+      "patched_versions": ">=11.4.14",
+      "severity": "high",
+      "cwe": "CWE-79, CWE-116",
+      "github_advisory_id": "GHSA-83rm-6c8r-g728",
+      "url": "https://github.com/advisories/GHSA-83rm-6c8r-g728"
+    },
+    "1243661": {
+      "findings": [
+        {
+          "version": "1.19.15",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__cli>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__cli>@modelcontextprotocol/node>@hono/node-server",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>@hono/node-server"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243661,
+      "title": "@hono/node-server: `serveStatic` decodes the request path a second time, leading to bypass of middleware on static paths",
+      "module_name": "@hono/node-server",
+      "vulnerable_versions": ">=1.19.10 <2.1.3",
+      "patched_versions": ">=2.1.3",
+      "severity": "moderate",
+      "cwe": "CWE-174",
+      "github_advisory_id": "GHSA-rmxm-3fg6-px4f",
+      "url": "https://github.com/advisories/GHSA-rmxm-3fg6-px4f"
+    },
+    "1243687": {
+      "findings": [
+        {
+          "version": "6.16.0",
+          "paths": [
+            "packages__@n8n__engine>express>qs",
+            "packages__@n8n__engine>express>body-parser>qs",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-cloud>qs",
+            "packages__@n8n__ai-utilities>@langchain/community>@getzep/zep-js>qs",
+            "packages__@n8n__ai-utilities>@langchain/community>cohere-ai>qs",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>express>body-parser>qs",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>express>qs",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser>qs",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>express-rate-limit>express>qs",
+            "packages__cli>@modelcontextprotocol/sdk>express>body-parser>qs",
+            "packages__cli>@modelcontextprotocol/sdk>express>qs",
+            "packages__cli>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser>qs",
+            "packages__cli>@modelcontextprotocol/sdk>express-rate-limit>express>qs",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.api>qs",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>@microsoft/teams.graph>qs",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>express>body-parser>qs",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>express>qs",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>@microsoft/teams.api>qs",
+            "packages__cli>swagger-ui-express>express>qs",
+            "packages__cli>swagger-ui-express>express>body-parser>qs",
+            "packages__cli>express-rate-limit>express>qs",
+            "packages__cli>express-rate-limit>express>body-parser>qs",
+            "packages__cli>rate-limit-redis>express-rate-limit>express>qs",
+            "packages__cli>rate-limit-redis>express-rate-limit>express>body-parser>qs",
+            "packages__cli>express>qs",
+            "packages__cli>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@getzep/zep-js>qs",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>express>qs",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>express-rate-limit>express>qs",
+            "packages__@n8n__nodes-langchain>@langchain/community>cohere-ai>qs",
+            "packages__@n8n__nodes-langchain>@langchain/community>@getzep/zep-cloud>qs",
+            "packages__@n8n__nodes-langchain>@langchain/community>@getzep/zep-js>qs",
+            "packages__@n8n__nodes-langchain>@getzep/zep-cloud>qs",
+            "packages__@n8n__nodes-langchain>@langchain/cohere>cohere-ai>qs",
+            "packages__@n8n__nodes-langchain>cohere-ai>qs",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>express>qs",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>express-rate-limit>express>qs",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>express>qs",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>express>qs",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser>qs",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>express-rate-limit>express>qs",
+            "packages__@n8n__nodes-langchain>express>qs",
+            "packages__@n8n__nodes-langchain>express>body-parser>qs",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>express>body-parser>qs",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>express>qs",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser>qs",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>express-rate-limit>express>qs",
+            "packages__modules__apps__backend>express>qs",
+            "packages__modules__apps__backend>express>body-parser>qs",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>express>body-parser>qs",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>express>qs",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>express-rate-limit>express>body-parser>qs",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>express-rate-limit>express>qs",
+            "packages__@n8n__backend-network>qs",
+            "packages__nodes-base>qs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1243687,
+      "title": "qs : qs.stringify with arrayFormat 'comma' throws an uncaught TypeError on array elements carrying a non-callable own toString (DoS)",
+      "module_name": "qs",
+      "vulnerable_versions": ">=6.7.0 <=6.16.0",
+      "patched_versions": ">=6.16.1",
+      "severity": "moderate",
+      "cwe": "CWE-248, CWE-704",
+      "github_advisory_id": "GHSA-6pq8-jhm2-2vcw",
+      "url": "https://github.com/advisories/GHSA-6pq8-jhm2-2vcw"
+    },
+    "1244003": {
+      "findings": [
+        {
+          "version": "1.16.1",
+          "paths": [
+            "packages__@n8n__ai-utilities>@langchain/community>ibm-cloud-sdk-core>axios>follow-redirects",
+            "packages__@n8n__ai-utilities>@langchain/community>ibm-cloud-sdk-core>retry-axios>axios>follow-redirects",
+            "packages__@n8n__ai-utilities>@langchain/community>@ibm-cloud/watsonx-ai>ibm-cloud-sdk-core>axios>follow-redirects",
+            "packages__@n8n__ai-utilities>@langchain/community>@ibm-cloud/watsonx-ai>ibm-cloud-sdk-core>retry-axios>axios>follow-redirects",
+            "packages__@n8n__instance-ai>@daytona/sdk>@daytona/analytics-api-client>axios>follow-redirects",
+            "packages__@n8n__instance-ai>@daytona/sdk>@daytona/api-client>axios>follow-redirects",
+            "packages__@n8n__instance-ai>@daytona/sdk>@daytona/toolbox-api-client>axios>follow-redirects",
+            "packages__@n8n__instance-ai>@daytona/sdk>axios>follow-redirects",
+            "packages__@n8n__client-oauth2>axios>follow-redirects",
+            "packages__@n8n__ai-workflow-builder.ee>axios>follow-redirects",
+            "packages__workflow>axios>follow-redirects",
+            "packages__quality__efficiency__scale__benchmark>axios>follow-redirects",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.api>@microsoft/teams.common>axios>follow-redirects",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>@microsoft/teams.graph>@microsoft/teams.common>axios>follow-redirects",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>@microsoft/teams.common>axios>follow-redirects",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>@microsoft/teams.api>@microsoft/teams.common>axios>follow-redirects",
+            "packages__cli>@chat-adapter/teams>@microsoft/teams.apps>axios>follow-redirects",
+            "packages__cli>@1password/connect>axios>follow-redirects",
+            "packages__cli>http-proxy-middleware>http-proxy>follow-redirects",
+            "packages__cli>@rudderstack/rudder-sdk-node>axios>follow-redirects",
+            "packages__cli>@rudderstack/rudder-sdk-node>axios-retry>axios>follow-redirects",
+            "packages__cli>@chat-adapter/slack>@slack/web-api>axios>follow-redirects",
+            "packages__cli>@chat-adapter/slack>@slack/socket-mode>@slack/web-api>axios>follow-redirects",
+            "packages__@n8n__nodes-langchain>@langchain/community>@ibm-cloud/watsonx-ai>ibm-cloud-sdk-core>axios>follow-redirects",
+            "packages__@n8n__nodes-langchain>@langchain/community>@ibm-cloud/watsonx-ai>ibm-cloud-sdk-core>retry-axios>axios>follow-redirects",
+            "packages__@n8n__nodes-langchain>@langchain/community>ibm-cloud-sdk-core>axios>follow-redirects",
+            "packages__@n8n__nodes-langchain>@langchain/community>ibm-cloud-sdk-core>retry-axios>axios>follow-redirects",
+            "packages__@n8n__agents>@daytona/sdk>@daytona/analytics-api-client>axios>follow-redirects",
+            "packages__@n8n__agents>@daytona/sdk>@daytona/api-client>axios>follow-redirects",
+            "packages__@n8n__agents>@daytona/sdk>@daytona/toolbox-api-client>axios>follow-redirects",
+            "packages__@n8n__agents>@daytona/sdk>axios>follow-redirects",
+            "packages__@n8n__agents>@n8n/sandbox-client>axios>follow-redirects",
+            "packages__@n8n__scan-community-package>axios>follow-redirects",
+            "packages__frontend__@n8n__rest-api-client>axios>follow-redirects",
+            "packages__@n8n__backend-network>axios>follow-redirects",
+            "packages__nodes-base>snowflake-sdk>axios>follow-redirects"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1244003,
+      "title": "follow-redirects: Cross-realm sensitiveHeaders arrays are discarded and custom credentials can follow redirects",
+      "module_name": "follow-redirects",
+      "vulnerable_versions": ">=1.16.0 <=1.16.1",
+      "patched_versions": ">=1.16.2",
+      "severity": "high",
+      "cwe": "CWE-201",
+      "github_advisory_id": "GHSA-mrwp-f3q8-3g9p",
+      "url": "https://github.com/advisories/GHSA-mrwp-f3q8-3g9p"
+    },
+    "1244013": {
+      "findings": [
+        {
+          "version": "10.5.0",
+          "paths": [
+            "packages__quality__testing__janitor>glob",
+            "packages__cli>sucrase>glob",
+            "packages__cli>@google-cloud/secret-manager>google-gax>rimraf>glob",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>glob",
+            "packages__@n8n__nodes-langchain>@google-cloud/resource-manager>google-gax>rimraf>glob",
+            "packages__@n8n__typeorm>glob",
+            "packages__quality__environments__containers>testcontainers>archiver>archiver-utils>glob",
+            "packages__quality__environments__containers>testcontainers>archiver>zip-stream>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/redis>testcontainers>archiver>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/redis>testcontainers>archiver>zip-stream>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/mysql>testcontainers>archiver>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/mysql>testcontainers>archiver>zip-stream>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/postgresql>testcontainers>archiver>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/postgresql>testcontainers>archiver>zip-stream>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/k3s>testcontainers>archiver>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/k3s>testcontainers>archiver>zip-stream>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/kafka>testcontainers>archiver>archiver-utils>glob",
+            "packages__quality__environments__containers>@testcontainers/kafka>testcontainers>archiver>zip-stream>archiver-utils>glob"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "11.1.0",
+          "paths": [
+            "packages__@n8n__node-cli>rimraf>glob",
+            "packages__cli>express-handlebars>glob"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "13.0.6",
+          "paths": [
+            "packages__cli>@sentry/node>@sentry/bundler-plugins>glob",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>@sentry/node>@sentry/bundler-plugins>glob",
+            "packages__core>@sentry/node-native>@sentry/node>@sentry/bundler-plugins>glob",
+            "packages__core>@sentry/profiling-node>@sentry/node>@sentry/bundler-plugins>glob",
+            "packages__core>@sentry/node>@sentry/bundler-plugins>glob"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1244013,
+      "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+      "module_name": "glob",
+      "vulnerable_versions": ">=9.0.0 <=14.0.1",
+      "patched_versions": ">=14.0.2",
+      "severity": "moderate",
+      "cwe": "CWE-400",
+      "github_advisory_id": "GHSA-3g3m-2fjr-6pw4",
+      "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4"
+    },
+    "1244221": {
+      "findings": [
+        {
+          "version": "13.0.2",
+          "paths": [
+            "packages__frontend__@n8n__design-system>markdown-it",
+            "packages__quality__policy__code-health>markdown-it",
+            "packages__frontend__@n8n__chat>markdown-it",
+            "packages__frontend__@n8n__chat>vue-markdown-render>markdown-it"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1244221,
+      "title": "markdown-it linkify: true has two quadratic paths, so a few hundred KB of markdown blocks the event loop for tens of seconds",
+      "module_name": "markdown-it",
+      "vulnerable_versions": "<14.3.1",
+      "patched_versions": ">=14.3.1",
+      "severity": "moderate",
+      "cwe": "CWE-400, CWE-407",
+      "github_advisory_id": "GHSA-253c-mchw-3w2r",
+      "url": "https://github.com/advisories/GHSA-253c-mchw-3w2r"
+    },
+    "1244623": {
+      "findings": [
+        {
+          "version": "10.2.3",
+          "paths": [
+            "packages__@n8n__eslint-config>eslint-plugin-n8n-nodes-base>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__oxlint-config>eslint-plugin-import-x>minimatch",
+            "packages__@n8n__oxlint-config>eslint-plugin-import-x>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__oxlint-config>eslint-plugin-n8n-nodes-base>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__oxlint-config>eslint-plugin-unused-imports>@typescript-eslint/eslint-plugin>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__oxlint-config>eslint-plugin-unused-imports>@typescript-eslint/eslint-plugin>@typescript-eslint/type-utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__oxlint-config>eslint-plugin-unused-imports>@typescript-eslint/eslint-plugin>@typescript-eslint/type-utils>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__oxlint-config>eslint-plugin-unused-imports>@typescript-eslint/eslint-plugin>@typescript-eslint/parser>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__eslint-plugin-community-nodes>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__eslint-plugin-community-nodes>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__frontend__@n8n__eslint-plugin-design-system>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__quality__policy__rules-engine>ts-morph>@ts-morph/common>minimatch",
+            "packages__quality__policy__code-health>ts-morph>@ts-morph/common>minimatch",
+            "packages__@n8n__node-cli>eslint-plugin-import-x>minimatch",
+            "packages__@n8n__node-cli>eslint-plugin-n8n-nodes-base>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>eslint-import-resolver-typescript>eslint-plugin-import>eslint-module-utils>@typescript-eslint/parser>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>eslint-import-resolver-typescript>eslint-plugin-import>eslint-module-utils>eslint-import-resolver-typescript>eslint-plugin-import-x>minimatch",
+            "packages__@n8n__node-cli>eslint-import-resolver-typescript>eslint-plugin-import>eslint-module-utils>eslint-import-resolver-typescript>eslint-plugin-import-x>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>eslint-import-resolver-typescript>eslint-plugin-import>@typescript-eslint/parser>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>eslint-import-resolver-typescript>eslint-plugin-import-x>minimatch",
+            "packages__@n8n__node-cli>ts-morph>@ts-morph/common>minimatch",
+            "packages__@n8n__node-cli>typescript-eslint>@typescript-eslint/eslint-plugin>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>typescript-eslint>@typescript-eslint/eslint-plugin>@typescript-eslint/type-utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>typescript-eslint>@typescript-eslint/eslint-plugin>@typescript-eslint/type-utils>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>typescript-eslint>@typescript-eslint/eslint-plugin>@typescript-eslint/parser>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>typescript-eslint>@typescript-eslint/parser>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>typescript-eslint>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>typescript-eslint>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>rimraf>glob>minimatch",
+            "packages__quality__testing__janitor>ts-morph>@ts-morph/common>minimatch",
+            "packages__cli>express-handlebars>glob>minimatch",
+            "packages__cli>@sentry/node>@sentry/bundler-plugins>glob>minimatch",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>@sentry/node>@sentry/bundler-plugins>glob>minimatch",
+            "packages__@n8n__scan-community-package>eslint-plugin-n8n-nodes-base>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__scan-community-package>@typescript-eslint/parser>@typescript-eslint/typescript-estree>minimatch",
+            "packages__core>@sentry/node-native>@sentry/node>@sentry/bundler-plugins>glob>minimatch",
+            "packages__core>@sentry/profiling-node>@sentry/node>@sentry/bundler-plugins>glob>minimatch",
+            "packages__core>@sentry/node>@sentry/bundler-plugins>glob>minimatch"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "version": "9.0.9",
+          "paths": [
+            "packages__@n8n__cli>@oclif/core>minimatch",
+            "packages__frontend__@n8n__storybook>vue-tsc>@vue/language-core>minimatch",
+            "packages__frontend__@n8n__frontend-test-utils>@testing-library/vue>@vue/test-utils>js-beautify>editorconfig>minimatch",
+            "packages__quality__efficiency__scale__benchmark>@oclif/core>minimatch",
+            "packages__@n8n__node-cli>eslint-plugin-import-x>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>eslint-import-resolver-typescript>eslint-plugin-import-x>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch",
+            "packages__@n8n__node-cli>@oclif/core>minimatch",
+            "packages__quality__testing__janitor>glob>minimatch",
+            "packages__cli>sucrase>glob>minimatch",
+            "packages__cli>@google-cloud/secret-manager>google-gax>rimraf>glob>minimatch",
+            "packages__@n8n__nodes-langchain>@n8n/typeorm>glob>minimatch",
+            "packages__@n8n__nodes-langchain>@google-cloud/resource-manager>google-gax>rimraf>glob>minimatch",
+            "packages__@n8n__typeorm>glob>minimatch",
+            "packages__quality__environments__containers>testcontainers>archiver>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>testcontainers>archiver>zip-stream>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/redis>testcontainers>archiver>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/redis>testcontainers>archiver>zip-stream>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/mysql>testcontainers>archiver>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/mysql>testcontainers>archiver>zip-stream>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/postgresql>testcontainers>archiver>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/postgresql>testcontainers>archiver>zip-stream>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/k3s>testcontainers>archiver>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/k3s>testcontainers>archiver>zip-stream>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/kafka>testcontainers>archiver>archiver-utils>glob>minimatch",
+            "packages__quality__environments__containers>@testcontainers/kafka>testcontainers>archiver>zip-stream>archiver-utils>glob>minimatch",
+            "packages__node-dev>@oclif/core>minimatch"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1244623,
+      "title": "minimatch has potential denial of service via globparts amplification",
+      "module_name": "minimatch",
+      "vulnerable_versions": ">=7.0.0 <11.0.1",
+      "patched_versions": ">=11.0.1",
+      "severity": "moderate",
+      "cwe": "CWE-405",
+      "github_advisory_id": "GHSA-g3hv-75wg-m249",
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249"
+    },
+    "1246029": {
+      "findings": [
+        {
+          "version": "5.7.2",
+          "paths": [
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-env>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-http>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-http>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-env>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-process>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-process>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/middleware-sdk-s3>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/signature-v4-multi-region>@aws-sdk/middleware-sdk-s3>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@aws-sdk/client-s3>@aws-sdk/middleware-flexible-checksums>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__blob-storage>@azure/storage-blob>@azure/core-xml>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>@azure/storage-blob>@azure/core-xml>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-env>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-http>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-http>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-env>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-process>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-process>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-web-identity>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-env>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-http>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-http>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-env>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/client-sso>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/token-providers>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-sso>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-process>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/util-user-agent-node>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/nested-clients>@aws-sdk/middleware-user-agent>@aws-sdk/core>fast-xml-parser",
+            "packages__@n8n__ai-utilities>@langchain/community>mongodb>@aws-sdk/credential-providers>@aws-sdk/client-cognito-identity>@aws-sdk/credential-provider-node>@aws-sdk/credential-provider-ini>@aws-sdk/credential-provider-web-identity>@aws-sdk/core>fast-xml-parser"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246029,
+      "title": "fast-xml-parser: Quadratic CPU consumption scanning unterminated stop-node tags",
+      "module_name": "fast-xml-parser",
+      "vulnerable_versions": "<=5.11.2",
+      "patched_versions": ">=5.12.0",
+      "severity": "low",
+      "cwe": "CWE-407",
+      "github_advisory_id": "GHSA-474x-hrwr-fgx4",
+      "url": "https://github.com/advisories/GHSA-474x-hrwr-fgx4"
+    },
+    "1246095": {
+      "findings": [
+        {
+          "version": "4.2.0",
+          "paths": [
+            "packages__nodes-base>snowflake-sdk>toml"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246095,
+      "title": "toml-node: Prototype pollution: parsing a TOML document can write to Object.prototype",
+      "module_name": "toml",
+      "vulnerable_versions": "<=5.0.0",
+      "patched_versions": ">=5.0.1",
+      "severity": "high",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-h895-cgqg-jf52",
+      "url": "https://github.com/advisories/GHSA-h895-cgqg-jf52"
+    },
+    "1246355": {
+      "findings": [
+        {
+          "version": "5.3.1",
+          "paths": [
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1246355,
+      "title": "basic-ftp: Uncaught TypeError in MLSD directory-listing parser via __proto__ fact name causes DoS in Client.list()",
+      "module_name": "basic-ftp",
+      "vulnerable_versions": "<=6.2.3",
+      "patched_versions": ">=6.2.4",
+      "severity": "moderate",
+      "cwe": "CWE-248, CWE-1321",
+      "github_advisory_id": "GHSA-5pm8-86m8-9m6r",
+      "url": "https://github.com/advisories/GHSA-5pm8-86m8-9m6r"
+    },
+    "1246357": {
+      "findings": [
+        {
+          "version": "1.19.15",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__cli>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__cli>@modelcontextprotocol/node>@hono/node-server",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>@hono/node-server",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>@hono/node-server"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246357,
+      "title": "@hono/node-server: Backslash in the request path is parsed as a path separator, bypassing path-based access control at a reverse proxy",
+      "module_name": "@hono/node-server",
+      "vulnerable_versions": "<1.19.18",
+      "patched_versions": ">=1.19.18",
+      "severity": "moderate",
+      "cwe": "CWE-436",
+      "github_advisory_id": "GHSA-jpvv-r467-5p4w",
+      "url": "https://github.com/advisories/GHSA-jpvv-r467-5p4w"
+    },
+    "1246367": {
+      "findings": [
+        {
+          "version": "5.3.1",
+          "paths": [
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__ai-utilities>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>puppeteer-core>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp",
+            "packages__@n8n__nodes-langchain>@langchain/community>puppeteer>@puppeteer/browsers>proxy-agent>pac-proxy-agent>get-uri>basic-ftp"
+          ],
+          "dev": false,
+          "optional": true,
+          "bundled": false
+        }
+      ],
+      "id": 1246367,
+      "title": "basic-ftp: Uncaught exception crashes the Node.js process when a password (or resumed-download path) contains CR/LF",
+      "module_name": "basic-ftp",
+      "vulnerable_versions": "<=6.2.2",
+      "patched_versions": ">=6.2.3",
+      "severity": "moderate",
+      "cwe": "CWE-248, CWE-755",
+      "github_advisory_id": "GHSA-r4jh-29pc-gfqr",
+      "url": "https://github.com/advisories/GHSA-r4jh-29pc-gfqr"
+    },
+    "1246368": {
+      "findings": [
+        {
+          "version": "4.13.11",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/node>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/node>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>hono"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246368,
+      "title": "Hono: `mount()` and `app.mount()` can forward a path that bypasses middleware scoped inside the mount prefix",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.13.16",
+      "patched_versions": ">=4.13.16",
+      "severity": "moderate",
+      "cwe": "CWE-288",
+      "github_advisory_id": "GHSA-4m76-xfj5-7975",
+      "url": "https://github.com/advisories/GHSA-4m76-xfj5-7975"
+    },
+    "1246369": {
+      "findings": [
+        {
+          "version": "4.13.11",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/node>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/node>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>hono"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246369,
+      "title": "Hono: RegExpRouter skips wildcard middleware for some route sets and for paths with an encoded line terminator",
+      "module_name": "hono",
+      "vulnerable_versions": ">=4.1.4 <=4.13.15",
+      "patched_versions": ">=4.13.16",
+      "severity": "moderate",
+      "cwe": "CWE-863",
+      "github_advisory_id": "GHSA-h7mg-cq63-vhpq",
+      "url": "https://github.com/advisories/GHSA-h7mg-cq63-vhpq"
+    },
+    "1246370": {
+      "findings": [
+        {
+          "version": "4.13.11",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/node>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/node>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>hono"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246370,
+      "title": "Hono: `css` helper does not escape a closing tag split between the template and an interpolated value, allowing HTML injection",
+      "module_name": "hono",
+      "vulnerable_versions": ">=3.12.0 <=4.13.15",
+      "patched_versions": ">=4.13.16",
+      "severity": "low",
+      "cwe": "CWE-79",
+      "github_advisory_id": "GHSA-3gg2-335m-rxc6",
+      "url": "https://github.com/advisories/GHSA-3gg2-335m-rxc6"
+    },
+    "1246373": {
+      "findings": [
+        {
+          "version": "4.13.11",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/node>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/node>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>hono"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246373,
+      "title": "Hono: `csrf()` does not check requests sent by hyperlink auditing (`text/ping`)",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.13.16",
+      "patched_versions": ">=4.13.16",
+      "severity": "moderate",
+      "cwe": "CWE-352",
+      "github_advisory_id": "GHSA-46wx-v44x-9hh2",
+      "url": "https://github.com/advisories/GHSA-46wx-v44x-9hh2"
+    },
+    "1246374": {
+      "findings": [
+        {
+          "version": "4.13.11",
+          "paths": [
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-apps>@modelcontextprotocol/ext-apps>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/sdk>hono",
+            "packages__cli>@modelcontextprotocol/node>@hono/node-server>hono",
+            "packages__cli>@modelcontextprotocol/node>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__nodes-langchain>@microsoft/agents-a365-tooling>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__nodes-langchain>@google/genai>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__mcp-browser>@modelcontextprotocol/sdk>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>@hono/node-server>hono",
+            "packages__@n8n__agents>@modelcontextprotocol/sdk>hono"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246374,
+      "title": "Hono: `validator('form')` skips validation for `multipart/form-data` requests with extra parameters",
+      "module_name": "hono",
+      "vulnerable_versions": ">=4.5.1 <=4.13.15",
+      "patched_versions": ">=4.13.16",
+      "severity": "moderate",
+      "cwe": "CWE-20, CWE-1471",
+      "github_advisory_id": "GHSA-4h7h-rv7c-7m2v",
+      "url": "https://github.com/advisories/GHSA-4h7h-rv7c-7m2v"
+    },
+    "1246705": {
+      "findings": [
+        {
+          "version": "0.221.0",
+          "paths": [
+            "packages__@n8n__instance-ai>@daytona/sdk>@opentelemetry/instrumentation-http",
+            "packages__cli>@microsoft/opentelemetry>@opentelemetry/instrumentation-http",
+            "packages__@n8n__nodes-langchain>@microsoft/opentelemetry>@opentelemetry/instrumentation-http",
+            "packages__@n8n__agents>@daytona/sdk>@opentelemetry/instrumentation-http"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1246705,
+      "title": "OpenTelemetry JavaScript: Insertion of Sensitive Information into Log File and Exposure of Sensitive Information to an Unauthorized Actor in @opentelemetry/instrumentation-http",
+      "module_name": "@opentelemetry/instrumentation-http",
+      "vulnerable_versions": ">=0.204.0 <0.222.0",
+      "patched_versions": ">=0.222.0",
+      "severity": "moderate",
+      "cwe": "CWE-200, CWE-532",
+      "github_advisory_id": "GHSA-3v2p-hm54-8qcq",
+      "url": "https://github.com/advisories/GHSA-3v2p-hm54-8qcq"
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 9,
+      "moderate": 37,
+      "high": 18,
+      "critical": 0
+    },
+    "dependencies": 2043,
+    "devDependencies": 0,
+    "optionalDependencies": 493,
+    "totalDependencies": 2536
+  }
+}

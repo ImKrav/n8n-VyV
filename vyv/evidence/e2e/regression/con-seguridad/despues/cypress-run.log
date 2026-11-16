@@ -1,0 +1,850 @@
+
+
+DevTools listening on ws://127.0.0.1:52811/devtools/browser/914719a3-1541-4dcd-845d-afb69c4b94ce
+(node:17880) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("file%3A///C%3A/Users/jdmg2/AppData/Local/Cypress/Cache/14.5.4/Cypress/resources/app/node_modules/ts-node/esm/transpile-only.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17880) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+====================================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Chrome 157 (headless)                                                          │
+  │ Node Version:   v24.14.1 (C:\Program Files\nodejs\node.exe)                                    │
+  │ Specs:          4 found (core.regression.cy.js, credentials.regression.cy.js, executions.regre │
+  │                 ssion.cy.js, workflows.regression.cy.js)                                       │
+  │ Searched:       C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\regression\**\*.cy.js    │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  core.regression.cy.js                                                           (1 of 4)
+
+
+  CO-01 · Data tables y columnas (API)
+[EVIDENCIA] CO-01 · Data tables y columnas (API) > CP-016-01 · crea una data table con nombre válido :: Tabla creada con id iWfzMD74k05RyjVy
+    √ CP-016-01 · crea una data table con nombre válido
+    √ CP-016-02 · rechaza nombre vacío o solo espacios
+[EVIDENCIA] CO-01 · Data tables y columnas (API) > CP-016-03 · rechaza nombre duplicado en el mismo proyecto (409) :: Data table with name 'vyv_dup_mwi229l2908' already exists in this project
+    √ CP-016-03 · rechaza nombre duplicado en el mismo proyecto (409)
+    √ Complementaria · valores límite de la longitud del nombre (1 / 128 / 129)
+    Columnas
+      √ CP-016-04 · añade columnas de los 4 tipos
+      √ CP-016-05 · rechaza nombres de columna inválidos y acepta los válidos (límite 63/64)
+      √ Complementaria · rechaza columna duplicada (409)
+      √ Complementaria · rechaza nombres reservados del sistema
+      √ CP-016-06 · renombra una columna y conserva sus datos
+      √ CP-016-07 · elimina una columna sin afectar las demás
+
+  CO-01 · Data tables (UI)
+    √ CP-016-01 · crea una data table desde cero y aparece su tarjeta (27333ms)
+    √ CP-016-02 · el botón Create queda deshabilitado con nombre vacío (7409ms)
+    √ CP-016-04 · muestra los encabezados de las columnas de los 4 tipos (7716ms)
+    √ CP-016-05 · el popover de nueva columna no crea nombres inválidos (7097ms)
+
+  CO-02 · Edición de filas (API)
+    √ CP-017-01 · añade una fila con un valor válido por tipo
+[EVIDENCIA] CO-02 · Edición de filas (API) > CP-017-02 · rechaza valores incompatibles con el tipo de la columna :: Validation error with data table request: value 'abc' does not match column type 'number': 'edad' expects a number but we got 'abc'
+    √ CP-017-02 · rechaza valores incompatibles con el tipo de la columna
+    √ CP-017-03 · guarda fechas en formato ISO UTC
+    √ CP-017-04 · admite nulos y el filtro isEmpty los encuentra
+[EVIDENCIA] CO-02 · Edición de filas (API) > CP-017-05 · guarda una celda de 10.000 caracteres :: Inserción de 10000 caracteres en 60 ms
+    √ CP-017-05 · guarda una celda de 10.000 caracteres
+[EVIDENCIA] CO-02 · Edición de filas (API) > CP-017-05 · guarda una celda de 100.000 caracteres :: Inserción de 100000 caracteres en 51 ms
+    √ CP-017-05 · guarda una celda de 100.000 caracteres
+    Con datos de ejemplo
+      √ CP-017-06 · ordena por edad ascendente y descendente
+      √ CP-017-07 · filtra con gt (valor límite excluido), eq y like
+      √ Complementaria · elimina filas seleccionadas
+
+  CO-02 · Nodo Data Table en un workflow (API)
+[EVIDENCIA] CO-02 · Nodo Data Table en un workflow (API) > CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro :: Insertar → HTTP 200: {"nombre":"Luis","edad":40,"id":1,"createdAt":"2026-11-15T16:35:59.970Z","updatedAt":"2026-11-15T16:35:59.970Z"}
+[EVIDENCIA] CO-02 · Nodo Data Table en un workflow (API) > CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro :: Leer edad > 35 → {"nombre":"Luis","edad":40,"id":1,"createdAt":"2026-11-15T16:35:59.970Z","updatedAt":"2026-11-15T16:35:59.970Z"}
+    √ CP-CO-02-08 · inserta una fila con el nodo Data Table y la lee con un filtro
+
+  CO-02 · Edición de filas (UI)
+    √ CP-017-01 · añade una fila y los valores persisten tras recargar (15664ms)
+    √ CP-017-06/07 · ordena y busca filas en la vista (8749ms)
+    √ Complementaria · elimina filas seleccionadas (9040ms)
+
+  CO-03 · Importar y exportar CSV (API)
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-01 · importa un CSV válido e infiere los tipos :: Tipos inferidos: ["nombre:string","edad:number","activo:boolean","fecha:date"]
+    √ CP-018-01 · importa un CSV válido e infiere los tipos
+    √ CP-018-02 · rechaza archivos que no son .csv (RNF-018)
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-03 · rechaza un CSV malformado sin crear tablas :: Respuesta 400: {"code":400,"message":"Error uploading file: Invalid CSV file: Quote Not Closed: the parsing is finished with an opening quote at line 7","stacktrace":"Response
+    √ CP-018-03 · rechaza un CSV malformado sin crear tablas
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-04 · no importa filas parciales si hay tipos incompatibles :: Validation error with data table request: value 'abc' does not match column type 'number': 'edad' expects a number but we got 'abc'
+    √ CP-018-04 · no importa filas parciales si hay tipos incompatibles
+    √ CP-018-05 · rechaza columnas que no existen en la tabla
+    √ Complementaria · ignora las columnas de sistema del CSV
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > CP-018-06 · el CSV descargado coincide con el original (round-trip) :: Round-trip OK: 5 filas idénticas
+    √ CP-018-06 · el CSV descargado coincide con el original (round-trip)
+    √ Complementaria · exporta con columnas de sistema cuando se solicita
+    √ Complementaria · CSV sin encabezados genera Column_1..Column_n
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > Hallazgo CP-018-07 · inferencia de fechas imposibles (documenta el defecto) :: Tipos inferidos: {"nombre":"string","fecha_iso":"date","fecha_imposible":"string","fecha_ddmm":"string","numero_raro":"string"}
+    √ Hallazgo CP-018-07 · inferencia de fechas imposibles (documenta el defecto)
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > Complementaria · BUG-018-05 · CSV malformado y fileId inválido responden 400 (tras la refactorización) :: CSV malformado → HTTP 400
+[EVIDENCIA] CO-03 · Importar y exportar CSV (API) > Complementaria · BUG-018-05 · CSV malformado y fileId inválido responden 400 (tras la refactorización) :: fileId con path traversal → HTTP 400
+    √ Complementaria · BUG-018-05 · CSV malformado y fileId inválido responden 400 (tras la refactorización)
+
+  CO-03 · CSV (UI)
+    √ CP-018-01 · importa valido.csv desde el modal de nueva data table (8638ms)
+    √ CP-018-06 · descarga el CSV desde la vista de la tabla (6513ms)
+
+  CO-04 · Carpetas: crear y navegar (API)
+    √ Precondición · la función Folders está habilitada por licencia
+    √ CP-019-01 · crea una carpeta en la raíz del proyecto
+    √ CP-019-02 · rechaza las 4 clases de nombres inválidos con su mensaje
+    √ Complementaria · valores límite de longitud (128 acepta / 129 rechaza)
+    √ CP-019-03 · renombra una carpeta
+    √ CP-019-04 · anida 3 niveles y el árbol muestra la ruta A → B → C
+    √ CP-019-06 · el contenido de la carpeta cuenta workflows y subcarpetas
+
+  CO-04 · Carpetas: crear y navegar (UI)
+    √ CP-019-01 · crea una carpeta desde el botón de añadir recurso (7859ms)
+    √ CP-019-03/05 · renombra desde los breadcrumbs y navega con las migas de pan (8320ms)
+    √ CP-019-06 · la tarjeta de carpeta muestra los conteos (9759ms)
+
+  CO-05 · Carpetas: mover y eliminar (API)
+    √ CP-020-01 · mueve un workflow de la raíz a una carpeta
+    √ CP-020-02 · mueve una carpeta con contenido dentro de otra
+    √ CP-020-03 · impide que una carpeta sea su propio padre
+    √ Complementaria · impide mover una carpeta dentro de su descendiente
+    √ Complementaria · elimina una carpeta vacía
+    √ CP-020-04 · elimina con contenido transfiriéndolo a otra carpeta
+    √ CP-020-05 · elimina con contenido sin transferir: los workflows quedan archivados
+    √ Complementaria · rechaza transferir el contenido a la carpeta que se elimina
+
+  CO-05 · Mover un workflow a la raíz (API)
+[EVIDENCIA] CO-05 · Mover un workflow a la raíz (API) > CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones :: Tras mover a la raíz: parentFolder=null
+[EVIDENCIA] CO-05 · Mover un workflow a la raíz (API) > CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones :: Contenido de la carpeta: {"totalSubFolders":0,"totalWorkflows":0}
+[EVIDENCIA] CO-05 · Mover un workflow a la raíz (API) > CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones :: Ejecuciones conservadas: 1
+    √ CP-CO-05-02 · el workflow movido a la raíz sale de la carpeta y conserva sus ejecuciones
+
+  CO-05 · Carpetas: mover y eliminar (UI)
+    √ CP-020-04 · elimina una carpeta transfiriendo su contenido (11209ms)
+    √ CP-020-02 · mueve una carpeta a otra con el modal de mover (10751ms)
+
+  Seguridad · Data tables y carpetas (OWASP Top 10)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01 Broken Access Control · la API exige sesión válida (sin cookie → 401) :: A01 · OK · Endpoints protegidos devuelven 401 sin sesión
+    √ A01 Broken Access Control · la API exige sesión válida (sin cookie → 401)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión) :: A07 · OK · Sesión ligada al browser-id
+    √ A01/A07 · la cookie de sesión no sirve con otro browser-id (protección de secuestro de sesión)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A01 · path traversal en fileId al crear una tabla desde CSV :: A01 · OK · fileId con ../ rechazado (400: Error uploading file: Error uploading file: Invalid file id: Path traversal dete)
+    √ A01 · path traversal en fileId al crear una tabla desde CSV
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A03 Injection · nombres con SQL no alteran la base de datos :: A03 · OK · Sin inyección SQL en nombres ni filtros
+    √ A03 Injection · nombres con SQL no alteran la base de datos
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto :: A03 · OK · Nombre de carpeta con < > rechazado
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto :: A03 · OK · Nombre de tabla con HTML se renderiza escapado
+    √ A03 Injection (XSS) · un nombre de carpeta con HTML se muestra como texto (7317ms)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236) :: A03 · OK · Las fórmulas se neutralizan al exportar
+    √ CP-018-08 · A03 inyección de fórmulas en el CSV exportado (CWE-1236)
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A04 Insecure Design · solo se aceptan archivos .csv :: A04 · OK · Extensiones distintas de .csv rechazadas
+    √ A04 Insecure Design · solo se aceptan archivos .csv
+┌───────────────────────────────────────┬───────────┐
+│ (index)                               │ Values    │
+├───────────────────────────────────────┼───────────┤
+│ x-content-type-options                │ 'nosniff' │
+│ x-frame-options / CSP frame-ancestors │ false     │
+│ x-powered-by (no debe exponerse)      │ 'ausente' │
+└───────────────────────────────────────┴───────────┘
+[EVIDENCIA] Seguridad · Data tables y carpetas (OWASP Top 10) > A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor :: A05 · REVISAR · {"x-content-type-options":"nosniff","x-frame-options / CSP frame-ancestors":false,"x-powered-by (no debe exponerse)":"ausente"}
+    √ A05 Security Misconfiguration · cabeceras de seguridad en la respuesta del editor
+
+
+  69 passing (3m)
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\regression-despues\mochawesome.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        69                                                                               │
+  │ Passing:      69                                                                               │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  19                                                                               │
+  │ Video:        true                                                                             │
+  │ Duration:     3 minutes, 1 second                                                              │
+  │ Spec Ran:     core.regression.cy.js                                                            │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-016-01_paso2_nombre.png                                                     
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-016-01_paso3_detalle.png                                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-016-01_paso4_tarjeta.png                                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-016-02_nombre_solo_espacios.png                                             
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-016-04_encabezados.png                                                      
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-016-05_mensaje_formato.png                                                  
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-017-01_persistencia.png                                                     
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-017-06_orden_ascendente.png                                                 
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-017-07_busqueda.png                                                         
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\Complementaria_filas_eliminadas.png                                            
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-018-01_vista_previa.png                                                     
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-018-01_tabla_importada.png                                                  
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-018-06_descarga.png                                                         
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-019-01_tarjeta.png                                                          
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-019-05_breadcrumbs.png                                                      
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-019-03_06_navegacion.png                                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-019-06_conteos.png                                                          
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-020-04_modal.png                                                            
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\core.r     (1440x900)
+     egression.cy.js\CP-020-02_movida.png                                                           
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\core.regression.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  credentials.regression.cy.js                                                    (2 of 4)
+
+
+  CR-01 · Crear credenciales (API)
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-01 · una credencial Header Auth con todos sus campos se guarda y aparece en el listado :: Credencial e7hEUVfnSv7DhIEI «VyV-Header_mwi266o7136» en el listado: 1 coincidencia
+    √ CP-CR-01-01 · una credencial Header Auth con todos sus campos se guarda y aparece en el listado
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-03 · la credencial «n8n API» con una clave válida de la instancia prueba la conexión con éxito :: Prueba de conexión: OK · Connection successful!
+    √ CP-CR-01-03 · la credencial «n8n API» con una clave válida de la instancia prueba la conexión con éxito
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-04 · (error) la credencial «n8n API» con una clave incorrecta informa el error :: Prueba de conexión: Error · Unauthorized
+    √ CP-CR-01-04 · (error) la credencial «n8n API» con una clave incorrecta informa el error
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-05 · (error) un tipo de credencial inexistente se rechaza con 400 :: Tipo inexistente → HTTP 400: Unrecognized credential type: tipoNoExisteVyv
+    √ CP-CR-01-05 · (error) un tipo de credencial inexistente se rechaza con 400
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-06 · (alternativo) dos credenciales con el mismo nombre se permiten y se distinguen por su ID :: Mismo nombre «VyV-Repetida_mwi267oy608»: BgAuidY72bT4lsmv y YBevsVmsxWRnXanN
+    √ CP-CR-01-06 · (alternativo) dos credenciales con el mismo nombre se permiten y se distinguen por su ID
+[EVIDENCIA] CR-01 · Crear credenciales (API) > CP-CR-01-02 · (alternativo) la API guarda una credencial sin su campo obligatorio; la validación es de la interfaz :: Header Auth sin «name» ni «value» → HTTP 200
+    √ CP-CR-01-02 · (alternativo) la API guarda una credencial sin su campo obligatorio; la validación es de la interfaz
+
+  CR-01 · Nombre de credencial con HTML (UI)
+[EVIDENCIA] CR-01 · Nombre de credencial con HTML (UI) > CP-CR-01-08 · (error) el nombre se muestra literal y no ejecuta ningún script :: El nombre con <img onerror> y <script> aparece como texto y no se ejecuta
+    √ CP-CR-01-08 · (error) el nombre se muestra literal y no ejecuta ningún script (11890ms)
+
+  CR-02 · Editar y eliminar credenciales (API)
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-01 · al cambiar el valor de una credencial en uso, el workflow envía el valor nuevo :: Antes: x-token=v1 · después de editar: x-token=v2
+    √ CP-CR-02-01 · al cambiar el valor de una credencial en uso, el workflow envía el valor nuevo
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-05 · renombrar una credencial en uso cambia el nombre y el workflow la sigue usando :: Credencial f2DgghX4gTcoM8sw renombrada a «VyV-CR02_mwi26lbi651-renombrada» · el workflow responde 200 con x-token=renombrada
+    √ CP-CR-02-05 · renombrar una credencial en uso cambia el nombre y el workflow la sigue usando
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-07 · (alternativo) eliminar una credencial sin uso la quita del listado y de la base de datos :: Después de eliminar gwpTObo8LSvfft6V: GET → 404 · 0 en el listado
+    √ CP-CR-02-07 · (alternativo) eliminar una credencial sin uso la quita del listado y de la base de datos
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02-08 · (error) eliminar una credencial en uso hace que la ejecución informe el problema :: Ejecución 25: error · nodo HTTP Request error · CredentialNotFoundError · redacción: credential_inaccessible
+    √ CP-CR-02-08 · (error) eliminar una credencial en uso hace que la ejecución informe el problema
+[EVIDENCIA] CR-02 · Editar y eliminar credenciales (API) > CP-CR-02 · (error) eliminar una credencial inexistente responde 404 :: DELETE de una credencial inexistente → HTTP 404: Credential to be deleted not found. You can only removed credentials owned by you
+    √ CP-CR-02 · (error) eliminar una credencial inexistente responde 404
+
+  CR-02 · Secretos de una credencial (API)
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro :: GET /rest/credentials/ionYkX8JHTQKB8B0 → {"data":{"updatedAt":"2026-11-15T16:38:26.101Z","createdAt":"2026-11-15T16:38:26.103Z","id":"ionYkX8JHTQKB8B0","name":"VyV-Header_mwi26ntb157","type":"httpHeaderAuth","isManaged":f
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro :: GET /rest/credentials/ionYkX8JHTQKB8B0?includeData=true → {"data":{"data":{"name":"X-API-Key","value":"__n8n_BLANK_VALUE_e5362baf-c777-4d57-a609-6eaf1f9e87f6"},"updatedAt":"2026-11-15T16:38:26.101Z","createdAt":"2026-11-15T16:38:26.103Z",
+    √ CP-CR-02-03 · abrir la credencial y el listado no devuelven el secreto en claro
+[EVIDENCIA] CR-02 · Secretos de una credencial (API) > CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre :: credentials del nodo: {"id":"ionYkX8JHTQKB8B0","name":"VyV-Header_mwi26ntb157"}
+    √ CP-CR-02-04 · el JSON del workflow que usa la credencial solo la referencia por ID y nombre
+
+  CR-02 · Formulario y eliminación de credenciales (UI)
+[EVIDENCIA] CR-02 · Formulario y eliminación de credenciales (UI) > CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM :: Campo Value al reabrir: «__n8n_BLANK_VALUE_e5362baf-c77»
+    √ CP-CR-02-02 · al reabrir la credencial, el valor secreto aparece enmascarado y no está en el DOM (10371ms)
+[EVIDENCIA] CR-02 · Formulario y eliminación de credenciales (UI) > CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial :: El diálogo pide confirmar con «Yes, delete» (sin texto que escribir); al cancelar, la credencial sigue en el listado
+    √ CP-CR-02-06 · (alternativo) el diálogo de eliminar pide confirmación y cancelar conserva la credencial (12171ms)
+
+  CR-03 · OAuth2 (API)
+    1) CP-CR-03-01 · la URL de autorización apunta al proveedor y su redirect_uri es el callback de esta instancia
+[EVIDENCIA] CR-03 · OAuth2 (API) > CP-CR-03-04 · (alternativo) los scopes de la URL coinciden con los configurados en la credencial :: Scopes pedidos al proveedor: read, write
+    √ CP-CR-03-04 · (alternativo) los scopes de la URL coinciden con los configurados en la credencial
+[EVIDENCIA] CR-03 · OAuth2 (API) > CP-CR-03-03 · (error) si el usuario cancela en el proveedor, el callback informa el error y no se guarda token :: Callback con error=access_denied → HTTP 200: n8n - OAuth Callback Error: The OAuth2 server returned an error. More details access_denied Failed to connect. The windo
+    √ CP-CR-03-03 · (error) si el usuario cancela en el proveedor, el callback informa el error y no se guarda token
+[EVIDENCIA] CR-03 · OAuth2 (API) > CP-CR-03 · (error) pedir la URL de autorización de una credencial inexistente responde 404 :: Autorizar una credencial inexistente → HTTP 404: Credential not found
+    √ CP-CR-03 · (error) pedir la URL de autorización de una credencial inexistente responde 404
+
+  CR-04 · Credenciales en nodos (API)
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-01 · el nodo HTTP Request usa la credencial asignada al ejecutar :: Cabecera recibida por el eco: x-token=asignada
+    √ CP-CR-04-01 · el nodo HTTP Request usa la credencial asignada al ejecutar
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-07 · sustituir la credencial del nodo se conserva al guardar y volver a leer :: Credencial del nodo tras guardar: 4lzD8r2mnvrUeDLO «VyV-CR04_mwi278xf521»
+    √ CP-CR-04-07 · sustituir la credencial del nodo se conserva al guardar y volver a leer
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-02 · (alternativo) al filtrar por el tipo requerido solo aparecen credenciales de ese tipo :: Filtro type=httpHeaderAuth: 4 credenciales, tipos httpHeaderAuth
+    √ CP-CR-04-02 · (alternativo) al filtrar por el tipo requerido solo aparecen credenciales de ese tipo
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-05 · (error) un workflow importado con una credencial que no existe no se publica e informa el nodo :: Publicar con credencial inexistente → HTTP 400: Cannot publish workflow: Credential "Credencial de otra instancia" no longer exists. Update the node to use a different credential.
+    √ CP-CR-04-05 · (error) un workflow importado con una credencial que no existe no se publica e informa el nodo
+[EVIDENCIA] CR-04 · Credenciales en nodos (API) > CP-CR-04-06 · (error) un nodo que requiere credencial y no tiene ninguna falla y lo informa :: Nodo HTTP Request: Credentials not found
+    √ CP-CR-04-06 · (error) un nodo que requiere credencial y no tiene ninguna falla y lo informa
+
+  CR-04 · Cambiar la credencial de un nodo (API)
+[EVIDENCIA] CR-04 · Cambiar la credencial de un nodo (API) > CP-CR-04-08 · la ejecución envía la cabecera de la credencial nueva y no la de la anterior :: Cabeceras recibidas por el eco (intento 2): x-token=abc · x-api-key=(ausente)
+    √ CP-CR-04-08 · la ejecución envía la cabecera de la credencial nueva y no la de la anterior
+
+  CR-04 · Crear credencial desde el nodo (UI)
+    2) CP-CR-04-03 · la credencial creada desde el selector del nodo queda seleccionada en el nodo
+[EVIDENCIA] CR-04 · Crear credencial desde el nodo (UI) > CP-CR-04-04 · (alternativo) con una sola credencial compatible, el nodo la toma sin intervención :: El nodo toma la única credencial httpQueryAuth: VyV-Unica 64732 (Te0ng1uZOxweyelE)
+    √ CP-CR-04-04 · (alternativo) con una sola credencial compatible, el nodo la toma sin intervención (11145ms)
+
+  CR-05 · Buscar, filtrar y compartir credenciales (API)
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-01 · un término parcial devuelve solo las coincidencias :: «vyvbusca83678 Fact» → vyvbusca83678 Facturación
+    √ CP-CR-05-01 · un término parcial devuelve solo las coincidencias
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-01 · (alternativo) un término inexistente devuelve un listado vacío :: Término inexistente → 0 credenciales
+    √ CP-CR-05-01 · (alternativo) un término inexistente devuelve un listado vacío
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-03 · el filtro por tipo solo muestra credenciales de ese tipo :: type=httpBasicAuth → vyvbusca83678 Básica (httpBasicAuth)
+    √ CP-CR-05-03 · el filtro por tipo solo muestra credenciales de ese tipo
+[EVIDENCIA] CR-05 · Buscar, filtrar y compartir credenciales (API) > CP-CR-05-06 · (error) compartir una credencial sin licencia responde 403 y no la comparte :: Compartir sin licencia → HTTP 403: Plan lacks license for this feature
+    √ CP-CR-05-06 · (error) compartir una credencial sin licencia responde 403 y no la comparte
+
+  CR-05 · Orden del listado de credenciales (UI)
+[EVIDENCIA] CR-05 · Orden del listado de credenciales (UI) > CP-CR-05-02 · el listado respeta el orden por nombre y por última actualización :: Orden por última actualización tras editar vyvorden83678 Bravo: vyvorden83678 Bravo > vyvorden83678 Alpha > vyvorden83678 Charlie
+    √ CP-CR-05-02 · el listado respeta el orden por nombre y por última actualización (17361ms)
+
+  CR-05 · Aislamiento de credenciales entre usuarios (API)
+[EVIDENCIA] CR-05 · Aislamiento de credenciales entre usuarios (API) > CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió :: Miembro · GET /rest/credentials → 0 credenciales; VyV-Privada visible: false
+[EVIDENCIA] CR-05 · Aislamiento de credenciales entre usuarios (API) > CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió :: Miembro · GET /rest/credentials/1hpDa9wwJYcwPKaA → HTTP 403
+    √ CP-CR-05-05 · el miembro no ve ni puede consultar una credencial que no se le compartió
+
+  Seguridad · Credenciales (OWASP Top 10:2025)
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-01 · A01 Broken Access Control · sin sesión, la API de credenciales responde 401 :: CP-SEG-CR-01 · A01 · OK · 7 rutas responden 401 sin sesión
+    √ CP-SEG-CR-01 · A01 Broken Access Control · sin sesión, la API de credenciales responde 401
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-02 · A01 Broken Access Control · el miembro no edita, borra, comparte ni transfiere una credencial ajena :: CP-SEG-CR-02 · A01 · OK · PATCH /rest/credentials/:id → 403; DELETE /rest/credentials/:id → 403; PUT /rest/credentials/:id/share → 403; PUT /rest/credentials/:id/transfer → 403
+    √ CP-SEG-CR-02 · A01 Broken Access Control · el miembro no edita, borra, comparte ni transfiere una credencial ajena
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-03 · A01 Broken Access Control · el miembro no puede usar en su workflow ni probar una credencial ajena :: CP-SEG-CR-03 · A01 · OK · guardar → 200; publicar → 400: Cannot publish workflow: You do not have access to credential "VyV-Seg-CR_mwi28l; probar → 403 Forbidden
+    √ CP-SEG-CR-03 · A01 Broken Access Control · el miembro no puede usar en su workflow ni probar una credencial ajena
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-04 · A04 Cryptographic Failures · crear y editar no devuelven el secreto, y leerlo con includeData lo redacta :: CP-SEG-CR-04 · A04 · OK · POST, PATCH y GET?includeData=true sin el secreto; value = CREDENTIAL_BLANKING_VALUE
+    √ CP-SEG-CR-04 · A04 Cryptographic Failures · crear y editar no devuelven el secreto, y leerlo con includeData lo redacta
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-05 · A08 Software or Data Integrity Failures · guardar reenviando el valor redactado conserva el secreto original :: CP-SEG-CR-05 · A08 · OK · cabecera recibida por el eco tras renombrar: el secreto original
+    √ CP-SEG-CR-05 · A08 Software or Data Integrity Failures · guardar reenviando el valor redactado conserva el secreto original
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-06 · A04 Cryptographic Failures · una credencial OAuth2 no devuelve clientSecret ni tokens en claro :: CP-SEG-CR-06 · A04 · OK · clientSecret redactado y sin oauthTokenData en la respuesta
+    √ CP-SEG-CR-06 · A04 Cryptographic Failures · una credencial OAuth2 no devuelve clientSecret ni tokens en claro
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-07 · A05 Injection · un nombre con SQL y claves __proto__ en data no alteran otras credenciales ni el servidor :: CP-SEG-CR-07 · A05 · OK · Nombre con SQL guardado como texto; __proto__ en data sin efecto
+    √ CP-SEG-CR-07 · A05 Injection · un nombre con SQL y claves __proto__ en data no alteran otras credenciales ni el servidor
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-08 · A06 Insecure Design · el listado con includeData=true no devuelve secretos :: CP-SEG-CR-08 · A06 · OK · 6 credenciales listadas; secreto en claro: false
+    √ CP-SEG-CR-08 · A06 Insecure Design · el listado con includeData=true no devuelve secretos
+[EVIDENCIA] Seguridad · Credenciales (OWASP Top 10:2025) > CP-SEG-CR-09 · A07 Authentication Failures · el flujo OAuth2 no se inicia para una credencial ajena ni acepta un state falso :: CP-SEG-CR-09 · A07 · OK · auth de una ajena → 404; callback con state falso → 200
+    √ CP-SEG-CR-09 · A07 Authentication Failures · el flujo OAuth2 no se inicia para una credencial ajena ni acepta un state falso
+    3) CP-SEG-CR-10 · A06 Insecure Design · la API rechaza una credencial sin sus campos obligatorios (issue #11)
+    4) CP-SEG-CR-11 · A10 Mishandling of Exceptional Conditions · id y tipo inexistentes responden 4xx sin traza
+
+
+  41 passing (2m)
+  4 failing
+
+  1) CR-03 · OAuth2 (API)
+       CP-CR-03-01 · la URL de autorización apunta al proveedor y su redirect_uri es el callback de esta instancia:
+
+      AssertionError: expected 'http://localhost:5680/rest/oauth2-credential/callback' to equal 'http://127.0.0.1:5680/rest/oauth2-credential/callback'
+      + expected - actual
+
+      -'http://localhost:5680/rest/oauth2-credential/callback'
+      +'http://127.0.0.1:5680/rest/oauth2-credential/callback'
+      
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\credentials.regression.cy.js:565:29)
+      at getRet (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121328:21)
+
+  2) CR-04 · Crear credencial desde el nodo (UI)
+       CP-CR-04-03 · la credencial creada desde el selector del nodo queda seleccionada en el nodo:
+     AssertionError: Timed out retrying after 15000ms: Expected to find element: `[data-test-id="node-credentials-select"] input`, but never found it.
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\credentials.regression.cy.js:787:12)
+      at getRet (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121328:21)
+      at wrapped (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:141671:19)
+
+  3) Seguridad · Credenciales (OWASP Top 10:2025)
+       CP-SEG-CR-10 · A06 Insecure Design · la API rechaza una credencial sin sus campos obligatorios (issue #11):
+
+      AssertionError: expected 200 to equal 400
+      + expected - actual
+
+      -200
+      +400
+      
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\credentials.regression.cy.js:1234:29)
+      at getRet (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121328:21)
+
+  4) Seguridad · Credenciales (OWASP Top 10:2025)
+       CP-SEG-CR-11 · A10 Mishandling of Exceptional Conditions · id y tipo inexistentes responden 4xx sin traza:
+     AssertionError: sin traza de pila: expected '{"code":404,"message":"Credential with ID \\"VyVnoExiste1\\" could not be found.","stacktrace":"ResponseError: Credential with ID \\"VyVnoExiste1\\" could not be found.\\n    at CredentialsService.getOne (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\credentials\\\\credentials.service.ts:2017:10)\\n    at CredentialsController.getOne (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\credentials\\\\credentials.controller.ts:158:6)\\n    at handler (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\controller.registry.ts:130:12)\\n    at C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\response-helper.ts:188:17"}' not to match /\bat .+\(.+:\d+:\d+\)|node_modules|\/usr\/local\/lib|packages\/cli/
+      at sinTraza (http://127.0.0.1:5680/__cypress/tests?p=regression\credentials.regression.cy.js:1023:48)
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\credentials.regression.cy.js:1240:9)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\regression-despues\mochawesome_001.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        45                                                                               │
+  │ Passing:      41                                                                               │
+  │ Failing:      4                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  10                                                                               │
+  │ Video:        true                                                                             │
+  │ Duration:     2 minutes, 1 second                                                              │
+  │ Spec Ran:     credentials.regression.cy.js                                                     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials.regression.cy.js\CP-CR-01-08_nombre-html.png                                             
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials.regression.cy.js\CP-CR-02-02_enmascarado.png                                             
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials.regression.cy.js\CP-CR-02-06_dialogo.png                                                 
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials.regression.cy.js\CR-03 · OAuth2 (API) -- CP-CR-03-01 · la URL de autorizac               
+     ión apunta al proveedor y su redirect_uri es el callback de esta instancia (fail               
+     ed).png                                                                                        
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials.regression.cy.js\CR-04 · Crear credencial desde el nodo (UI) -- CP-CR-04-0               
+     3 · la credencial creada desde el selector del nodo queda seleccionada en el nod               
+     o (failed).png                                                                                 
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials.regression.cy.js\CP-CR-04-04_asignada.png                                                
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials.regression.cy.js\CP-CR-05-02_nombre_az.png                                               
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden     (1440x900)
+     tials.regression.cy.js\CP-CR-05-02_ultima_actualizacion.png                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials.regression.cy.js\Seguridad · Credenciales (OWASP Top 102025) -- CP-SEG-CR-               
+     10 · A06 Insecure Design · la API rechaza una credencial sin sus campos obligato               
+     rios (issue #11) (failed).png                                                                  
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\creden    (1902x1104)
+     tials.regression.cy.js\Seguridad · Credenciales (OWASP Top 102025) -- CP-SEG-CR-               
+     11 · A10 Mishandling of Exceptional Conditions · id y tipo inexistentes responde               
+     n 4xx sin traza (failed).png                                                                   
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\credentials.regression.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  executions.regression.cy.js                                                     (3 of 4)
+
+
+  EX-01 · Estados de las ejecuciones (API)
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-01 · una ejecución exitosa aparece como «success» con inicio y duración coherentes :: Ejecución 41: success · modo webhook · duración 10 ms
+    √ CP-EX-01-01 · una ejecución exitosa aparece como «success» con inicio y duración coherentes
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-02 · (error) una ejecución cuyo nodo falla aparece con estado «error» :: Webhook → HTTP 500 · ejecución 42: error
+    √ CP-EX-01-02 · (error) una ejecución cuyo nodo falla aparece con estado «error»
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-03 · (alternativo) mientras dura el nodo Wait la ejecución aparece «waiting» :: Ejecución 43: waiting hasta 2026-11-15T16:45:11.351Z
+    √ CP-EX-01-03 · (alternativo) mientras dura el nodo Wait la ejecución aparece «waiting»
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-04 · (alternativo) una ejecución larga aparece «running» y cambia a «success» al terminar :: Ejecución 44: running → success
+    √ CP-EX-01-04 · (alternativo) una ejecución larga aparece «running» y cambia a «success» al terminar (5469ms)
+[EVIDENCIA] EX-01 · Estados de las ejecuciones (API) > CP-EX-01-07 · la lista global y la del workflow muestran las mismas ejecuciones con los mismos datos :: Workflow XqHntBRzIcuyJdy9: 1 en su lista · 1 en la global
+    √ CP-EX-01-07 · la lista global y la del workflow muestran las mismas ejecuciones con los mismos datos
+
+  EX-02 · Filtros de la lista de ejecuciones (API)
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=success: 26 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=error: 4 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=waiting: 1 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=canceled: 1 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado :: status=running: 0 ejecuciones
+    √ CP-EX-02-01 · cada valor del filtro de estado muestra solo ejecuciones con ese estado
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-02 · el filtro por workflow muestra solo ejecuciones de ese workflow :: workflowId=X64IPQBmGq5ndLT3: 1 ejecuciones
+    √ CP-EX-02-02 · el filtro por workflow muestra solo ejecuciones de ese workflow
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-03 · (alternativo) rangos de fechas: el mismo día incluye, el futuro y el rango invertido devuelven vacío :: Día 2026-11-15 (UTC): 1 ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-03 · (alternativo) rangos de fechas: el mismo día incluye, el futuro y el rango invertido devuelven vacío :: Rango invertido: 0 ejecuciones
+    √ CP-EX-02-03 · (alternativo) rangos de fechas: el mismo día incluye, el futuro y el rango invertido devuelven vacío
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-04 · (alternativo) estado + workflow + fecha a la vez solo devuelven lo que cumple todo :: error + workflow + desde 2026-11-15T16:39:20.787Z: 47
+    √ CP-EX-02-04 · (alternativo) estado + workflow + fecha a la vez solo devuelven lo que cumple todo
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02-05 · sin filtros la lista vuelve a mostrar todas las ejecuciones :: Sin filtros: 32 ejecuciones (límite 100)
+    √ CP-EX-02-05 · sin filtros la lista vuelve a mostrar todas las ejecuciones
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02 · (error) un filtro mal formado o un límite fuera de rango responden 400 :: Filtro mal formado → HTTP 400: Failed to parse query string
+[EVIDENCIA] EX-02 · Filtros de la lista de ejecuciones (API) > CP-EX-02 · (error) un filtro mal formado o un límite fuera de rango responden 400 :: limit=500 → HTTP 400: Execution limit must be between 1 and 100
+    √ CP-EX-02 · (error) un filtro mal formado o un límite fuera de rango responden 400
+
+  EX-03 · Vista previa, reintento y eliminación (API)
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-01 · la vista previa muestra por nodo los mismos datos que devolvió la ejecución :: Nodos en la vista previa: Webhook, Edit Fields · salida de Edit Fields: {"pedido":42,"estado":"listo"}
+    √ CP-EX-03-01 · la vista previa muestra por nodo los mismos datos que devolvió la ejecución
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-02 · (error) la ejecución fallida identifica el nodo con error, su mensaje y sus datos de entrada :: Nodo con error: Falla · mensaje: fallo controlado VyV
+    √ CP-EX-03-02 · (error) la ejecución fallida identifica el nodo con error, su mensaje y sus datos de entrada
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-04 · (alternativo) reintentar con la versión original vuelve a fallar y queda como reintento :: Reintento 52 de 51: error (retry)
+    √ CP-EX-03-04 · (alternativo) reintentar con la versión original vuelve a fallar y queda como reintento
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-03 · reintentar con la versión actual (corregida) termina con éxito :: Reintento 54 con la versión actual: success
+    √ CP-EX-03-03 · reintentar con la versión actual (corregida) termina con éxito
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-05 · eliminar una ejecución la quita de la lista :: Después de eliminar 55: 0 ejecuciones en la lista
+    √ CP-EX-03-05 · eliminar una ejecución la quita de la lista
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03-06 · (alternativo) eliminar varias seleccionadas solo quita esas :: Eliminadas 57, 56 · quedan 58
+    √ CP-EX-03-06 · (alternativo) eliminar varias seleccionadas solo quita esas
+[EVIDENCIA] EX-03 · Vista previa, reintento y eliminación (API) > CP-EX-03 · (error, hallazgo) consultar una ejecución eliminada no devuelve datos (responde 200 {} y no 404) :: GET de la ejecución eliminada 59 → HTTP 200 {}
+    √ CP-EX-03 · (error, hallazgo) consultar una ejecución eliminada no devuelve datos (responde 200 {} y no 404)
+
+  EX-04 · Detener ejecuciones (API)
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-03 · detener una ejecución en un nodo Wait la deja «canceled» y no se reanuda :: Detener 60: waiting → canceled
+    √ CP-EX-04-03 · detener una ejecución en un nodo Wait la deja «canceled» y no se reanuda
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-02 · detener una ejecución de producción en curso la deja «canceled» :: Detener 61: running → canceled
+    √ CP-EX-04-02 · detener una ejecución de producción en curso la deja «canceled»
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-04 · (alternativo) detener en bloque solo afecta a las ejecuciones seleccionadas :: Detener solo A: 62 canceled · 63 waiting
+    √ CP-EX-04-04 · (alternativo) detener en bloque solo afecta a las ejecuciones seleccionadas
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04-05 · (alternativo) «detener todas» cancela todas las ejecuciones en curso :: Detener todas: 3 ejecuciones detenidas
+    √ CP-EX-04-05 · (alternativo) «detener todas» cancela todas las ejecuciones en curso
+[EVIDENCIA] EX-04 · Detener ejecuciones (API) > CP-EX-04 · (error, hallazgo) detener una ejecución ya terminada no la modifica (responde 500) :: Detener la ejecución terminada 66 → HTTP 500: Only running or waiting executions can be stopped and 66 is currently success
+    √ CP-EX-04 · (error, hallazgo) detener una ejecución ya terminada no la modifica (responde 500)
+
+  EX-04 · Detener desde el editor (UI)
+[EVIDENCIA] EX-04 · Detener desde el editor (UI) > CP-EX-04-01 · detener una ejecución manual larga la deja «canceled» y el nodo siguiente no se ejecuta :: Ejecución 67: manual/canceled · nodos ejecutados: 
+    √ CP-EX-04-01 · detener una ejecución manual larga la deja «canceled» y el nodo siguiente no se ejecuta (15152ms)
+[EVIDENCIA] EX-04 · Detener desde el editor (UI) > CP-EX-04-06 · (alternativo) al dejar de escuchar el webhook de prueba, su URL ya no dispara la ejecución :: GET /webhook-test/vyv-test-1794760856867-213682 tras detener la escucha → HTTP 404
+    √ CP-EX-04-06 · (alternativo) al dejar de escuchar el webhook de prueba, su URL ya no dispara la ejecución (9489ms)
+
+  EX-05 · Datos del panel de logs (API)
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-01 · el árbol sigue el orden real de ejecución e incluye solo la rama tomada :: Orden de ejecución: Webhook → If → Rama sí
+    √ CP-EX-05-01 · el árbol sigue el orden real de ejecución e incluye solo la rama tomada
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-02 · la entrada y la salida de un nodo coinciden con los datos del workflow :: If: 0 ítems en «true» y 1 en «false» · salida de «Rama no»: {"rama":"no"}
+    √ CP-EX-05-02 · la entrada y la salida de un nodo coinciden con los datos del workflow
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-03 · (error) el nodo que falla queda marcado con error y su mensaje :: Estado: error · nodo con error: Rama sí · fallo en la rama sí
+    √ CP-EX-05-03 · (error) el nodo que falla queda marcado con error y su mensaje
+[EVIDENCIA] EX-05 · Datos del panel de logs (API) > CP-EX-05-04 · (alternativo) la ejecución de Execute Workflow enlaza con la ejecución hija y sus datos :: Respuesta del padre: {"desde":"hijo"} · ejecución hija: {"executionId":"72","workflowId":"UsGnxGhIJVgsAJsw"}
+    √ CP-EX-05-04 · (alternativo) la ejecución de Execute Workflow enlaza con la ejecución hija y sus datos
+
+  EX-05 · Panel de logs con el teclado (UI)
+[EVIDENCIA] EX-05 · Panel de logs con el teclado (UI) > CP-EX-05-05 · los atajos abren, recorren y cierran el panel de logs :: «l» abre el panel, ↓/↑ recorren Manual Trigger → Paso A → Paso B → Paso A, Esc quita la selección y «l» cierra
+    √ CP-EX-05-05 · los atajos abren, recorren y cierran el panel de logs (9928ms)
+
+  Seguridad · Ejecuciones (OWASP Top 10:2025)
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-01 · A01 Broken Access Control · sin sesión, la API de ejecuciones responde 401 :: CP-SEG-EX-01 · A01 · OK · 5 rutas responden 401 sin sesión
+    √ CP-SEG-EX-01 · A01 Broken Access Control · sin sesión, la API de ejecuciones responde 401
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-02 · A01 Broken Access Control · el miembro no ve las ejecuciones del propietario en su lista ni filtrando por workflowId :: CP-SEG-EX-02 · A01 · OK · filtro workflowId ajeno → 200, 0 resultados
+    √ CP-SEG-EX-02 · A01 Broken Access Control · el miembro no ve las ejecuciones del propietario en su lista ni filtrando por workflowId
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-03 · A01 Broken Access Control · el miembro no obtiene el detalle de una ejecución ajena :: CP-SEG-EX-03 · A01 · OK · GET /rest/executions/:id ajena → 404 {"code":404,"message":"Execution not found","stacktrace":"Re (sin datos de la ejecución: true)
+    √ CP-SEG-EX-03 · A01 Broken Access Control · el miembro no obtiene el detalle de una ejecución ajena
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-04 · A01 Broken Access Control · el miembro no puede detener, reintentar ni eliminar ejecuciones ajenas :: CP-SEG-EX-04 · A01 · OK · stop → 404; retry → 404; delete → 404; estado final: waiting
+    √ CP-SEG-EX-04 · A01 Broken Access Control · el miembro no puede detener, reintentar ni eliminar ejecuciones ajenas
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-05 · A04 Cryptographic Failures · el detalle de una ejecución fallida no contiene el secreto de la credencial :: CP-SEG-EX-05 · A04 · OK · Detalle de 6758 caracteres; contiene el secreto: false
+    √ CP-SEG-EX-05 · A04 Cryptographic Failures · el detalle de una ejecución fallida no contiene el secreto de la credencial
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-06 · A05 Injection · filtros malformados o con SQL responden 4xx y no amplían resultados :: CP-SEG-EX-06 · A05 · OK · JSON roto → 400; estado con SQL → 200; workflowId con SQL → 200; lastId con SQL → 400
+    √ CP-SEG-EX-06 · A05 Injection · filtros malformados o con SQL responden 4xx y no amplían resultados
+[EVIDENCIA] Seguridad · Ejecuciones (OWASP Top 10:2025) > CP-SEG-EX-07 · A06 Insecure Design · la lista no permite pedir más de 100 ejecuciones por página :: CP-SEG-EX-07 · A06 · OK · limit=100000 → 400: Execution limit must be between 1 and 100
+    √ CP-SEG-EX-07 · A06 Insecure Design · la lista no permite pedir más de 100 ejecuciones por página
+    1) CP-SEG-EX-08 · A10 Mishandling of Exceptional Conditions · detener una ejecución terminada responde 4xx, no 500 (issue #9)
+    2) CP-SEG-EX-09 · A10 Mishandling of Exceptional Conditions · una ejecución inexistente responde 404 (issue #10)
+
+
+  37 passing (1m)
+  2 failing
+
+  1) Seguridad · Ejecuciones (OWASP Top 10:2025)
+       CP-SEG-EX-08 · A10 Mishandling of Exceptional Conditions · detener una ejecución terminada responde 4xx, no 500 (issue #9):
+     AssertionError: sin traza de pila: expected '{"code":0,"message":"Only running or waiting executions can be stopped and 75 is currently error","stacktrace":"WorkflowOperationError: Only running or waiting executions can be stopped and 75 is currently error\\n    at ExecutionService.notStoppableError (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\executions\\\\execution.service.ts:613:10)\\n    at ExecutionService.assertStoppable (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\executions\\\\execution.service.ts:608:15)\\n    at ExecutionService.stop (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\executions\\\\execution.service.ts:566:8)\\n    at ExecutionsController.stop (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\executions\\\\executions.controller.ts:94:10)\\n    at handler (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\controller.registry.ts:130:12)\\n    at C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\response-helper.ts:188:17"}' not to match /\bat .+\(.+:\d+:\d+\)|node_modules|\/usr\/local\/lib|packages\/cli/
+      at sinTraza (http://127.0.0.1:5680/__cypress/tests?p=regression\executions.regression.cy.js:794:47)
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\executions.regression.cy.js:943:9)
+
+  2) Seguridad · Ejecuciones (OWASP Top 10:2025)
+       CP-SEG-EX-09 · A10 Mishandling of Exceptional Conditions · una ejecución inexistente responde 404 (issue #10):
+
+      AssertionError: expected 200 to equal 404
+      + expected - actual
+
+      -200
+      +404
+      
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\executions.regression.cy.js:956:29)
+      at getRet (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121328:21)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\regression-despues\mochawesome_002.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        39                                                                               │
+  │ Passing:      37                                                                               │
+  │ Failing:      2                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  5                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     1 minute, 18 seconds                                                             │
+  │ Spec Ran:     executions.regression.cy.js                                                      │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\execut     (1440x900)
+     ions.regression.cy.js\CP-EX-04-01_detenida.png                                                 
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\execut     (1440x900)
+     ions.regression.cy.js\CP-EX-04-06_escucha-detenida.png                                         
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\execut     (1440x900)
+     ions.regression.cy.js\CP-EX-05-05_seleccion-con-flechas.png                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\execut    (1902x1104)
+     ions.regression.cy.js\Seguridad · Ejecuciones (OWASP Top 102025) -- CP-SEG-EX-08               
+      · A10 Mishandling of Exceptional Conditions · detener una ejecución terminada r               
+     esponde 4xx, no 500 (issue #9) (failed).png                                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\execut    (1902x1104)
+     ions.regression.cy.js\Seguridad · Ejecuciones (OWASP Top 102025) -- CP-SEG-EX-09               
+      · A10 Mishandling of Exceptional Conditions · una ejecución inexistente respond               
+     e 404 (issue #10) (failed).png                                                                 
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\executions.regression.cy.js.mp4
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  workflows.regression.cy.js                                                      (4 of 4)
+
+
+  WF-01 · Lienzo del editor (UI)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-01 · los nodos Manual Trigger y Edit Fields conectados se conservan al recargar :: Después de recargar: 2 nodos y la conexión Manual Trigger → Edit Fields
+    √ CP-WF-01-01 · los nodos Manual Trigger y Edit Fields conectados se conservan al recargar (18358ms)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-02 / CP-WF-01-05 · (alternativo) eliminar un nodo quita sus conexiones y Ctrl+Z lo restaura :: Eliminar "Paso B": el nodo y su conexión desaparecen; el resto se conserva
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-02 / CP-WF-01-05 · (alternativo) eliminar un nodo quita sus conexiones y Ctrl+Z lo restaura :: Ctrl+Z restaura el nodo con su conexión; Ctrl+Shift+Z lo vuelve a eliminar
+    √ CP-WF-01-02 / CP-WF-01-05 · (alternativo) eliminar un nodo quita sus conexiones y Ctrl+Z lo restaura (8451ms)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-04 · (alternativo) un nodo desactivado se muestra atenuado y no transforma los datos :: Campos de la respuesta: headers, params, query, body, webhookUrl, executionMode, final · final=ok
+    √ CP-WF-01-04 · (alternativo) un nodo desactivado se muestra atenuado y no transforma los datos (8010ms)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01-07 · la nota adhesiva conserva color, contenido y tamaño al guardar :: Nota leída: {"content":"## Nota VyV\nTexto de prueba","color":4,"width":300,"height":180}
+    √ CP-WF-01-07 · la nota adhesiva conserva color, contenido y tamaño al guardar (7840ms)
+[EVIDENCIA] WF-01 · Lienzo del editor (UI) > CP-WF-01 · (error) abrir un workflow que no existe muestra el aviso y no abre un lienzo :: Un id inexistente lleva a /entity-not-found/workflow con el aviso "Workflow not found"
+    √ CP-WF-01 · (error) abrir un workflow que no existe muestra el aviso y no abre un lienzo (7752ms)
+
+  WF-02 · Ajustes del workflow (API)
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-06 / CP-WF-02-05 · los ajustes (zona horaria y timeout) persisten al volver a leer el workflow :: Ajustes leídos: {"timezone":"America/Bogota","executionTimeout":120,"saveManualExecutions":false}
+    √ CP-WF-02-06 / CP-WF-02-05 · los ajustes (zona horaria y timeout) persisten al volver a leer el workflow
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-01 · (alternativo) con «no guardar ejecuciones exitosas» la ejecución de producción no queda registrada :: Ejecuciones guardadas: 0
+    √ CP-WF-02-01 · (alternativo) con «no guardar ejecuciones exitosas» la ejecución de producción no queda registrada
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-03 · (error) una ejecución más larga que el timeout del workflow se cancela :: Estado con timeout de 1 s y espera de 4 s: canceled
+    √ CP-WF-02-03 · (error) una ejecución más larga que el timeout del workflow se cancela
+[EVIDENCIA] WF-02 · Ajustes del workflow (API) > CP-WF-02-04 · (error) el workflow de error se dispara cuando el workflow principal falla :: Ejecuciones del workflow de error: error/success
+    √ CP-WF-02-04 · (error) el workflow de error se dispara cuando el workflow principal falla
+
+  WF-02 · Ejecuciones manuales sin guardar (UI)
+[EVIDENCIA] WF-02 · Ejecuciones manuales sin guardar (UI) > CP-WF-02-02 · con «no guardar ejecuciones manuales» la ejecución desde el editor no queda registrada :: Ejecuciones registradas con saveManualExecutions=false: 0
+    √ CP-WF-02-02 · con «no guardar ejecuciones manuales» la ejecución desde el editor no queda registrada (9322ms)
+[EVIDENCIA] WF-02 · Ejecuciones manuales sin guardar (UI) > CP-WF-02-02 · (alternativo) con el ajuste por defecto la ejecución manual sí queda registrada :: Ejecuciones registradas con el ajuste por defecto: manual/success
+    √ CP-WF-02-02 · (alternativo) con el ajuste por defecto la ejecución manual sí queda registrada (8707ms)
+
+  WF-03 · Webhook de producción (API)
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-02 · el webhook de producción responde 200 y registra una ejecución exitosa :: GET /webhook/vyv-wf03-1794760966245-545084 → 200 {"ok":true}
+    √ CP-WF-03-02 · el webhook de producción responde 200 y registra una ejecución exitosa
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-04 · dos workflows con la misma ruta y métodos distintos reciben cada uno su método :: GET y POST /webhook/vyv-met-1794760967319-563350 → A y B (una ejecución cada uno)
+    √ CP-WF-03-04 · dos workflows con la misma ruta y métodos distintos reciben cada uno su método
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-01 · (error) no se puede publicar un workflow sin nodo trigger :: Publicar sin trigger → HTTP 400: Workflow cannot be activated because it has no trigger node. At least one trigger, webhook, or polling node is required.
+    √ CP-WF-03-01 · (error) no se puede publicar un workflow sin nodo trigger
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-03 · (error) un segundo workflow con la misma ruta y método no se publica :: Publicar B con la misma ruta → HTTP 409: There is a conflict with one of the webhooks.
+    √ CP-WF-03-03 · (error) un segundo workflow con la misma ruta y método no se publica
+[EVIDENCIA] WF-03 · Webhook de producción (API) > CP-WF-03-05 · (alternativo) despublicar el workflow detiene su webhook de producción :: Después de despublicar: GET /webhook/vyv-despublicar-1794760969411-294982 → 404
+    √ CP-WF-03-05 · (alternativo) despublicar el workflow detiene su webhook de producción
+    - CP-WF-03-08 · después de reiniciar n8n el workflow sigue publicado y su webhook responde
+
+  WF-03 · Cambios sin publicar (API y UI)
+[EVIDENCIA] WF-03 · Cambios sin publicar (API y UI) > CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados :: Tras guardar v=2 sin publicar, producción responde {"v":1}
+[EVIDENCIA] WF-03 · Cambios sin publicar (API y UI) > CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados :: Tras publicar, producción responde {"v":2}
+    √ CP-WF-03-07 · producción usa la versión publicada hasta que se publican los cambios guardados (21751ms)
+
+  WF-04 · Historial de versiones (API)
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-01 · tres cambios guardados crean tres versiones nuevas en orden cronológico :: Versiones (más reciente primero): f21319fe → ff0ddf35 → b7daad42 → 42e893f0
+    √ CP-WF-04-01 · tres cambios guardados crean tres versiones nuevas en orden cronológico
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-03 · restaurar la versión con 2 nodos sobre un workflow de 4 crea una versión nueva con ese contenido :: Después de restaurar: 2 nodos · 5 versiones
+    √ CP-WF-04-03 · restaurar la versión con 2 nodos sobre un workflow de 4 crea una versión nueva con ese contenido
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-04 / CP-WF-04-06 · una versión antigua se clona como workflow nuevo y el original no cambia :: Clon EXmFSUfKPf8Yhc52: 2 nodos · original w22OkI75jEuNYgd9: 3 nodos
+    √ CP-WF-04-04 / CP-WF-04-06 · una versión antigua se clona como workflow nuevo y el original no cambia
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-05 · (alternativo) comparar dos versiones identifica los nodos añadidos, eliminados y modificados :: Diff: {"añadidos":["Nuevo"],"eliminados":["Se va"],"modificados":["Se queda"]}
+    √ CP-WF-04-05 · (alternativo) comparar dos versiones identifica los nodos añadidos, eliminados y modificados
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04-02 · (error) nombrar una versión sin licencia responde 403 y no cambia el nombre :: Nombrar versión → HTTP 403: Plan lacks license for this feature
+    √ CP-WF-04-02 · (error) nombrar una versión sin licencia responde 403 y no cambia el nombre
+[EVIDENCIA] WF-04 · Historial de versiones (API) > CP-WF-04 · (error) una versión o un workflow inexistentes responden 404 :: Workflow inexistente → HTTP 404: Could not find workflow
+    √ CP-WF-04 · (error) una versión o un workflow inexistentes responden 404
+
+  WF-05 · Importar y duplicar workflows (API)
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-03 · importar desde una URL con JSON válido devuelve los nodos y conexiones del archivo :: Importado desde /webhook/vyv-json-1794760997741-95027 → workflow N7EneSsOGZaSyvEv con 2 nodos
+    √ CP-WF-05-03 · importar desde una URL con JSON válido devuelve los nodos y conexiones del archivo
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400 :: texto que no es URL → HTTP 400: Invalid url
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400 :: ruta inexistente → HTTP 400: The data in the file does not seem to be a n8n workflow JSON file!
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400 :: respuesta que no es un workflow → HTTP 400: The data in the file does not seem to be a n8n workflow JSON file!
+    √ CP-WF-05-04 · (error) una URL inválida, inexistente o sin JSON de workflow se rechaza con 400
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre vacío → HTTP 400: Workflow name is required
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre 129 caracteres → HTTP 400: Workflow name must be 128 characters or less
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre 128 caracteres → HTTP 200
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre repetido → HTTP 200
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan :: Nombre repetido (segunda vez) → HTTP 200
+    √ CP-WF-05-05 · nombres del duplicado: vacío y de 129 se rechazan; de 128 y repetido se aceptan
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-06 · el duplicado conserva las etiquetas y sus cambios no afectan al original :: Original tras modificar la copia: "VyV original", 2 nodos, etiquetas vyv-etiqueta_mwi2cye2288
+    √ CP-WF-05-06 · el duplicado conserva las etiquetas y sus cambios no afectan al original
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría :: "slack": 2621 plantillas · primera: Scrape physician profiles from BrowserAct into Google Sheets and notify Slack
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría :: Término inexistente: 0 plantillas
+[EVIDENCIA] WF-05 · Importar y duplicar workflows (API) > CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría :: Sin filtro: 14214 · categoría "AI": 9841
+    √ CP-WF-05-01 · (alternativo) la búsqueda de plantillas devuelve resultados, vacío para un término inexistente y respeta la categoría
+
+  Seguridad · Workflows (OWASP Top 10:2025)
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-01 · A01 Broken Access Control · sin sesión, la API de workflows responde 401 :: CP-SEG-WF-01 · A01 · OK · 7 rutas responden 401 sin sesión
+    √ CP-SEG-WF-01 · A01 Broken Access Control · sin sesión, la API de workflows responde 401
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-02 · A01 Broken Access Control · un miembro no lee, edita, archiva, activa ni ve el historial de un workflow ajeno :: CP-SEG-WF-02 · A01 · OK · GET /rest/workflows/:id → 403; PATCH /rest/workflows/:id → 403; POST /rest/workflows/:id/archive → 403; DELETE /rest/workflows/:id → 403; POST /rest/workflows/:id/activate → 403; GET /rest/workflow-history/workflow/:id → 404
+    √ CP-SEG-WF-02 · A01 Broken Access Control · un miembro no lee, edita, archiva, activa ni ve el historial de un workflow ajeno
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-03 · A01 Broken Access Control · el listado del miembro no incluye el workflow del propietario :: CP-SEG-WF-03 · A01 · OK · 0 workflows visibles para el miembro
+    √ CP-SEG-WF-03 · A01 Broken Access Control · el listado del miembro no incluye el workflow del propietario
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-04 · A01 Broken Access Control · el miembro no puede crear un workflow en el proyecto personal del propietario :: CP-SEG-WF-04 · A01 · OK · POST /rest/workflows con projectId ajeno → 400
+    √ CP-SEG-WF-04 · A01 Broken Access Control · el miembro no puede crear un workflow en el proyecto personal del propietario
+    1) CP-SEG-WF-05 · A01 Broken Access Control (SSRF) · importar desde URL no consulta direcciones internas
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-06 · A05 Injection · un nombre con HTML se guarda como texto y no se ejecuta en la lista :: CP-SEG-WF-06 · A05 · OK · 2 nombres con manejadores mostrados como texto, sin ejecución. Errores de la página: > Invalid or unexpected token | > Invalid or unexpected token
+    √ CP-SEG-WF-06 · A05 Injection · un nombre con HTML se guarda como texto y no se ejecuta en la lista (9009ms)
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-07 · A05 Injection · un nombre y una búsqueda con SQL no alteran los datos :: CP-SEG-WF-07 · A05 · OK · Consultas parametrizadas: nombre y filtro con SQL sin efecto
+    √ CP-SEG-WF-07 · A05 Injection · un nombre y una búsqueda con SQL no alteran los datos
+    2) CP-SEG-WF-08 · A08 Software or Data Integrity Failures · una edición basada en una versión vieja no sobrescribe la actual
+[EVIDENCIA] Seguridad · Workflows (OWASP Top 10:2025) > CP-SEG-WF-09 · A01 Broken Access Control · un webhook deja de ejecutar el workflow al despublicarlo :: CP-SEG-WF-09 · A01 · OK · Ruta no registrada → 404; webhook despublicado, primera petición → 404
+    √ CP-SEG-WF-09 · A01 Broken Access Control · un webhook deja de ejecutar el workflow al despublicarlo
+    3) CP-SEG-WF-10 · A10 Mishandling of Exceptional Conditions · un id inexistente responde 404 sin traza
+    4) CP-SEG-WF-11 · A10 Mishandling of Exceptional Conditions · un cuerpo JSON malformado responde 400, no 500
+
+
+  35 passing (2m)
+  1 pending
+  4 failing
+
+  1) Seguridad · Workflows (OWASP Top 10:2025)
+       CP-SEG-WF-05 · A01 Broken Access Control (SSRF) · importar desde URL no consulta direcciones internas:
+     AssertionError: n8n descargó contenido de direcciones internas (N8N_SSRF_PROTECTION_ENABLED=false por defecto): expected [ Array(1) ] to have a length of 0 but got 1
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\workflows.regression.cy.js:925:138)
+      at getRet (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:4285:29)
+
+  2) Seguridad · Workflows (OWASP Top 10:2025)
+       CP-SEG-WF-08 · A08 Software or Data Integrity Failures · una edición basada en una versión vieja no sobrescribe la actual:
+
+      AssertionError: expected 200 to be one of [ 400, 409 ]
+      + expected - actual
+
+      -200
+      +[ 400, 409 ]
+      
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\workflows.regression.cy.js:970:34)
+      at getRet (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121066:20)
+      at tryCatcher (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:1777:23)
+      at Promise.attempt.Promise.try (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:4285:29)
+      at Context.thenFn (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121077:66)
+      at Context.then (http://127.0.0.1:5680/__cypress/runner/cypress_runner.js:121328:21)
+
+  3) Seguridad · Workflows (OWASP Top 10:2025)
+       CP-SEG-WF-10 · A10 Mishandling of Exceptional Conditions · un id inexistente responde 404 sin traza:
+     AssertionError: sin traza de pila: expected '{"code":404,"message":"Could not load the workflow - you can only access workflows owned by you","stacktrace":"ResponseError: Could not load the workflow - you can only access workflows owned by you\\n    at WorkflowsController.getWorkflow (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\workflows\\\\workflows.controller.ts:280:10)\\n    at handler (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\controller.registry.ts:130:12)\\n    at C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\response-helper.ts:188:17"}' not to match /\bat .+\(.+:\d+:\d+\)|node_modules|\/usr\/local\/lib|packages\/cli/
+      at sinTraza (http://127.0.0.1:5680/__cypress/tests?p=regression\workflows.regression.cy.js:825:47)
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\workflows.regression.cy.js:998:9)
+
+  4) Seguridad · Workflows (OWASP Top 10:2025)
+       CP-SEG-WF-11 · A10 Mishandling of Exceptional Conditions · un cuerpo JSON malformado responde 400, no 500:
+     AssertionError: sin traza de pila: expected '"<!DOCTYPE html>\\n<html lang=\\"en\\">\\n<head>\\n<meta charset=\\"utf-8\\">\\n<title>Error</title>\\n</head>\\n<body>\\n<pre>ResponseError: Failed to parse request body<br> &nbsp; &nbsp;at parseBody (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\middlewares\\\\body-parser.ts:112:10)<br> &nbsp; &nbsp;at processTicksAndRejections (node:internal/process/task_queues:104:5)<br> &nbsp; &nbsp;at bodyParser (C:\\\\Users\\\\jdmg2\\\\Documents\\\\Homara\\\\Final\\\\n8n-VyV\\\\packages\\\\cli\\\\src\\\\middlewares\\\\body-parser.ts:118:2)</pre>\\n</body>\\n</html>\\n"' not to match /\bat .+\(.+:\d+:\d+\)|node_modules|\/usr\/local\/lib|packages\/cli/
+      at sinTraza (http://127.0.0.1:5680/__cypress/tests?p=regression\workflows.regression.cy.js:825:47)
+      at Context.eval (http://127.0.0.1:5680/__cypress/tests?p=regression\workflows.regression.cy.js:1011:9)
+
+
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\regression-despues\mochawesome_003.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        40                                                                               │
+  │ Passing:      35                                                                               │
+  │ Failing:      4                                                                                │
+  │ Pending:      1                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  11                                                                               │
+  │ Video:        true                                                                             │
+  │ Duration:     2 minutes, 8 seconds                                                             │
+  │ Spec Ran:     workflows.regression.cy.js                                                       │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl     (1440x900)
+     ows.regression.cy.js\CP-WF-01-01_lienzo.png                                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl     (1440x900)
+     ows.regression.cy.js\CP-WF-01-05_rehacer.png                                                   
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl     (1440x900)
+     ows.regression.cy.js\CP-WF-01-04_desactivado.png                                               
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl     (1440x900)
+     ows.regression.cy.js\CP-WF-01-07_nota.png                                                      
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl     (1440x900)
+     ows.regression.cy.js\CP-WF-01_no-existe.png                                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl     (1440x900)
+     ows.regression.cy.js\CP-WF-02-02_editor.png                                                    
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl     (1440x900)
+     ows.regression.cy.js\CP-WF-03-07_cambios-sin-publicar.png                                      
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl    (1902x1104)
+     ows.regression.cy.js\Seguridad · Workflows (OWASP Top 102025) -- CP-SEG-WF-05 ·                
+     A01 Broken Access Control (SSRF) · importar desde URL no consulta direcciones in               
+     ternas (failed).png                                                                            
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl    (1902x1104)
+     ows.regression.cy.js\Seguridad · Workflows (OWASP Top 102025) -- CP-SEG-WF-08 ·                
+     A08 Software or Data Integrity Failures · una edición basada en una versión viej               
+     a no sobrescribe la actual (failed).png                                                        
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl    (1902x1104)
+     ows.regression.cy.js\Seguridad · Workflows (OWASP Top 102025) -- CP-SEG-WF-10 ·                
+     A10 Mishandling of Exceptional Conditions · un id inexistente responde 404 sin t               
+     raza (failed).png                                                                              
+  -  C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\screenshots\workfl    (1902x1104)
+     ows.regression.cy.js\Seguridad · Workflows (OWASP Top 102025) -- CP-SEG-WF-11 ·                
+     A10 Mishandling of Exceptional Conditions · un cuerpo JSON malformado responde 4               
+     00, no 500 (failed).png                                                                        
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\workflows.regression.cy.js.mp4
+
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✔  core.regression.cy.js                    03:01       69       69        -        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  credentials.regression.cy.js             02:01       45       41        4        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  executions.regression.cy.js              01:18       39       37        2        -        - │
+  ├────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ ✖  workflows.regression.cy.js               02:08       40       35        4        1        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✖  3 of 4 failed (75%)                      08:31      193      182       10        1        -  
+

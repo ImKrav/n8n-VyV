@@ -1,0 +1,65 @@
+[
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-EX-01",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "5 rutas responden 401 sin sesión"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-EX-02",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "filtro workflowId ajeno → 200, 0 resultados"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-EX-03",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "GET /rest/executions/:id ajena → 404 {\"code\":404,\"message\":\"Execution not found\"} (sin datos de la ejecución: true)"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-EX-04",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "stop → 404; retry → 404; delete → 404; estado final: waiting"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-EX-05",
+    "owasp": "A04",
+    "resultado": "OK",
+    "detalle": "Detalle de 6953 caracteres; contiene el secreto: false"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-EX-06",
+    "owasp": "A05",
+    "resultado": "OK",
+    "detalle": "JSON roto → 400; estado con SQL → 200; workflowId con SQL → 200; lastId con SQL → 400"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-EX-07",
+    "owasp": "A06",
+    "resultado": "OK",
+    "detalle": "limit=100000 → 400: Execution limit must be between 1 and 100"
+  },
+  {
+    "severidad": "Baja",
+    "id": "CP-SEG-EX-08",
+    "owasp": "A10",
+    "resultado": "HALLAZGO",
+    "detalle": "stop de una terminada → 500: Only running or waiting executions can be stopped and 66 is currently error"
+  },
+  {
+    "severidad": "Baja",
+    "id": "CP-SEG-EX-09",
+    "owasp": "A10",
+    "resultado": "HALLAZGO",
+    "detalle": "GET de una inexistente → 200 {}"
+  }
+]

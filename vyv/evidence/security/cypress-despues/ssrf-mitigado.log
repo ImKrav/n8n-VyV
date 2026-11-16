@@ -1,0 +1,69 @@
+
+
+DevTools listening on ws://127.0.0.1:53813/devtools/browser/329ed39d-0c4a-4f1d-a6d5-73dd91cf4638
+(node:25564) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("file%3A///C%3A/Users/jdmg2/AppData/Local/Cypress/Cache/14.5.4/Cypress/resources/app/node_modules/ts-node/esm/transpile-only.mjs", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25564) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+====================================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        14.5.4                                                                         │
+  │ Browser:        Electron 130 (headless)                                                        │
+  │ Node Version:   v24.14.1 (C:\Program Files\nodejs\node.exe)                                    │
+  │ Specs:          1 found (_ssrf.cy.js)                                                          │
+  │ Searched:       C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\security\_ssrf.cy.js     │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  _ssrf.cy.js                                                                     (1 of 1)
+
+
+  SSRF mitigado
+[EVIDENCIA] SSRF mitigado > CP-SEG-WF-05 · A01 (SSRF) · con N8N_SSRF_PROTECTION_ENABLED=true las direcciones internas se bloquean :: http://127.0.0.1:5680/rest/settings → 400: The request was blocked because it resolves to a restricted IP address
+[EVIDENCIA] SSRF mitigado > CP-SEG-WF-05 · A01 (SSRF) · con N8N_SSRF_PROTECTION_ENABLED=true las direcciones internas se bloquean :: http://localhost:5680/healthz → 400: The request was blocked because it resolves to a restricted IP address
+    √ CP-SEG-WF-05 · A01 (SSRF) · con N8N_SSRF_PROTECTION_ENABLED=true las direcciones internas se bloquean
+
+
+  1 passing (828ms)
+
+[mochawesome] Report JSON saved to C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\mochawesome\mochawesome_030.json
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      1                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  0                                                                                │
+  │ Video:        true                                                                             │
+  │ Duration:     0 seconds                                                                        │
+  │ Spec Ran:     _ssrf.cy.js                                                                      │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Video)
+
+  -  Video output: C:\Users\jdmg2\Documents\Homara\Final\n8n-VyV\vyv\e2e\results\videos\_ssrf.cy.js.mp4
+
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✔  _ssrf.cy.js                              831ms        1        1        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✔  All specs passed!                        831ms        1        1        -        -        -  
+

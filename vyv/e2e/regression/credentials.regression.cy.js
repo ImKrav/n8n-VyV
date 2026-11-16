@@ -16,3 +16,5 @@ import '../credentials/CR-04/create-from-node.ui.cy.js';
 import '../credentials/CR-05/search-share.api.cy.js'; // CR-05 · Listado y permisos
 import '../credentials/CR-05/sort.ui.cy.js';
 import '../credentials/CR-05/isolation.api.cy.js';
+// Seguridad del módulo (OWASP Top 10:2025, RNF-02)
+import '../security/credentials.security.cy.js';

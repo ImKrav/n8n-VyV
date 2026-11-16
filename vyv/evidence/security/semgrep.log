@@ -1,0 +1,282 @@
+[00.12][[33mWARNING[0m]: Skipping unknown field 'pattern-not-sinks' in rule "ajinabraham.njsscan.database.nosql_find_injection.node_nosqli_injection"
+[0m               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 906 files tracked by git with 677 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin      Rules                                                                
+ ─────────────────────────────        ───────────────────                                                               
+  <multilang>       6     906          Community     677                                                                
+  ts              188     674                                                                                           
+  json              3       2                                                                                           
+                                                                                                                        
+Warning: 3 timeout error(s) in packages/cli/src/controllers/oauth/__tests__/oauth2-credential.controller.test.ts when
+running the following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf,
+ajinabraham.njsscan.xss.xss_node.express_xss]
+Semgrep stopped running rules on packages/cli/src/controllers/oauth/__tests__/oauth2-credential.controller.test.ts after
+3 timeout error(s). See `--timeout-threshold` for more info.
+Warning: 3 timeout error(s) in packages/cli/src/credentials/__tests__/credentials.controller.test.ts when running the
+following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf,
+ajinabraham.njsscan.xss.xss_node.express_xss]
+Semgrep stopped running rules on packages/cli/src/credentials/__tests__/credentials.controller.test.ts after 3 timeout
+error(s). See `--timeout-threshold` for more info.
+Warning: 3 timeout error(s) in packages/cli/src/credentials/__tests__/credentials.service.test.ts when running the
+following rules: [ajinabraham.njsscan.database.nosql_find_injection.node_nosqli_injection,
+ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf, javascript.express.security.audit.express-ssrf.express-ssrf]
+Semgrep stopped running rules on packages/cli/src/credentials/__tests__/credentials.service.test.ts after 3 timeout
+error(s). See `--timeout-threshold` for more info.
+Warning: 3 timeout error(s) in packages/cli/src/executions/__tests__/execution.service.test.ts when running the
+following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf,
+ajinabraham.njsscan.xss.xss_node.express_xss]
+Semgrep stopped running rules on packages/cli/src/executions/__tests__/execution.service.test.ts after 3 timeout
+error(s). See `--timeout-threshold` for more info.
+Warning: 1 timeout error(s) in packages/cli/src/webhooks/__tests__/waiting-webhooks.test.ts when running the following
+rules: [ajinabraham.njsscan.xss.xss_node.express_xss]
+Warning: 3 timeout error(s) in packages/cli/src/webhooks/__tests__/webhook-helpers.test.ts when running the following
+rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.eval.eval_node.eval_nodejs,
+ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf]
+Semgrep stopped running rules on packages/cli/src/webhooks/__tests__/webhook-helpers.test.ts after 3 timeout error(s).
+See `--timeout-threshold` for more info.
+Warning: 1 timeout error(s) in packages/cli/src/webhooks/webhook-helpers.ts when running the following rules:
+[ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf]
+Warning: 2 timeout error(s) in packages/cli/src/workflows/__tests__/workflow-execution.service.test.ts when running the
+following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf]
+Warning: 1 timeout error(s) in packages/cli/src/workflows/__tests__/workflow-validation.service.test.ts when running the
+following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos]
+Warning: 1 timeout error(s) in packages/cli/src/workflows/triggers/__tests__/trigger-execution-context.factory.test.ts
+when running the following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos]
+Warning: 1 timeout error(s) in packages/frontend/editor-
+ui/src/features/core/folders/components/MoveToFolderModal.test.ts when running the following rules:
+[ajinabraham.njsscan.dos.regex_dos.regex_dos]
+Warning: 2 timeout error(s) in packages/frontend/editor-
+ui/src/features/credentials/components/CredentialEdit/CredentialEdit.test.ts when running the following rules:
+[ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf]
+Warning: 3 timeout error(s) in packages/frontend/editor-
+ui/src/features/credentials/components/CredentialEdit/CredentialModeSelector.test.ts when running the following rules:
+[ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf,
+ajinabraham.njsscan.xss.xss_node.express_xss]
+Semgrep stopped running rules on packages/frontend/editor-
+ui/src/features/credentials/components/CredentialEdit/CredentialModeSelector.test.ts after 3 timeout error(s). See
+`--timeout-threshold` for more info.
+Warning: 3 timeout error(s) in packages/frontend/editor-ui/src/features/credentials/components/NodeCredentials.test.ts
+when running the following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos,
+ajinabraham.njsscan.eval.eval_node.eval_nodejs, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf]
+Semgrep stopped running rules on packages/frontend/editor-ui/src/features/credentials/components/NodeCredentials.test.ts
+after 3 timeout error(s). See `--timeout-threshold` for more info.
+Warning: 2 timeout error(s) in packages/frontend/editor-
+ui/src/features/credentials/composables/__tests__/useCredentialOAuth.test.ts when running the following rules:
+[ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf]
+Warning: 3 timeout error(s) in packages/frontend/editor-ui/src/features/credentials/composables/useCredentialForm.ts
+when running the following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos,
+ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf, ajinabraham.njsscan.xss.xss_node.express_xss]
+Semgrep stopped running rules on packages/frontend/editor-ui/src/features/credentials/composables/useCredentialForm.ts
+after 3 timeout error(s). See `--timeout-threshold` for more info.
+Warning: 3 timeout error(s) in packages/frontend/editor-ui/src/features/credentials/credentials.store.ts when running
+the following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf,
+ajinabraham.njsscan.xss.xss_node.express_xss]
+Semgrep stopped running rules on packages/frontend/editor-ui/src/features/credentials/credentials.store.ts after 3
+timeout error(s). See `--timeout-threshold` for more info.
+Warning: 2 timeout error(s) in packages/frontend/editor-
+ui/src/features/execution/executions/components/workflow/WorkflowExecutionsPreview.test.ts when running the following
+rules: [ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf, ajinabraham.njsscan.xss.xss_node.express_xss]
+Warning: 1 timeout error(s) in packages/frontend/editor-ui/src/features/execution/logs/logs.utils.test.ts when running
+the following rules: [ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf]
+Warning: 2 timeout error(s) in packages/frontend/editor-ui/src/features/workflows/canvas/components/Canvas.test.ts when
+running the following rules: [ajinabraham.njsscan.dos.regex_dos.regex_dos,
+ajinabraham.njsscan.redirect.open_redirect.express_open_redirect2]
+Warning: 1 timeout error(s) in packages/frontend/editor-
+ui/src/features/workflows/canvas/composables/useCanvasLayout.test.ts when running the following rules:
+[ajinabraham.njsscan.dos.regex_dos.regex_dos]
+Warning: 3 timeout error(s) in packages/frontend/editor-
+ui/src/features/workflows/components/WorkflowSettings/WorkflowSettings.test.ts when running the following rules:
+[ajinabraham.njsscan.dos.regex_dos.regex_dos, ajinabraham.njsscan.ssrf.ssrf_node.node_ssrf,
+ajinabraham.njsscan.xss.xss_node.express_xss]
+Semgrep stopped running rules on packages/frontend/editor-
+ui/src/features/workflows/components/WorkflowSettings/WorkflowSettings.test.ts after 3 timeout error(s). See `--timeout-
+threshold` for more info.
+[00.63][[33mWARNING[0m]: Skipping unknown field 'pattern-not-sinks' in rule "ajinabraham.njsscan.database.nosql_find_injection.node_nosqli_injection"
+[0m                    
+                    
+┌──────────────────┐
+│ 32 Code Findings │
+└──────────────────┘
+                                                    
+    packages/cli/src/executions/execution.service.ts
+   ❯❯❱ ajinabraham.njsscan.database.nosql_find_injection.node_nosqli_injection
+          Untrusted user input in findOne() function can result in NoSQL Injection.
+          Details: https://sg.run/0q35                                             
+                                                                                   
+          155┆ execution = await this.engineV2ExecutionReader.findOne(executionId, sharedWorkflowIds);
+                                                                                                     
+    packages/cli/src/executions/pre-execution-checks/__tests__/credentials-permission-checker.test.ts
+    ❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_username
+          A hardcoded username in plain text is identified. Store it properly in an environment variable.
+          Details: https://sg.run/5z6X                                                                   
+                                                                                                         
+          938┆ const userId = 'user-123';
+            ⋮┆----------------------------------------
+          1029┆ const userId = 'user-123';
+            ⋮┆----------------------------------------
+          1316┆ const userId = 'user-123';
+                                                                          
+    packages/cli/src/webhooks/__tests__/slack-interaction-webhooks.test.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_secret
+          A hardcoded secret is identified. Store it properly in an environment variable.
+          Details: https://sg.run/Rxpe                                                   
+                                                                                         
+           13┆ const TEST_HMAC_SECRET = 'test-hmac-secret-key';
+                                                                             
+    packages/cli/src/webhooks/__tests__/telegram-interaction-webhooks.test.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_secret
+          A hardcoded secret is identified. Store it properly in an environment variable.
+          Details: https://sg.run/Rxpe                                                   
+                                                                                         
+           13┆ const TEST_HMAC_SECRET = 'test-hmac-secret-key';
+                                                             
+    packages/cli/src/webhooks/__tests__/test-webhooks.test.ts
+    ❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_username
+          A hardcoded username in plain text is identified. Store it properly in an environment variable.
+          Details: https://sg.run/5z6X                                                                   
+                                                                                                         
+           49┆ const userId = '04ab4baf-85df-478f-917b-d303934a97de';
+                                                                
+    packages/cli/src/webhooks/__tests__/waiting-webhooks.test.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_secret
+          A hardcoded secret is identified. Store it properly in an environment variable.
+          Details: https://sg.run/Rxpe                                                   
+                                                                                         
+           48┆ const TEST_HMAC_SECRET = 'test-hmac-secret-key';
+                                                 
+    packages/cli/src/webhooks/waiting-webhooks.ts
+   ❯❯❱ ajinabraham.njsscan.redirect.open_redirect.express_open_redirect
+          Untrusted user input in redirect() can result in Open Redirect vulnerability. An http parameter may
+          contain a URL value and could cause the web application to redirect the request to the specified   
+          URL. By modifying the URL value to a malicious site, an attacker may successfully launch a phishing
+          scam and steal user credentials. Because the server name in the modified link is identical to the  
+          original site, phishing attempts have a more trustworthy appearance. Whether this issue poses a    
+          vulnerability will be subject to the intended behavior of the application. For example, a search   
+          engine might intentionally provide redirects to arbitrary URLs.                                    
+          Details: https://sg.run/QxzQ                                                                       
+                                                                                                             
+          202┆ const location = req.originalUrl.replace(
+          203┆    `/${this.endpointsConfig.webhookWaiting}/`,
+          204┆    `/${this.endpointsConfig.formWaiting}/`,
+          205┆ );
+          206┆ if (location === req.originalUrl) {
+          207┆    return false;
+          208┆ }
+          209┆ res.redirect(307, location);
+                                                
+    packages/cli/src/webhooks/webhook-helpers.ts
+    ❯❱ ajinabraham.njsscan.crypto.crypto_node.node_insecure_random_generator
+          crypto.pseudoRandomBytes()/Math.random() is a cryptographically weak random number generator.
+          Details: https://sg.run/ABG8                                                                 
+                                                                                                       
+          232┆ : null) ?? `mcp-trigger-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+                                                        
+    packages/cli/src/webhooks/webhook-request-handler.ts
+    ❯❱ javascript.express.security.cors-misconfiguration.cors-misconfiguration
+          By letting user input control CORS parameters, there is a risk that software does not properly 
+          verify that the source of data or communication is valid. Use literal values for CORS settings.
+          Details: https://sg.run/nKXO                                                                   
+                                                                                                         
+          226┆ res.header('Access-Control-Allow-Origin', defaultOrigin);
+            ⋮┆----------------------------------------
+          230┆ res.header('Access-Control-Allow-Origin', req.headers.origin);
+            ⋮┆----------------------------------------
+          232┆ res.header('Access-Control-Allow-Origin', defaultOrigin);
+            ⋮┆----------------------------------------
+          235┆ res.header('Access-Control-Allow-Origin', req.headers.origin);
+                                                                           
+    packages/cli/src/workflows/__tests__/workflow-execution.service.test.ts
+    ❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_username
+          A hardcoded username in plain text is identified. Store it properly in an environment variable.
+          Details: https://sg.run/5z6X                                                                   
+                                                                                                         
+          617┆ const userId = 'user-id';
+            ⋮┆----------------------------------------
+          720┆ const userId = 'user-id';
+            ⋮┆----------------------------------------
+          755┆ const userId = 'user-id';
+            ⋮┆----------------------------------------
+          817┆ const userId = 'user-id';
+            ⋮┆----------------------------------------
+          875┆ const userId = 'user-id';
+            ⋮┆----------------------------------------
+          961┆ const userId = 'user-id';
+            ⋮┆----------------------------------------
+          1142┆ const userId = 'user-id';
+            ⋮┆----------------------------------------
+          1211┆ const userId = 'user-id';
+                                                                  
+    packages/cli/src/workflows/callable/callable-workflow-input.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_password
+          A hardcoded password in plain text is identified. Store it properly in an environment variable.
+          Details: https://sg.run/JolW                                                                   
+                                                                                                         
+           96┆ const PASSTHROUGH = 'passthrough';
+                                                  
+    packages/cli/src/workflows/workflow.service.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_api_key
+          A hardcoded API Key is identified. Store it properly in an environment variable.
+          Details: https://sg.run/G3B2                                                    
+                                                                                          
+          117┆ const PUBLISH_API_KEY_SCOPE: ApiKeyScope = 'workflow:activate';
+                                                                        
+    packages/frontend/editor-ui/src/features/core/auth/auth.constants.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_password
+          A hardcoded password in plain text is identified. Store it properly in an environment variable.
+          Details: https://sg.run/JolW                                                                   
+                                                                                                         
+            6┆ export const CHANGE_PASSWORD_MODAL_KEY = 'changePassword';
+            ⋮┆----------------------------------------
+            7┆ export const CONFIRM_PASSWORD_MODAL_KEY = 'confirmPassword';
+                                                                                             
+    packages/frontend/editor-ui/src/features/core/auth/components/ChangePasswordModal.test.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_password
+          A hardcoded password in plain text is identified. Store it properly in an environment variable.
+          Details: https://sg.run/JolW                                                                   
+                                                                                                         
+           22┆ const NEW_PASSWORD = 'Sunflower7';
+            ⋮┆----------------------------------------
+           23┆ const CURRENT_PASSWORD = 'Old-password1';
+            ⋮┆----------------------------------------
+           24┆ const WRONG_PASSWORD_MESSAGE = 'Provided current password is incorrect.';
+                                                                                              
+    packages/frontend/editor-ui/src/features/core/auth/components/ConfirmPasswordModal.test.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_password
+          A hardcoded password in plain text is identified. Store it properly in an environment variable.
+          Details: https://sg.run/JolW                                                                   
+                                                                                                         
+           21┆ const PASSWORD = 'Old-password1';
+            ⋮┆----------------------------------------
+           22┆ const WRONG_PASSWORD_MESSAGE =
+           23┆    'Unable to update profile. Please check your credentials and try again.';
+                                                                                       
+    packages/frontend/editor-ui/src/features/core/auth/components/MfaSetupModal.test.ts
+   ❯❯❱ ajinabraham.njsscan.generic.hardcoded_secrets.node_secret
+          A hardcoded secret is identified. Store it properly in an environment variable.
+          Details: https://sg.run/Rxpe                                                   
+                                                                                         
+           26┆ const SECRET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 32 (32 blocking)
+ • Rules run: 197
+ • Targets scanned: 906
+ • Parsed lines: ~99.9%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 197 rules on 906 files: 32 findings.
+
+A new version of Semgrep is available. See https://semgrep.dev/docs/upgrading
+
+📢 Too many findings? Try Semgrep Pro for more powerful queries and less noise.
+   See https://sg.run/false-positives.

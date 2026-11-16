@@ -1,0 +1,79 @@
+[
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-WF-01",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "7 rutas responden 401 sin sesión"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-WF-02",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "GET /rest/workflows/:id → 403; PATCH /rest/workflows/:id → 403; POST /rest/workflows/:id/archive → 403; DELETE /rest/workflows/:id → 403; POST /rest/workflows/:id/activate → 403; GET /rest/workflow-history/workflow/:id → 404"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-WF-03",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "0 workflows visibles para el miembro"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-WF-04",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "POST /rest/workflows con projectId ajeno → 400"
+  },
+  {
+    "severidad": "Media",
+    "id": "CP-SEG-WF-05",
+    "owasp": "A01",
+    "resultado": "HALLAZGO",
+    "detalle": "http://127.0.0.1:5678/rest/settings → 400: The data in the file does not seem to be a n8n workflow JSON file!; http://localhost:5678/healthz → 400: The data in the file does not seem to be a n8n workflow JSON file!"
+  },
+  {
+    "severidad": "Media",
+    "id": "CP-SEG-WF-06",
+    "owasp": "A05",
+    "resultado": "HALLAZGO",
+    "detalle": "El nombre de un workflow con un atributo de evento se ejecuta al abrir la lista (marca en localStorage)"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-WF-07",
+    "owasp": "A05",
+    "resultado": "OK",
+    "detalle": "Consultas parametrizadas: nombre y filtro con SQL sin efecto"
+  },
+  {
+    "severidad": "Baja",
+    "id": "CP-SEG-WF-08",
+    "owasp": "A08",
+    "resultado": "HALLAZGO",
+    "detalle": "PATCH con checksum viejo → 200: la edición vieja sobrescribe la actual (sin licencia no hay detección de conflictos)"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-WF-09",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "Ruta no registrada → 404; webhook despublicado, primera petición → 404"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-WF-10",
+    "owasp": "A10",
+    "resultado": "OK",
+    "detalle": "404: Could not load the workflow - you can only access workflows owned by you"
+  },
+  {
+    "severidad": "Baja",
+    "id": "CP-SEG-WF-11",
+    "owasp": "A10",
+    "resultado": "HALLAZGO",
+    "detalle": "POST /rest/workflows con JSON truncado → 500"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-TR-01",
+    "owasp": "A02",
+    "resultado": "OK",
+    "detalle": "{\"x-frame-options\":\"SAMEORIGIN\",\"x-content-type-options\":\"nosniff\",\"referrer-policy\":\"no-referrer\",\"cross-origin-opener-policy\":\"same-origin-allow-popups\",\"x-powered-by\":\"ausente\"}"
+  },
+  {
+    "severidad": "Baja",
+    "id": "CP-SEG-TR-02",
+    "owasp": "A02",
+    "resultado": "HALLAZGO",
+    "detalle": "Solo Content-Security-Policy-Report-Only: script-src 'nonce-…' 'strict-dynamic' 'unsafe-eval'; object-src 'none'; base-uri 'none'"
+  },
+  {
+    "severidad": "Baja",
+    "id": "CP-SEG-TR-08",
+    "owasp": "A02",
+    "resultado": "HALLAZGO",
+    "detalle": "/assets/index-5MTts1Re.js → x-content-type-options: ausente"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-TR-03",
+    "owasp": "A07",
+    "resultado": "OK",
+    "detalle": "n8n-auth: Max-Age=604800; Path=/; Expires=Sun, 22 Nov 2026 16:27:18 GMT; HttpOnly; SameSite=Lax (Secure depende de N8N_SECURE_COOKIE y de HTTPS)"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-TR-04",
+    "owasp": "A07",
+    "resultado": "OK",
+    "detalle": "existente → 401 «Wrong username or password. Do you have caps lock on?»; inexistente → 401 «Wrong username or password. Do you have caps lock on?»"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-TR-05",
+    "owasp": "A07",
+    "resultado": "OK",
+    "detalle": "7 intentos → 401, 401, 401, 401, 401, 429, 429"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-TR-06",
+    "owasp": "A07",
+    "resultado": "OK",
+    "detalle": "cookie reutilizada tras logout → 401"
+  },
+  {
+    "severidad": "N/A",
+    "id": "CP-SEG-TR-07",
+    "owasp": "A01",
+    "resultado": "OK",
+    "detalle": "GET :tabla/rows → 403 User is missing a scope required to perf; POST :tabla/insert → 403 User is missing a scope required to perf; GET :tabla/download-csv → 403 User is missing a scope required to perf; DELETE :tabla → 403 User is missing a scope required to perf"
+  }
+]
