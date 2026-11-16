@@ -35,11 +35,11 @@
     "detalle": "http://127.0.0.1:5678/rest/settings → 400: The data in the file does not seem to be a n8n workflow JSON file!; http://localhost:5678/healthz → 400: The data in the file does not seem to be a n8n workflow JSON file!"
   },
   {
-    "severidad": "N/A",
+    "severidad": "Media",
     "id": "CP-SEG-WF-06",
     "owasp": "A05",
-    "resultado": "OK",
-    "detalle": "2 nombres con manejadores mostrados como texto, sin ejecución. Errores de la página: > Invalid or unexpected token | > Invalid or unexpected token"
+    "resultado": "HALLAZGO",
+    "detalle": "El nombre de un workflow con un atributo de evento se ejecuta al abrir la lista (marca en localStorage)"
   },
   {
     "severidad": "N/A",

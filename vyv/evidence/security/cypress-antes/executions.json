@@ -32,7 +32,7 @@
     "id": "CP-SEG-EX-05",
     "owasp": "A04",
     "resultado": "OK",
-    "detalle": "Detalle de 6943 caracteres; contiene el secreto: false"
+    "detalle": "Detalle de 6953 caracteres; contiene el secreto: false"
   },
   {
     "severidad": "N/A",
@@ -53,7 +53,7 @@
     "id": "CP-SEG-EX-08",
     "owasp": "A10",
     "resultado": "HALLAZGO",
-    "detalle": "stop de una terminada → 500: Only running or waiting executions can be stopped and 33 is currently error"
+    "detalle": "stop de una terminada → 500: Only running or waiting executions can be stopped and 66 is currently error"
   },
   {
     "severidad": "Baja",

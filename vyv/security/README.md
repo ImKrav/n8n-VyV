@@ -21,7 +21,7 @@ Cada `it` afirma el **comportamiento seguro esperado**. Si n8n no lo cumple, la 
 | --- | --- | --- |
 | [`workflows.security.cy.js`](../e2e/security/workflows.security.cy.js) | CP-SEG-WF-01 … 11 | WF-01 a WF-05 |
 | [`executions.security.cy.js`](../e2e/security/executions.security.cy.js) | CP-SEG-EX-01 … 09 | EX-01 a EX-05 |
-| [`credentials.security.cy.js`](../e2e/security/credentials.security.cy.js) | CP-SEG-CR-01 … 11 | CR-01 a CR-05 |
+| [`credentials.security.cy.js`](../e2e/security/credentials.security.cy.js) | CP-SEG-CR-01 … 12 | CR-01 a CR-05 |
 | [`transversal.security.cy.js`](../e2e/security/transversal.security.cy.js) | CP-SEG-TR-01 … 08 | Cabeceras, sesión, login y data tables (CO-01 a CO-03) |
 | [`core/security/owasp.cy.js`](../e2e/core/security/owasp.cy.js) (ya existía) | A01, A03, A04, A05, CP-018-08 | CO-01 a CO-05 |
 
@@ -31,8 +31,8 @@ Las pruebas de seguridad que el plan ya tenía siguen en su funcionalidad y entr
 
 | Corrida | Instancia | Pruebas | Aprobadas | Fallidas | Evidencia |
 | --- | --- | --- | --- | --- | --- |
-| Antes | n8n 2.47.0 oficial (Docker), modo normal | 54 | 43 | 11 | [`cypress-antes/`](../evidence/security/cypress-antes/) |
-| Después | Fork compilado desde esta rama, modo normal | 54 | 45 | 9 | [`cypress-despues/`](../evidence/security/cypress-despues/) |
+| Antes | n8n 2.47.0 oficial (Docker), modo normal (16/11/2026) | 55 | 43 | 12 | [`cypress-antes/`](../evidence/security/cypress-antes/) |
+| Después | Fork compilado desde esta rama, modo normal (15/11/2026, sin CP-SEG-CR-12 ni la corrección de CP-SEG-WF-06) | 54 | 45 | 9 | [`cypress-despues/`](../evidence/security/cypress-despues/) |
 
 Fecha de las dos corridas: 15/11/2026, Chromium. Las fallidas de «después» son los 8 hallazgos de n8n de la tabla siguiente y el caso de carpetas con HTML de `owasp.cy.js`, que necesita la licencia de carpetas (*Blocked (licencia)* en modo normal). Respecto de «antes» cambian dos casos: **CP-018-08 pasa** por la corrección del equipo en `csv-escape.ts` (BUG-018-04), y **CP-CR-01-07 pasa** porque en el fork el archivo SQLite es accesible (en Docker queda dentro del volumen y la prueba no lo puede leer).
 
@@ -44,7 +44,7 @@ Fecha de las dos corridas: 15/11/2026, Chromium. Las fallidas de «después» so
 | A02 Security Misconfiguration | Cabeceras del editor y de los estáticos (TR-01, TR-02, TR-08), ZAP baseline, `n8n audit` | ❌ SEC-02, SEC-03, SEC-04, SEC-14 · ✅ X-Frame-Options, nosniff en la interfaz, sin X-Powered-By |
 | A03 Software Supply Chain Failures | `pnpm audit --prod`, Trivy sobre la imagen | ❌ SEC-12 (18 altas), SEC-13 (2 críticas de Alpine) |
 | A04 Cryptographic Failures | El secreto no sale en POST, PATCH, GET `includeData`, el listado ni el detalle de una ejecución fallida; OAuth2 sin `clientSecret` ni tokens; cifrado en la base (CR-04, CR-06, CR-08, EX-05, CP-CR-01-07) | ✅ |
-| A05 Injection | Nombres y filtros con SQL, claves `__proto__`, nombres con HTML en la lista de workflows (WF-06, WF-07, EX-06, CR-07, `owasp.cy.js`) | ✅ · ℹ️ SEC-11 por validar |
+| A05 Injection | Nombres y filtros con SQL, claves `__proto__`, nombres con HTML en la lista de workflows (WF-06, WF-07, EX-06, CR-07, `owasp.cy.js`) | ❌ **SEC-11**: el nombre de un workflow ejecuta código en la lista · credenciales y data tables ✅ |
 | A06 Insecure Design | Límite de 100 ejecuciones por página (EX-07), el listado no trae secretos (CR-08), campos obligatorios (CR-10) | ❌ SEC-09 · el resto ✅ |
 | A07 Authentication Failures | Cookie HttpOnly y SameSite (TR-03), error de login genérico (TR-04), límite de 5 intentos por correo → 429 (TR-05), logout invalida la cookie (TR-06), sesión ligada al `browser-id` (`owasp.cy.js`), OAuth2 con *state* falso o credencial ajena (CR-09) | ✅ |
 | A08 Software or Data Integrity Failures | Edición con versión vieja (WF-08); reenviar el valor redactado conserva el secreto (CR-05) | ❌ SEC-05 · CR-05 ✅ |
@@ -67,7 +67,8 @@ El registro completo, con CWE, vector CVSS v3.1, validación y recomendación, e
 | SEC-18 | Baja | N/A | Los logins fallidos no quedan en el log de la instancia sin la licencia de *log streaming* | Registrar `user-login-failed` en el log normal o usar un proxy que lo registre |
 | SEC-05 | Baja | 2,6 | Sin licencia, una edición vieja sobrescribe la actual (`forceSave`) | Detectar conflictos sin licencia |
 | SEC-06 a 09 | Baja | N/A | 500 ante JSON malformado y al detener una terminada; 200 `{}` para una ejecución inexistente; credencial sin campos obligatorios (issues #9, #10 y #11) | Respuestas 4xx coherentes |
-| SEC-10, SEC-11 | Por validar | 3,7 / N/A | Ventana de ~250 ms del webhook tras despublicar; SyntaxError con un nombre con `onerror="…"` sin ejecución | Repetir en el entorno del plan |
+| **SEC-11** | **Media** | **5,4** | **El nombre de un workflow se interpreta como HTML en la lista y ejecuta código (la prueba usa una marca inocua en `localStorage`). Credenciales y data tables no lo ejecutan** | Escapar el nombre al mostrarlo. Afecta también a n8n original: informarlo por su canal de seguridad antes de publicar detalles |
+| SEC-10 | Por validar | 3,7 | Ventana de ~250 ms del webhook tras despublicar | Repetir en el entorno del plan |
 
 **Verdaderos negativos relevantes.** El miembro no puede usar una credencial ajena: n8n acepta guardar la referencia, pero rechaza publicar («You do not have access to credential») y la prueba de la credencial responde 403 (CP-SEG-CR-03). El detalle de una ejecución fallida con una credencial Header Auth no incluye el secreto (CP-SEG-EX-05). Reenviar el valor redactado (`CREDENTIAL_BLANKING_VALUE`) conserva el secreto original, y así lo confirma un webhook de eco (CP-SEG-CR-05).
 

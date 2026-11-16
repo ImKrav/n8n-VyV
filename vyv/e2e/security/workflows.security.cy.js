@@ -105,20 +105,25 @@ describe('Seguridad · Workflows (OWASP Top 10:2025)', () => {
   it('CP-SEG-WF-06 · A05 Injection · un nombre con HTML se guarda como texto y no se ejecuta en la lista', () => {
     // Con el manejador entre comillas el editor lanza un SyntaxError (observación, ver vyv/security/README.md):
     // se recoge como evidencia; lo que decide la prueba es que no se ejecute código ni se cree el elemento.
-    const errores = [];
-    cy.on('uncaught:exception', (err) => { errores.push(err.message.split('\n')[2]?.trim()); return false; });
+    // Marca inocua: el manejador solo escribe una clave en localStorage de la propia página.
+    // `window.__x` no sirve como señal: el manejador corre en otro contexto y no la ve.
     const ts = Date.now();
-    const nombres = [`VyV-Seg-<img src=x onerror="window.__xss=1">${ts}`, `VyV-Seg-<svg onload=window.__xss=2>${ts}`];
-    nombres.forEach((n) => nuevo(n).its('name').should('eq', n));
+    const nombre = `VyV-Seg-<img src=x onerror=localStorage.setItem(\`vyvMarca\`,1)>${ts}`;
+    cy.window().then((w) => w.localStorage.removeItem('vyvMarca'));
+    cy.on('uncaught:exception', () => false);
+    nuevo(nombre).its('name').should('eq', nombre);
     cy.visitarN8n('/home/workflows');
-    nombres.forEach((n) => cy.contains(n, { timeout: 20000 }).should('exist'));
-    cy.wait(2000);
-    cy.get('img[onerror], svg[onload]').should('not.exist');
-    cy.window().its('__xss').should('be.undefined');
-    cy.then(() => registrar({
-      id: 'CP-SEG-WF-06', owasp: 'A05', resultado: 'OK',
-      detalle: `2 nombres con manejadores mostrados como texto, sin ejecución. Errores de la página: ${errores.length ? errores.join(' | ') : 'ninguno'}`,
-    }));
+    cy.contains(String(ts), { timeout: 20000 });
+    cy.wait(3000);
+    cy.window().then((w) => {
+      const ejecutado = w.localStorage.getItem('vyvMarca') === '1';
+      w.localStorage.removeItem('vyvMarca');
+      registrar({
+        id: 'CP-SEG-WF-06', owasp: 'A05', resultado: ejecutado ? 'HALLAZGO' : 'OK', severidad: ejecutado ? 'Media' : 'N/A',
+        detalle: ejecutado ? 'El nombre de un workflow con un atributo de evento se ejecuta al abrir la lista (marca en localStorage)' : 'El nombre se muestra como texto, sin ejecución',
+      });
+      expect(ejecutado, 'el nombre no ejecuta código al mostrarse en la lista').to.eq(false);
+    });
   });
 
   it('CP-SEG-WF-07 · A05 Injection · un nombre y una búsqueda con SQL no alteran los datos', () => {

@@ -116,6 +116,37 @@ describe('Seguridad · Credenciales (OWASP Top 10:2025)', () => {
     });
   });
 
+  it('CP-SEG-CR-12 · A01 Broken Access Control · el miembro no puede ejecutar a mano un workflow propio con una credencial ajena', () => {
+    // Variante de CP-SEG-CR-03 sin publicar: ejecución manual (POST /rest/workflows/:id/run) desde el editor.
+    comoMiembro(miembro);
+    const nodos = [
+      { id: 'm', name: 'Inicio', type: 'n8n-nodes-base.manualTrigger', typeVersion: 1, position: [0, 0], parameters: {} },
+      n8nApi.nodoHttpCredencial(`${Cypress.config('baseUrl')}/webhook/${rutaEco}`, cred),
+    ];
+    const pasos = [];
+    n8nApi.req('POST', '/rest/workflows', { name: 'VyV-Seg-CR-manual', nodes: nodos, connections: n8nApi.cadena('Inicio', 'HTTP Request'), settings: {}, active: false }).then(n8nApi.ok).then((w) => {
+      creadas.workflows.push(w.id);
+      n8nApi.req('POST', `/rest/workflows/${w.id}/run`, { destinationNode: { nodeName: 'HTTP Request', mode: 'inclusive' } }).then((r) => {
+        pasos.push(`run → ${r.status} ${String(r.body?.message ?? '').slice(0, 90)}`);
+        if (r.status !== 200 || !r.body?.data?.executionId) return;
+        n8nApi.esperarEjecuciones(w.id, 1, (e) => ['success', 'error', 'crashed'].includes(e.status)).then(([e]) => {
+          if (!e) { pasos.push('sin ejecución terminada'); return; }
+          n8nApi.req('GET', `/rest/executions/${e.id}`).then((d) => {
+            // CredentialsPermissionChecker rechaza la ejecución antes de empezar y n8n redacta el error para el miembro.
+            const rechazada = texto(d).includes('\\"failedBeforeStart\\":true');
+            pasos.push(`ejecución ${e.status}; rechazada antes de empezar (failedBeforeStart): ${rechazada}; contiene el secreto: ${texto(d).includes(SECRETO)}`);
+            expect(rechazada, 'la comprobación previa de permisos rechaza la ejecución').to.eq(true);
+          });
+        });
+      });
+    });
+    cy.then(() => {
+      const fuga = pasos.some((p) => p.includes('contiene el secreto: true'));
+      registrar({ id: 'CP-SEG-CR-12', owasp: 'A01', resultado: fuga ? 'HALLAZGO' : 'OK', severidad: fuga ? 'Crítica' : 'N/A', detalle: pasos.join('; ') });
+      expect(fuga, 'el secreto del propietario no llega a una ejecución del miembro').to.eq(false);
+    });
+  });
+
   it('CP-SEG-CR-04 · A04 Cryptographic Failures · crear y editar no devuelven el secreto, y leerlo con includeData lo redacta', () => {
     cy.nombreUnico('VyV-Seg-CR-red').then((n) => n8nApi.req('POST', '/rest/credentials', { name: n, type: 'httpHeaderAuth', data: { name: 'X-Api-Key', value: SECRETO } })).then((r) => {
       expect(r.status).to.eq(200);
