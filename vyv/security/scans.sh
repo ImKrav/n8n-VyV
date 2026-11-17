@@ -53,7 +53,10 @@ dast() {
 	case "$N8N_URL" in http://localhost:*|http://127.0.0.1:*) ;; *) echo "dast: N8N_URL debe ser localhost" >&2; return 2 ;; esac
 	local objetivo="${N8N_URL/localhost/host.docker.internal}"
 	objetivo="${objetivo/127.0.0.1/host.docker.internal}"
-	docker run --rm -v "$(win "$OUT")":/zap/wrk zaproxy/zap-stable:2.16.1 zap-baseline.py -t "$objetivo" -I \
+	local red=()
+	# Linux: host.docker.internal no existe y n8n escucha solo en 127.0.0.1; ZAP usa la red del host.
+	if [ "$(uname -s)" = Linux ]; then objetivo="$N8N_URL"; red=(--network host -u 0); fi
+	docker run --rm "${red[@]}" -v "$(win "$OUT")":/zap/wrk zaproxy/zap-stable:2.16.1 zap-baseline.py -t "$objetivo" -I \
 		-J zap-baseline.json -r zap-baseline.html > "$OUT/zap-baseline.log" 2>&1
 	tail -n 3 "$OUT/zap-baseline.log"
 }

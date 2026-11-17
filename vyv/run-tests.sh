@@ -14,6 +14,8 @@
 set -euo pipefail
 VYV="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(dirname "$VYV")"
+# Optional local configuration (Node path, owner credentials, dbPath, restartCommand…); not versioned.
+if [ -f "$VYV/.env" ]; then set -a; . "$VYV/.env"; set +a; fi
 
 units() {
 	# The unit test files live outside editor-ui; this link lets them resolve its packages.
