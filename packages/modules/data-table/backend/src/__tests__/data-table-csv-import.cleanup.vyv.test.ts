@@ -24,14 +24,19 @@ describe('DataTableCsvImportService.cleanupFile (VyV)', () => {
 	it('no lanza si la limpieza falla (no enmascara el error original de la importación)', async () => {
 		// Arrange
 		const { svc, cleanup, logger } = crear();
-		cleanup.deleteFile.mockRejectedValue(new Error('Path traversal detected, refusing to join paths'));
+		cleanup.deleteFile.mockRejectedValue(
+			new Error('Path traversal detected, refusing to join paths'),
+		);
 		// Act
 		const resultado = svc.cleanupFile('../../etc/passwd');
 		// Assert
 		await expect(resultado).resolves.toBeUndefined();
 		expect(logger.warn).toHaveBeenCalledWith(
 			'Could not clean up uploaded CSV file',
-			expect.objectContaining({ fileId: '../../etc/passwd', error: expect.stringContaining('Path traversal') }),
+			expect.objectContaining({
+				fileId: '../../etc/passwd',
+				error: expect.stringContaining('Path traversal'),
+			}),
 		);
 	});
 

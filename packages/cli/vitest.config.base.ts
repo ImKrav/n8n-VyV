@@ -75,6 +75,9 @@ export const baseConfig = mergeConfig(createVitestConfigWithDecorators(), {
 		// mocks into the `@n8n/di` Container (`mockInstance`), and a shared worker
 		// would leak that state across files.
 		pool: 'forks',
+		// Tests must not reach the real PostHog: remote feature flags (e.g. credential
+		// descriptions) change over time and make flag-dependent tests environment-dependent.
+		env: { N8N_DIAGNOSTICS_ENABLED: 'false' },
 		globalSetup: ['./test/global-setup.ts'],
 		setupFiles: [
 			'./test/setup-test-folder.ts',

@@ -123,7 +123,9 @@ export class CsvParserService {
 				})
 				.on('end', () => resolve(onEnd(columnNames, rowCount)))
 				// A malformed file is a client error: report it as such instead of a 500
-				.on('error', (error: Error) => reject(new FileUploadError(`Invalid CSV file: ${error.message}`)));
+				.on('error', (error: Error) =>
+					reject(new FileUploadError(`Invalid CSV file: ${error.message}`)),
+				);
 
 			createReadStream(filePath)
 				.on('error', (error: NodeJS.ErrnoException) =>
@@ -280,7 +282,9 @@ export class CsvParserService {
 			// new Date() silently rolls impossible dates over (2024-02-30 -> 2024-03-01),
 			// so year-first dates are also checked against the calendar.
 			const yearFirst = /^(\d{4})[-/](\d{2})[-/](\d{2})/.exec(value);
-			return yearFirst ? this.isValidCalendarDate(+yearFirst[1], +yearFirst[2], +yearFirst[3]) : true;
+			return yearFirst
+				? this.isValidCalendarDate(+yearFirst[1], +yearFirst[2], +yearFirst[3])
+				: true;
 		}
 
 		return false;

@@ -37,8 +37,12 @@ const withDistroless = process.env.DOCKER_BUILD_DISTROLESS === 'true';
 // Build n8n on the pointer-compressed bases. The pins live in the bake file.
 const pointerCompressed = process.env.DOCKER_BUILD_PC === 'true';
 
-const imageBaseName = process.env.IMAGE_BASE_NAME || 'n8nio/n8n';
-const runnersImageBaseName = process.env.RUNNERS_IMAGE_BASE_NAME || 'n8nio/runners';
+// Registries reject upper case; forks get it from `github.repository` (e.g. ImKrav/n8n-VyV).
+const imageBaseName = (process.env.IMAGE_BASE_NAME || 'n8nio/n8n').toLowerCase();
+const runnersImageBaseName = (process.env.RUNNERS_IMAGE_BASE_NAME || 'n8nio/runners').toLowerCase();
+// docker buildx bake reads these from the environment too.
+process.env.IMAGE_BASE_NAME = imageBaseName;
+process.env.RUNNERS_IMAGE_BASE_NAME = runnersImageBaseName;
 const imageTag = process.env.IMAGE_TAG || 'local';
 
 // Push directly when the name has a registry host. This avoids the slow
@@ -162,7 +166,10 @@ async function buildWithBake(targets) {
 		...(isContainerDriver
 			? [
 					'--provenance=false',
-					...(tarballDir ? tarballOutputs : [shouldPush ? '--push' : '--load']),
+					// Recent buildx asks for an explicit entitlement to write outside the context.
+					...(tarballDir
+						? [`--allow=fs.write=${path.resolve(tarballDir)}`, ...tarballOutputs]
+						: [shouldPush ? '--push' : '--load']),
 				]
 			: []),
 	];

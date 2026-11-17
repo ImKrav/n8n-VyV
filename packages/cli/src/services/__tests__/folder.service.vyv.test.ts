@@ -56,7 +56,9 @@ describe('FolderService.deleteFolder (VyV, mocks)', () => {
 	it('C1 · carpeta inexistente → FolderNotFoundError y no borra nada (D1 = F)', async () => {
 		folderRepository.findOneOrFailFolderInProject.mockRejectedValue(new Error('no existe'));
 
-		await expect(servicio.deleteFolder(usuario, 'X', PROYECTO, {})).rejects.toBeInstanceOf(FolderNotFoundError);
+		await expect(servicio.deleteFolder(usuario, 'X', PROYECTO, {})).rejects.toBeInstanceOf(
+			FolderNotFoundError,
+		);
 
 		expect(folderRepository.delete).not.toHaveBeenCalled();
 		expect(eventService.emit).not.toHaveBeenCalled();
@@ -72,13 +74,19 @@ describe('FolderService.deleteFolder (VyV, mocks)', () => {
 		expect(workflowService.archive).toHaveBeenCalledWith(usuario, 'w1', { skipArchived: true });
 		expect(workflowRepository.moveToFolder).toHaveBeenCalledWith(['w1', 'w2'], PROJECT_ROOT);
 		expect(folderRepository.delete).toHaveBeenCalledWith({ id: 'A' });
-		expect(eventService.emit).toHaveBeenCalledWith('folder-deleted', { folderId: 'A', projectId: PROYECTO });
+		expect(eventService.emit).toHaveBeenCalledWith('folder-deleted', {
+			folderId: 'A',
+			projectId: PROYECTO,
+		});
 	});
 
 	it('C3 · transferir a la misma carpeta → UserError y no hay transacción (D3 = V)', async () => {
 		await expect(
 			servicio.deleteFolder(usuario, 'A', PROYECTO, { transferToFolderId: 'A' }),
-		).rejects.toThrow(new UserError('Cannot transfer folder contents to the folder being deleted'));
+		).rejects.toThrow(UserError);
+		await expect(
+			servicio.deleteFolder(usuario, 'A', PROYECTO, { transferToFolderId: 'A' }),
+		).rejects.toThrow('Cannot transfer folder contents to the folder being deleted');
 
 		expect(folderRepository.manager.transaction).not.toHaveBeenCalled();
 	});
@@ -86,7 +94,12 @@ describe('FolderService.deleteFolder (VyV, mocks)', () => {
 	it('C4 · transferir a otra carpeta → valida destino y mueve en transacción (D4 = V)', async () => {
 		await servicio.deleteFolder(usuario, 'A', PROYECTO, { transferToFolderId: 'C' });
 
-		expect(folderRepository.findOneOrFailFolderInProject).toHaveBeenNthCalledWith(2, 'C', PROYECTO, undefined);
+		expect(folderRepository.findOneOrFailFolderInProject).toHaveBeenNthCalledWith(
+			2,
+			'C',
+			PROYECTO,
+			undefined,
+		);
 		expect(folderRepository.moveAllToFolder).toHaveBeenCalledWith('A', 'C', tx);
 		expect(workflowRepository.moveAllToFolder).toHaveBeenCalledWith('A', 'C', tx);
 		expect(tx.delete).toHaveBeenCalledTimes(1);

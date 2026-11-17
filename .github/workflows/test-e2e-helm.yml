@@ -102,7 +102,7 @@ jobs:
           pnpm --filter n8n-containers exec tsx helm-start-stack.ts \
             --env E2E_TESTS=true --env NODE_ENV=development \
             --mode "${{ inputs.mode || 'queue' }}" \
-            --image "${{ env.DOCKER_IMAGE }}" \
+            --image "${DOCKER_IMAGE,,}" \
             --chart-ref "${{ env.HELM_CHART_REF }}" \
             --url-file /tmp/n8n-helm-url.txt \
             --kubeconfig-file /tmp/n8n-helm-kubeconfig.txt

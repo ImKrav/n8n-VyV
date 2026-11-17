@@ -4,9 +4,13 @@ import { createServer } from 'node:https';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-/** Git reports a failed TLS verification differently per libcurl TLS backend. */
+/**
+ * Git reports a failed TLS verification differently per libcurl TLS backend
+ * (OpenSSL: "SSL certificate problem"; GnuTLS, e.g. GitHub-hosted Ubuntu runners:
+ * "server certificate verification failed" or "SSL certificate verification failed").
+ */
 export const TLS_VERIFICATION_ERROR =
-	/SSL certificate problem|server certificate verification failed/;
+	/SSL certificate problem|(server|SSL) certificate verification failed/;
 
 /**
  * An HTTPS server with a self-signed certificate that answers every request

@@ -30,7 +30,10 @@ describe('escapeCsvValue (VyV)', () => {
 			['+1+1', "'+1+1"],
 			['-2+3', "'-2+3"],
 			['@SUM(1+1)', "'@SUM(1+1)"],
-			['=HYPERLINK("https://example.com";"clic")', '"\'=HYPERLINK(""https://example.com"";""clic"")"'],
+			[
+				'=HYPERLINK("https://example.com";"clic")',
+				'"\'=HYPERLINK(""https://example.com"";""clic"")"',
+			],
 		])('%s se exporta como texto', (entrada, esperado) => {
 			expect(escapeCsvValue(entrada, { neutralizeFormulas: true })).toBe(esperado);
 		});

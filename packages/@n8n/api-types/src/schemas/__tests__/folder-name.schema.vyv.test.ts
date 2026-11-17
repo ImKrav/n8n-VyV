@@ -52,7 +52,9 @@ describe('folderNameSchema · caminos independientes (VyV)', () => {
 		// Arrange
 		const entrada = 'a'.repeat(FOLDER_NAME_MAX_LENGTH + 1);
 		// Act / Assert
-		expect(mensajes(entrada)).toEqual([`Folder name cannot be longer than ${FOLDER_NAME_MAX_LENGTH} characters`]);
+		expect(mensajes(entrada)).toEqual([
+			`Folder name cannot be longer than ${FOLDER_NAME_MAX_LENGTH} characters`,
+		]);
 	});
 
 	it('C6 · nombre válido en el límite (128) y con espacios externos → se acepta recortado', () => {

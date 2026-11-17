@@ -31,7 +31,9 @@ describe('CsvParserService · errores de entrada (VyV)', () => {
 		const promesa = svc.parseFile('malformado.csv');
 
 		await expect(promesa).rejects.toBeInstanceOf(FileUploadError);
-		await expect(svc.parseFile('malformado.csv')).rejects.toThrow(/Invalid CSV file: .*Quote Not Closed/);
+		await expect(svc.parseFile('malformado.csv')).rejects.toThrow(
+			/Invalid CSV file: .*Quote Not Closed/,
+		);
 	});
 
 	it('fileId con path traversal → FileUploadError (y conserva el mensaje original)', async () => {

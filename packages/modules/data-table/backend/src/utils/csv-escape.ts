@@ -28,9 +28,14 @@ export function escapeCsvValue(value: unknown, options: EscapeCsvOptions = {}): 
 		str = `'${str}`;
 	}
 
-	const hasLeadingOrTrailingSpace = str.length > 0 && (str[0] === ' ' || str[str.length - 1] === ' ');
+	const hasLeadingOrTrailingSpace =
+		str.length > 0 && (str[0] === ' ' || str[str.length - 1] === ' ');
 	const needsQuotes =
-		str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r') || hasLeadingOrTrailingSpace;
+		str.includes(',') ||
+		str.includes('"') ||
+		str.includes('\n') ||
+		str.includes('\r') ||
+		hasLeadingOrTrailingSpace;
 
 	return needsQuotes ? `"${str.replace(/"/g, '""')}"` : str;
 }
