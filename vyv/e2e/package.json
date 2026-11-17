@@ -52,5 +52,10 @@
       "enabled": true,
       "output": "results/cucumber-report.json"
     }
+  },
+  "allowScripts": {
+    "cypress": true,
+    "esbuild": true,
+    "@badeball/cypress-cucumber-preprocessor": true
   }
 }
