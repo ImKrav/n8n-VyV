@@ -37,7 +37,7 @@ on:
 jobs:
   run-discovery-evals:
     name: 'Run Discovery Evals'
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       NODE_OPTIONS: '--max-old-space-size=7168'
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: useblacksmith/checkout@bcec731f1eb1367240608d1c889a75b96db6ec53 # v1.5.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch || github.ref }}
           fetch-depth: 1

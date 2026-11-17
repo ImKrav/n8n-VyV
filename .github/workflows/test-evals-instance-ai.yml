@@ -158,7 +158,7 @@ jobs:
     name: 'Run Evals'
     # 8vcpu/32GB: full-suite N=10 baselines need ~150 min of eval time and
     # did not fit the 4vcpu tier at any timeout.
-    runs-on: blacksmith-8vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     # Long ceiling for high-N baselines (240) and for Baseten (600: auto
     # 1 lane / c=2 is ~16× slower than the Anthropic default, so a ~18 min
     # full suite becomes ~5 h; +2 h buffer for provider backoff). Plain

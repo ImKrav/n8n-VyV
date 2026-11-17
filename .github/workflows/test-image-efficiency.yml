@@ -19,7 +19,7 @@ jobs:
   image-efficiency:
     name: Image Efficiency
     needs: prepare-docker
-    runs-on: ${{ vars.RUNNER_PROVIDER == 'github' && 'ubuntu-latest' || 'blacksmith-2vcpu-ubuntu-2204' }}
+    runs-on: ${{ vars.RUNNER_PROVIDER == 'github' && 'ubuntu-latest' || 'ubuntu-latest' }}
     timeout-minutes: 20
     env:
       CURRENTS_RECORD_KEY: ${{ secrets.CURRENTS_RECORD_KEY }}
@@ -30,7 +30,7 @@ jobs:
       QA_METRICS_WEBHOOK_PASSWORD: ${{ secrets.QA_METRICS_WEBHOOK_PASSWORD }}
     steps:
       - name: Checkout
-        uses: useblacksmith/checkout@bcec731f1eb1367240608d1c889a75b96db6ec53 # v1.5.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Environment
         uses: ./.github/actions/setup-nodejs

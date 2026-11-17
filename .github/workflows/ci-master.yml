@@ -13,7 +13,7 @@ permissions:
 jobs:
   build-and-format:
     name: Build & format
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: '--max-old-space-size=7168'
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -21,7 +21,7 @@ jobs:
       QA_METRICS_WEBHOOK_USER: ${{ secrets.QA_METRICS_WEBHOOK_USER }}
       QA_METRICS_WEBHOOK_PASSWORD: ${{ secrets.QA_METRICS_WEBHOOK_PASSWORD }}
     steps:
-      - uses: useblacksmith/checkout@bcec731f1eb1367240608d1c889a75b96db6ec53 # v1.5.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup and Build
         uses: ./.github/actions/setup-nodejs
         with:

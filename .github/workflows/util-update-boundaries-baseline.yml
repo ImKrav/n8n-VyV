@@ -17,7 +17,7 @@ jobs:
       github.ref_name == github.event.repository.default_branch &&
       (github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'schedule' && github.repository == 'n8n-io/n8n'))
-    runs-on: ${{ vars.RUNNER_PROVIDER == 'github' && 'ubuntu-latest' || 'blacksmith-4vcpu-ubuntu-2204' }}
+    runs-on: ${{ vars.RUNNER_PROVIDER == 'github' && 'ubuntu-latest' || 'ubuntu-latest' }}
     # Least-privilege GITHUB_TOKEN: checkout only needs read. The branch push and
     # the PR use the scoped app token below.
     permissions:

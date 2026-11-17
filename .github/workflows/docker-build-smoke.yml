@@ -88,9 +88,9 @@ jobs:
       matrix:
         include:
           - platform: amd64
-            runner: blacksmith-4vcpu-ubuntu-2204
+            runner: ubuntu-latest
           - platform: arm64
-            runner: blacksmith-8vcpu-ubuntu-2204-arm
+            runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     needs: gate
     if: ${{ !github.event.pull_request.head.repo.fork && needs.gate.outputs.build == 'true' }}

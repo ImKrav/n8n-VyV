@@ -26,7 +26,7 @@ env:
 jobs:
   run_workflow_tests:
     name: Run Workflow Tests with Snapshots
-    runs-on: blacksmith-2vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

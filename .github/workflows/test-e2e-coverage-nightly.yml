@@ -15,7 +15,7 @@ jobs:
   # ~30s cache hits rather than racing to build in parallel from cold.
   build:
     name: Install & Build
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -28,7 +28,7 @@ jobs:
     uses: ./.github/workflows/prepare-docker-reusable.yml
     with:
       build-variant: coverage
-      runner: blacksmith-8vcpu-ubuntu-2204
+      runner: ubuntu-latest
     secrets: inherit
 
   # Distribute the full e2e suite across shards by historical duration
@@ -38,7 +38,7 @@ jobs:
   generate-matrix:
     name: Generate shard matrix
     needs: build
-    runs-on: blacksmith-2vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.gen.outputs.matrix }}
     steps:
@@ -66,7 +66,7 @@ jobs:
       # (keeps test-e2e-reusable coverage-agnostic). See run-coverage-shard.mjs.
       test-command: pnpm --filter=n8n-playwright coverage:shard
       workers: '1'
-      runner: blacksmith-4vcpu-ubuntu-2204
+      runner: ubuntu-latest
       timeout-minutes: 55
       pre-generated-matrix: ${{ needs.generate-matrix.outputs.matrix }}
       artifact-prefix: coverage
@@ -81,7 +81,7 @@ jobs:
   unit-coverage:
     name: ${{ matrix.name }}
     needs: build
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -194,7 +194,7 @@ jobs:
     name: Aggregate Coverage
     needs: [e2e, unit-coverage, python-coverage]
     if: always() && needs.e2e.result != 'skipped' && needs.e2e.result != 'cancelled'
-    runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

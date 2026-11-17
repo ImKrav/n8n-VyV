@@ -25,7 +25,7 @@ on:
       runner:
         description: 'GitHub runner to use'
         required: false
-        default: 'blacksmith-2vcpu-ubuntu-2204'
+        default: 'ubuntu-latest'
         type: string
       timeout-minutes:
         description: 'Job timeout in minutes'
@@ -90,7 +90,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: useblacksmith/checkout@bcec731f1eb1367240608d1c889a75b96db6ec53 # v1.5.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
           ref: ${{ inputs.branch || github.ref }}

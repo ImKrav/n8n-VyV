@@ -94,7 +94,7 @@ jobs:
         # A manual run has no base ref. It takes the branch picked in the
         # Run-workflow dropdown, which is where this file came from, so the
         # workflow and the scripts it runs stay from one commit.
-        uses: useblacksmith/checkout@bcec731f1eb1367240608d1c889a75b96db6ec53 # v1.5.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
           persist-credentials: false

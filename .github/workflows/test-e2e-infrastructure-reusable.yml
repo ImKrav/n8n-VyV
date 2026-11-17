@@ -40,7 +40,7 @@ jobs:
       test-command: 'pnpm --filter=n8n-playwright test:benchmark --grep ${{ matrix.grep }}'
       pre-generated-matrix: ${{ matrix.shards }}
       workers: '1'
-      runner: blacksmith-8vcpu-ubuntu-2204
+      runner: ubuntu-latest
       timeout-minutes: 120
       artifact-prefix: 'benchmark-${{ matrix.lane }}'
       currents-project-id: 'LRxcNt'
@@ -55,7 +55,7 @@ jobs:
     name: Aggregate sizing matrix
     needs: [benchmark]
     if: always() && needs.benchmark.result != 'skipped' && needs.benchmark.result != 'cancelled'
-    runs-on: blacksmith-2vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
