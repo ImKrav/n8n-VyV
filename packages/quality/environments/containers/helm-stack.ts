@@ -21,7 +21,8 @@ const execAsync = promisify(execCallback);
 
 const DEFAULT_K3S_IMAGE = 'rancher/k3s:v1.32.2-k3s1';
 const DEFAULT_CHART_REPO = 'https://github.com/n8n-io/n8n-hosting.git';
-const DEFAULT_CHART_REF = 'main';
+// Pinned: n8n-hosting main is the 3.x chart (no config.extraEnv), incompatible with n8n 2.x.
+const DEFAULT_CHART_REF = 'v1.19.0';
 const N8N_NODE_PORT = 30080;
 const HEALTH_POLL_INTERVAL_MS = 2_000;
 const CONTAINERD_READY_TIMEOUT_MS = 30_000;

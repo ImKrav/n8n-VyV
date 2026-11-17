@@ -443,8 +443,8 @@ jobs:
         env:
           CHANGED_FILES: ${{ needs.install-and-build.outputs.changed_files }}
           MERGE_BASE: ${{ needs.install-and-build.outputs.merge_base }}
-          PLAYWRIGHT_GREP_INVERT: ${{ github.event.pull_request.head.repo.fork == true && '@licensed' || '' }}
-          PLAYWRIGHT_PROJECT: ${{ github.event.pull_request.head.repo.fork == true && 'sqlite:e2e' || 'multi-main:e2e' }}
+          PLAYWRIGHT_GREP_INVERT: ${{ (github.event.pull_request.head.repo.fork == true || github.repository != 'n8n-io/n8n') && '@licensed' || '' }}
+          PLAYWRIGHT_PROJECT: ${{ (github.event.pull_request.head.repo.fork == true || github.repository != 'n8n-io/n8n') && 'sqlite:e2e' || 'multi-main:e2e' }}
         run: |
           FILES_CSV=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
           MATRIX=$(node packages/quality/testing/playwright/scripts/distribute-tests.mjs --matrix 20 --orchestrate --impact "--project=$PLAYWRIGHT_PROJECT" "--files=$FILES_CSV" "--base=$MERGE_BASE")
@@ -465,7 +465,7 @@ jobs:
     with:
       branch: ${{ needs.install-and-build.outputs.commit_sha }}
       test-mode: docker-artifact
-      test-command: ${{ github.event.pull_request.head.repo.fork == true && 'pnpm --filter=n8n-playwright test:container:sqlite:e2e --grep-invert=@licensed' || 'pnpm --filter=n8n-playwright test:container:multi-main:e2e' }}
+      test-command: ${{ (github.event.pull_request.head.repo.fork == true || github.repository != 'n8n-io/n8n') && 'pnpm --filter=n8n-playwright test:container:sqlite:e2e --grep-invert=@licensed' || 'pnpm --filter=n8n-playwright test:container:multi-main:e2e' }}
       workers: '1'
       pre-generated-matrix: ${{ needs.e2e-matrix.outputs.matrix }}
       artifact-prefix: e2e
@@ -490,7 +490,7 @@ jobs:
     with:
       branch: ${{ needs.install-and-build.outputs.commit_sha }}
       test-mode: docker-artifact
-      test-command: pnpm --filter=n8n-playwright test:container:engine-v2:e2e
+      test-command: ${{ github.repository != 'n8n-io/n8n' && 'pnpm --filter=n8n-playwright test:container:engine-v2:e2e --grep-invert=@licensed' || 'pnpm --filter=n8n-playwright test:container:engine-v2:e2e' }}
       workers: '1'
       artifact-prefix: e2e-engine
     secrets: inherit
@@ -543,7 +543,8 @@ jobs:
       needs.prepare-docker.result == 'success' &&
       (needs.install-and-build.outputs.e2e_performance == 'true' ||
        contains(github.event.pull_request.labels.*.name, 'run-perf-tests')) &&
-      github.event.pull_request.head.repo.fork != true
+      github.event.pull_request.head.repo.fork != true &&
+      github.repository == 'n8n-io/n8n'
     uses: ./.github/workflows/test-e2e-performance-reusable.yml
     secrets: inherit
 

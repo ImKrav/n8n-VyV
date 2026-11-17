@@ -16,7 +16,7 @@ on:
       helm-chart-ref:
         description: 'n8n-hosting branch/tag for Helm chart'
         required: false
-        default: 'main'
+        default: 'v1.19.0'
       mode:
         description: 'Deployment mode to test'
         required: true
@@ -28,7 +28,7 @@ on:
 
 env:
   DOCKER_IMAGE: ghcr.io/${{ github.repository }}:ci-${{ github.run_id }}
-  HELM_CHART_REF: ${{ inputs.helm-chart-ref || 'main' }}
+  HELM_CHART_REF: ${{ inputs.helm-chart-ref || 'v1.19.0' }}
 
 jobs:
   build:

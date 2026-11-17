@@ -86,7 +86,8 @@ jobs:
     uses: ./.github/workflows/test-e2e-reusable.yml
     with:
       test-mode: docker-artifact
-      test-command: pnpm --filter=n8n-playwright test:container:sqlite:e2e
+      # Without the enterprise license secrets (any repo but n8n-io/n8n), skip @licensed tests.
+      test-command: ${{ github.repository != 'n8n-io/n8n' && 'pnpm --filter=n8n-playwright test:container:sqlite:e2e --grep-invert=@licensed' || 'pnpm --filter=n8n-playwright test:container:sqlite:e2e' }}
       workers: '1'
       timeout-minutes: 55
       pre-generated-matrix: ${{ needs.generate-matrix.outputs.matrix }}
