@@ -40,6 +40,10 @@ jobs:
           node-version: 26.12.1
           cache: pnpm
 
+      # build-n8n.mjs importa zx antes de su propio `pnpm install`
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Build n8n (compiled/)
         env:
           NODE_OPTIONS: --max-old-space-size=8192
